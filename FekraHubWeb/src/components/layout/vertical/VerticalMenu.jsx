@@ -60,7 +60,7 @@ const VerticalMenu = ({ dictionary, scrollMenu }) => {
     >
       {/* Incase you also want to scroll NavHeader to scroll with Vertical Menu, remove NavHeader from above and paste it below this comment */}
       {/* Vertical Menu */}
-      <Menu style={{background:"#0000"}}
+      <Menu
         popoutMenuOffset={{ mainAxis: 10 }}
         menuItemStyles={menuItemStyles(verticalNavOptions, theme, settings)}
         renderExpandIcon={({ open }) => <RenderExpandIcon open={open} transitionDuration={transitionDuration} />}
@@ -74,12 +74,26 @@ const VerticalMenu = ({ dictionary, scrollMenu }) => {
         >
           {dictionary['navigation'].dashboard}
         </MenuItem>
-        <MenuSection label={dictionary['navigation'].appsPages}>
-          <SubMenu label={dictionary['navigation'].parents} icon={<i className='ri-layout-left-line' />}>
-            <MenuItem href={`/${locale}/parents/form-validation`}>{dictionary['navigation'].add}</MenuItem>
+        <MenuSection label={dictionary['navigation'].pages}>
+          <SubMenu label={dictionary['navigation'].children} icon={<i className='ri-user-line' />}>
+            <MenuItem href={`/${locale}/pages/parents/children/create-student`}>
+              {dictionary['navigation'].add}
+            </MenuItem>
+            <MenuItem href={`/${locale}/pages/parents/children/view-students`}>
+              {dictionary['navigation'].view}
+            </MenuItem>
           </SubMenu>
         </MenuSection>
       </Menu>
+      {/* <Menu
+          popoutMenuOffset={{ mainAxis: 10 }}
+          menuItemStyles={menuItemStyles(verticalNavOptions, theme, settings)}
+          renderExpandIcon={({ open }) => <RenderExpandIcon open={open} transitionDuration={transitionDuration} />}
+          renderExpandedMenuItemIcon={{ icon: <i className='ri-circle-line' /> }}
+          menuSectionStyles={menuSectionStyles(verticalNavOptions, theme)}
+        >
+          <GenerateVerticalMenu menuData={menuData(dictionary, params)} />
+        </Menu> */}
     </ScrollWrapper>
   )
 }
