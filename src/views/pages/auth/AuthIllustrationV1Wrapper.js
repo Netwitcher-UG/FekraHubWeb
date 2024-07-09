@@ -5,8 +5,10 @@ import Box from '@mui/material/Box'
 // ** Styled Components
 const AuthIllustrationV1Wrapper = styled(Box)(({ theme }) => ({
   width: '100%',
-  maxWidth: 400,
+  maxWidth: '100%', // Change this to ensure it takes full width
   position: 'relative',
+  display: 'flex',
+  justifyContent: 'center',
   [theme.breakpoints.up('md')]: {
     '&:before': {
       zIndex: -1,
