@@ -24,7 +24,8 @@ const defaultProvider = {
   logout: () => Promise.resolve(),
   forget: () => Promise.resolve(),
   confirmUser: () => Promise.resolve(),
-  resendEmail: () => Promise.resolve()
+  resendEmail: () => Promise.resolve(),
+  resetPassword: () => Promise.resolve()
 }
 const AuthContext = createContext(defaultProvider)
 
@@ -193,6 +194,21 @@ const AuthProvider = ({ children }) => {
     }
   }
 
+  const handleResetPassword = async params => {
+    try {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACK_END_URL}/api/Account/ResetPassword`, params, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+
+      return response
+    } catch (error) {
+      console.error('Error:', error)
+      return error.response
+    }
+  }
+
   const handleLogout = () => {
     setUser(null)
     setToken(null)
@@ -212,7 +228,8 @@ const AuthProvider = ({ children }) => {
     logout: handleLogout,
     forget: handlePasswordForget,
     confirmUser: handleConfirmUser,
-    resendEmail: handleResendConfirmEmail
+    resendEmail: handleResendConfirmEmail,
+    resetPassword: handleResetPassword
   }
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>

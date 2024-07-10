@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
 import CardContent from '@mui/material/CardContent'
 import { styled, useTheme } from '@mui/material/styles'
+import CircularProgress from '@mui/material/CircularProgress'
 import MuiCard from '@mui/material/Card'
 import InputAdornment from '@mui/material/InputAdornment'
 import themeConfig from 'src/configs/themeConfig'
@@ -77,7 +78,7 @@ const RegisterV1 = () => {
     watch,
     handleSubmit,
     control,
-    formState: { errors }
+    formState: { errors, isSubmitting }
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -466,8 +467,8 @@ const RegisterV1 = () => {
                         />
                       )}
                     />
-                    <Button fullWidth type='submit' variant='contained' sx={{ mb: 4 }}>
-                      Sign up
+                    <Button fullWidth disabled={isSubmitting} type='submit' variant='contained' sx={{ mb: 4 }}>
+                      {isSubmitting ? <CircularProgress size={25} /> : 'Sign up'}
                     </Button>
                     <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
                       <Typography sx={{ color: 'text.secondary', mr: 2 }}>Already have an account?</Typography>

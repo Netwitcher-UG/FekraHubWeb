@@ -10,6 +10,7 @@ import { styled, useTheme } from '@mui/material/styles'
 import * as yup from 'yup'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
+import CircularProgress from '@mui/material/CircularProgress'
 // ** Custom Component Import
 import CustomTextField from 'src/@core/components/mui/text-field'
 import { useAuth } from 'src/hooks/useAuth'
@@ -81,7 +82,7 @@ const ForgotPassword = () => {
     setError,
     watch,
     handleSubmit,
-    formState: { errors }
+    formState: { errors, isSubmitting }
   } = useForm({
     defaultValues,
     mode: 'onBlur',
@@ -185,8 +186,8 @@ const ForgotPassword = () => {
                       />
                     )}
                   />
-                  <Button fullWidth type='submit' variant='contained' sx={{ mb: 4 }}>
-                    Send reset link
+                  <Button fullWidth disabled={isSubmitting} type='submit' variant='contained' sx={{ mb: 4 }}>
+                    {isSubmitting ? <CircularProgress size={25} /> : 'Send reset link'}
                   </Button>
                   <Typography
                     sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', '& svg': { mr: 1 } }}
