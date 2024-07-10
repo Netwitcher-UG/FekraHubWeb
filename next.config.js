@@ -15,5 +15,8 @@ module.exports = {
     }
 
     return config
+  },
+  env: {
+    NEXT_PUBLIC_BACK_END_URL: process.env.BACK_END_URL
   }
 }

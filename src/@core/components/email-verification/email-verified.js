@@ -1,14 +1,26 @@
-import { useState, useEffect } from 'react'
+// ** Next Import
 import Link from 'next/link'
+
+// ** MUI Components
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import { styled, useTheme } from '@mui/material/styles'
 import MuiCard from '@mui/material/Card'
-import themeConfig from 'src/configs/themeConfig'
-import BlankLayout from 'src/@core/layouts/BlankLayout'
-import AuthIllustrationV1Wrapper from 'src/views/pages/auth/AuthIllustrationV1Wrapper'
+import Icon from 'src/@core/components/icon'
 
+// ** Configs
+import themeConfig from 'src/configs/themeConfig'
+
+// ** Layout Import
+import BlankLayout from 'src/@core/layouts/BlankLayout'
+import { useRouter } from 'next/router'
+// ** Demo Imports
+import AuthIllustrationV1Wrapper from 'src/views/pages/auth/AuthIllustrationV1Wrapper'
+import CustomAvatar from 'src/@core/components/mui/avatar'
+
+// ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
   [theme.breakpoints.up('sm')]: { width: '25rem' }
 }))
@@ -18,39 +30,13 @@ const LinkStyled = styled(Link)(({ theme }) => ({
   color: `${theme.palette.primary.main} !important`
 }))
 
-const VerifyEmailV1 = ({ email, reason = 'Account activation', resend = false, handleResend: customHandleResend }) => {
+const EmailVerified = () => {
+  // ** Hook
   const theme = useTheme()
-  const [timer, setTimer] = useState(0)
-  const [canResend, setCanResend] = useState(true)
-
-  useEffect(() => {
-    let interval
-    if (!canResend) {
-      interval = setInterval(() => {
-        setTimer(prev => {
-          if (prev > 0) return prev - 1
-          setCanResend(true)
-          clearInterval(interval)
-          return 0
-        })
-      }, 1000)
-    }
-    return () => clearInterval(interval)
-  }, [canResend])
-
-  const handleResend = () => {
-    if (canResend) {
-      setCanResend(false)
-      setTimer(120)
-
-      if (customHandleResend) {
-        customHandleResend(email)
-      }
-    }
-  }
+  const router = useRouter()
 
   return (
-    <Box className='content-center' sx={{ display: 'flex', justifyContent: 'center' }}>
+    <Box className='content-center'>
       <AuthIllustrationV1Wrapper>
         <Card>
           <CardContent sx={{ p: theme => `${theme.spacing(10.5, 8, 8)} !important` }}>
@@ -87,41 +73,22 @@ const VerifyEmailV1 = ({ email, reason = 'Account activation', resend = false, h
                 {themeConfig.templateName}
               </Typography>
             </Box>
-            <Box sx={{ mb: 6 }}>
-              <Typography variant='h4' sx={{ mb: 1.5 }}>
-                Verify your email ✉️
-              </Typography>
-              <Typography sx={{ color: 'text.secondary' }}>
-                {reason} link sent to your email address: {email}. Please follow the link inside to continue.
-              </Typography>
+            <Box sx={{ mb: 6, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <CustomAvatar skin='light' variant='circle' color={'success'} sx={{ width: 100, height: 100, mb: 4 }}>
+                <Icon icon={'lets-icons:check-ring'} fontSize={100} color={'success'} />
+              </CustomAvatar>
+
+              <Typography sx={{ color: 'text.secondary' }}>Your email was successfully verified !</Typography>
             </Box>
-            {resend && (
-              <Box sx={{ mt: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Typography sx={{ color: 'text.secondary' }}>Didn't get the mail?</Typography>
-                {canResend ? (
-                  <Typography
-                    component={LinkStyled}
-                    href='/'
-                    onClick={e => {
-                      e.preventDefault()
-                      handleResend()
-                    }}
-                    sx={{ ml: 1 }}
-                  >
-                    Resend
-                  </Typography>
-                ) : (
-                  <Typography sx={{ ml: 1, color: 'text.secondary' }}>Resend in {timer}s</Typography>
-                )}
-              </Box>
-            )}
+            <Button fullWidth variant='contained' onClick={() => router.push('/login')}>
+              Go To Login Page
+            </Button>
           </CardContent>
         </Card>
       </AuthIllustrationV1Wrapper>
     </Box>
   )
 }
+EmailVerified.getLayout = page => <BlankLayout>{page}</BlankLayout>
 
-VerifyEmailV1.getLayout = page => <BlankLayout>{page}</BlankLayout>
-
-export default VerifyEmailV1
+export default EmailVerified
