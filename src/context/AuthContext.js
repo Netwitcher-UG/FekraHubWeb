@@ -37,47 +37,31 @@ const AuthProvider = ({ children }) => {
 
   // ** Hooks
   const router = useRouter()
-  // useEffect(() => {
-  //   const initAuth = async () => {
-  //     const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)
-  //     if (storedToken) {
-  //       setLoading(true)
-  //       await axios
-  //         .get(authConfig.meEndpoint, {
-  //           headers: {
-  //             Authorization: storedToken
-  //           }
-  //         })
-  //         .then(async response => {
-  //           setLoading(false)
-  //           setUser({ ...response.data.userData })
-  //         })
-  //         .catch(() => {
-  //           localStorage.removeItem('userData')
-  //           localStorage.removeItem('refreshToken')
-  //           localStorage.removeItem('accessToken')
-  //           setUser(null)
-  //           setLoading(false)
-  //           if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
-  //             router.replace('/login')
-  //           }
-  //         })
-  //     } else {
-  //       setLoading(false)
-  //     }
-  //   }
-  //   initAuth()
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [])
-
   useEffect(() => {
     const initAuth = async () => {
       const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)
-      const storedUser = JSON.parse(window.localStorage.getItem('userData'))
-      if (storedToken && storedUser) {
-        setUser(storedUser)
-        setToken(storedToken)
-        setLoading(false)
+      if (storedToken) {
+        setLoading(true)
+        await axios
+          .post(`${process.env.NEXT_PUBLIC_BACK_END_URL}/api/Account/ValidateToken`, null, {
+            headers: {
+              Authorization: `Bearer ${storedToken}`
+            }
+          })
+          .then(async response => {
+            setLoading(false)
+            setUser({ ...response.data.userData })
+          })
+          .catch(() => {
+            localStorage.removeItem('userData')
+            localStorage.removeItem('refreshToken')
+            localStorage.removeItem('accessToken')
+            setUser(null)
+            setLoading(false)
+            if (!router.pathname.includes('login')) {
+              router.replace('/login')
+            }
+          })
       } else {
         setLoading(false)
       }
@@ -85,6 +69,22 @@ const AuthProvider = ({ children }) => {
     initAuth()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // useEffect(() => {
+  //   const initAuth = async () => {
+  //     const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)
+  //     const storedUser = JSON.parse(window.localStorage.getItem('userData'))
+  //     if (storedToken && storedUser) {
+  //       setUser(storedUser)
+  //       setToken(storedToken)
+  //       setLoading(false)
+  //     } else {
+  //       setLoading(false)
+  //     }
+  //   }
+  //   initAuth()
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [])
 
   // const handleLogin = (params, errorCallback) => {
   //   axios.post(authConfig.loginEndpoint, params).then(async response => {
