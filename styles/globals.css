@@ -35,3 +35,7 @@ code:not([class*='language-']):after {
 code[class*='language-'] {
   padding: 0;
 }
+
+.custom-style-columns {
+  font-weight: 800 !important;
+}

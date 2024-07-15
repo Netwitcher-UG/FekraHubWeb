@@ -121,7 +121,7 @@ const App = props => {
                     </Guard>
                     <ReactHotToast>
                       <Toaster
-                        position={settings.toastPosition}
+                        position={'bottom-center'}
                         containerStyle={{ zIndex: 99999 }}
                         toastOptions={{ className: 'react-hot-toast' }}
                       />
