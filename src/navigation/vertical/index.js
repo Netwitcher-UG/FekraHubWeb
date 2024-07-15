@@ -29,6 +29,11 @@ const navigation = () => {
       path: '/apps/email'
     },
     {
+      title: 'Courses',
+      icon: 'tabler:mail',
+      path: '/courses'
+    },
+    {
       title: 'Chat',
       icon: 'tabler:messages',
       path: '/apps/chat'
@@ -346,7 +351,6 @@ const navigation = () => {
       icon: 'tabler:brand-tabler'
     },
     {
-      
       title: 'Cards',
       icon: 'tabler:id',
       children: [
@@ -457,7 +461,7 @@ const navigation = () => {
         {
           title: 'More',
           path: '/components/more'
-        },
+        }
       ]
     },
     {
@@ -518,7 +522,7 @@ const navigation = () => {
         {
           title: 'Input Mask',
           path: '/forms/form-elements/input-mask'
-        },
+        }
       ]
     },
     {
