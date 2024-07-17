@@ -11,6 +11,9 @@ import DialogContentText from '@mui/material/DialogContentText'
 import { Box } from '@mui/system'
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined'
 import { Typography } from '@mui/material'
+import Translations from 'src/layouts/components/Translations'
+import Icon from 'src/@core/components/icon'
+
 const CustomDialogDelete = ({ open, handleClose, decsription, onDelete }) => {
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
@@ -18,14 +21,21 @@ const CustomDialogDelete = ({ open, handleClose, decsription, onDelete }) => {
   return (
     <Fragment>
       <Dialog fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby='responsive-dialog-title'>
-        <DialogTitle
-          id='responsive-dialog-title'
-          sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}
-        >
-          <Typography variant='h4' sx={{ color: '#ce3446' }}>
-            Alert
+        <DialogTitle id='responsive-dialog-title' sx={{}}>
+          <Typography
+            variant='h4'
+            sx={{
+              color: '#ce3446',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '10px',
+              '& svg': { mr: 2 }
+            }}
+          >
+            <Translations text={'Alert'} />
+            <Icon icon='mdi:alert-circle-outline' />
           </Typography>{' '}
-          <ErrorOutlineOutlinedIcon sx={{ color: '#ce3446' }} />
         </DialogTitle>
         <DialogContent>
           <DialogContentText

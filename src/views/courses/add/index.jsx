@@ -14,6 +14,8 @@ import { Autocomplete, Grid, TextField } from '@mui/material'
 import { useForm, Controller } from 'react-hook-form'
 import { addCourses } from 'src/store/apps/courses'
 import { useDispatch } from 'react-redux'
+import Translations from 'src/layouts/components/Translations'
+import CustomTextField from 'src/@core/components/mui/text-field'
 
 const CustomCloseButton = styled(IconButton)(({ theme }) => ({
   top: 0,
@@ -78,9 +80,11 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
 
   return (
     <div>
-      <Button variant='contained' onClick={handleClickOpen}>
-        <AddIcon /> Add Courses
+      <Button onClick={handleClickOpen} variant='contained' sx={{ '& svg': { mr: 2 } }}>
+        <Icon fontSize='1.125rem' icon='tabler:plus' />
+        <Translations text={'Add Courses'} />
       </Button>
+
       <Dialog
         open={open}
         onClose={handleClose}
@@ -103,7 +107,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                 defaultValue=''
                 control={control}
                 render={({ field }) => (
-                  <TextField
+                  <CustomTextField
                     {...field}
                     fullWidth
                     autoFocus
@@ -122,7 +126,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                 defaultValue=''
                 control={control}
                 render={({ field }) => (
-                  <TextField
+                  <CustomTextField
                     {...field}
                     fullWidth
                     label={`${'Price'}`}
@@ -139,7 +143,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                 defaultValue=''
                 control={control}
                 render={({ field }) => (
-                  <TextField
+                  <CustomTextField
                     {...field}
                     fullWidth
                     label={`${'Lessons'}`}
@@ -156,7 +160,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                 defaultValue=''
                 control={control}
                 render={({ field }) => (
-                  <TextField
+                  <CustomTextField
                     {...field}
                     fullWidth
                     label={`${'Capacity'}`}
@@ -173,7 +177,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                 defaultValue=''
                 control={control}
                 render={({ field }) => (
-                  <TextField
+                  <CustomTextField
                     {...field}
                     fullWidth
                     label={`${'StartDate'}`}
@@ -190,7 +194,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                 defaultValue=''
                 control={control}
                 render={({ field }) => (
-                  <TextField
+                  <CustomTextField
                     {...field}
                     fullWidth
                     label={`${'EndDate'}`}
@@ -221,7 +225,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                       onChange(newValue ? newValue.value : '')
                     }}
                     renderInput={params => (
-                      <TextField
+                      <CustomTextField
                         {...params}
                         fullWidth
                         sx={{ mb: 4 }}
@@ -253,7 +257,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                       onChange(newValue ? newValue.value : '')
                     }}
                     renderInput={params => (
-                      <TextField
+                      <CustomTextField
                         {...params}
                         fullWidth
                         sx={{ mb: 4 }}

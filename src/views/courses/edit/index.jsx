@@ -20,6 +20,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { useDispatch, useSelector } from 'react-redux'
 import { editCourses } from 'src/store/apps/courses'
+import CustomTextField from 'src/@core/components/mui/text-field'
 
 const Header = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -99,7 +100,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                 defaultValue={dataDef?.name}
                 control={control}
                 render={({ field }) => (
-                  <TextField
+                  <CustomTextField
                     {...field}
                     fullWidth
                     label={`${'Name'}`}
@@ -117,7 +118,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                 defaultValue=''
                 control={control}
                 render={({ field }) => (
-                  <TextField
+                  <CustomTextField
                     {...field}
                     fullWidth
                     label={`${'Price'}`}
@@ -134,7 +135,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                 defaultValue=''
                 control={control}
                 render={({ field }) => (
-                  <TextField
+                  <CustomTextField
                     {...field}
                     fullWidth
                     label={`${'Lessons'}`}
@@ -151,7 +152,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                 defaultValue=''
                 control={control}
                 render={({ field }) => (
-                  <TextField
+                  <CustomTextField
                     {...field}
                     fullWidth
                     label={`${'Capacity'}`}
@@ -168,7 +169,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                 defaultValue=''
                 control={control}
                 render={({ field }) => (
-                  <TextField
+                  <CustomTextField
                     {...field}
                     fullWidth
                     label={`${'StartDate'}`}
@@ -185,7 +186,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                 defaultValue=''
                 control={control}
                 render={({ field }) => (
-                  <TextField
+                  <CustomTextField
                     {...field}
                     fullWidth
                     label={`${'EndDate'}`}
@@ -223,7 +224,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                       onChange(newValue ? newValue.value : undefined)
                     }}
                     renderInput={params => (
-                      <TextField
+                      <CustomTextField
                         {...params}
                         fullWidth
                         sx={{ mb: 4 }}
@@ -255,7 +256,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                       onChange(newValue ? newValue.value : defaultValues.RoomId)
                     }}
                     renderInput={params => (
-                      <TextField
+                      <CustomTextField
                         {...params}
                         fullWidth
                         sx={{ mb: 4 }}
