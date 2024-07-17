@@ -10,7 +10,7 @@ import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import Divider from '@mui/material/Divider'
-import Typography from '@mui/material/Typography'
+// import Typography from '@mui/material/Typography'
 import { DataGrid } from '@mui/x-data-grid'
 import Translations from 'src/layouts/components/Translations'
 
@@ -22,22 +22,6 @@ import { fetchEmployees } from 'src/store/apps/users'
 
 // ** Custom Table Components Imports
 import TableHeader from 'src/views/apps/users/employees/list/TableHeader'
-// import AddExpenseDrawer from 'src/views/apps/expenses/list/AddExpenseDrawer'
-
-// const stateColors = {
-//   'To Report': 'info',
-//   'لإعداد التقارير ': 'info',
-//   'To Submit': 'purple',
-//   'للإرسال ': 'purple',
-//   Submitted: 'warning',
-//   'تم الإرسال ': 'warning',
-//   Approved: 'success',
-//   'تمت الموافقة ': 'success',
-//   Done: 'default',
-//   'منتهي ': 'default',
-//   Refused: 'error',
-//   'تم الرفض ': 'error'
-// }
 
 const customScrollbarStyles = {
   '& ::-webkit-scrollbar': {
@@ -55,85 +39,71 @@ const customScrollbarStyles = {
 const columns = [
   {
     width: 200,
-    sortable: false,
     headerName: <Translations text={'User Name'} />,
     field: 'userName'
   },
   {
     width: 200,
-    sortable: false,
     headerName: <Translations text={'Email'} />,
     field: 'email'
   },
   {
     width: 200,
-    sortable: false,
     headerName: <Translations text={'First Name'} />,
     field: 'firstName'
   },
   {
     width: 200,
-    sortable: false,
     headerName: <Translations text={'Last Name'} />,
     field: 'lastName'
   },
   {
     width: 100,
-    sortable: false,
     headerName: <Translations text={'Gender'} />,
     field: 'gender'
   },
   {
     width: 200,
-    sortable: false,
     headerName: <Translations text={'Nationality'} />,
     field: 'nationality'
   },
   {
     width: 200,
-    sortable: false,
     headerName: <Translations text={'Phone Number'} />,
     field: 'phoneNumber'
   },
   {
     width: 200,
-    sortable: false,
     headerName: <Translations text={'Job'} />,
     field: 'job'
   },
   {
     width: 200,
-    sortable: false,
     headerName: <Translations text={'BirthDay'} />,
     field: 'birthday'
   },
   {
     width: 200,
-    sortable: false,
     headerName: <Translations text={'City'} />,
     field: 'city'
   },
   {
     width: 200,
-    sortable: false,
     headerName: <Translations text={'Street'} />,
     field: 'street'
   },
   {
     width: 200,
-    sortable: false,
     headerName: <Translations text={'Street'} />,
     field: 'emergencyPhoneNumber'
   },
   {
     width: 200,
-    sortable: false,
     headerName: <Translations text={'Birth Place'} />,
     field: 'birthplace'
   },
   {
     width: 200,
-    sortable: false,
     headerName: <Translations text={'Street Num'} />,
     field: 'streetNr'
   }
@@ -149,7 +119,6 @@ const EmployeesList = () => {
 
   // ** Hooks
   const dispatch = useDispatch()
-  const router = useRouter()
   const store = useSelector(state => state.users)
 
   useEffect(() => {
@@ -157,7 +126,7 @@ const EmployeesList = () => {
   }, [dispatch])
 
   //   const fetchDataWithPagination = (page, searchValue = '') => {
-  //     const offset = (page - 1) * pageSize // Calculate offset based on page number
+  //     const offset = (page - 1) * pageSize
 
   //     dispatch(
   //       fetchExpenses({
@@ -178,17 +147,16 @@ const EmployeesList = () => {
   //       fetchDataWithPagination(currentPage, searchTerm) // Fetch data on component mount or page change
   //     }, 700) // 700ms delay
 
-  //     return () => clearTimeout(timer) // Clean up the timer on unmount or before the next effect runs
+  //     return () => clearTimeout(timer)
   //   }, [dispatch, currentPage, searchTerm])
 
   //   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
 
   //   const handlePageChange = (event, value) => {
-  //     setCurrentPage(value) // Update current page when pagination control is clicked
-  //   }
+  //     setCurrentPage(value)
 
   //   const handleFilter = value => {
-  //     setSearchTerm(value) // Update the search term state
+  //     setSearchTerm(value)
   //   }
 
   return (
