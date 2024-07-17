@@ -42,7 +42,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   }
 }))
 
-export default function CustomSearch({ onSearch }) {
+export default function CustomSearch({ SetSearch }) {
+  const handleChange = event => {
+    SetSearch(event.target.value)
+  }
+
   return (
     <Search
       style={{
@@ -55,7 +59,7 @@ export default function CustomSearch({ onSearch }) {
       <SearchIconWrapper>
         <SearchIcon />
       </SearchIconWrapper>
-      <StyledInputBase placeholder='search' inputProps={{ 'aria-label': 'search' }} />
+      <StyledInputBase placeholder='search' inputProps={{ 'aria-label': 'search' }} onChange={handleChange} />
     </Search>
   )
 }

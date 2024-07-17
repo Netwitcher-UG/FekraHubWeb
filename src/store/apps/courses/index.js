@@ -5,9 +5,9 @@ import { ShowSuccessToast } from 'src/@core/utils/ShowSuccesToast'
 
 // git Courses
 
-export const fetchCourses = createAsyncThunk('courses/fetchCourses', async (_, { rejectWithValue }) => {
+export const fetchCourses = createAsyncThunk('courses/fetchCourses', async (data, { rejectWithValue }) => {
   try {
-    const response = await axios.get('http://fekrahub.runasp.net/api/Courses', {
+    const response = await axios.get(`http://fekrahub.tryasp.net/api/Courses?search=${data}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         accept: 'text/plain'
@@ -25,7 +25,7 @@ export const fetchCourses = createAsyncThunk('courses/fetchCourses', async (_, {
 
 export const fetchCoursesRoom = createAsyncThunk('courses/fetchCoursesRoom', async (_, { rejectWithValue }) => {
   try {
-    const response = await axios.get('http://fekrahub.runasp.net/api/Rooms', {
+    const response = await axios.get('http://fekrahub.tryasp.net/api/Rooms', {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         accept: 'text/plain'
@@ -43,7 +43,7 @@ export const fetchCoursesRoom = createAsyncThunk('courses/fetchCoursesRoom', asy
 
 export const fetchTeacher = createAsyncThunk('courses/fetchTeacher', async (_, { rejectWithValue }) => {
   try {
-    const response = await axios.get('http://fekrahub.runasp.net/api/UsersManagment/GetTeacher', {
+    const response = await axios.get('http://fekrahub.tryasp.net/api/UsersManagment/GetTeacher', {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         accept: 'text/plain'
@@ -60,7 +60,7 @@ export const fetchTeacher = createAsyncThunk('courses/fetchTeacher', async (_, {
 // ** Add Courses
 export const addCourses = createAsyncThunk('courses/addCourses', async (data, { getState, dispatch }) => {
   try {
-    const response = await axios.post(`http://fekrahub.runasp.net/api/Courses`, data, {
+    const response = await axios.post(`http://fekrahub.tryasp.net/api/Courses`, data, {
       headers: {
         accept: 'application/json',
         'Content-Type': 'multipart/form-data',
@@ -68,7 +68,7 @@ export const addCourses = createAsyncThunk('courses/addCourses', async (data, { 
       }
     })
     ShowSuccessToast('Success')
-    dispatch(fetchCourses())
+    dispatch(fetchCourses(''))
 
     return response.data
   } catch (errors) {
@@ -80,14 +80,14 @@ export const addCourses = createAsyncThunk('courses/addCourses', async (data, { 
 // ** Edit Courses
 export const editCourses = createAsyncThunk('courses/editCourses', async (data, { getState, dispatch }) => {
   try {
-    const response = await axios.put(`http://fekrahub.runasp.net/api/Courses/${data.id}`, data, {
+    const response = await axios.put(`http://fekrahub.tryasp.net/api/Courses/${data.id}`, data, {
       headers: {
         'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${localStorage.accessToken}`
       }
     })
     ShowSuccessToast('Success')
-    dispatch(fetchCourses())
+    dispatch(fetchCourses(''))
     return response.data
   } catch (error) {}
 })
@@ -98,14 +98,14 @@ export const deleteCourse = createAsyncThunk(
   'courses/deleteCourse',
   async (id, { getState, rejectWithValue, dispatch }) => {
     try {
-      await axios.delete(`http://fekrahub.runasp.net/api/Courses/${id}`, {
+      await axios.delete(`http://fekrahub.tryasp.net/api/Courses/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('accessToken')}`
         }
       })
 
       ShowSuccessToast('success')
-      dispatch(fetchCourses())
+      dispatch(fetchCourses(''))
     } catch (error) {
       ShowErrorToast('Error')
 
