@@ -72,30 +72,19 @@ const navigation = () => {
           title: 'Employees',
           path: '/users/employees'
         }
+      ]
+    },
+    {
+      title: 'Students',
+      icon: 'tabler:user',
+      children: [
+        {
+          title: 'Avilable Students',
+          path: '/students'
+        }
         // {
-        //   title: 'View',
-        //   children: [
-        //     {
-        //       title: 'Account',
-        //       path: '/apps/user/view/account'
-        //     },
-        //     {
-        //       title: 'Security',
-        //       path: '/apps/user/view/security'
-        //     },
-        //     {
-        //       title: 'Billing & Plans',
-        //       path: '/apps/user/view/billing-plan'
-        //     },
-        //     {
-        //       title: 'Notifications',
-        //       path: '/apps/user/view/notification'
-        //     },
-        //     {
-        //       title: 'Connection',
-        //       path: '/apps/user/view/connection'
-        //     }
-        //   ]
+        //   title: 'Employees',
+        //   path: '/users/employees'
         // }
       ]
     }

@@ -9,6 +9,7 @@ import { configureStore } from '@reduxjs/toolkit'
 // import calendar from 'src/store/apps/calendar'
 // import permissions from 'src/store/apps/permissions'
 import users from 'src/store/apps/users'
+import students from 'src/store/apps/students'
 
 export const store = configureStore({
   reducer: {
@@ -18,7 +19,8 @@ export const store = configureStore({
     // invoice,
     // calendar,
     // permissions
-    users
+    users,
+    students
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

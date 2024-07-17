@@ -75,6 +75,20 @@ const navigation = () => {
           path: '/users/employees'
         }
       ]
+    },
+    {
+      title: 'Students',
+      icon: 'tabler:user',
+      children: [
+        {
+          title: 'Avilable Students',
+          path: '/students'
+        }
+        // {
+        //   title: 'Employees',
+        //   path: '/users/employees'
+        // }
+      ]
     }
     // //     {
     // //       title: 'Roles & Permissions',

@@ -22,26 +22,10 @@ import { fetchParents } from 'src/store/apps/users'
 
 // ** Custom Table Components Imports
 import TableHeader from 'src/views/apps/users/parents/list/TableHeader'
-// import AddExpenseDrawer from 'src/views/apps/expenses/list/AddExpenseDrawer'
-
-// const stateColors = {
-//   'To Report': 'info',
-//   'لإعداد التقارير ': 'info',
-//   'To Submit': 'purple',
-//   'للإرسال ': 'purple',
-//   Submitted: 'warning',
-//   'تم الإرسال ': 'warning',
-//   Approved: 'success',
-//   'تمت الموافقة ': 'success',
-//   Done: 'default',
-//   'منتهي ': 'default',
-//   Refused: 'error',
-//   'تم الرفض ': 'error'
-// }
 
 const customScrollbarStyles = {
   '& ::-webkit-scrollbar': {
-    height: 8 // Set the thickness for the horizontal scrollbar
+    height: 8
   },
   '& ::-webkit-scrollbar-thumb': {
     backgroundColor: '#888',
@@ -55,96 +39,82 @@ const customScrollbarStyles = {
 const columns = [
   {
     width: 200,
-    sortable: false,
     headerName: <Translations text={'User Name'} />,
     field: 'userName'
   },
   {
     width: 200,
-    sortable: false,
     headerName: <Translations text={'Email'} />,
     field: 'email'
   },
   {
     width: 200,
-    sortable: false,
     headerName: <Translations text={'First Name'} />,
     field: 'firstName'
   },
   {
     width: 200,
-    sortable: false,
     headerName: <Translations text={'Last Name'} />,
     field: 'lastName'
   },
   {
     width: 100,
-    sortable: false,
     headerName: <Translations text={'Gender'} />,
     field: 'gender'
   },
   {
     width: 200,
-    sortable: false,
     headerName: <Translations text={'Nationality'} />,
     field: 'nationality'
   },
   {
     width: 200,
-    sortable: false,
     headerName: <Translations text={'Phone Number'} />,
     field: 'phoneNumber'
   },
   {
     width: 200,
-    sortable: false,
     headerName: <Translations text={'Job'} />,
     field: 'job'
   },
   {
     width: 200,
-    sortable: false,
     headerName: <Translations text={'BirthDay'} />,
     field: 'birthday'
   },
   {
     width: 200,
-    sortable: false,
     headerName: <Translations text={'City'} />,
     field: 'city'
   },
   {
     width: 200,
-    sortable: false,
     headerName: <Translations text={'Street'} />,
     field: 'street'
   },
   {
     width: 200,
-    sortable: false,
     headerName: <Translations text={'Street'} />,
     field: 'emergencyPhoneNumber'
   },
   {
     width: 200,
-    sortable: false,
     headerName: <Translations text={'Birth Place'} />,
     field: 'birthplace'
   },
   {
     width: 200,
-    sortable: false,
     headerName: <Translations text={'Street Num'} />,
     field: 'streetNr'
   }
 ]
 
-const ExpensesList = () => {
+const ParentsList = () => {
   // ** State
   //   const [value, setValue] = useState('')
   const [addUserOpen, setAddUserOpen] = useState(false)
-  //   const [currentPage, setCurrentPage] = useState(1) // State to track current page
-  //   const [searchTerm, setSearchTerm] = useState('') // State to manage search term
+  //   const [currentPage, setCurrentPage] = useState(1)
+  //   const [searchTerm, setSearchTerm] = useState('')
   //   const pageSize = 10 // Page size
 
   // ** Hooks
@@ -242,11 +212,9 @@ const ExpensesList = () => {
           </Box> */}
         </Card>
       </Grid>
-
-      {/* <AddExpenseDrawer open={addUserOpen} toggle={toggleAddUserDrawer} store={store} /> */}
     </Grid>
   )
 }
 
-export default ExpensesList
-// export default withRoleRestriction(ExpensesList)
+export default ParentsList
+// export default withRoleRestriction(ParentsList)
