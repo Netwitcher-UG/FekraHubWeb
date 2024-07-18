@@ -7,7 +7,6 @@ import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import IconButton from '@mui/material/IconButton'
-import AddIcon from '@mui/icons-material/Add'
 import Paper from '@mui/material/Paper'
 import Icon from 'src/@core/components/icon'
 import { Autocomplete, Grid, TextField } from '@mui/material'
@@ -41,7 +40,6 @@ const Item = styled(Paper)(({ theme }) => ({
 }))
 
 const AddCourses = ({ dataRooms, dataTeacher }) => {
-  console.log('🚀 ~ AddCourses ~ dataTeacher:', dataTeacher)
   const [open, setOpen] = useState(false)
   const handleClickOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
@@ -93,7 +91,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
       >
         <DialogTitle id='customized-dialog-title' sx={{ p: 4 }}>
           <Typography variant='h4' sx={{ fontWeight: '900' }}>
-            Add Courses
+            <Translations text={'Add Courses'} />
           </Typography>
           <CustomCloseButton aria-label='close' onClick={handleClose}>
             <Icon icon='tabler:x' fontSize='1.25rem' />
@@ -277,10 +275,10 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
         </DialogContent>
         <DialogActions sx={{ p: theme => `${theme.spacing(3)} !important` }}>
           <Button type='button' variant='outlined' onClick={handleClose}>
-            cancel
+            <Translations text={'cancel'} />
           </Button>
           <Button disabled={!isDirty} type='button' variant='contained' onClick={handleSubmit(handleSaveData)}>
-            Add Courses
+            <Translations text={'Add Courses'} />
           </Button>
         </DialogActions>
       </Dialog>

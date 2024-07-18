@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import SearchIcon from '@mui/icons-material/Search'
 import styled from '@emotion/styled'
 import InputBase from '@mui/material/InputBase'
 
@@ -7,7 +6,7 @@ const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
 
-  backgroundColor: '#F1F1F1',
+  backgroundColor: theme.palette.mode === 'dark' ? '#333333' : '#F1F1F1',
   maxWidth: '432px',
 
   marginRight: theme.spacing(2),
@@ -57,7 +56,17 @@ export default function CustomSearch({ SetSearch }) {
       }}
     >
       <SearchIconWrapper>
-        <SearchIcon />
+        <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24'>
+          <path
+            fill='none'
+            stroke='currentColor'
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            strokeWidth={2.05}
+            d='M17.5 17.5L22 22m-2-11a9 9 0 1 0-18 0a9 9 0 0 0 18 0'
+            color='currentColor'
+          ></path>
+        </svg>
       </SearchIconWrapper>
       <StyledInputBase placeholder='search' inputProps={{ 'aria-label': 'search' }} onChange={handleChange} />
     </Search>

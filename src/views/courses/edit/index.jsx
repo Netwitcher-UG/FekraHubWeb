@@ -81,7 +81,6 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
       <Header>
         <Typography
           sx={{
-            color: '#3B3B3B',
             fontWeight: '800',
             fontSize: '22px'
           }}

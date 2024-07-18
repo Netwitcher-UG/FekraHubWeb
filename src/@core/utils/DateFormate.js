@@ -5,10 +5,10 @@ export function FormateDate(date) {
 
   var originalDate = new Date(date)
   var day = originalDate.getUTCDate()
-  var month = originalDate.getUTCMonth() + 1
+  var month = originalDate.getUTCMonth() - 10
   var year = originalDate.getUTCFullYear() + 1
 
-  var formattedDate = year + '-' + (month < 10 ? '0' : '') + month + '-' + day + ''
+  var formattedDate = year + '-' + month + '-' + day + ''
 
   return formattedDate
 }
