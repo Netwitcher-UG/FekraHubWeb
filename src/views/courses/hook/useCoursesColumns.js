@@ -3,6 +3,7 @@ import { Stack, Typography, IconButton } from '@mui/material'
 
 import { useDispatch } from 'react-redux'
 import { deleteCourse } from 'src/store/apps/courses'
+import Translations from 'src/layouts/components/Translations'
 
 const useCoursesColumns = () => {
   const dispatch = useDispatch()
@@ -41,73 +42,73 @@ const useCoursesColumns = () => {
   const columns = useMemo(
     () => [
       {
-        flex: 0.3,
+        width: 200,
         field: 'id',
-        headerName: <Typography className='custom-style-columns'>Id</Typography>,
+        headerName: <Translations text={'Id'} />,
         renderCell: params => {
           params.row.id
         }
       },
       {
-        flex: 0.3,
+        width: 200,
         field: 'name',
-        headerName: <Typography className='custom-style-columns'>Name</Typography>,
+        headerName: <Translations text={'Name'} />,
         renderCell: params => {
           params.row.name
         }
       },
       {
-        flex: 0.3,
+        width: 200,
         field: 'startDate',
-        headerName: <Typography className='custom-style-columns'>start Date</Typography>,
+        headerName: <Translations text={'Start Date'} />,
         renderCell: params => {
           return <Typography>{params.row.startDate?.slice(0, 10)}</Typography>
         }
       },
       {
-        flex: 0.3,
+        width: 200,
         field: 'endDate',
-        headerName: <Typography className='custom-style-columns'>end Date</Typography>,
+        headerName: <Translations text={'End Date'} />,
         renderCell: params => {
           return <Typography>{params.row.endDate?.slice(0, 10)}</Typography>
         }
       },
       {
-        flex: 0.3,
+        width: 200,
         field: 'teacher',
-        headerName: <Typography className='custom-style-columns'>Teachers</Typography>,
+        headerName: <Translations text={'Teachers'} />,
         renderCell: params => {
           return <Typography>{params.row.teacher?.map(val => val.firstName)}</Typography>
         }
       },
       {
-        flex: 0.3,
+        width: 200,
         field: 'lessons',
-        headerName: <Typography className='custom-style-columns'> Lessons</Typography>,
+        headerName: <Translations text={'lessons'} />,
         renderCell: params => {
           params.row.lessons
         }
       },
       {
-        flex: 0.3,
+        width: 200,
         field: 'price',
-        headerName: <Typography className='custom-style-columns'>price</Typography>,
+        headerName: <Translations text={'Price'} />,
         renderCell: params => {
           params.row.price
         }
       },
       {
-        flex: 0.3,
+        width: 200,
         field: 'room',
-        headerName: <Typography className='custom-style-columns'>room</Typography>,
+        headerName: <Translations text={'Room'} />,
         renderCell: params => {
           return params.row.room.name
         }
       },
       {
-        flex: 0.3,
+        width: 200,
         field: 'action',
-        headerName: <Typography className='custom-style-columns'>Action</Typography>,
+        headerName: <Translations text={'Action'} />,
         renderCell: params => {
           return (
             <Stack direction={'row'} alignItems={'center'}>
