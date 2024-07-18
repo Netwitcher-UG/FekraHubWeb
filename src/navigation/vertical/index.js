@@ -46,6 +46,11 @@ const navigation = () => {
       title: 'Courses',
       icon: 'tabler:user',
       path: '/courses'
+    },
+    {
+      title: 'Location',
+      icon: 'tabler:user',
+      path: '/location'
     }
 
     // {

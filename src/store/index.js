@@ -11,6 +11,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import users from 'src/store/apps/users'
 import students from 'src/store/apps/students'
 import courses from 'src/store/apps/courses'
+import location from 'src/store/apps/location'
 
 export const store = configureStore({
   reducer: {
@@ -22,7 +23,8 @@ export const store = configureStore({
     // permissions
     users,
     students,
-    courses
+    courses,
+    location
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
