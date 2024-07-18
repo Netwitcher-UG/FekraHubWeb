@@ -7,6 +7,7 @@ export default function Index() {
   const [search, SetSearch] = useState('')
 
   const { data, status, error, dataRooms, dataTeacher } = useSelector(state => state.courses)
+  console.log('🚀 ~ Index ~ status:', status)
 
   const dispatch = useDispatch()
 
@@ -19,5 +20,13 @@ export default function Index() {
     dispatch(fetchCourses(search))
   }, [dispatch, search])
 
-  return <CoursesDataGrid rows={data} dataRooms={dataRooms} dataTeacher={dataTeacher} SetSearch={SetSearch} />
+  return (
+    <CoursesDataGrid
+      rows={data}
+      dataRooms={dataRooms}
+      dataTeacher={dataTeacher}
+      SetSearch={SetSearch}
+      status={status}
+    />
+  )
 }

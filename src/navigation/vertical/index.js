@@ -1,5 +1,19 @@
 const navigation = () => {
   return [
+    // {
+    //   title: 'Users Managament',
+    //   icon: 'tabler:user',
+    //   children: [
+    //     {
+    //       title: 'Parents',
+    //       path: '/users/parents'
+    //     },
+    //     {
+    //       title: 'Employees',
+    //       path: '/users/employees'
+    //     }
+    //   ]
+    // },
     {
       title: 'Users Managament',
       icon: 'tabler:user',
@@ -20,14 +34,12 @@ const navigation = () => {
       children: [
         {
           title: 'Avilable Students',
-          path: '/students',
-          title: 'Roles',
-          path: '/apps/roles'
-        },
-        {
-          title: 'Permissions',
-          path: '/apps/permissions'
+          path: '/students'
         }
+        // {
+        //   title: 'Employees',
+        //   path: '/users/employees'
+        // }
       ]
     },
     {

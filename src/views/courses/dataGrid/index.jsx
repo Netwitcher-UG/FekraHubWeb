@@ -8,23 +8,15 @@ import AddCourses from '../add'
 import { useRouter } from 'next/router'
 import CustomDialogDelete from 'src/@core/components/custom-delete'
 import DrawerEdit from '../edit'
+import CircularProgress from '@mui/material/CircularProgress'
 
-export default function CoursesDataGrid({ rows, dataRooms, dataTeacher, SetSearch }) {
-  const {
-    columns,
-    isDialogOpen,
-    handleCloseDialog,
-    handleDelete,
-    drawerData,
-    open,
-    handleOpenDrawer,
-    handleCloseDrawer,
-    DeleteName
-  } = useCoursesColumns()
+export default function CoursesDataGrid({ rows, dataRooms, dataTeacher, SetSearch, status }) {
+  const { columns, isDialogOpen, handleCloseDialog, handleDelete, drawerData, open, handleCloseDrawer, DeleteName } =
+    useCoursesColumns()
 
   return (
     <>
-      <Card sx={{}}>
+      <Card>
         <Stack padding={4} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
           <Box>
             <CustomSearch SetSearch={SetSearch} />
@@ -33,12 +25,23 @@ export default function CoursesDataGrid({ rows, dataRooms, dataTeacher, SetSearc
             <AddCourses dataRooms={dataRooms} dataTeacher={dataTeacher} />
           </Box>
         </Stack>
-        <Box sx={{ width: '100%', height: '500px', display: 'flex', flexDirection: 'column' }}>
-          <CustomDataGrid
-            columns={columns}
-            // sx={}
-            rows={rows}
-          />
+
+        <Box sx={{ height: 500 }}>
+          {status === 'loading' ? (
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '90%',
+                zIndex: 10
+              }}
+            >
+              <CircularProgress size={100} />
+            </Box>
+          ) : (
+            <CustomDataGrid columns={columns} rowHeight={62} rows={rows} />
+          )}
         </Box>
       </Card>
       <CustomDialogDelete
