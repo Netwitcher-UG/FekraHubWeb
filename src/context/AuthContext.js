@@ -105,7 +105,7 @@ const AuthProvider = ({ children }) => {
       formData.append('email', params.email)
       formData.append('password', params.password)
 
-      const response = await axios.post(`http://fekrahub.tryasp.net/api/Account/LogIn`, formData, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACK_END_URL}/api/Account/LogIn`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
