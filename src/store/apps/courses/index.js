@@ -16,6 +16,8 @@ export const fetchCourses = createAsyncThunk('courses/fetchCourses', async (data
   }
 })
 
+//***************************************************************************************************************** */
+
 // git Courses Room
 
 export const fetchCoursesRoom = createAsyncThunk('courses/fetchCoursesRoom', async (_, { rejectWithValue }) => {
@@ -28,6 +30,55 @@ export const fetchCoursesRoom = createAsyncThunk('courses/fetchCoursesRoom', asy
     return rejectWithValue(error.response?.data || error.message)
   }
 })
+
+export const addRoom = createAsyncThunk('courses/addRoom', async (data, { getState, dispatch }) => {
+  try {
+    const response = await axiosInstance.post(`/api/Rooms`, data, {
+      headers: {
+        accept: 'application/json',
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    ShowSuccessToast('Success')
+    dispatch(fetchCoursesRoom(''))
+
+    return response.data
+  } catch (errors) {
+    ShowErrorToast('Error')
+    return rejectWithValue(errors.response?.data || errors.message)
+  }
+})
+
+export const editRoom = createAsyncThunk('courses/editRoom', async (data, { getState, dispatch }) => {
+  try {
+    const response = await axiosInstance.put(`/api/Rooms/${data.id}`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    ShowSuccessToast('Success')
+    dispatch(fetchCoursesRoom(''))
+    return response.data
+  } catch (error) {}
+})
+
+export const deleteRoom = createAsyncThunk(
+  'courses/deleteCourse',
+  async (id, { getState, rejectWithValue, dispatch }) => {
+    try {
+      await axiosInstance.delete(`/api/Rooms/${id}`, {})
+
+      ShowSuccessToast('success')
+      dispatch(fetchCoursesRoom(''))
+    } catch (error) {
+      ShowErrorToast('Error')
+
+      return rejectWithValue(error.response.data)
+    }
+  }
+)
+
+//***************************************************************************************************************** */
 
 // git Teacher
 
