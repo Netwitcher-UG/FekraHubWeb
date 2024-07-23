@@ -14,7 +14,6 @@ import TableContainer from '@mui/material/TableContainer'
 import TableCell from '@mui/material/TableCell'
 import { convertDate } from 'src/@core/utils/convert-date'
 import CircularProgress from '@mui/material/CircularProgress'
-import { convertFromJson } from 'src/@core/utils/convert-from-json'
 
 // ** Configs
 import themeConfig from 'src/configs/themeConfig'
@@ -28,10 +27,12 @@ const MUITableCell = styled(TableCell)(({ theme }) => ({
   }
 }))
 
-const PreviewCard = ({ data }) => {
+const PreviewReport = ({ data }) => {
   // ** Hook
-  const singleElement = data ? data[0] : null
-  const parsedData = convertFromJson(singleElement?.data)
+  const singleElement = data ? (data[0] ? data[0] : data) : null
+  const parsedData = JSON.parse(singleElement?.data)
+
+  const parsedDataArray = Object.entries(parsedData).map(([key, value]) => ({ key, value }))
 
   const theme = useTheme()
   if (singleElement) {
@@ -162,10 +163,6 @@ const PreviewCard = ({ data }) => {
             <TableHead>
               <TableRow>
                 <TableCell>Type</TableCell>
-                <TableCell>Result</TableCell>
-                {/* <TableCell>hours</TableCell>
-                <TableCell>qty</TableCell>
-                <TableCell>Total</TableCell> */}
               </TableRow>
             </TableHead>
             <TableBody
@@ -176,7 +173,7 @@ const PreviewCard = ({ data }) => {
                 }
               }}
             >
-              {parsedData.map((item, index) => (
+              {parsedDataArray.map((item, index) => (
                 <TableRow key={index}>
                   <TableCell>{item.key}</TableCell>
                   <TableCell>{item.value}</TableCell>
@@ -201,4 +198,4 @@ const PreviewCard = ({ data }) => {
   }
 }
 
-export default PreviewCard
+export default PreviewReport
