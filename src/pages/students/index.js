@@ -4,22 +4,29 @@ import Grid from '@mui/material/Grid'
 import { useSelector, useDispatch } from 'react-redux'
 import StudentsDataGrid from 'src/views/students/list/Datagrid'
 import { fetchStudents, fetchCourses } from 'src/store/apps/students'
-import useStudentsColumns from 'src/views/students/hooks/useStudentsColumns'
-
+import { useRouter } from 'next/router'
+import Divider from '@mui/material/Divider'
+import StudentsPaginate from 'src/views/students/list/paginate'
 const StudentsList = () => {
   const [value, setValue] = useState('')
   const [selectedCourse, setSelectedCourse] = useState(0)
   const [searchTerm, setSearchTerm] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 10
   const dispatch = useDispatch()
+  const router = useRouter()
   const store = useSelector(state => state.students)
+  const handleRowClick = params => {
+    router.push(`/students/${params.row.id}`)
+  }
 
-  const columns = useStudentsColumns()
-
-  const fetchDataWithPagination = (searchValue = '', courseValue) => {
+  const fetchDataWithPagination = (page, searchValue = '', courseValue) => {
     dispatch(
       fetchStudents({
         search: searchValue,
-        course: courseValue
+        course: courseValue,
+        PageSize: pageSize,
+        PageNumber: page
       })
     )
     dispatch(fetchCourses())
@@ -27,24 +34,32 @@ const StudentsList = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      fetchDataWithPagination(searchTerm, selectedCourse)
+      fetchDataWithPagination(currentPage, searchTerm, selectedCourse)
     }, 700)
 
     return () => clearTimeout(timer)
-  }, [dispatch, searchTerm, selectedCourse])
+  }, [dispatch, currentPage, searchTerm, selectedCourse])
 
   return (
     <Grid container spacing={6.5}>
       <Grid item xs={12}>
         <Card>
           <StudentsDataGrid
-            columns={columns}
             store={store}
             setValue={setValue}
             value={value}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
             handleFilter={setSearchTerm}
             selectedCourse={selectedCourse}
             setSelectedCourse={setSelectedCourse}
+            handleRowClick={handleRowClick}
+          />
+          <Divider sx={{ m: '0 !important' }} />
+          <StudentsPaginate
+            totalPages={store?.data?.totalPages}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
           />
         </Card>
       </Grid>

@@ -12,19 +12,15 @@ import users from 'src/store/apps/users'
 import students from 'src/store/apps/students'
 import courses from 'src/store/apps/courses'
 import location from 'src/store/apps/location'
+import reports from 'src/store/apps/reports'
 
 export const store = configureStore({
   reducer: {
-    // user,
-    // chat,
-    // email,
-    // invoice,
-    // calendar,
-    // permissions
     users,
     students,
     courses,
-    location
+    location,
+    reports
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

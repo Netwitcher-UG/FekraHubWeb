@@ -10,10 +10,7 @@ import MenuItem from '@mui/material/MenuItem'
 import { DataGrid } from '@mui/x-data-grid'
 import Translations from 'src/layouts/components/Translations'
 import CardHeader from '@mui/material/CardHeader'
-import TableHeader from './TableHeader'
-import Pagination from '@mui/material/Pagination'
-import useStudentsColumns from 'src/views/students/hooks/useStudentsColumns'
-import AddReportDrawer from '../add-student-report/addReportDrawer'
+// import TableHeader from './TableHeader'
 
 const customScrollbarStyles = {
   '& ::-webkit-scrollbar': {
@@ -28,34 +25,32 @@ const customScrollbarStyles = {
   }
 }
 
-const StudentsDataGrid = ({
+const StudentReportsDataGrid = ({
+  columns,
   store,
   setValue,
   value,
   handleFilter,
   selectedCourse,
   setSelectedCourse,
-  handleRowClick,
-  setCurrentPage
+  handleRowClick
 }) => {
-  const handleCourseChange = e => {
-    setCurrentPage(1)
-    setSelectedCourse(e.target.value)
-  }
-  const { columns, open, drawerData, handleCloseDrawer } = useStudentsColumns()
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setCurrentPage(1)
-      handleFilter(value)
-    }, 700)
+  //   const handleCourseChange = e => {
+  //     setSelectedCourse(e.target.value)
+  //   }
 
-    return () => clearTimeout(timer)
-  }, [value, handleFilter])
+  //   useEffect(() => {
+  //     const timer = setTimeout(() => {
+  //       handleFilter(value)
+  //     }, 700)
+
+  //     return () => clearTimeout(timer)
+  //   }, [value, handleFilter])
 
   return (
     <>
-      <CardHeader title='Search Filters' />
-      <CardContent>
+      {/* <CardHeader title='Search Filters' /> */}
+      {/* <CardContent>
         <Grid container spacing={6}>
           <Grid item sm={4} xs={12}>
             <CustomTextField
@@ -69,6 +64,11 @@ const StudentsDataGrid = ({
                 displayEmpty: true
               }}
             >
+              <MenuItem value=''>
+                <em>
+                  <Translations text={'Select Course'} />
+                </em>
+              </MenuItem>
               <MenuItem value={0}>None</MenuItem>
               {store?.coursesData.map(course => (
                 <MenuItem key={course.id} value={course.id}>
@@ -78,9 +78,9 @@ const StudentsDataGrid = ({
             </CustomTextField>
           </Grid>
         </Grid>
-      </CardContent>
+      </CardContent> */}
       <Divider sx={{ m: '0 !important' }} />
-      <TableHeader value={value} setValue={setValue} handleFilter={handleFilter} />
+      {/* <TableHeader value={value} setValue={setValue} handleFilter={handleFilter} /> */}
       <Box sx={{ height: 500 }}>
         {store.loading ? (
           <Box
@@ -95,28 +95,25 @@ const StudentsDataGrid = ({
             <CircularProgress size={100} />
           </Box>
         ) : (
-          <>
-            <DataGrid
-              rowHeight={62}
-              rows={store?.data.students || []}
-              columns={columns}
-              hideFooter={true}
-              disableRowSelectionOnClick
-              onRowClick={handleRowClick}
-              pagination={true}
-              sx={{
-                overflowY: 'scroll',
-                overflowX: 'scroll',
-                ...customScrollbarStyles,
-                fontSize: '1rem'
-              }}
-            />
-          </>
+          <DataGrid
+            rowHeight={62}
+            rows={store?.data || []}
+            columns={columns}
+            hideFooter={true}
+            disableRowSelectionOnClick
+            pagination={true}
+            onRowClick={handleRowClick}
+            sx={{
+              overflowY: 'scroll',
+              overflowX: 'scroll',
+              ...customScrollbarStyles,
+              fontSize: '1rem'
+            }}
+          />
         )}
       </Box>
-      {open && <AddReportDrawer open={open} handleCloseDrawer={handleCloseDrawer} rowData={drawerData} />}
     </>
   )
 }
 
-export default StudentsDataGrid
+export default StudentReportsDataGrid

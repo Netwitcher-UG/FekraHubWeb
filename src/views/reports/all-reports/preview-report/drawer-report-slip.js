@@ -14,10 +14,10 @@ import TableContainer from '@mui/material/TableContainer'
 import TableCell from '@mui/material/TableCell'
 import { convertDate } from 'src/@core/utils/convert-date'
 import CircularProgress from '@mui/material/CircularProgress'
-import { convertFromJson } from 'src/@core/utils/convert-from-json'
 
 // ** Configs
 import themeConfig from 'src/configs/themeConfig'
+import { useEffect } from 'react'
 
 const MUITableCell = styled(TableCell)(({ theme }) => ({
   borderBottom: 0,
@@ -28,19 +28,22 @@ const MUITableCell = styled(TableCell)(({ theme }) => ({
   }
 }))
 
-const PreviewCard = ({ data }) => {
+const DrawerReportSlip = ({ data }) => {
   // ** Hook
-  const singleElement = data ? data[0] : null
-  const parsedData = convertFromJson(singleElement?.data)
+  const singleElement = data ? data : null
+
+  const parsedData = JSON.parse(singleElement?.data)
+
+  const parsedDataArray = Object.entries(parsedData).map(([key, value]) => ({ key, value }))
 
   const theme = useTheme()
   if (singleElement) {
     return (
       <Card>
         <CardContent sx={{ p: [`${theme.spacing(6)} !important`, `${theme.spacing(10)} !important`] }}>
-          <Grid container>
-            <Grid item sm={6} xs={12} sx={{ mb: { sm: 0, xs: 4 } }}>
-              <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Grid container sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Grid item sm={6} xs={12} sx={{ mb: { sm: 4, xs: 4 } }}>
+              <Box>
                 <Box sx={{ mb: 6, display: 'flex', alignItems: 'center' }}>
                   <svg width={34} viewBox='0 0 32 22' fill='none' xmlns='http://www.w3.org/2000/svg'>
                     <path
@@ -70,7 +73,7 @@ const PreviewCard = ({ data }) => {
                       d='M7.77295 16.3566L23.6563 0H32V6.88383C32 6.88383 31.8262 9.17836 30.6591 10.4057L19.7824 22H13.6938L7.77295 16.3566Z'
                     />
                   </svg>
-                  <Typography variant='h4' sx={{ ml: 2.5, fontWeight: 700, lineHeight: '24px' }}>
+                  <Typography variant='h5' sx={{ ml: 2.5, fontWeight: 700, lineHeight: '24px' }}>
                     {themeConfig.templateName}
                   </Typography>
                 </Box>
@@ -85,10 +88,10 @@ const PreviewCard = ({ data }) => {
                   <TableBody sx={{ '& .MuiTableCell-root': { py: `${theme.spacing(1.5)} !important` } }}>
                     <TableRow>
                       <MUITableCell>
-                        <Typography variant='h4'>Report Date:</Typography>
+                        <Typography variant='h5'>Report Date:</Typography>
                       </MUITableCell>
                       <MUITableCell>
-                        <Typography variant='h4'>{`${convertDate(singleElement.creationDate)}`}</Typography>
+                        <Typography variant='h5'>{`${convertDate(singleElement.creationDate)}`}</Typography>
                       </MUITableCell>
                     </TableRow>
                     <TableRow>
@@ -176,7 +179,7 @@ const PreviewCard = ({ data }) => {
                 }
               }}
             >
-              {parsedData.map((item, index) => (
+              {parsedDataArray.map((item, index) => (
                 <TableRow key={index}>
                   <TableCell>{item.key}</TableCell>
                   <TableCell>{item.value}</TableCell>
@@ -185,15 +188,6 @@ const PreviewCard = ({ data }) => {
             </TableBody>
           </Table>
         </TableContainer>
-
-        <Divider />
-
-        <CardContent sx={{ px: [6, 10] }}>
-          <Typography sx={{ color: 'text.secondary' }}>
-            <Typography component='span' sx={{ fontWeight: 500, color: 'text.info !important' }}></Typography>
-            Report Genrated by {themeConfig.templateName}
-          </Typography>
-        </CardContent>
       </Card>
     )
   } else {
@@ -201,4 +195,4 @@ const PreviewCard = ({ data }) => {
   }
 }
 
-export default PreviewCard
+export default DrawerReportSlip
