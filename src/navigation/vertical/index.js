@@ -114,34 +114,6 @@ const navigation = () => {
     //   ]
     // },
     {
-      title: 'Users Managament',
-      icon: 'tabler:user',
-      children: [
-        {
-          title: 'Parents',
-          path: '/users/parents'
-        },
-        {
-          title: 'Employees',
-          path: '/users/employees'
-        }
-      ]
-    },
-    {
-      title: 'Students',
-      icon: 'tabler:user',
-      children: [
-        {
-          title: 'Avilable Students',
-          path: '/students'
-        }
-        // {
-        //   title: 'Employees',
-        //   path: '/users/employees'
-        // }
-      ]
-    },
-    {
       icon: 'tabler:file-text',
       title: 'Reports',
       path: '/reports'
