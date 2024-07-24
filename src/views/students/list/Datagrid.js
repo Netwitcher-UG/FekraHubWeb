@@ -11,6 +11,11 @@ import { DataGrid } from '@mui/x-data-grid'
 import Translations from 'src/layouts/components/Translations'
 import CardHeader from '@mui/material/CardHeader'
 import TableHeader from './TableHeader'
+import Pagination from '@mui/material/Pagination'
+import useStudentsColumns from 'src/views/students/hooks/useStudentsColumns'
+import AddReportDrawer from '../add-student-report/addReportDrawer'
+import { Autocomplete } from '@mui/material'
+import { eventListeners } from '@popperjs/core'
 
 const customScrollbarStyles = {
   '& ::-webkit-scrollbar': {
@@ -25,13 +30,26 @@ const customScrollbarStyles = {
   }
 }
 
-const StudentsDataGrid = ({ columns, store, setValue, value, handleFilter, selectedCourse, setSelectedCourse }) => {
-  const handleCourseChange = e => {
-    setSelectedCourse(e.target.value)
+const StudentsDataGrid = ({
+  store,
+  setValue,
+  value,
+  handleFilter,
+  selectedCourse,
+  setSelectedCourse,
+  handleRowClick,
+  setCurrentPage
+}) => {
+  const handleCourseChange = (event, newValue) => {
+    setCurrentPage(1)
+    setSelectedCourse(newValue ? newValue.value : '')
   }
+
+  const { columns, open, drawerData, handleCloseDrawer } = useStudentsColumns()
 
   useEffect(() => {
     const timer = setTimeout(() => {
+      setCurrentPage(1)
       handleFilter(value)
     }, 700)
 
@@ -44,29 +62,32 @@ const StudentsDataGrid = ({ columns, store, setValue, value, handleFilter, selec
       <CardContent>
         <Grid container spacing={6}>
           <Grid item sm={4} xs={12}>
-            <CustomTextField
-              select
+            <Autocomplete
+              options={store?.coursesData?.map(course => ({ value: course.id, label: course.name }))}
               fullWidth
-              defaultValue=''
-              label={<Translations text={'Course'} />}
-              value={selectedCourse}
+              id='autocomplete-courseFilter'
+              getOptionLabel={option => option.label}
+              value={
+                selectedCourse
+                  ? {
+                      value: selectedCourse,
+                      label: store?.coursesData?.find(course => course.id === selectedCourse)?.name || ''
+                    }
+                  : null
+              }
               onChange={handleCourseChange}
-              SelectProps={{
-                displayEmpty: true
-              }}
-            >
-              <MenuItem value=''>
-                <em>
-                  <Translations text={'Select Course'} />
-                </em>
-              </MenuItem>
-              <MenuItem value={0}>None</MenuItem>
-              {store?.coursesData.map(course => (
-                <MenuItem key={course.id} value={course.id}>
-                  {course.name}
-                </MenuItem>
-              ))}
-            </CustomTextField>
+              renderInput={params => (
+                <CustomTextField
+                  {...params}
+                  fullWidth
+                  sx={{ mb: 4 }}
+                  placeholder='Select course'
+                  label='Course filter'
+                  id='validation-billing-select'
+                  aria-describedby='validation-billing-select'
+                />
+              )}
+            />
           </Grid>
         </Grid>
       </CardContent>
@@ -86,22 +107,26 @@ const StudentsDataGrid = ({ columns, store, setValue, value, handleFilter, selec
             <CircularProgress size={100} />
           </Box>
         ) : (
-          <DataGrid
-            rowHeight={62}
-            rows={store?.data || []}
-            columns={columns}
-            hideFooter={true}
-            disableRowSelectionOnClick
-            pagination={true}
-            sx={{
-              overflowY: 'scroll',
-              overflowX: 'scroll',
-              ...customScrollbarStyles,
-              fontSize: '1rem'
-            }}
-          />
+          <>
+            <DataGrid
+              rowHeight={62}
+              rows={store?.data.students || []}
+              columns={columns}
+              hideFooter={true}
+              disableRowSelectionOnClick
+              onRowClick={handleRowClick}
+              pagination={true}
+              sx={{
+                overflowY: 'scroll',
+                overflowX: 'scroll',
+                ...customScrollbarStyles,
+                fontSize: '1rem'
+              }}
+            />
+          </>
         )}
       </Box>
+      {open && <AddReportDrawer open={open} handleCloseDrawer={handleCloseDrawer} rowData={drawerData} />}
     </>
   )
 }

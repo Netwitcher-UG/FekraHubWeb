@@ -16,12 +16,14 @@ const ReactHotToast = styled(Box)(({ theme }) => {
       left: `${theme.spacing(6)} !important`,
       right: `${theme.spacing(6)} !important`,
       bottom: `${theme.spacing(6)} !important`,
-      top: layout === 'horizontal' && !navHidden ? '139px !important' : '75px !important',
-      zIndex: useMediaQuery(theme.breakpoints.down('lg'))
-        ? `${theme.zIndex.drawer - 1} !important`
-        : `${theme.zIndex.drawer + 1} !important`
+      top: layout === 'horizontal' && !navHidden ? '60px !important' : '75px !important',
+      // zIndex: useMediaQuery(theme.breakpoints.down('lg'))
+      //   ? `${theme.zIndex.drawer - 1} !important`
+      //   : `${theme.zIndex.drawer + 1} !important`
+      zIndex: 9999
     },
     '& .react-hot-toast': {
+      zIndex: 9999,
       fontWeight: 400,
       letterSpacing: '0.14px',
       boxShadow: theme.shadows[4],

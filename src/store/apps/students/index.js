@@ -4,10 +4,17 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axiosInstance from 'src/lib/axiosInstance'
 
 export const fetchStudents = createAsyncThunk('appStudents/fetchStudents', async params => {
-  const { search, course = '' } = params
-  const response = await axiosInstance.get(`/api/Student?search=${search}&courseId=${course == 0 ? '' : course}`)
+  const { search, course = '', PageNumber = 1, PageSize = 10 } = params
+  const response = await axiosInstance.get(
+    `/api/Student?PageNumber=${PageNumber}&PageSize=${PageSize}&search=${search}&courseId=${course == 0 ? '' : course}`
+  )
 
-  return response.data
+  // return response.data.students
+  return {
+    students: response?.data?.students,
+    currentPage: response?.data?.currentPage,
+    totalPages: response?.data?.totalPages
+  }
 })
 export const fetchCourses = createAsyncThunk('appStudents/fetchCourses', async () => {
   const response = await axiosInstance.get('/api/Courses')
@@ -18,7 +25,11 @@ export const fetchCourses = createAsyncThunk('appStudents/fetchCourses', async (
 export const appStudentsSlice = createSlice({
   name: 'appStudents',
   initialState: {
-    data: [],
+    data: {
+      students: [],
+      currentPage: 1,
+      totalPages: 1
+    },
     coursesData: [],
     loading: false
   },

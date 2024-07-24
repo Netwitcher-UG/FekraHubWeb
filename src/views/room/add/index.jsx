@@ -41,8 +41,8 @@ const Item = styled(Paper)(({ theme }) => ({
 }))
 
 const AddRoom = () => {
-  const { data: dataTeacher, status, error } = useSelector(state => state.location)
-  console.log('🚀 ~ AddRoom ~ data:', dataTeacher)
+  const { data, status, error } = useSelector(state => state.location)
+  console.log('🚀 ~ AddRoom ~ data:', data)
 
   const dispatch = useDispatch()
 
@@ -105,11 +105,12 @@ const AddRoom = () => {
         </DialogTitle>
         <DialogContent dividers sx={{ p: theme => `${theme.spacing(4)} !important`, border: 'none' }}>
           <Grid container rowSpacing={4} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-            <Grid item xs={6} sm={6} lg={6}>
+            <Grid item xs={12} sm={12} lg={12}>
               <Controller
                 name='name'
                 defaultValue=''
                 control={control}
+                rules={(require = true)}
                 render={({ field }) => (
                   <CustomTextField
                     {...field}
@@ -117,27 +118,24 @@ const AddRoom = () => {
                     autoFocus
                     label={`${'name'}`}
                     variant='outlined'
-                    error={!!errors.Name}
-                    helperText={errors.Name ? errors.Name.message : ''}
+                    error={!!errors.name}
+                    helperText={errors.name ? errors.name.message : ''}
                   />
                 )}
               />
-              <Typography>{errors.Name ? errors.Name.message : ''}</Typography>
             </Grid>
-            <Grid item xs={6} sm={6} lg={6}>
+            <Grid item xs={12} sm={12} lg={12}>
               <Controller
                 name='locationID'
                 control={control}
                 rules={{ required: true }}
                 render={({ field: { value, onChange } }) => (
                   <Autocomplete
-                    options={dataTeacher?.map(teacher => ({ value: teacher.id, label: teacher.name }))}
+                    options={data?.map(teacher => ({ value: teacher.id, label: teacher.name }))}
                     fullWidth
                     id='autocomplete-UserId'
                     getOptionLabel={option => option.label}
-                    value={
-                      value ? { value, label: dataTeacher.find(teacher => teacher.id === value)?.name || '' } : null
-                    }
+                    value={value ? { value, label: data.find(teacher => teacher.id === value)?.name || '' } : null}
                     onChange={(event, newValue) => {
                       onChange(newValue ? newValue.value : '')
                     }}
@@ -150,8 +148,8 @@ const AddRoom = () => {
                         label='location'
                         id='validation-billing-select'
                         aria-describedby='validation-billing-select'
-                        error={Boolean(errors.UserId)}
-                        helperText={errors.UserId?.message || ''}
+                        error={Boolean(errors.locationID)}
+                        helperText={errors.locationID?.message || ''}
                       />
                     )}
                   />

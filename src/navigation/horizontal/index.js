@@ -89,6 +89,10 @@ const navigation = () => {
         //   path: '/users/employees'
         // }
       ]
+    },
+    {
+      title: 'Reports',
+      path: '/reports'
     }
     // //     {
     // //       title: 'Roles & Permissions',
