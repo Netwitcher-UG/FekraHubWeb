@@ -7,6 +7,7 @@ import {
   Divider,
   Drawer,
   Grid,
+  InputAdornment,
   Radio,
   TextField,
   Typography
@@ -30,7 +31,32 @@ const Header = styled(Box)(({ theme }) => ({
   margin: '0px'
 }))
 
+const schema = yup.object().shape({
+  Price: yup
+    .number()
+    .required('Price is required')
+    .positive('Price must be a positive number')
+    .min(1, 'Price must be at least 1'),
+
+  Lessons: yup
+    .number()
+    .required('Lessons are required')
+    .integer('Lessons must be an integer')
+    .min(1, 'Lessons must be at least 1'),
+
+  Capacity: yup
+    .number()
+    .required('Capacity is required')
+    .integer('Capacity must be an integer')
+    .min(1, 'Capacity must be at least 1'),
+  Name: yup.string().required('Course Name is required').min(2, 'Course Name must be at least 2 characters'),
+  TeacherId: yup.string().required('Teacher is required'),
+  StartDate: yup.date().required('Start Date is required').nullable(),
+  EndDate: yup.date().required('End Date is required').nullable().min(yup.ref('StartDate'))
+})
+
 export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
+  console.log('🚀 ~ DrawerEdit ~ dataDef:', dataDef)
   const { status, error, dataRooms, dataTeacher } = useSelector(state => state.courses)
 
   const dispatch = useDispatch()
@@ -43,7 +69,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
     StartDate: dataDef?.startDate?.slice(0, 10),
     EndDate: dataDef?.endDate.slice(0, 10),
     UserId: dataDef?.teacher?.map(val => val.firstName) || '',
-    RoomId: dataDef?.room?.id || ''
+    RoomId: dataDef?.id || ''
   }
 
   const {
@@ -53,7 +79,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
     formState: { errors, isDirty },
     reset
   } = useForm({
-    // resolver: yupResolver(Schema),
+    // resolver: yupResolver(schema),
     defaultValues,
     mode: 'onBlur'
   })
@@ -96,6 +122,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
             <Grid item xs={12} sm={12} lg={12}>
               <Controller
                 name='Name'
+                rules={{ required: true }}
                 defaultValue={dataDef?.name}
                 control={control}
                 render={({ field }) => (
@@ -114,16 +141,20 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
             <Grid item xs={12} sm={12} lg={12}>
               <Controller
                 name='Price'
-                defaultValue=''
+                rules={{ required: true }}
                 control={control}
                 render={({ field }) => (
-                  <CustomTextField
+                  <TextField
                     {...field}
-                    fullWidth
-                    label={`${'Price'}`}
+                    label='Price'
+                    type='number'
                     variant='outlined'
-                    error={!!errors.name}
-                    helperText={errors.name ? errors.name.message : ''}
+                    fullWidth
+                    error={!!errors.Price}
+                    helperText={errors.Price ? errors.Price.message : ''}
+                    InputProps={{
+                      endAdornment: <InputAdornment position='end'>€</InputAdornment>
+                    }}
                   />
                 )}
               />
@@ -131,6 +162,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
             <Grid item xs={12} sm={12} lg={12}>
               <Controller
                 name='Lessons'
+                rules={{ required: true }}
                 defaultValue=''
                 control={control}
                 render={({ field }) => (
@@ -139,8 +171,8 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                     fullWidth
                     label={`${'Lessons'}`}
                     variant='outlined'
-                    error={!!errors.name}
-                    helperText={errors.name ? errors.name.message : ''}
+                    error={!!errors.Lessons}
+                    helperText={errors.Lessons ? errors.Lessons.message : ''}
                   />
                 )}
               />
@@ -148,6 +180,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
             <Grid item xs={12} sm={12} lg={12}>
               <Controller
                 name='Capacity'
+                rules={{ required: true }}
                 defaultValue=''
                 control={control}
                 render={({ field }) => (
@@ -156,8 +189,8 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                     fullWidth
                     label={`${'Capacity'}`}
                     variant='outlined'
-                    error={!!errors.name}
-                    helperText={errors.name ? errors.name.message : ''}
+                    error={!!errors.Capacity}
+                    helperText={errors.Capacity ? errors.Capacity.message : ''}
                   />
                 )}
               />
@@ -165,6 +198,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
             <Grid item xs={12} sm={12} lg={12}>
               <Controller
                 name='StartDate'
+                rules={{ required: true }}
                 defaultValue=''
                 control={control}
                 render={({ field }) => (
@@ -173,8 +207,8 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                     fullWidth
                     label={`${'StartDate'}`}
                     variant='outlined'
-                    error={!!errors.name}
-                    helperText={errors.name ? errors.name.message : ''}
+                    error={!!errors.StartDate}
+                    helperText={errors.StartDate ? errors.StartDate.message : ''}
                   />
                 )}
               />
@@ -184,14 +218,15 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                 name='EndDate'
                 defaultValue=''
                 control={control}
+                rules={{ required: true }}
                 render={({ field }) => (
                   <CustomTextField
                     {...field}
                     fullWidth
                     label={`${'EndDate'}`}
                     variant='outlined'
-                    error={!!errors.name}
-                    helperText={errors.name ? errors.name.message : ''}
+                    error={!!errors.EndDate}
+                    helperText={errors.EndDate ? errors.EndDate.message : ''}
                   />
                 )}
               />
@@ -200,7 +235,8 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
               <Controller
                 name='UserId'
                 control={control}
-                render={({ field: { value, onChange } }) => (
+                rules={{ required: true }}
+                render={({ field: { value, onChange, ref } }) => (
                   <Autocomplete
                     options={
                       dataDef?.teacher?.map(teacher => ({
@@ -228,11 +264,12 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                         fullWidth
                         sx={{ mb: 4 }}
                         placeholder=''
-                        label='User'
+                        label='Teacher'
                         id='validation-billing-select'
                         aria-describedby='validation-billing-select'
                         error={Boolean(errors.UserId)}
                         helperText={errors.UserId?.message || ''}
+                        inputRef={ref}
                       />
                     )}
                   />
@@ -243,7 +280,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
               <Controller
                 name='RoomId'
                 control={control}
-                // rules={{ required: true }}
+                rules={{ required: true }}
                 render={({ field: { value, onChange } }) => (
                   <Autocomplete
                     options={dataRooms?.map(room => ({ value: room.id, label: room.name })) || []}
@@ -279,7 +316,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
             justifyContent={'flex-start'}
             spacing={4}
           >
-            <Button disabled={!isDirty} type='button' variant='contained' onClick={handleSubmit(handleSaveData)}>
+            <Button type='button' variant='contained' onClick={handleSubmit(handleSaveData)}>
               Add Courses
             </Button>
             <Button type='button' variant='outlined' onClick={handleCloseDrawer}>

@@ -39,3 +39,11 @@ code[class*='language-'] {
 .custom-style-columns {
   font-weight: 800 !important;
 }
+
+.MuiDialog-paper {
+  position: none !important;
+}
+
+.css-1x2dz75-MuiPaper-root-MuiDialog-paper {
+  overflow-y: visible !important;
+}
