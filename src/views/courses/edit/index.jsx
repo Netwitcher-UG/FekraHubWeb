@@ -1,19 +1,6 @@
-import {
-  Autocomplete,
-  Avatar,
-  Button,
-  Checkbox,
-  Chip,
-  Divider,
-  Drawer,
-  Grid,
-  InputAdornment,
-  Radio,
-  TextField,
-  Typography
-} from '@mui/material'
+import { Autocomplete, Button, Chip, Divider, Drawer, Grid, InputAdornment, TextField, Typography } from '@mui/material'
 import { Box, Stack } from '@mui/system'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import styled from '@emotion/styled'
 import { Controller, useForm } from 'react-hook-form'
@@ -55,8 +42,9 @@ const schema = yup.object().shape({
   EndDate: yup.date().required('End Date is required').nullable().min(yup.ref('StartDate'))
 })
 
-export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
-  console.log('🚀 ~ DrawerEdit ~ dataDef:', dataDef)
+export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationData }) {
+  const [location, setLocation] = useState('')
+
   const { status, error, dataRooms, dataTeacher } = useSelector(state => state.courses)
 
   const dispatch = useDispatch()
@@ -88,6 +76,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
     dispatch(editCourses({ ...data, id: dataDef.id }))
     handleCloseDrawer()
     reset()
+    setLocation('')
   }
 
   return (
@@ -278,36 +267,63 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
             </Grid>
             <Grid item xs={12} sm={12} lg={12}>
               <Controller
-                name='RoomId'
+                name='LocationId'
                 control={control}
-                rules={{ required: true }}
-                render={({ field: { value, onChange } }) => (
+                render={({ field }) => (
                   <Autocomplete
-                    options={dataRooms?.map(room => ({ value: room.id, label: room.name })) || []}
+                    {...field}
                     fullWidth
-                    id='autocomplete-RoomId'
-                    getOptionLabel={option => option.label}
-                    value={value ? { value, label: dataRooms.find(room => room.id === value)?.name || '' } : null}
-                    onChange={(event, newValue) => {
-                      onChange(newValue ? newValue.value : defaultValues.RoomId)
+                    options={locationData}
+                    getOptionLabel={option => option.name || ''}
+                    onChange={(event, value) => {
+                      const selectedId = value ? value : ''
+                      field.onChange(selectedId)
+                      setLocation(selectedId)
                     }}
                     renderInput={params => (
                       <CustomTextField
-                        {...params}
                         fullWidth
-                        sx={{ mb: 4 }}
-                        placeholder=''
-                        label='Room'
-                        id='validation-billing-select'
-                        aria-describedby='validation-billing-select'
-                        error={Boolean(errors.RoomId)}
-                        helperText={errors.RoomId?.message || ''}
+                        {...params}
+                        label='Select Location'
+                        variant='outlined'
+                        error={!!errors.LocationId}
+                        helperText={errors.LocationId ? errors.LocationId.message : ''}
                       />
                     )}
                   />
                 )}
               />
             </Grid>
+            {location.length !== 0 ? (
+              <Grid item xs={12} sm={12} lg={12}>
+                <Controller
+                  name='RoomId'
+                  control={control}
+                  render={({ field: { onChange, value, ref } }) => (
+                    <Autocomplete
+                      options={location.room}
+                      getOptionLabel={option => option.name || ''}
+                      renderInput={params => (
+                        <CustomTextField
+                          {...params}
+                          label='Select Room'
+                          variant='outlined'
+                          inputRef={ref}
+                          error={!!errors.RoomId}
+                          helperText={errors.RoomId ? errors.RoomId.message : ''}
+                        />
+                      )}
+                      onChange={(event, newValue) => {
+                        onChange(newValue ? newValue.id : '')
+                      }}
+                      value={location.room.find(room => room.id === value) || null}
+                    />
+                  )}
+                />
+              </Grid>
+            ) : (
+              ''
+            )}
           </Grid>
           <Stack
             sx={{ p: theme => `${theme.spacing(3)} !important` }}

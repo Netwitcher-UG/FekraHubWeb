@@ -16,6 +16,7 @@ import { fetchLocation } from 'src/store/apps/location'
 import Icon from 'src/@core/components/icon'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
+import CustomTextField from 'src/@core/components/mui/text-field'
 
 const CustomCloseButton = styled(IconButton)(({ theme }) => ({
   top: 0,
@@ -144,7 +145,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                         setLocation(selectedId)
                       }}
                       renderInput={params => (
-                        <TextField
+                        <CustomTextField
                           fullWidth
                           {...params}
                           label='Select Location'
@@ -187,7 +188,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                       options={location.room}
                       getOptionLabel={option => option.name || ''}
                       renderInput={params => (
-                        <TextField
+                        <CustomTextField
                           {...params}
                           label='Select Room'
                           variant='outlined'
@@ -213,7 +214,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                       options={dataTeacher}
                       getOptionLabel={option => option.firstName || ''}
                       renderInput={params => (
-                        <TextField
+                        <CustomTextField
                           {...params}
                           label='Teacher'
                           variant='outlined'
@@ -236,7 +237,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                   name='Name'
                   control={control}
                   render={({ field }) => (
-                    <TextField
+                    <CustomTextField
                       {...field}
                       label='Course Name'
                       variant='outlined'
@@ -253,7 +254,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                   name='Price'
                   control={control}
                   render={({ field }) => (
-                    <TextField
+                    <CustomTextField
                       {...field}
                       label='Price'
                       type='number'
@@ -274,7 +275,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                   name='Lessons'
                   control={control}
                   render={({ field }) => (
-                    <TextField
+                    <CustomTextField
                       {...field}
                       label='Lessons'
                       variant='outlined'
@@ -291,7 +292,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                   name='Capacity'
                   control={control}
                   render={({ field }) => (
-                    <TextField
+                    <CustomTextField
                       {...field}
                       label='Capacity'
                       variant='outlined'
@@ -307,7 +308,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                   name='StartDate'
                   control={control}
                   render={({ field }) => (
-                    <TextField
+                    <CustomTextField
                       {...field}
                       label='StartDate'
                       variant='outlined'
@@ -323,7 +324,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                   name='EndDate'
                   control={control}
                   render={({ field }) => (
-                    <TextField
+                    <CustomTextField
                       {...field}
                       label='EndDate'
                       variant='outlined'
