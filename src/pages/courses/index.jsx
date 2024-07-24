@@ -7,7 +7,6 @@ export default function Index() {
   const [search, SetSearch] = useState('')
 
   const { data, status, error, dataRooms, dataTeacher } = useSelector(state => state.courses)
-  console.log('🚀 ~ Index ~ status:', status)
 
   const dispatch = useDispatch()
 
