@@ -1,6 +1,6 @@
 import { Card } from '@mui/material'
 import { Box, Stack } from '@mui/system'
-import React from 'react'
+import React, { useEffect } from 'react'
 import CustomDataGrid from 'src/@core/components/custom-datagrid'
 import useCoursesColumns from '../hook/useCoursesColumns'
 import CustomSearch from 'src/@core/components/custom-search'
@@ -9,10 +9,20 @@ import { useRouter } from 'next/router'
 import CustomDialogDelete from 'src/@core/components/custom-delete'
 import DrawerEdit from '../edit'
 import CircularProgress from '@mui/material/CircularProgress'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchLocation } from 'src/store/apps/location'
 
 export default function CoursesDataGrid({ rows, dataRooms, dataTeacher, SetSearch, status }) {
   const { columns, isDialogOpen, handleCloseDialog, handleDelete, drawerData, open, handleCloseDrawer, DeleteName } =
     useCoursesColumns()
+
+  const { data: locationData, error } = useSelector(state => state.location)
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(fetchLocation(''))
+  }, [dispatch])
 
   return (
     <>
@@ -50,7 +60,14 @@ export default function CoursesDataGrid({ rows, dataRooms, dataTeacher, SetSearc
         decsription={`Are you sure you want to delete the class ${DeleteName} ? `}
         onDelete={handleDelete}
       />
-      {open && <DrawerEdit open={open} handleCloseDrawer={handleCloseDrawer} dataDef={drawerData} />}
+      {open && (
+        <DrawerEdit
+          open={open}
+          handleCloseDrawer={handleCloseDrawer}
+          dataDef={drawerData}
+          locationData={locationData}
+        />
+      )}
     </>
   )
 }
