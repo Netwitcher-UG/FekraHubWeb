@@ -167,7 +167,7 @@ const ParentsList = () => {
         <Card>
           {/* <Divider sx={{ m: '0 !important' }} /> */}
           <TableHeader />
-          <Box sx={{ height: 500 }}>
+          <Box sx={{ height: 'calc(100vh - 250px)' }}>
             {store.loading ? (
               <Box
                 sx={{

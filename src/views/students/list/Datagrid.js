@@ -93,7 +93,7 @@ const StudentsDataGrid = ({
       </CardContent>
       <Divider sx={{ m: '0 !important' }} />
       <TableHeader value={value} setValue={setValue} handleFilter={handleFilter} />
-      <Box sx={{ height: 500 }}>
+      <Box sx={{ height: 'calc(100vh - 250px)' }}>
         {store.loading ? (
           <Box
             sx={{

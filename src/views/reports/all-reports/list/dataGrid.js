@@ -81,46 +81,43 @@ const ReportsDataGrid = ({
 
   return (
     <>
-      {store?.data?.reports?.length > 0 && (
-        <>
-          <CardHeader title='Search Filters' />
-          <CardContent>
-            <Grid container spacing={6}>
-              <Grid item sm={4} xs={12}>
-                <Autocomplete
-                  options={courses?.map(course => ({ value: course.id, label: course.name }))}
+      <CardHeader title='Search Filters' />
+      <CardContent>
+        <Grid container spacing={6}>
+          <Grid item sm={4} xs={12}>
+            <Autocomplete
+              options={courses?.map(course => ({ value: course.id, label: course.name }))}
+              fullWidth
+              id='autocomplete-courseFilter'
+              getOptionLabel={option => option.label}
+              value={
+                selectedCourse
+                  ? {
+                      value: selectedCourse,
+                      label: courses?.find(course => course.id === selectedCourse)?.name || ''
+                    }
+                  : null
+              }
+              onChange={handleCourseChange}
+              renderInput={params => (
+                <CustomTextField
+                  {...params}
                   fullWidth
-                  id='autocomplete-courseFilter'
-                  getOptionLabel={option => option.label}
-                  value={
-                    selectedCourse
-                      ? {
-                          value: selectedCourse,
-                          label: courses?.find(course => course.id === selectedCourse)?.name || ''
-                        }
-                      : null
-                  }
-                  onChange={handleCourseChange}
-                  renderInput={params => (
-                    <CustomTextField
-                      {...params}
-                      fullWidth
-                      sx={{ mb: 4 }}
-                      placeholder='Select course'
-                      label='Course filter'
-                      id='validation-billing-select'
-                      aria-describedby='validation-billing-select'
-                    />
-                  )}
+                  sx={{ mb: 4 }}
+                  placeholder='Select course'
+                  label='Course filter'
+                  id='validation-billing-select'
+                  aria-describedby='validation-billing-select'
                 />
-              </Grid>
-            </Grid>
-          </CardContent>
-          <Divider sx={{ m: '0 !important' }} />
-        </>
-      )}
+              )}
+            />
+          </Grid>
+        </Grid>
+      </CardContent>
+      <Divider sx={{ m: '0 !important' }} />
+
       {store?.data?.reports?.length > 0 && <TableHeader handleApproveAllReports={handleApproveAllReports} />}
-      <Box sx={{ height: 500 }}>
+      <Box sx={{ height: 'calc(100vh - 250px)' }}>
         {store.loading ? (
           <Box
             sx={{
