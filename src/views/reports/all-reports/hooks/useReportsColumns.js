@@ -15,9 +15,13 @@ const useReportsColumns = () => {
     () => [
       {
         width: 200,
-        headerName: <Translations text={'Creation Date'} />,
-        field: 'creationDate',
-        renderCell: ({ row }) => checkCell(convertDate(row.creationDate))
+        headerName: <Translations text={'Report Date'} />,
+        field: 'reportDate',
+        renderCell: ({ row }) => (
+          <>
+            {row.month} / {row.year}
+          </>
+        )
       },
       {
         width: 200,
@@ -70,6 +74,12 @@ const useReportsColumns = () => {
         headerName: <Translations text={'Teacher Email'} />,
         field: 'teacherEmail',
         renderCell: ({ row }) => checkCell(row.teacherEmail)
+      },
+      {
+        width: 200,
+        headerName: <Translations text={'Creation Date'} />,
+        field: 'creationDate',
+        renderCell: ({ row }) => checkCell(convertDate(row.creationDate))
       }
     ],
     []

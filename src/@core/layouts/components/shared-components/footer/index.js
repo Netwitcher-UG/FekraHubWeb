@@ -44,7 +44,7 @@ const Footer = props => {
           px: 6,
           width: '100%',
           py: theme => theme.spacing(footer === 'fixed' && skin === 'bordered' ? 2.875 : 3),
-          ...(contentWidth === 'boxed' && { '@media (min-width:1440px)': { maxWidth: 1440 } }),
+          ...(contentWidth === 'boxed' && 'removed1440'),
           ...(layout === 'vertical' && {
             borderTopLeftRadius: theme => theme.shape.borderRadius,
             borderTopRightRadius: theme => theme.shape.borderRadius,

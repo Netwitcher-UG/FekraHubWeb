@@ -4,6 +4,7 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm, Controller } from 'react-hook-form'
 import Box from '@mui/material/Box'
+import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
@@ -61,17 +62,18 @@ const RegisterV1 = () => {
       ),
     email: yup.string().email('Invalid email').required('Email is required'),
     phoneNumber: yup.number().typeError('Must be a number').min(9, 'Must be at least 9 digits'),
-    firstName: yup.string(),
-    lastname: yup.string(),
+    firstName: yup.string().required('Firstname is required'),
+    lastname: yup.string().required('Lastname is required'),
     emergencyPhoneNumber: yup.number().typeError('Must be a number').min(9, 'Must be at least 9 digits'),
-    birthplace: yup.string(),
-    nationality: yup.string(),
-    street: yup.string(),
-    streetNr: yup.string(),
-    city: yup.string(),
-    job: yup.string(),
-    graduation: yup.string(),
-    birthday: yup.date().nullable()
+    birthplace: yup.string().required('Birthplace is required'),
+    nationality: yup.string().required('Nationality is required'),
+    street: yup.string().required('Street is required'),
+    streetNr: yup.string().required('Street number is required'),
+    city: yup.string().required('City is required'),
+    job: yup.string().required('Job is required'),
+    graduation: yup.string().required('Graduation is required'),
+    birthday: yup.date().nullable().required('Birthday is required'),
+    gender: yup.string().required('Gender is required')
   })
 
   const {
@@ -184,293 +186,344 @@ const RegisterV1 = () => {
                   </Typography>
                   <Typography sx={{ color: 'text.secondary' }}>Make your app management easy and fun!</Typography>
                 </Box>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'space-between' }}>
-                  <form
-                    noValidate
-                    autoComplete='off'
-                    onSubmit={handleSubmit(onSubmit)}
-                    style={{ width: '100%', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}
-                  >
-                    <Controller
-                      name='username'
-                      control={control}
-                      render={({ field }) => (
-                        <CustomTextField
-                          {...field}
-                          autoFocus
-                          fullWidth
-                          id='username'
-                          sx={{ mb: 4, width: '45%' }}
-                          label='Username'
-                          placeholder='John.doe'
-                          error={!!errors.username}
-                          helperText={errors.username?.message}
-                        />
-                      )}
-                    />
-                    <Controller
-                      name='email'
-                      control={control}
-                      render={({ field }) => (
-                        <CustomTextField
-                          {...field}
-                          fullWidth
-                          type='email'
-                          label='Email'
-                          sx={{ mb: 4, width: '45%' }}
-                          placeholder='john.doe@gmail.com'
-                          error={!!errors.email}
-                          helperText={errors.email?.message}
-                        />
-                      )}
-                    />
-                    <Controller
-                      name='password'
-                      control={control}
-                      render={({ field }) => (
-                        <CustomTextField
-                          {...field}
-                          fullWidth
-                          label='Password'
-                          placeholder='············'
-                          id='auth-register-password'
-                          type={showPassword ? 'text' : 'password'}
-                          sx={{ mb: 4, width: '45%' }}
-                          error={!!errors.password}
-                          helperText={errors.password?.message}
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position='end'>
-                                <IconButton
-                                  edge='end'
-                                  onClick={handleClickShowPassword}
-                                  onMouseDown={e => e.preventDefault()}
-                                  aria-label='toggle password visibility'
-                                >
-                                  <Icon fontSize='1.25rem' icon={showPassword ? 'tabler:eye' : 'tabler:eye-off'} />
-                                </IconButton>
-                              </InputAdornment>
-                            )
-                          }}
-                        />
-                      )}
-                    />
-                    <Controller
-                      name='phoneNumber'
-                      control={control}
-                      render={({ field }) => (
-                        <CustomTextField
-                          {...field}
-                          fullWidth
-                          label='Phone Number'
-                          placeholder='Enter your phone number'
-                          sx={{ mb: 4, width: '45%' }}
-                          type='tel'
-                          error={!!errors.phoneNumber}
-                          helperText={errors.phoneNumber?.message}
-                        />
-                      )}
-                    />
-                    <Controller
-                      name='firstName'
-                      control={control}
-                      render={({ field }) => (
-                        <CustomTextField
-                          {...field}
-                          fullWidth
-                          label='First Name'
-                          placeholder='Enter your first name'
-                          sx={{ mb: 4, width: '45%' }}
-                        />
-                      )}
-                    />
-                    <Controller
-                      name='lastname'
-                      control={control}
-                      render={({ field }) => (
-                        <CustomTextField
-                          {...field}
-                          fullWidth
-                          label='Last Name'
-                          placeholder='Enter your last name'
-                          sx={{ mb: 4, width: '45%' }}
-                        />
-                      )}
-                    />
-                    <Controller
-                      name='gender'
-                      control={control}
-                      rules={{ required: true }}
-                      render={({ field: { value, onChange } }) => (
-                        <CustomTextField
-                          select
-                          fullWidth
-                          sx={{ mb: 4, width: '45%' }}
-                          label='Gender'
-                          id='validation-gender-select'
-                          aria-describedby='validation-gender-select'
-                          defaultValue=''
-                          SelectProps={{
-                            value: value,
-                            onChange: e => onChange(e),
-                            displayEmpty: true
-                          }}
-                        >
-                          <MenuItem value='' disabled>
-                            <em>Select Gender</em>
-                          </MenuItem>
-                          <MenuItem key={1} value={'male'}>
-                            Male
-                          </MenuItem>
-                          <MenuItem key={2} value={'female'}>
-                            Female
-                          </MenuItem>
-                        </CustomTextField>
-                      )}
-                    />
-                    <Controller
-                      name='emergencyPhoneNumber'
-                      control={control}
-                      render={({ field }) => (
-                        <CustomTextField
-                          {...field}
-                          fullWidth
-                          label='Emergency Phone Number'
-                          placeholder='Enter your emergency phone number'
-                          sx={{ mb: 4, width: '45%' }}
-                          type='tel' // Restrict input to numbers
-                          error={!!errors.emergencyPhoneNumber}
-                          helperText={errors.emergencyPhoneNumber?.message}
-                        />
-                      )}
-                    />
-                    <Controller
-                      name='birthday'
-                      control={control}
-                      render={({ field: { value, onChange } }) => (
-                        <Box sx={{ mb: 4, width: '45%' }}>
-                          <CustomDatePickerWrapper>
-                            <DatePicker
-                              selected={value}
-                              onChange={onChange}
-                              dateFormat='yyyy/MM/dd'
-                              customInput={<CustomTextField label='Birthday' fullWidth />}
-                              placeholderText='Birthday'
-                              popperProps={{
-                                modifiers: [
-                                  {
-                                    name: 'preventOverflow',
-                                    options: {
-                                      altBoundary: true,
-                                      rootBoundary: 'viewport',
-                                      tether: false,
-                                      flip: {
-                                        behavior: ['bottom']
+
+                <form
+                  noValidate
+                  autoComplete='off'
+                  onSubmit={handleSubmit(onSubmit)}
+                  style={{ width: '100%', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}
+                >
+                  <Grid container spacing={5}>
+                    <Grid item xs={12} sm={6}>
+                      <Controller
+                        name='username'
+                        control={control}
+                        render={({ field }) => (
+                          <CustomTextField
+                            {...field}
+                            autoFocus
+                            fullWidth
+                            id='username'
+                            label='Username'
+                            placeholder='John.doe'
+                            error={!!errors.username}
+                            helperText={errors.username?.message}
+                          />
+                        )}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Controller
+                        name='email'
+                        control={control}
+                        render={({ field }) => (
+                          <CustomTextField
+                            {...field}
+                            fullWidth
+                            type='email'
+                            label='Email'
+                            placeholder='john.doe@gmail.com'
+                            error={!!errors.email}
+                            helperText={errors.email?.message}
+                          />
+                        )}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Controller
+                        name='password'
+                        control={control}
+                        render={({ field }) => (
+                          <CustomTextField
+                            {...field}
+                            fullWidth
+                            label='Password'
+                            placeholder='············'
+                            id='auth-register-password'
+                            type={showPassword ? 'text' : 'password'}
+                            error={!!errors.password}
+                            helperText={errors.password?.message}
+                            InputProps={{
+                              endAdornment: (
+                                <InputAdornment position='end'>
+                                  <IconButton
+                                    edge='end'
+                                    onClick={handleClickShowPassword}
+                                    onMouseDown={e => e.preventDefault()}
+                                    aria-label='toggle password visibility'
+                                  >
+                                    <Icon fontSize='1.25rem' icon={showPassword ? 'tabler:eye' : 'tabler:eye-off'} />
+                                  </IconButton>
+                                </InputAdornment>
+                              )
+                            }}
+                          />
+                        )}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Controller
+                        name='phoneNumber'
+                        control={control}
+                        render={({ field }) => (
+                          <CustomTextField
+                            {...field}
+                            fullWidth
+                            label='Phone Number'
+                            placeholder='Enter your phone number'
+                            type='tel'
+                            error={!!errors.phoneNumber}
+                            helperText={errors.phoneNumber?.message}
+                          />
+                        )}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Controller
+                        name='firstName'
+                        control={control}
+                        render={({ field }) => (
+                          <CustomTextField
+                            {...field}
+                            fullWidth
+                            label='First Name'
+                            placeholder='Enter your first name'
+                            error={!!errors.firstName}
+                            helperText={errors.firstName?.message}
+                          />
+                        )}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Controller
+                        name='lastname'
+                        control={control}
+                        render={({ field }) => (
+                          <CustomTextField
+                            {...field}
+                            fullWidth
+                            label='Last Name'
+                            placeholder='Enter your last name'
+                            error={!!errors.lastname}
+                            helperText={errors.lastname?.message}
+                          />
+                        )}
+                      />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                      <Controller
+                        name='gender'
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field: { value, onChange } }) => (
+                          <CustomTextField
+                            select
+                            fullWidth
+                            label='Gender'
+                            id='validation-gender-select'
+                            aria-describedby='validation-gender-select'
+                            error={!!errors.gender}
+                            helperText={errors.gender?.message}
+                            defaultValue=''
+                            SelectProps={{
+                              value: value,
+                              onChange: e => onChange(e),
+                              displayEmpty: true
+                            }}
+                          >
+                            <MenuItem value='' disabled>
+                              <em>Select Gender</em>
+                            </MenuItem>
+                            <MenuItem key={1} value={'male'}>
+                              Male
+                            </MenuItem>
+                            <MenuItem key={2} value={'female'}>
+                              Female
+                            </MenuItem>
+                          </CustomTextField>
+                        )}
+                      />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                      <Controller
+                        name='emergencyPhoneNumber'
+                        control={control}
+                        render={({ field }) => (
+                          <CustomTextField
+                            {...field}
+                            fullWidth
+                            label='Emergency Phone Number'
+                            placeholder='Enter your emergency phone number'
+                            type='tel' // Restrict input to numbers
+                            error={!!errors.emergencyPhoneNumber}
+                            helperText={errors.emergencyPhoneNumber?.message}
+                          />
+                        )}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Controller
+                        name='birthday'
+                        control={control}
+                        render={({ field: { value, onChange } }) => (
+                          <Box>
+                            <CustomDatePickerWrapper>
+                              <DatePicker
+                                selected={value}
+                                onChange={onChange}
+                                dateFormat='yyyy/MM/dd'
+                                customInput={<CustomTextField label='Birthday' fullWidth />}
+                                placeholderText='Birthday'
+                                error={!!errors.birthday}
+                                helperText={errors.birthday?.message}
+                                popperProps={{
+                                  modifiers: [
+                                    {
+                                      name: 'preventOverflow',
+                                      options: {
+                                        altBoundary: true,
+                                        rootBoundary: 'viewport',
+                                        tether: false,
+                                        flip: {
+                                          behavior: ['bottom']
+                                        }
                                       }
                                     }
-                                  }
-                                ]
-                              }}
-                            />
-                          </CustomDatePickerWrapper>
-                        </Box>
-                      )}
-                    />
-                    <Controller
-                      name='birthplace'
-                      control={control}
-                      render={({ field }) => (
-                        <CustomTextField
-                          {...field}
-                          fullWidth
-                          label='Birthplace'
-                          placeholder='Enter your birthplace'
-                          sx={{ mb: 4, width: '45%' }}
-                        />
-                      )}
-                    />
-                    <Controller
-                      name='nationality'
-                      control={control}
-                      render={({ field }) => (
-                        <CustomTextField
-                          {...field}
-                          fullWidth
-                          label='Nationality'
-                          placeholder='Enter your nationality'
-                          sx={{ mb: 4, width: '45%' }}
-                        />
-                      )}
-                    />
-                    <Controller
-                      name='street'
-                      control={control}
-                      render={({ field }) => (
-                        <CustomTextField
-                          {...field}
-                          fullWidth
-                          label='Street'
-                          placeholder='Enter your street'
-                          sx={{ mb: 4, width: '45%' }}
-                        />
-                      )}
-                    />
-                    <Controller
-                      name='streetNr'
-                      control={control}
-                      render={({ field }) => (
-                        <CustomTextField
-                          {...field}
-                          fullWidth
-                          label='Street Number'
-                          placeholder='Enter your street number'
-                          sx={{ mb: 4, width: '45%' }}
-                        />
-                      )}
-                    />
-                    <Controller
-                      name='city'
-                      control={control}
-                      render={({ field }) => (
-                        <CustomTextField
-                          {...field}
-                          fullWidth
-                          label='City'
-                          placeholder='Enter your city'
-                          sx={{ mb: 4, width: '45%' }}
-                        />
-                      )}
-                    />
-                    <Controller
-                      name='job'
-                      control={control}
-                      render={({ field }) => (
-                        <CustomTextField
-                          {...field}
-                          fullWidth
-                          label='Job'
-                          placeholder='Enter your job'
-                          sx={{ mb: 4, width: '45%' }}
-                        />
-                      )}
-                    />
-                    <Controller
-                      name='graduation'
-                      control={control}
-                      render={({ field }) => (
-                        <CustomTextField
-                          {...field}
-                          fullWidth
-                          label='Graduation'
-                          placeholder='Enter your graduation'
-                          sx={{ mb: 4, width: '45%' }}
-                        />
-                      )}
-                    />
-                    <Button fullWidth disabled={isSubmitting} type='submit' variant='contained' sx={{ mb: 4 }}>
-                      {isSubmitting ? <CircularProgress size={25} /> : 'Sign up'}
-                    </Button>
-                    <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
+                                  ]
+                                }}
+                              />
+                              {errors.birthday && (
+                                <Typography fontSize={12.5} color={'error'}>
+                                  {errors.birthday?.message}
+                                </Typography>
+                              )}
+                            </CustomDatePickerWrapper>
+                          </Box>
+                        )}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Controller
+                        name='birthplace'
+                        control={control}
+                        render={({ field }) => (
+                          <CustomTextField
+                            {...field}
+                            fullWidth
+                            label='Birthplace'
+                            error={!!errors.birthplace}
+                            helperText={errors.birthplace?.message}
+                            placeholder='Enter your birthplace'
+                          />
+                        )}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Controller
+                        name='nationality'
+                        control={control}
+                        render={({ field }) => (
+                          <CustomTextField
+                            {...field}
+                            fullWidth
+                            label='Nationality'
+                            placeholder='Enter your nationality'
+                            error={!!errors.nationality}
+                            helperText={errors.nationality?.message}
+                          />
+                        )}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Controller
+                        name='street'
+                        control={control}
+                        render={({ field }) => (
+                          <CustomTextField
+                            {...field}
+                            fullWidth
+                            label='Street'
+                            error={!!errors.street}
+                            helperText={errors.street?.message}
+                            placeholder='Enter your street'
+                          />
+                        )}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Controller
+                        name='streetNr'
+                        control={control}
+                        render={({ field }) => (
+                          <CustomTextField
+                            {...field}
+                            fullWidth
+                            error={!!errors.streetNr}
+                            helperText={errors.streetNr?.message}
+                            label='Street Number'
+                            placeholder='Enter your street number'
+                          />
+                        )}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Controller
+                        name='city'
+                        control={control}
+                        render={({ field }) => (
+                          <CustomTextField
+                            {...field}
+                            fullWidth
+                            label='City'
+                            placeholder='Enter your city'
+                            error={!!errors.city}
+                            helperText={errors.city?.message}
+                          />
+                        )}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Controller
+                        name='job'
+                        control={control}
+                        render={({ field }) => (
+                          <CustomTextField
+                            {...field}
+                            fullWidth
+                            label='Job'
+                            placeholder='Enter your job'
+                            error={!!errors.job}
+                            helperText={errors.job?.message}
+                          />
+                        )}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Controller
+                        name='graduation'
+                        control={control}
+                        render={({ field }) => (
+                          <CustomTextField
+                            {...field}
+                            fullWidth
+                            label='Graduation'
+                            error={!!errors.graduation}
+                            helperText={errors.graduation?.message}
+                            placeholder='Enter your graduation'
+                          />
+                        )}
+                      />
+                    </Grid>
+                    <Grid item xs={24} sm={12}>
+                      <Button fullWidth disabled={isSubmitting} type='submit' variant='contained' sx={{ mb: 4 }}>
+                        {isSubmitting ? <CircularProgress size={25} /> : 'Sign up'}
+                      </Button>
+                    </Grid>
+                    <Box
+                      sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center', ml: 4 }}
+                    >
                       <Typography sx={{ color: 'text.secondary', mr: 2 }}>Already have an account?</Typography>
                       <Typography
                         component={LinkStyled}
@@ -488,8 +541,8 @@ const RegisterV1 = () => {
                         my: `${theme.spacing(6)} !important`
                       }}
                     ></Divider>
-                  </form>
-                </Box>
+                  </Grid>
+                </form>
               </CardContent>
             </Card>
           </AuthIllustrationV1Wrapper>

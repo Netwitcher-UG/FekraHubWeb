@@ -4,13 +4,19 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axiosInstance from 'src/lib/axiosInstance'
 
 export const fetchReportsByFilter = createAsyncThunk('appReports/fetchReportsByFilter', async params => {
-  const { student = '', reportId = '', improved = '' } = params
+  const { student = '', courseId = '', reportId = '', improved = '', PageNumber = 1, PageSize = 10 } = params
   try {
     const response = await axiosInstance.get(
-      `/api/Reports/Filter?studentId=${student}&reportId=${reportId}&Improved=${improved}`
+      `/api/Reports/Filter?PageNumber=${PageNumber}&PageSize=${PageSize}&studentId=${student}&reportId=${reportId}&Improved=${improved}&courseId=${
+        courseId == 0 ? '' : courseId
+      }`
     )
 
-    return response.data
+    return {
+      reports: response?.data?.data,
+      currentPage: response?.data?.currentPage,
+      totalPages: response?.data?.totalPages
+    }
   } catch (error) {
     return error.response
   }
@@ -29,6 +35,20 @@ export const fetchReportKeys = createAsyncThunk('appReports/fetchReportKeys', as
 export const acceptReport = createAsyncThunk('appReports/acceptReport', async (id, thunkAPI) => {
   try {
     const response = await axiosInstance.patch(`/api/Reports/AcceptReport?reportId=${id}`)
+    thunkAPI.dispatch(fetchReportsByFilter({ improved: '' }))
+    return response
+  } catch (error) {
+    return error.response
+  }
+})
+
+export const acceptAllReport = createAsyncThunk('appReports/acceptAllReport', async (data, thunkAPI) => {
+  try {
+    const response = await axiosInstance.patch(`/api/Reports/AcceptAllReport`, data, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
     thunkAPI.dispatch(fetchReportsByFilter({ improved: '' }))
     return response
   } catch (error) {
@@ -64,7 +84,11 @@ export const addReport = createAsyncThunk('appReports/addReport', async data => 
 export const appReportsSlice = createSlice({
   name: 'appReports',
   initialState: {
-    data: [],
+    data: {
+      reports: [],
+      currentPage: 1,
+      totalPages: 1
+    },
     reportKeys: [],
     loading: false,
     acceptLoading: false,

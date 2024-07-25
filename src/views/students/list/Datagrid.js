@@ -117,7 +117,7 @@ const StudentsDataGrid = ({
               onRowClick={handleRowClick}
               pagination={true}
               sx={{
-                overflowY: 'scroll',
+                // overflowY: 'scroll',
                 overflowX: 'scroll',
                 ...customScrollbarStyles,
                 fontSize: '1rem'

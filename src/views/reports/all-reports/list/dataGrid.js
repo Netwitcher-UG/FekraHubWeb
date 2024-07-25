@@ -11,7 +11,9 @@ import { DataGrid } from '@mui/x-data-grid'
 import Translations from 'src/layouts/components/Translations'
 import CardHeader from '@mui/material/CardHeader'
 import ReportPreviewDrawer from '../preview-report/report-drawer'
-// import TableHeader from './TableHeader'
+import TableHeader from './TableHeader'
+import { Autocomplete } from '@mui/material'
+import toast from 'react-hot-toast'
 
 const customScrollbarStyles = {
   '& ::-webkit-scrollbar': {
@@ -28,13 +30,17 @@ const customScrollbarStyles = {
 
 const ReportsDataGrid = ({
   columns,
-  store
+  store,
+  courses,
   // setValue,
   // value,
   // handleFilter,
-  // selectedCourse,
-  // setSelectedCourse,
+  selectedCourse,
+  setSelectedCourse,
   // handleRowClick
+  setCurrentPage,
+  dispatch,
+  acceptAllReport
 }) => {
   const [drawerData, setDrawerData] = useState(null)
   const [open, setOpen] = useState(false)
@@ -49,9 +55,21 @@ const ReportsDataGrid = ({
     setDrawerData(null)
   }, [])
 
-  //   const handleCourseChange = e => {
-  //     setSelectedCourse(e.target.value)
-  //   }
+  const handleCourseChange = (event, newValue) => {
+    setCurrentPage(1)
+    setSelectedCourse(newValue ? newValue.value : '')
+  }
+
+  const handleApproveAllReports = async () => {
+    const nullImprovedIds = store?.data?.reports.filter(item => item.improved === null).map(item => item.id)
+
+    if (nullImprovedIds.length == 0) toast.error(<Translations text={'No report needs approval on this page'} />)
+    else {
+      const response = await dispatch(acceptAllReport(nullImprovedIds))
+      if (response?.payload?.status == 200) toast.success(<Translations text={'Reports approved successfully '} />)
+      else toast.error(<Translations text={'Something went wrong try again !'} />)
+    }
+  }
 
   //   useEffect(() => {
   //     const timer = setTimeout(() => {
@@ -63,38 +81,45 @@ const ReportsDataGrid = ({
 
   return (
     <>
-      {/* <CardHeader title='Search Filters' /> */}
-      {/* <CardContent>
-        <Grid container spacing={6}>
-          <Grid item sm={4} xs={12}>
-            <CustomTextField
-              select
-              fullWidth
-              defaultValue=''
-              label={<Translations text={'Course'} />}
-              value={selectedCourse}
-              onChange={handleCourseChange}
-              SelectProps={{
-                displayEmpty: true
-              }}
-            >
-              <MenuItem value=''>
-                <em>
-                  <Translations text={'Select Course'} />
-                </em>
-              </MenuItem>
-              <MenuItem value={0}>None</MenuItem>
-              {store?.coursesData.map(course => (
-                <MenuItem key={course.id} value={course.id}>
-                  {course.name}
-                </MenuItem>
-              ))}
-            </CustomTextField>
-          </Grid>
-        </Grid>
-      </CardContent> */}
-      <Divider sx={{ m: '0 !important' }} />
-      {/* <TableHeader value={value} setValue={setValue} handleFilter={handleFilter} /> */}
+      {store?.data?.reports?.length > 0 && (
+        <>
+          <CardHeader title='Search Filters' />
+          <CardContent>
+            <Grid container spacing={6}>
+              <Grid item sm={4} xs={12}>
+                <Autocomplete
+                  options={courses?.map(course => ({ value: course.id, label: course.name }))}
+                  fullWidth
+                  id='autocomplete-courseFilter'
+                  getOptionLabel={option => option.label}
+                  value={
+                    selectedCourse
+                      ? {
+                          value: selectedCourse,
+                          label: courses?.find(course => course.id === selectedCourse)?.name || ''
+                        }
+                      : null
+                  }
+                  onChange={handleCourseChange}
+                  renderInput={params => (
+                    <CustomTextField
+                      {...params}
+                      fullWidth
+                      sx={{ mb: 4 }}
+                      placeholder='Select course'
+                      label='Course filter'
+                      id='validation-billing-select'
+                      aria-describedby='validation-billing-select'
+                    />
+                  )}
+                />
+              </Grid>
+            </Grid>
+          </CardContent>
+          <Divider sx={{ m: '0 !important' }} />
+        </>
+      )}
+      {store?.data?.reports?.length > 0 && <TableHeader handleApproveAllReports={handleApproveAllReports} />}
       <Box sx={{ height: 500 }}>
         {store.loading ? (
           <Box
@@ -111,7 +136,7 @@ const ReportsDataGrid = ({
         ) : (
           <DataGrid
             rowHeight={62}
-            rows={store?.data || []}
+            rows={store?.data?.reports || []}
             columns={columns}
             hideFooter={true}
             disableRowSelectionOnClick

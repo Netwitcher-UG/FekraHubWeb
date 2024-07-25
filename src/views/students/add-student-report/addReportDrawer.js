@@ -31,10 +31,31 @@ import CircularProgress from '@mui/material/CircularProgress'
 const Header = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  padding: '24px',
-  justifyContent: 'space-between',
-  margin: '0px'
+  padding: theme.spacing(3),
+  justifyContent: 'space-between'
 }))
+
+const HeaderText = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'flex-start'
+}))
+
+const StudentName = styled(Typography)(({ theme }) => ({
+  fontWeight: 700,
+  fontSize: '1.25rem',
+  marginBottom: theme.spacing(0.5)
+}))
+
+const DateChip = styled(Chip)(({ theme }) => ({
+  fontSize: '0.875rem',
+  fontWeight: 500
+}))
+
+const date = new Date()
+const month = date.toLocaleString('default', { month: 'long' })
+const year = date.getFullYear()
 
 const CustomDatePickerWrapper = styled(DatePickerWrapper)({
   '& .react-datepicker-popper': {
@@ -52,7 +73,7 @@ export default function AddReportDrawer({ open, handleCloseDrawer, rowData }) {
   const { reportKeys } = useSelector(state => state.reports)
 
   const schema = yup.object().shape({
-    creationDate: yup.date().required(<Translations text={'Date is required'} />),
+    // creationDate: yup.date().required(<Translations text={'Date is required'} />),
     ...reportKeys.reduce((acc, key) => {
       acc[key] = yup.string().required(<Translations text={`${key} is required`} />)
       return acc
@@ -60,7 +81,7 @@ export default function AddReportDrawer({ open, handleCloseDrawer, rowData }) {
   })
 
   const defaultValues = {
-    creationDate: null,
+    // creationDate: null,
     ...reportKeys.reduce((acc, key) => {
       acc[key] = ''
       return acc
@@ -117,20 +138,20 @@ export default function AddReportDrawer({ open, handleCloseDrawer, rowData }) {
       }}
     >
       <Header>
-        <Typography
-          sx={{
-            fontWeight: '800',
-            fontSize: '22px'
-          }}
-        >
-          Submit a report for student : {rowData.firstName} {rowData.lastName}
-        </Typography>
+        <HeaderText>
+          <StudentName>Submitting report for :</StudentName>
+          <Typography variant='h6' component='span'>
+            {rowData.firstName} {rowData.lastName}
+          </Typography>
+        </HeaderText>
+        <DateChip label={`${month} / ${year}`} color='info' />
       </Header>
+
       <Divider variant='middle' />
       <Stack padding={4} sx={{ gap: '8px' }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container rowSpacing={4} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-            <Grid item xs={12} sm={12} lg={12}>
+            {/* <Grid item xs={12} sm={12} lg={12}>
               <Controller
                 name='creationDate'
                 control={control}
@@ -155,9 +176,9 @@ export default function AddReportDrawer({ open, handleCloseDrawer, rowData }) {
                   </Box>
                 )}
               />
-            </Grid>
+            </Grid> */}
           </Grid>
-          <Typography
+          {/* <Typography
             sx={{
               fontSize: '15px',
               m: 2
@@ -165,7 +186,7 @@ export default function AddReportDrawer({ open, handleCloseDrawer, rowData }) {
           >
             Report Info
           </Typography>
-          <Divider variant='middle' />
+          <Divider variant='middle' /> */}
 
           <Grid container rowSpacing={4} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ mt: 2, mb: 4 }}>
             {' '}
@@ -187,21 +208,25 @@ export default function AddReportDrawer({ open, handleCloseDrawer, rowData }) {
               </Grid>
             ))}
           </Grid>
-          <Divider variant='middle' />
-          <Grid sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Button color='primary' sx={{ m: 2 }} variant='contained' type='submit'>
-              {isSubmitting ? <CircularProgress size={25} color='secondary' /> : 'Submit report'}
-            </Button>
-            <Button
-              type='button'
-              color='secondary'
-              variant='outlined'
-              disabled={isSubmitting}
-              onClick={handleCloseDrawer}
-            >
-              Close
-            </Button>
-          </Grid>
+          {reportKeys.length > 0 && (
+            <>
+              <Divider variant='middle' />
+              <Grid sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Button disabled={isSubmitting} color='primary' sx={{ m: 2 }} variant='contained' type='submit'>
+                  {isSubmitting ? <CircularProgress size={25} color='secondary' /> : 'Submit report'}
+                </Button>
+                <Button
+                  type='button'
+                  color='secondary'
+                  variant='outlined'
+                  disabled={isSubmitting}
+                  onClick={handleCloseDrawer}
+                >
+                  Close
+                </Button>
+              </Grid>
+            </>
+          )}
         </form>
       </Stack>
     </Drawer>
