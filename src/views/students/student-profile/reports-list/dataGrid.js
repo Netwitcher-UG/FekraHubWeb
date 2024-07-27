@@ -97,7 +97,7 @@ const StudentReportsDataGrid = ({
         ) : (
           <DataGrid
             rowHeight={62}
-            rows={store?.data || []}
+            rows={store?.data?.reports || []}
             columns={columns}
             hideFooter={true}
             disableRowSelectionOnClick

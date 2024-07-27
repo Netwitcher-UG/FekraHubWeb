@@ -81,6 +81,15 @@ export const addReport = createAsyncThunk('appReports/addReport', async data => 
   }
 })
 
+export const exportReport = createAsyncThunk('appReports/exportReport', async id => {
+  try {
+    const response = await axiosInstance.get(`/api/Reports/ExportReport?reportId=${id}`)
+    return response
+  } catch (error) {
+    return error.response
+  }
+})
+
 export const appReportsSlice = createSlice({
   name: 'appReports',
   initialState: {
@@ -92,7 +101,8 @@ export const appReportsSlice = createSlice({
     reportKeys: [],
     loading: false,
     acceptLoading: false,
-    unAcceptLoading: false
+    unAcceptLoading: false,
+    exportLoading: false // Add exportLoading state here
   },
   reducers: {},
   extraReducers: builder => {
@@ -128,8 +138,19 @@ export const appReportsSlice = createSlice({
       .addCase(unAcceptReport.rejected, state => {
         state.unAcceptLoading = false
       })
+      // fetchReportKeys cases
       .addCase(fetchReportKeys.fulfilled, (state, action) => {
         state.reportKeys = action.payload
+      })
+      // exportReport cases
+      .addCase(exportReport.pending, state => {
+        state.exportLoading = true
+      })
+      .addCase(exportReport.fulfilled, (state, action) => {
+        state.exportLoading = false
+      })
+      .addCase(exportReport.rejected, state => {
+        state.exportLoading = false
       })
   }
 })
