@@ -14,6 +14,8 @@ import ReportPreviewDrawer from '../preview-report/report-drawer'
 import TableHeader from './TableHeader'
 import { Autocomplete } from '@mui/material'
 import toast from 'react-hot-toast'
+import useReportsColumns from '../hooks/useReportsColumns'
+import EditReportDrawer from '../edit-report/edit-report-drawer'
 
 const customScrollbarStyles = {
   '& ::-webkit-scrollbar': {
@@ -29,7 +31,6 @@ const customScrollbarStyles = {
 }
 
 const ReportsDataGrid = ({
-  columns,
   store,
   courses,
   // setValue,
@@ -44,6 +45,8 @@ const ReportsDataGrid = ({
 }) => {
   const [drawerData, setDrawerData] = useState(null)
   const [open, setOpen] = useState(false)
+
+  const { columns, handleEditDrawerClose, editDraweropen, editDrawerData } = useReportsColumns()
 
   const handleOpenDrawer = useCallback(params => {
     setDrawerData(params.row)
@@ -149,6 +152,9 @@ const ReportsDataGrid = ({
         )}
       </Box>
       {open && <ReportPreviewDrawer open={open} handleCloseDrawer={handleCloseDrawer} rowData={drawerData} />}
+      {editDraweropen && (
+        <EditReportDrawer open={editDraweropen} handleCloseDrawer={handleEditDrawerClose} rowData={editDrawerData} />
+      )}
     </>
   )
 }

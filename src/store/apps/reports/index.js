@@ -90,6 +90,21 @@ export const exportReport = createAsyncThunk('appReports/exportReport', async id
   }
 })
 
+export const updateReport = createAsyncThunk('appReports/updateReport', async (updatedData, thunkAPI) => {
+  try {
+    const response = await axiosInstance.patch(`/api/Reports/UpdateReport`, updatedData, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    thunkAPI.dispatch(fetchReportsByFilter({ improved: '' }))
+
+    return response
+  } catch (error) {
+    return error.response
+  }
+})
+
 export const appReportsSlice = createSlice({
   name: 'appReports',
   initialState: {
