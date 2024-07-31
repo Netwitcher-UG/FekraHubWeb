@@ -9,12 +9,12 @@ import Button from '@mui/material/Button'
 import Icon from 'src/@core/components/icon'
 import { useRouter } from 'next/router'
 
-const ChildrenList = ({ children, loading }) => {
+const ChildrenList = ({ childrenData, loading }) => {
   const router = useRouter()
 
   const renderData =
-    children?.length > 0 && !loading ? (
-      children.map((child, index) => (
+    childrenData?.length > 0 && !loading ? (
+      childrenData.map((child, index) => (
         <Grid item xs={12} sm={6} md={3} key={index}>
           <ChildCard child={child} />
         </Grid>

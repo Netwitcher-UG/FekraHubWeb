@@ -9,8 +9,10 @@ const ViewChild = () => {
   useEffect(() => {
     dispatch(fetchParentStudents())
   }, [dispatch])
+
   const { parentStudents, childrenLoading } = useSelector(state => state.students)
-  return <ChildrenList children={parentStudents} loading={childrenLoading} />
+
+  return <ChildrenList childrenData={parentStudents} loading={childrenLoading} />
 }
 
 export default ViewChild
