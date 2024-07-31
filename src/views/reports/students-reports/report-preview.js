@@ -203,6 +203,7 @@ const PreviewReport = ({ data }) => {
               <TableHead>
                 <TableRow>
                   <TableCell>Type</TableCell>
+                  <TableCell>Result</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody

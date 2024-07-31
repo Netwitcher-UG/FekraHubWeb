@@ -166,9 +166,6 @@ const DrawerReportSlip = ({ data }) => {
               <TableRow>
                 <TableCell>Type</TableCell>
                 <TableCell>Result</TableCell>
-                {/* <TableCell>hours</TableCell>
-                <TableCell>qty</TableCell>
-                <TableCell>Total</TableCell> */}
               </TableRow>
             </TableHead>
             <TableBody

@@ -22,6 +22,44 @@ export const fetchCourses = createAsyncThunk('appStudents/fetchCourses', async (
   return response.data
 })
 
+export const fetchAvailableCourses = createAsyncThunk('appStudents/fetchAvailableCourses', async () => {
+  const response = await axiosInstance.get('/api/Student/CoursesCapacity')
+
+  return response.data
+})
+
+export const addStudent = createAsyncThunk('appUsers/addStudent', async data => {
+  try {
+    const response = await axiosInstance.post('/api/Student', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    return response
+  } catch (error) {
+    return error.response
+  }
+})
+
+export const acceptContract = createAsyncThunk('appUsers/acceptContract', async data => {
+  try {
+    const response = await axiosInstance.post('/api/Student/AcceptedContract', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    return response
+  } catch (error) {
+    return error.response
+  }
+})
+
+export const fetchParentStudents = createAsyncThunk('appStudents/fetchParentStudents', async () => {
+  const response = await axiosInstance.get(`/api/Student/ByParent`)
+
+  return response.data
+})
+
 export const appStudentsSlice = createSlice({
   name: 'appStudents',
   initialState: {
@@ -31,7 +69,10 @@ export const appStudentsSlice = createSlice({
       totalPages: 1
     },
     coursesData: [],
-    loading: false
+    availableCourses: [],
+    acceptContractLoading: false,
+    parentStudents: [],
+    childrenLoading: false
   },
   reducers: {},
   extraReducers: builder => {
@@ -48,6 +89,29 @@ export const appStudentsSlice = createSlice({
       })
       .addCase(fetchCourses.fulfilled, (state, action) => {
         state.coursesData = action.payload
+      })
+      .addCase(fetchAvailableCourses.fulfilled, (state, action) => {
+        state.availableCourses = action.payload
+      })
+      .addCase(acceptContract.pending, state => {
+        state.acceptContractLoading = true
+      })
+      .addCase(acceptContract.fulfilled, (state, action) => {
+        state.acceptContractLoading = false
+      })
+      .addCase(acceptContract.rejected, state => {
+        state.acceptContractLoading = false
+      })
+
+      .addCase(fetchParentStudents.pending, state => {
+        state.childrenLoading = true
+      })
+      .addCase(fetchParentStudents.fulfilled, (state, action) => {
+        state.childrenLoading = false
+        state.parentStudents = action.payload
+      })
+      .addCase(fetchParentStudents.rejected, state => {
+        state.childrenLoading = false
       })
   }
 })

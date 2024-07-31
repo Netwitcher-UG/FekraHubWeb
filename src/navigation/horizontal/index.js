@@ -91,8 +91,23 @@ const navigation = () => {
       ]
     },
     {
+      icon: 'tabler:file-text',
       title: 'Reports',
       path: '/reports'
+    },
+    {
+      title: 'Children',
+      icon: 'tabler:users',
+      children: [
+        {
+          title: 'Registerd Children',
+          path: '/children'
+        },
+        {
+          title: 'Add Child',
+          path: '/children/add-child'
+        }
+      ]
     }
     // //     {
     // //       title: 'Roles & Permissions',

@@ -61,6 +61,21 @@ const navigation = () => {
       title: 'Room',
       icon: 'tabler:user',
       path: '/room'
+    },
+
+    {
+      title: 'Children',
+      icon: 'tabler:users',
+      children: [
+        {
+          title: 'Registerd Children',
+          path: '/children'
+        },
+        {
+          title: 'Add Child',
+          path: '/children/add-child'
+        }
+      ]
     }
 
     // {
