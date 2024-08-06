@@ -1,5 +1,5 @@
 // ** React Imports
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 
@@ -17,7 +17,7 @@ import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import DatePicker from 'react-datepicker'
 import CustomAvatar from 'src/@core/components/mui/avatar'
-import { Autocomplete } from '@mui/material'
+// import { Autocomplete } from '@mui/material'
 import { t } from 'i18next'
 import Translations from 'src/layouts/components/Translations'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
@@ -29,6 +29,7 @@ import toast from 'react-hot-toast'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { addStudent, acceptContract } from 'src/store/apps/students'
+import CourseCard from './course-card'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -73,7 +74,7 @@ const defaultPersonalValues = {
 }
 
 const accountSchema = yup.object().shape({
-  CourseID: yup.string().required()
+  // CourseID: yup.string().required()
 })
 
 const personalSchema = yup.object().shape({
@@ -86,7 +87,7 @@ const personalSchema = yup.object().shape({
   city: yup.string().required(),
   street: yup.string().required(),
   ZipCode: yup.string().required(),
-  Note: yup.string().required()
+  Note: yup.string()
 })
 
 const AddChildWizard = ({ courses }) => {
@@ -96,9 +97,16 @@ const AddChildWizard = ({ courses }) => {
   const [accountData, setAccountData] = useState(defaultAccountValues)
   const [combinedData, setCombinedData] = useState(null)
   const [base64File, setBase64File] = useState(null)
+  const [selectedCourse, setSelectedCourse] = useState(null)
   const dispatch = useDispatch()
   const router = useRouter()
   const { acceptContractLoading } = useSelector(state => state.students)
+
+  const renderData = courses.map((course, index) => (
+    <Grid item xs={12} sm={6} md={4} xl={3} key={index}>
+      <CourseCard course={course} selectedCourse={selectedCourse} setSelectedCourse={setSelectedCourse} />
+    </Grid>
+  ))
 
   const handleAcceptContract = async () => {
     const response = await dispatch(acceptContract(combinedData))
@@ -134,18 +142,23 @@ const AddChildWizard = ({ courses }) => {
     setActiveStep(activeStep + 1)
   }
 
-  const onSubmitAccount = async data => {
-    setAccountData(data)
-    const allData = { ...personalData, ...data }
+  const onSubmitAccount = async () => {
+    if (!selectedCourse) toast.error(<Translations text={'Please select a course '} />)
+    else {
+      setAccountData({ CourseID: selectedCourse })
+      // const allData = { ...personalData, ...data }
+      const allData = { ...personalData, CourseID: selectedCourse }
 
-    setCombinedData(allData)
+      console.log(allData)
+      setCombinedData(allData)
 
-    const response = await dispatch(addStudent(allData))
-    if (response?.payload?.status == 200) {
-      setBase64File(response?.payload?.data)
-      setActiveStep(activeStep + 1)
-    } else if (response?.payload?.status == 400) toast.error(<Translations text={response?.payload?.data} />)
-    else toast.error(<Translations text={'Something went wrong try again !'} />)
+      const response = await dispatch(addStudent(allData))
+      if (response?.payload?.status == 200) {
+        setBase64File(response?.payload?.data)
+        setActiveStep(activeStep + 1)
+      } else if (response?.payload?.status == 400) toast.error(<Translations text={response?.payload?.data} />)
+      else toast.error(<Translations text={'Something went wrong try again !'} />)
+    }
   }
 
   // Handle Stepper
@@ -361,6 +374,22 @@ const AddChildWizard = ({ courses }) => {
 
               <Grid item xs={12} sm={6}>
                 <Controller
+                  name='ZipCode'
+                  control={personalControl}
+                  render={({ field }) => (
+                    <CustomTextField
+                      {...field}
+                      error={Boolean(personalErrors.ZipCode)}
+                      {...(personalErrors.ZipCode && { helperText: 'This field is required' })}
+                      fullWidth
+                      label='Zipcode'
+                      placeholder='Enter Zipcode'
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Controller
                   name='Note'
                   control={personalControl}
                   render={({ field }) => (
@@ -374,22 +403,6 @@ const AddChildWizard = ({ courses }) => {
                       placeholder={t('Note')}
                       error={Boolean(personalErrors.Note)}
                       {...(personalErrors.Note && { helperText: 'This field is required' })}
-                    />
-                  )}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Controller
-                  name='ZipCode'
-                  control={personalControl}
-                  render={({ field }) => (
-                    <CustomTextField
-                      {...field}
-                      error={Boolean(personalErrors.ZipCode)}
-                      {...(personalErrors.ZipCode && { helperText: 'This field is required' })}
-                      fullWidth
-                      label='Zipcode'
-                      placeholder='Enter Zipcode'
                     />
                   )}
                 />
@@ -417,7 +430,7 @@ const AddChildWizard = ({ courses }) => {
                   {steps[1].subtitle}
                 </Typography>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              {/* <Grid item xs={12} sm={6}>
                 <Controller
                   name='CourseID'
                   control={accountControl}
@@ -446,6 +459,9 @@ const AddChildWizard = ({ courses }) => {
                     )
                   }}
                 />
+              </Grid> */}
+              <Grid container spacing={2} sx={{ mt: 4 }}>
+                {renderData}
               </Grid>
 
               <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }}>
