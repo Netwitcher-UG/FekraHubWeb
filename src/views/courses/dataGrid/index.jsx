@@ -1,6 +1,6 @@
 import { Card } from '@mui/material'
 import { Box, Stack } from '@mui/system'
-import React, { useEffect } from 'react'
+import React, { useEffect, useContext } from 'react'
 import CustomDataGrid from 'src/@core/components/custom-datagrid'
 import useCoursesColumns from '../hook/useCoursesColumns'
 import CustomSearch from 'src/@core/components/custom-search'
@@ -11,12 +11,14 @@ import DrawerEdit from '../edit'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchLocation } from 'src/store/apps/location'
+import { AbilityContext } from 'src/layouts/components/acl/Can'
 
 export default function CoursesDataGrid({ rows, dataRooms, dataTeacher, SetSearch, status }) {
   const { columns, isDialogOpen, handleCloseDialog, handleDelete, drawerData, open, handleCloseDrawer, DeleteName } =
     useCoursesColumns()
 
   const { data: locationData, error } = useSelector(state => state.location)
+  const ability = useContext(AbilityContext)
 
   const dispatch = useDispatch()
 
@@ -31,9 +33,11 @@ export default function CoursesDataGrid({ rows, dataRooms, dataTeacher, SetSearc
           <Box>
             <CustomSearch SetSearch={SetSearch} />
           </Box>
-          <Box>
-            <AddCourses dataRooms={dataRooms} dataTeacher={dataTeacher} />
-          </Box>
+          {ability.can('create', 'Course') && (
+            <Box>
+              <AddCourses dataRooms={dataRooms} dataTeacher={dataTeacher} />
+            </Box>
+          )}
         </Stack>
 
         <Box sx={{ height: 500 }}>

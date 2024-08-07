@@ -1,7 +1,8 @@
-import React, { useMemo, useState, useCallback } from 'react'
+import React, { useMemo, useState, useCallback, useContext } from 'react'
 import { Stack, Typography, IconButton } from '@mui/material'
 
 import { useDispatch } from 'react-redux'
+import { AbilityContext } from 'src/layouts/components/acl/Can'
 import { deleteCourse } from 'src/store/apps/courses'
 import Translations from 'src/layouts/components/Translations'
 
@@ -13,7 +14,7 @@ const useCoursesColumns = () => {
   const [selectedId, setSelectedId] = useState(null)
   const [drawerData, setDrawerData] = useState(null)
   const [open, setOpen] = useState(false)
-
+  const ability = useContext(AbilityContext)
   const handleOpenDrawer = useCallback(data => {
     setDrawerData(data)
     setOpen(true)
@@ -112,22 +113,26 @@ const useCoursesColumns = () => {
         renderCell: params => {
           return (
             <Stack direction={'row'} alignItems={'center'}>
-              <IconButton onClick={() => handleOpenDrawer(params.row)}>
-                <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24'>
-                  <path
-                    fill='currentColor'
-                    d='M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83l3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z'
-                  ></path>
-                </svg>
-              </IconButton>
-              <IconButton onClick={() => handleDeleteClick(params.row)}>
-                <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24'>
-                  <path
-                    fill='currentColor'
-                    d='M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6zM8 9h8v10H8zm7.5-5l-1-1h-5l-1 1H5v2h14V4z'
-                  ></path>
-                </svg>
-              </IconButton>
+              {ability.can('update', 'Course') && (
+                <IconButton onClick={() => handleOpenDrawer(params.row)}>
+                  <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24'>
+                    <path
+                      fill='currentColor'
+                      d='M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83l3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z'
+                    ></path>
+                  </svg>
+                </IconButton>
+              )}
+              {ability.can('delete', 'Course') && (
+                <IconButton onClick={() => handleDeleteClick(params.row)}>
+                  <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24'>
+                    <path
+                      fill='currentColor'
+                      d='M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6zM8 9h8v10H8zm7.5-5l-1-1h-5l-1 1H5v2h14V4z'
+                    ></path>
+                  </svg>
+                </IconButton>
+              )}
             </Stack>
           )
         }

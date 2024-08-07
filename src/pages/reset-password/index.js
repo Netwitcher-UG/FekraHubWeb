@@ -269,5 +269,5 @@ const ResetPasswordV1 = () => {
   )
 }
 ResetPasswordV1.getLayout = page => <BlankLayout>{page}</BlankLayout>
-
+ResetPasswordV1.guestGuard = true
 export default ResetPasswordV1

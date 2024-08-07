@@ -21,7 +21,8 @@ const AuthGuard = props => {
         !window.localStorage.getItem('userData') &&
         router.route != '/register' &&
         router.route != '/confirm-user' &&
-        router.route != '/reset-password'
+        router.route != '/reset-password' &&
+        router.route != '/404'
       ) {
         // if (router.asPath !== '/') {
         //   router.replace({

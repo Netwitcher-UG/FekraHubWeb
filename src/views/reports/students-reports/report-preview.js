@@ -8,6 +8,7 @@ import TableHead from '@mui/material/TableHead'
 import TableBody from '@mui/material/TableBody'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
+import { useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import CardContent from '@mui/material/CardContent'
 import { styled, useTheme } from '@mui/material/styles'
@@ -20,7 +21,7 @@ import { exportReport } from 'src/store/apps/reports'
 import { Button } from '@mui/material'
 import Icon from 'src/@core/components/icon'
 import { downloadBase64File } from 'src/@core/utils/download-base64'
-
+import { AbilityContext } from 'src/layouts/components/acl/Can'
 // ** Configs
 import themeConfig from 'src/configs/themeConfig'
 
@@ -34,6 +35,7 @@ const MUITableCell = styled(TableCell)(({ theme }) => ({
 }))
 
 const PreviewReport = ({ data }) => {
+  const ability = useContext(AbilityContext)
   // ** Hook
   const singleElement = data?.reports ? (data?.reports[0] ? data?.reports[0] : data?.reports) : null
 
@@ -61,24 +63,26 @@ const PreviewReport = ({ data }) => {
   if (singleElement) {
     return (
       <>
-        <Button
-          color='primary'
-          disabled={exportLoading}
-          onClick={() => handleExportReport()}
-          variant='contained'
-          sx={{ mb: 4 }}
-        >
-          {exportLoading ? (
-            <CircularProgress size={30} />
-          ) : (
-            <>
-              <Box sx={{ mr: 2 }}>
-                <Icon fontSize='1.125rem' icon='ph:export-bold' />
-              </Box>
-              <Translations text={'Export'} />
-            </>
-          )}
-        </Button>
+        {ability.can('export', 'Report') && (
+          <Button
+            color='primary'
+            disabled={exportLoading}
+            onClick={() => handleExportReport()}
+            variant='contained'
+            sx={{ mb: 4 }}
+          >
+            {exportLoading ? (
+              <CircularProgress size={30} />
+            ) : (
+              <>
+                <Box sx={{ mr: 2 }}>
+                  <Icon fontSize='1.125rem' icon='ph:export-bold' />
+                </Box>
+                <Translations text={'Export'} />
+              </>
+            )}
+          </Button>
+        )}
         <Card>
           <CardContent sx={{ p: [`${theme.spacing(6)} !important`, `${theme.spacing(10)} !important`] }}>
             <Grid container>

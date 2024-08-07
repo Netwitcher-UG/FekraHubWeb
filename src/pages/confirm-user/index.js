@@ -47,6 +47,6 @@ const ConfirmPage = () => {
   )
 }
 ConfirmPage.getLayout = page => <BlankLayout>{page}</BlankLayout>
-// ConfirmPage.guestGuard = true
+ConfirmPage.guestGuard = true
 
 export default ConfirmPage

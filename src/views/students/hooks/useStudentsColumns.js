@@ -1,7 +1,8 @@
-import { useMemo, useState, useCallback } from 'react'
+import { useMemo, useState, useCallback, useContext } from 'react'
 import Translations from 'src/layouts/components/Translations'
 import Chip from '@mui/material/Chip'
 import Icon from 'src/@core/components/icon'
+import { AbilityContext } from 'src/layouts/components/acl/Can'
 import { convertDate } from 'src/@core/utils/convert-date'
 import IconButton from '@mui/material/IconButton'
 const useStudentsColumns = () => {
@@ -12,6 +13,7 @@ const useStudentsColumns = () => {
 
   const [open, setOpen] = useState(false)
   const [drawerData, setDrawerData] = useState(null)
+  const ability = useContext(AbilityContext)
 
   const handleOpenDrawer = useCallback(data => {
     setDrawerData(data)
@@ -30,9 +32,13 @@ const useStudentsColumns = () => {
         width: 100,
         headerName: '',
         renderCell: ({ row }) => (
-          <IconButton color='success' onClick={e => handleAddReportClick(e, row)} sx={{ width: '80%' }}>
-            <Icon icon='tabler:file-plus' fontSize={30} />
-          </IconButton>
+          <>
+            {ability.can('create', 'StudentReport') && (
+              <IconButton color='success' onClick={e => handleAddReportClick(e, row)} sx={{ width: '80%' }}>
+                <Icon icon='tabler:file-plus' fontSize={30} />
+              </IconButton>
+            )}
+          </>
         ),
         sortable: false
       },

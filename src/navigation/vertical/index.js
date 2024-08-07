@@ -15,16 +15,20 @@ const navigation = () => {
     //   ]
     // },
     {
-      title: 'Users Managament',
+      title: 'Manage Users',
       icon: 'tabler:user',
       children: [
         {
           title: 'Parents',
-          path: '/users/parents'
+          path: '/users/parents',
+          subject: 'Parent',
+          action: 'read'
         },
         {
           title: 'Employees',
-          path: '/users/employees'
+          path: '/users/employees',
+          subject: 'Employee',
+          action: 'read'
         }
       ]
     },
@@ -34,33 +38,39 @@ const navigation = () => {
       children: [
         {
           title: 'Avilable Students',
-          path: '/students'
+          path: '/students',
+          subject: 'StudentCourse',
+          action: 'read'
         }
-        // {
-        //   title: 'Employees',
-        //   path: '/users/employees'
-        // }
       ]
     },
     {
       title: 'Courses',
       icon: 'tabler:user',
-      path: '/courses'
+      path: '/courses',
+      action: 'read',
+      subject: 'Course'
     },
     {
       title: 'Location',
       icon: 'tabler:user',
-      path: '/location'
+      path: '/location',
+      action: 'manage',
+      subject: 'Location'
     },
     {
       icon: 'tabler:file-text',
       title: 'Reports',
-      path: '/reports'
+      path: '/reports',
+      action: 'read',
+      subject: 'StudentReport'
     },
     {
       title: 'Room',
       icon: 'tabler:user',
-      path: '/room'
+      path: '/room',
+      action: 'manage',
+      subject: 'Room'
     },
 
     {
@@ -69,11 +79,15 @@ const navigation = () => {
       children: [
         {
           title: 'Registerd Children',
-          path: '/children'
+          path: '/children',
+          action: 'manage',
+          subject: 'Children'
         },
         {
           title: 'Add Child',
-          path: '/children/add-child'
+          path: '/children/add-child',
+          action: 'manage',
+          subject: 'Children'
         }
       ]
     }

@@ -14,12 +14,13 @@ import { Box, Stack } from '@mui/system'
 import Button from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
 import DrawerReportSlip from './drawer-report-slip'
-import React, { useEffect } from 'react'
+import React, { useEffect, useContext } from 'react'
 import { acceptReport, unAcceptReport, exportReport } from 'src/store/apps/reports'
 import Translations from 'src/layouts/components/Translations'
 import toast from 'react-hot-toast'
 import Icon from 'src/@core/components/icon'
 import { downloadBase64File } from 'src/@core/utils/download-base64'
+import { AbilityContext } from 'src/layouts/components/acl/Can'
 
 import styled from '@emotion/styled'
 import { useDispatch, useSelector } from 'react-redux'
@@ -33,6 +34,7 @@ const Header = styled(Box)(({ theme }) => ({
 }))
 
 export default function ReportPreviewDrawer({ open, handleCloseDrawer, rowData }) {
+  const ability = useContext(AbilityContext)
   const dispatch = useDispatch()
   const { acceptLoading, unAcceptLoading, exportLoading } = useSelector(state => state.reports)
 
@@ -107,7 +109,7 @@ export default function ReportPreviewDrawer({ open, handleCloseDrawer, rowData }
       <Divider variant='middle' />
 
       <Stack padding={4} sx={{ gap: '8px' }}>
-        {rowData?.improved == true && (
+        {ability.can('export', 'Report') && rowData?.improved == true && (
           <Button color='primary' disabled={exportLoading} onClick={() => handleExportReport()} variant='contained'>
             {exportLoading ? (
               <CircularProgress size={30} />
@@ -134,32 +136,34 @@ export default function ReportPreviewDrawer({ open, handleCloseDrawer, rowData }
             justifyContent={'flex-start'}
             spacing={4}
           >
-            <Box>
-              {rowData?.improved === null && (
-                <>
-                  <Button
-                    type='button'
-                    color='success'
-                    sx={{ m: 2 }}
-                    variant='contained'
-                    onClick={() => handleReportApprove()}
-                    disabled={acceptLoading || unAcceptLoading}
-                  >
-                    Approve
-                  </Button>
+            {ability.can('approve', 'Report') && (
+              <Box>
+                {rowData?.improved === null && (
+                  <>
+                    <Button
+                      type='button'
+                      color='success'
+                      sx={{ m: 2 }}
+                      variant='contained'
+                      onClick={() => handleReportApprove()}
+                      disabled={acceptLoading || unAcceptLoading}
+                    >
+                      Approve
+                    </Button>
 
-                  <Button
-                    type='button'
-                    color='error'
-                    variant='contained'
-                    disabled={acceptLoading || unAcceptLoading}
-                    onClick={() => handleReportDisapprove()}
-                  >
-                    Disapprove
-                  </Button>
-                </>
-              )}
-            </Box>
+                    <Button
+                      type='button'
+                      color='error'
+                      variant='contained'
+                      disabled={acceptLoading || unAcceptLoading}
+                      onClick={() => handleReportDisapprove()}
+                    >
+                      Disapprove
+                    </Button>
+                  </>
+                )}
+              </Box>
+            )}
             <Button
               type='button'
               color='secondary'
