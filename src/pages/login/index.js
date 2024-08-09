@@ -118,6 +118,7 @@ const LoginPage = () => {
 
   const onSubmit = async data => {
     const { email, password } = data
+    setEmailNotConfirmed(false)
     await auth.login({ email, password, setEmailNotConfirmed }, () => {
       setError('email', {
         type: 'manual',

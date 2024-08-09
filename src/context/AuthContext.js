@@ -193,7 +193,7 @@ const AuthProvider = ({ children }) => {
     } catch (error) {
       if (error?.response?.status == 401) {
         toast.error('Email or Password are incorrect!')
-      } else if (error?.response?.status == 400) params.setEmailNotConfirmed(true)
+      } else if (error?.response?.status == 409) params.setEmailNotConfirmed(true)
       else console.log(error)
     }
   }
