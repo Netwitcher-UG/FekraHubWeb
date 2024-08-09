@@ -41,7 +41,7 @@ const ChildCard = props => {
           variant='h5'
           color='primary'
           sx={{ cursor: 'pointer' }}
-          onClick={() => router.push(`/students/${child.id}`)}
+          onClick={() => router.push(`/children/${child.id}`)}
         >
           <u>
             {' '}

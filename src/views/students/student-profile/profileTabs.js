@@ -7,18 +7,19 @@ import TabList from '@mui/lab/TabList'
 import TabPanel from '@mui/lab/TabPanel'
 import TabContext from '@mui/lab/TabContext'
 import Typography from '@mui/material/Typography'
-import { fetchReportsByFilter } from 'src/store/apps/reports'
+import { fetchReportsByFilter, fetchChildReports } from 'src/store/apps/reports'
 import { useDispatch, useSelector } from 'react-redux'
 import StudentReportsTab from './reports-list/reports-tab'
 
-const StudentProfile = ({ student }) => {
+const StudentProfile = ({ student, byParent = false }) => {
   // ** State
   const [value, setValue] = useState('1')
   const dispatch = useDispatch()
   const store = useSelector(state => state.reports)
   useEffect(() => {
     if (!student) return
-    dispatch(fetchReportsByFilter({ student: student, improved: true }))
+    if (byParent) dispatch(fetchChildReports(student))
+    else dispatch(fetchReportsByFilter({ student: student, improved: true }))
   }, [student])
 
   const handleChange = (event, newValue) => {
@@ -35,7 +36,7 @@ const StudentProfile = ({ student }) => {
         <Typography>Profile</Typography>
       </TabPanel>
       <TabPanel value='2'>
-        <StudentReportsTab store={store} />
+        <StudentReportsTab store={store} byParent={byParent} />
       </TabPanel>
     </TabContext>
   )

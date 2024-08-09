@@ -33,7 +33,8 @@ const StudentReportsDataGrid = ({
   handleFilter,
   selectedCourse,
   setSelectedCourse,
-  handleRowClick
+  handleRowClick,
+  byParent
 }) => {
   //   const handleCourseChange = e => {
   //     setSelectedCourse(e.target.value)
@@ -82,7 +83,7 @@ const StudentReportsDataGrid = ({
       <Divider sx={{ m: '0 !important' }} />
       {/* <TableHeader value={value} setValue={setValue} handleFilter={handleFilter} /> */}
       <Box sx={{ height: 500 }}>
-        {store.loading ? (
+        {(byParent ? store.childReportsLoading : store.loading) ? (
           <Box
             sx={{
               display: 'flex',
@@ -97,7 +98,7 @@ const StudentReportsDataGrid = ({
         ) : (
           <DataGrid
             rowHeight={62}
-            rows={store?.data?.reports || []}
+            rows={(byParent ? store?.childReports : store?.data?.reports) || []}
             columns={columns}
             hideFooter={true}
             disableRowSelectionOnClick

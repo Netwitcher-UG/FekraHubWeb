@@ -5,7 +5,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 
 // ** MUI Components
-// import Alert from '@mui/material/Alert'
+import Alert from '@mui/material/Alert'
 import Button from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
 // import Divider from '@mui/material/Divider'
@@ -92,7 +92,7 @@ const defaultValues = {
 }
 
 const LoginPage = () => {
-  // const [rememberMe, setRememberMe] = useState(true)
+  const [emailNotConfirmed, setEmailNotConfirmed] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
   // ** Hooks
@@ -118,7 +118,7 @@ const LoginPage = () => {
 
   const onSubmit = async data => {
     const { email, password } = data
-    await auth.login({ email, password }, () => {
+    await auth.login({ email, password, setEmailNotConfirmed }, () => {
       setError('email', {
         type: 'manual',
         message: 'Email or Password is invalid'
@@ -191,14 +191,13 @@ const LoginPage = () => {
               </Typography>
               <Typography sx={{ color: 'text.secondary' }}>Please sign-in to your account</Typography>
             </Box>
-            {/* <Alert icon={false} sx={{ py: 3, mb: 6, ...bgColors.primaryLight, '& .MuiAlert-message': { p: 0 } }}>
-              <Typography variant='body2' sx={{ mb: 2, color: 'primary.main' }}>
-                Admin: <strong>admin@vuexy.com</strong> / Pass: <strong>admin</strong>
-              </Typography>
-              <Typography variant='body2' sx={{ color: 'primary.main' }}>
-                Client: <strong>client@vuexy.com</strong> / Pass: <strong>client</strong>
-              </Typography>
-            </Alert> */}
+            {emailNotConfirmed && (
+              <Alert icon={false} sx={{ py: 3, mb: 6, ...bgColors.primaryLight, '& .MuiAlert-message': { p: 0 } }}>
+                <Typography variant='body2' sx={{ mb: 2, color: 'warning.main' }}>
+                  Your account is not activated ! The confirmation link was resent to your email please check it
+                </Typography>
+              </Alert>
+            )}
             <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
               <Box sx={{ mb: 4 }}>
                 <Controller

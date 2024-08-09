@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid'
 import useStudentReportsColumns from '../../hooks/useStudentReportsColumns'
 import StudentReportsDataGrid from './dataGrid'
 import { useRouter } from 'next/router'
-const StudentReportsTab = ({ store }) => {
+const StudentReportsTab = ({ store, byParent }) => {
   // const [value, setValue] = useState('')
   // const [selectedCourse, setSelectedCourse] = useState(0)
   // const [searchTerm, setSearchTerm] = useState('')
@@ -14,7 +14,7 @@ const StudentReportsTab = ({ store }) => {
   const handleRowClick = params => {
     const currentPath = window.location.pathname
 
-    const newPath = `${currentPath}/report/${params.row.id}`
+    const newPath = `${currentPath}report/${params.row.id}`
 
     router.push(newPath)
   }
@@ -45,6 +45,7 @@ const StudentReportsTab = ({ store }) => {
             columns={columns}
             handleRowClick={handleRowClick}
             store={store}
+            byParent={byParent}
             // setValue={setValue}
             // value={value}
             // handleFilter={setSearchTerm}

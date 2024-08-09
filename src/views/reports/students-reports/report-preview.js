@@ -37,7 +37,13 @@ const MUITableCell = styled(TableCell)(({ theme }) => ({
 const PreviewReport = ({ data }) => {
   const ability = useContext(AbilityContext)
   // ** Hook
-  const singleElement = data?.reports ? (data?.reports[0] ? data?.reports[0] : data?.reports) : null
+  const singleElement = data?.reports
+    ? data?.reports[0]
+      ? data?.reports[0]
+      : data?.reports
+    : data && !data?.reports
+    ? data
+    : null
 
   const parsedData = JSON.parse(singleElement?.data)
 
@@ -45,7 +51,7 @@ const PreviewReport = ({ data }) => {
   const { exportLoading } = useSelector(state => state.reports)
   const dispatch = useDispatch()
   const handleExportReport = async () => {
-    const response = await dispatch(exportReport(singleElement.id))
+    const response = await dispatch(exportReport(singleElement?.id))
 
     if (response?.payload?.status != 200) {
       toast.error(<Translations text={'Export failed try again !'} />, 1000)

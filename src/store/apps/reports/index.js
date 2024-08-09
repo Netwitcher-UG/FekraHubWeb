@@ -105,6 +105,24 @@ export const updateReport = createAsyncThunk('appReports/updateReport', async (u
   }
 })
 
+export const fetchChildReports = createAsyncThunk('appReports/fetchChildReports', async student => {
+  try {
+    const response = await axiosInstance.get(`/api/Reports/GetReportsByStudent?studentId=${student}`)
+    return response.data
+  } catch (error) {
+    return error.response
+  }
+})
+
+export const fetchSingleChildReport = createAsyncThunk('appReports/fetchSingleChildReport', async id => {
+  try {
+    const response = await axiosInstance.get(`/api/Reports/GetOneReport/${id}`)
+    return response.data
+  } catch (error) {
+    return error.response
+  }
+})
+
 export const appReportsSlice = createSlice({
   name: 'appReports',
   initialState: {
@@ -117,7 +135,9 @@ export const appReportsSlice = createSlice({
     loading: false,
     acceptLoading: false,
     unAcceptLoading: false,
-    exportLoading: false // Add exportLoading state here
+    exportLoading: false,
+    childReports: [],
+    childReportsLoading: false
   },
   reducers: {},
   extraReducers: builder => {
@@ -166,6 +186,16 @@ export const appReportsSlice = createSlice({
       })
       .addCase(exportReport.rejected, state => {
         state.exportLoading = false
+      })
+      .addCase(fetchChildReports.pending, state => {
+        state.childReportsLoading = true
+      })
+      .addCase(fetchChildReports.fulfilled, (state, action) => {
+        state.childReportsLoading = false
+        state.childReports = action.payload
+      })
+      .addCase(fetchChildReports.rejected, state => {
+        state.childReportsLoading = false
       })
   }
 })
