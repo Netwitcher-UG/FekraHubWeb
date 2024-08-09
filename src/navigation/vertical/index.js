@@ -90,6 +90,13 @@ const navigation = () => {
           subject: 'Children'
         }
       ]
+    },
+    {
+      title: 'Worksheets',
+      icon: 'tabler:user',
+      path: '/worksheets/worksheets',
+      action: 'manage',
+      subject: 'File'
     }
 
     // {

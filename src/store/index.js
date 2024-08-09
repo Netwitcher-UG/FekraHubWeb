@@ -13,6 +13,7 @@ import students from 'src/store/apps/students'
 import courses from 'src/store/apps/courses'
 import location from 'src/store/apps/location'
 import reports from 'src/store/apps/reports'
+import worksheet from 'src/store/apps/worksheets/worksheets'
 
 export const store = configureStore({
   reducer: {
@@ -20,7 +21,8 @@ export const store = configureStore({
     students,
     courses,
     location,
-    reports
+    reports,
+    worksheet
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
