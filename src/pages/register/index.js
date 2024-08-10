@@ -51,7 +51,7 @@ const RegisterV1 = () => {
   const theme = useTheme()
 
   const schema = yup.object().shape({
-    username: yup.string().required('Username is required'),
+    // username: yup.string().required('Username is required'),
     password: yup
       .string()
       .required('Password is required')
@@ -84,13 +84,13 @@ const RegisterV1 = () => {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      username: '',
+      // username: '',
       password: '',
       email: '',
-      phoneNumber: Number(''),
+      phoneNumber: null,
       firstName: '',
       lastname: '',
-      emergencyPhoneNumber: Number(''),
+      emergencyPhoneNumber: null,
       birthplace: '',
       nationality: '',
       street: '',
@@ -108,7 +108,7 @@ const RegisterV1 = () => {
     const formattedDate = parsedDate?.toLocaleDateString('en-US')
     try {
       const formData = new FormData()
-      formData.append('username', data.username)
+      // formData.append('username', data.username)
       formData.append('password', data.password)
       formData.append('email', data.email)
       formData.append('phoneNumber', data.phoneNumber.toString())
@@ -194,7 +194,7 @@ const RegisterV1 = () => {
                   style={{ width: '100%', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}
                 >
                   <Grid container spacing={5}>
-                    <Grid item xs={12} sm={6}>
+                    {/* <Grid item xs={12} sm={6}>
                       <Controller
                         name='username'
                         control={control}
@@ -211,7 +211,7 @@ const RegisterV1 = () => {
                           />
                         )}
                       />
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={12} sm={6}>
                       <Controller
                         name='email'
@@ -271,7 +271,7 @@ const RegisterV1 = () => {
                             fullWidth
                             label='Phone Number'
                             placeholder='Enter your phone number'
-                            type='tel'
+                            type='number'
                             error={!!errors.phoneNumber}
                             helperText={errors.phoneNumber?.message}
                           />
@@ -332,7 +332,7 @@ const RegisterV1 = () => {
                               displayEmpty: true
                             }}
                           >
-                            <MenuItem value='' disabled>
+                            <MenuItem value='' sx={{ display: 'none' }}>
                               <em>Select Gender</em>
                             </MenuItem>
                             <MenuItem key={1} value={'male'}>
@@ -356,7 +356,7 @@ const RegisterV1 = () => {
                             fullWidth
                             label='Emergency Phone Number'
                             placeholder='Enter your emergency phone number'
-                            type='tel' // Restrict input to numbers
+                            type='number' // Restrict input to numbers
                             error={!!errors.emergencyPhoneNumber}
                             helperText={errors.emergencyPhoneNumber?.message}
                           />
@@ -373,7 +373,9 @@ const RegisterV1 = () => {
                               <DatePicker
                                 selected={value}
                                 onChange={onChange}
-                                dateFormat='yyyy/MM/dd'
+                                dateFormat='dd/MM/yyyy'
+                                showYearDropdown
+                                showMonthDropdown
                                 customInput={<CustomTextField label='Birthday' fullWidth />}
                                 placeholderText='Birthday'
                                 error={!!errors.birthday}

@@ -36,7 +36,7 @@ import { boxSizing } from '@mui/system'
 
 // Validation Schema
 const schema = yup.object().shape({
-  username: yup.string().required('Username is required'),
+  // username: yup.string().required('Username is required'),
   email: yup.string().email('Email is invalid').required('Email is required'),
   password: yup
     .string()
@@ -45,14 +45,8 @@ const schema = yup.object().shape({
     .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
     .matches(/[0-9]/, 'Password must contain at least one number')
     .matches(/[\W_]/, 'Password must contain at least one non-alphanumeric character'),
-  //   password2: yup
-  //     .string()
-  //     .required('Confirm Password is required')
-  //     .oneOf([yup.ref('password'), null], 'Passwords must match'),
   firstName: yup.string(),
   lastname: yup.string(),
-  //   country: yup.string(),
-  //   language: yup.array().of(yup.string()),
   birthday: yup.date().nullable(),
   nationality: yup.string(),
   phoneNumber: yup.number().typeError('Must be a number'),
@@ -77,13 +71,11 @@ const FormLayoutsSeparator = () => {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      username: '',
+      // username: '',
       email: '',
       password: '',
-      //   password2: '',
       firstName: '',
       lastname: '',
-      //   country: '',
       nationality: '',
       birthplace: '',
       birthday: null,
@@ -127,7 +119,7 @@ const FormLayoutsSeparator = () => {
                 1. Account Details
               </Typography>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            {/* <Grid item xs={12} sm={6}>
               <Controller
                 name='username'
                 control={control}
@@ -142,7 +134,7 @@ const FormLayoutsSeparator = () => {
                   />
                 )}
               />
-            </Grid>
+            </Grid> */}
             <Grid item xs={12} sm={6}>
               <Controller
                 name='email'
@@ -281,7 +273,7 @@ const FormLayoutsSeparator = () => {
                       displayEmpty: true
                     }}
                   >
-                    <MenuItem value='' disabled>
+                    <MenuItem value='' sx={{ display: 'none' }}>
                       <em>Select Gender</em>
                     </MenuItem>
                     <MenuItem key={1} value={'male'}>
@@ -355,7 +347,8 @@ const FormLayoutsSeparator = () => {
                       selected={field.value}
                       showYearDropdown
                       showMonthDropdown
-                      placeholderText='MM-DD-YYYY'
+                      dateFormat='dd/MM/yyyy'
+                      placeholderText='birthDate'
                       customInput={<CustomInput />}
                       id='form-layouts-separator-date'
                       onChange={date => field.onChange(date)}

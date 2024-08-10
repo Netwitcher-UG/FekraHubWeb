@@ -275,7 +275,7 @@ const AddChildWizard = ({ courses }) => {
                       <DatePicker
                         selected={value}
                         onChange={onChange}
-                        dateFormat='yyyy/MM/dd'
+                        dateFormat='dd/MM/yyyy'
                         showYearDropdown
                         showMonthDropdown
                         customInput={
