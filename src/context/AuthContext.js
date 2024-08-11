@@ -42,7 +42,7 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const initAuth = async () => {
       const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)
-      const storedRolesPermissions = JSON.parse(window.localStorage.getItem('rolesPermissions'))
+      // const storedRolesPermissions = JSON.parse(window.localStorage.getItem('rolesPermissions'))
       if (storedToken) {
         setLoading(true)
         await axios
@@ -55,7 +55,18 @@ const AuthProvider = ({ children }) => {
             const decoded = jwt.decode(storedToken)
             setLoading(false)
             setUser({ ...decoded })
-            setRolesPermissions(storedRolesPermissions)
+            // setRolesPermissions(storedRolesPermissions)
+            // const rolesResponse = await axios.post(
+            //   `${process.env.NEXT_PUBLIC_BACK_END_URL}/api/AuthorizationUsers/RolePermissions`,
+            //   {
+            //     headers: {
+            //       Authorization: `Bearer ${token}`
+            //     }
+            //   }
+            // )
+            // const rolesPermissions = rolesResponse.data
+            // // localStorage.setItem('rolesPermissions', JSON.stringify(rolesPermissions))
+            // setRolesPermissions(rolesPermissions)
           })
           .catch(error => {
             console.log(error)
@@ -176,7 +187,7 @@ const AuthProvider = ({ children }) => {
           )
 
           const rolesPermissions = rolesResponse.data
-          localStorage.setItem('rolesPermissions', JSON.stringify(rolesPermissions))
+          // localStorage.setItem('rolesPermissions', JSON.stringify(rolesPermissions))
           setRolesPermissions(rolesPermissions)
           router.replace('/')
         } catch (rolesError) {
@@ -288,7 +299,7 @@ const AuthProvider = ({ children }) => {
     setToken(null)
     window.localStorage.removeItem('userData')
     window.localStorage.removeItem(authConfig.storageTokenKeyName)
-    window.localStorage.removeItem('rolesPermissions')
+    // window.localStorage.removeItem('rolesPermissions')
     router.push('/login')
   }
 
@@ -297,7 +308,9 @@ const AuthProvider = ({ children }) => {
     loading,
     setUser,
     token,
+    setToken,
     rolesPermissions,
+    setRolesPermissions,
     setLoading,
     login: handleLogin,
     register: handleRegister,

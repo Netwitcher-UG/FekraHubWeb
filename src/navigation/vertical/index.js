@@ -16,7 +16,7 @@ const navigation = () => {
     // },
     {
       title: 'Manage Users',
-      icon: 'tabler:user',
+      icon: 'la:users-cog',
       children: [
         {
           title: 'Parents',
@@ -33,8 +33,15 @@ const navigation = () => {
       ]
     },
     {
+      title: 'Roles',
+      icon: 'tabler:shield',
+      path: '/roles',
+      action: 'manage',
+      subject: 'Permission'
+    },
+    {
       title: 'Students',
-      icon: 'tabler:user',
+      icon: 'ph:student',
       children: [
         {
           title: 'Avilable Students',
@@ -46,28 +53,28 @@ const navigation = () => {
     },
     {
       title: 'Courses',
-      icon: 'tabler:user',
+      icon: 'fluent-mdl2:publish-course',
       path: '/courses',
       action: 'read',
       subject: 'Course'
     },
     {
-      title: 'Location',
-      icon: 'tabler:user',
+      title: 'Locations',
+      icon: 'ep:map-location',
       path: '/location',
       action: 'manage',
       subject: 'Location'
     },
     {
-      icon: 'tabler:file-text',
+      icon: 'carbon:report',
       title: 'Reports',
       path: '/reports',
       action: 'read',
       subject: 'StudentReport'
     },
     {
-      title: 'Room',
-      icon: 'tabler:user',
+      title: 'Rooms',
+      icon: 'fluent:conference-room-24-regular',
       path: '/room',
       action: 'manage',
       subject: 'Room'
@@ -93,7 +100,7 @@ const navigation = () => {
     },
     {
       title: 'Worksheets',
-      icon: 'tabler:user',
+      icon: 'ph:files',
       path: '/worksheets/worksheets',
       action: 'manage',
       subject: 'File'

@@ -37,7 +37,7 @@ import { boxSizing } from '@mui/system'
 
 // Validation Schema
 const schema = yup.object().shape({
-  username: yup.string().required('Username is required'),
+  // username: yup.string().required('Username is required'),
   email: yup.string().email('Email is invalid').required('Email is required'),
   password: yup
     .string()
@@ -79,7 +79,7 @@ const FormLayoutsSeparator = () => {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      username: '',
+      // username: '',
       email: '',
       password: '',
       firstName: '',
@@ -130,7 +130,7 @@ const FormLayoutsSeparator = () => {
                 1. Account Details
               </Typography>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            {/* <Grid item xs={12} sm={6}>
               <Controller
                 name='username'
                 control={control}
@@ -145,7 +145,7 @@ const FormLayoutsSeparator = () => {
                   />
                 )}
               />
-            </Grid>
+            </Grid> */}
             <Grid item xs={12} sm={6}>
               <Controller
                 name='email'

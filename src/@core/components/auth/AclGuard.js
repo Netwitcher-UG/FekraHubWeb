@@ -3,7 +3,9 @@ import { useEffect } from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
-
+import authConfig from 'src/configs/auth'
+import axios from 'axios'
+import toast from 'react-hot-toast'
 // ** Context Imports
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 
@@ -38,12 +40,39 @@ const AclGuard = props => {
   // }, [auth.user, guestGuard, router])
 
   useEffect(() => {
+    const getRoles = async () => {
+      try {
+        const rolesResponse = await axios.post(
+          `${process.env.NEXT_PUBLIC_BACK_END_URL}/api/AuthorizationUsers/RolePermissions`,
+          {
+            headers: {
+              Authorization: `Bearer ${auth.token}`
+            }
+          }
+        )
+
+        const rolesPermissions = rolesResponse.data
+        auth.setRolesPermissions(rolesPermissions)
+      } catch (rolesError) {
+        console.log(rolesError)
+        window.localStorage.removeItem(authConfig.storageTokenKeyName)
+        window.localStorage.removeItem('userData')
+        auth.setUser(null)
+        auth.setToken(null)
+        router.replace('/login')
+        toast.error('Failed to retrieve roles and permissions. Please try again.')
+      }
+    }
+    if (auth.user) getRoles()
+  }, [])
+
+  useEffect(() => {
     if (router.route === '/') router.replace('/dashboards/analytics/')
     if (router.route === '/login' && window.localStorage.getItem('userData')) router.replace('/')
   }, [router])
 
   // User is logged in, build ability for the user based on his role
-  if (auth.user && !ability) {
+  if (auth.user && !ability && auth.rolesPermissions) {
     ability = defineAbilitiesFor(auth.user.role, auth.rolesPermissions)
     if (router.route === '/') {
       return <Spinner />
@@ -82,7 +111,8 @@ const AclGuard = props => {
     '/users/employees': { action: 'read', subject: 'Employee' },
     '/users/parents': { action: 'read', subject: 'Parent' },
     '/children': { action: 'manage', subject: 'Children' },
-    '/children/add-child': { action: 'manage', subject: 'Children' }
+    '/children/add-child': { action: 'manage', subject: 'Children' },
+    '/roles': { action: 'manage', subject: 'Permission' }
   }
 
   if (ability && auth.user) {
