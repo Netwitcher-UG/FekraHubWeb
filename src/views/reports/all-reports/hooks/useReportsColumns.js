@@ -40,7 +40,7 @@ const useReportsColumns = () => {
         field: 'reportDate',
         renderCell: ({ row }) => (
           <>
-            {row.month} / {row.year}
+            {row.month}.{row.year}
           </>
         )
       },

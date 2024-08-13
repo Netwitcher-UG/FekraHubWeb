@@ -91,7 +91,9 @@ const DrawerReportSlip = ({ data }) => {
                         <Typography variant='h5'>Report Date:</Typography>
                       </MUITableCell>
                       <MUITableCell>
-                        <Typography variant='h5'>{`${convertDate(singleElement.creationDate)}`}</Typography>
+                        <Typography variant='h5'>
+                          {singleElement?.month}.{singleElement?.year}
+                        </Typography>
                       </MUITableCell>
                     </TableRow>
                     <TableRow>

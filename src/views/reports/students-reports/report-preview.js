@@ -141,7 +141,9 @@ const PreviewReport = ({ data }) => {
                           <Typography variant='h4'>Report Date:</Typography>
                         </MUITableCell>
                         <MUITableCell>
-                          <Typography variant='h4'>{`${convertDate(singleElement.creationDate)}`}</Typography>
+                          <Typography variant='h4'>
+                            {singleElement?.month}.{singleElement?.year}
+                          </Typography>
                         </MUITableCell>
                       </TableRow>
                       <TableRow>

@@ -1,5 +1,5 @@
 // ** React Imports
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 
@@ -17,7 +17,12 @@ import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import DatePicker from 'react-datepicker'
 import CustomAvatar from 'src/@core/components/mui/avatar'
-// import { Autocomplete } from '@mui/material'
+import countryList from 'react-select-country-list'
+import { Autocomplete } from '@mui/material'
+
+import Checkbox from '@mui/material/Checkbox'
+import FormControlLabel from '@mui/material/FormControlLabel'
+
 import { t } from 'i18next'
 import Translations from 'src/layouts/components/Translations'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
@@ -101,6 +106,10 @@ const AddChildWizard = ({ courses }) => {
   const dispatch = useDispatch()
   const router = useRouter()
   const { acceptContractLoading } = useSelector(state => state.students)
+  const countryOptions = useMemo(() => countryList().getData(), [])
+
+  const [isChecked1, setIsChecked1] = useState(false)
+  const [isChecked2, setIsChecked2] = useState(false)
 
   const renderData = courses.map((course, index) => (
     <Grid item xs={12} sm={6} md={4} xl={3} key={index}>
@@ -275,7 +284,7 @@ const AddChildWizard = ({ courses }) => {
                       <DatePicker
                         selected={value}
                         onChange={onChange}
-                        dateFormat='dd/MM/yyyy'
+                        dateFormat='dd.MM.yyyy'
                         showYearDropdown
                         showMonthDropdown
                         customInput={
@@ -311,16 +320,31 @@ const AddChildWizard = ({ courses }) => {
                 <Controller
                   name='nationality'
                   control={personalControl}
-                  render={({ field }) => (
-                    <CustomTextField
-                      {...field}
-                      error={Boolean(personalErrors.nationality)}
-                      {...(personalErrors.nationality && { helperText: 'This field is required' })}
-                      fullWidth
-                      label='Nationality'
-                      placeholder='Enter nationality'
-                    />
-                  )}
+                  render={({ field }) => {
+                    const selectedCountry = countryOptions.find(country => country.label === field.value)
+
+                    return (
+                      <Autocomplete
+                        options={countryOptions.map(country => ({ value: country.label, label: country.label }))}
+                        getOptionLabel={option => option.label || ''}
+                        value={selectedCountry ? { value: selectedCountry.label, label: selectedCountry.label } : null}
+                        onChange={(event, newValue) => {
+                          field.onChange(newValue ? newValue.value : '')
+                        }}
+                        renderInput={params => (
+                          <CustomTextField
+                            {...params}
+                            fullWidth
+                            placeholder=' Country / nationality'
+                            label='Select Country / nationality'
+                            variant='outlined'
+                            error={Boolean(personalErrors.nationality)}
+                            {...(personalErrors.nationality && { helperText: 'This field is required' })}
+                          />
+                        )}
+                      />
+                    )
+                  }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -399,8 +423,8 @@ const AddChildWizard = ({ courses }) => {
                       multiline
                       minRows={4}
                       // sx={{ mb: 4, width: '100%' }}
-                      label={<Translations text={'Note'} />}
-                      placeholder={t('Note')}
+                      label={<Translations text={'Special health care needs'} />}
+                      placeholder={t('Special health care needs')}
                       error={Boolean(personalErrors.Note)}
                       {...(personalErrors.Note && { helperText: 'This field is required' })}
                     />
@@ -469,7 +493,7 @@ const AddChildWizard = ({ courses }) => {
                   Back
                 </Button>
                 <Button type='submit' disabled={isSubmitting} variant='contained'>
-                  {isSubmitting ? <CircularProgress size={25} /> : 'Next'}
+                  {isSubmitting ? <CircularProgress size={25} /> : 'Confirm'}
                 </Button>
               </Grid>
             </Grid>
@@ -482,12 +506,42 @@ const AddChildWizard = ({ courses }) => {
             {' '}
             <iframe src={`data:application/pdf;base64,${base64File}`} width='100%' height='800vh' title={'test'} />
             <Divider sx={{ mt: 2 }} />
-            <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+            {/* New Checkboxes */}
+            <Grid item xs={12} sx={{ mt: 8, display: 'flex', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+              <FormControlLabel
+                control={
+                  <Checkbox color={'success'} checked={isChecked1} onChange={() => setIsChecked1(!isChecked1)} />
+                }
+                sx={{ width: '49%' }}
+                color='success'
+                label={
+                  <Translations
+                    text={
+                      'Ich bestätige, den Vertrag gelesen und verstanden zu haben und erkläre mich damit einverstanden, diesen kostenpflichtig abzuschließen.'
+                    }
+                  />
+                }
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox color={'success'} checked={isChecked2} onChange={() => setIsChecked2(!isChecked2)} />
+                }
+                sx={{ width: '49%' }}
+                label={
+                  <Translations
+                    text={
+                      'Ich habe die /Allgemeinen Geschäftsbedingungen (AGB)/ gelesen, verstanden und akzeptiere diese.'
+                    }
+                  />
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', mt: 8 }}>
               <Button
                 color='success'
                 onClick={() => handleAcceptContract()}
                 variant='contained'
-                disabled={acceptContractLoading}
+                disabled={acceptContractLoading || !isChecked1 || !isChecked2}
               >
                 {acceptContractLoading ? (
                   <CircularProgress size={25} />

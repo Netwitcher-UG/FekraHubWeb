@@ -83,7 +83,7 @@ export const addReport = createAsyncThunk('appReports/addReport', async data => 
 
 export const exportReport = createAsyncThunk('appReports/exportReport', async id => {
   try {
-    const response = await axiosInstance.get(`/api/Reports/ExportReport?reportId=${id}`)
+    const response = await axiosInstance.post(`/api/Reports/ExportReport?reportId=${id}`)
     return response
   } catch (error) {
     return error.response

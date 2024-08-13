@@ -1,5 +1,5 @@
 // ** React Imports
-import { forwardRef } from 'react'
+import { forwardRef, useMemo } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 
 // ** MUI Imports
@@ -19,7 +19,8 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Alert from '@mui/material/Alert'
 import useBgColor from 'src/@core/hooks/useBgColor'
 import { useDispatch } from 'react-redux'
-
+import countryList from 'react-select-country-list'
+import { Autocomplete } from '@mui/material'
 // ** Custom Component Import
 import CustomTextField from 'src/@core/components/mui/text-field'
 
@@ -101,6 +102,7 @@ const FormLayoutsSeparator = () => {
 
   const dispatch = useDispatch()
   const bgColors = useBgColor()
+  const countryOptions = useMemo(() => countryList().getData(), [])
   const onSubmit = async data => {
     const parsedDate = new Date(data?.birthday)
     const formattedDate = parsedDate?.toLocaleDateString('en-US')
@@ -130,22 +132,6 @@ const FormLayoutsSeparator = () => {
                 1. Account Details
               </Typography>
             </Grid>
-            {/* <Grid item xs={12} sm={6}>
-              <Controller
-                name='username'
-                control={control}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    fullWidth
-                    label='Username'
-                    placeholder='carterLeonard'
-                    error={Boolean(errors.username)}
-                    helperText={errors.username?.message}
-                  />
-                )}
-              />
-            </Grid> */}
             <Grid item xs={12} sm={6}>
               <Controller
                 name='email'
@@ -394,7 +380,7 @@ const FormLayoutsSeparator = () => {
                     <DatePicker
                       selected={value}
                       onChange={onChange}
-                      dateFormat='dd/MM/yyyy'
+                      dateFormat='dd.MM.yyyy'
                       showYearDropdown
                       showMonthDropdown
                       customInput={<CustomTextField label='Birthday' fullWidth />}
@@ -429,13 +415,34 @@ const FormLayoutsSeparator = () => {
                 )}
               />
             </Grid>
+
             <Grid item xs={12} sm={6}>
               <Controller
                 name='nationality'
                 control={control}
-                render={({ field }) => (
-                  <CustomTextField {...field} fullWidth label='Nationality' placeholder='Enter your nationality' />
-                )}
+                render={({ field }) => {
+                  const selectedCountry = countryOptions.find(country => country.label === field.value)
+
+                  return (
+                    <Autocomplete
+                      options={countryOptions.map(country => ({ value: country.label, label: country.label }))}
+                      getOptionLabel={option => option.label || ''}
+                      value={selectedCountry ? { value: selectedCountry.label, label: selectedCountry.label } : null}
+                      onChange={(event, newValue) => {
+                        field.onChange(newValue ? newValue.value : '')
+                      }}
+                      renderInput={params => (
+                        <CustomTextField
+                          {...params}
+                          fullWidth
+                          placeholder=' Country / nationality'
+                          label='Select Country / nationality'
+                          variant='outlined'
+                        />
+                      )}
+                    />
+                  )
+                }}
               />
             </Grid>
             <Grid item xs={12} sm={6}>

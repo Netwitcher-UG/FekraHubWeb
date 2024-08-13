@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -27,6 +27,8 @@ import MenuItem from '@mui/material/MenuItem'
 import toast from 'react-hot-toast'
 // import VerifyEmailV1 from '../pages/auth/verify-email-v1'
 import VerifyEmailV1 from 'src/@core/components/email-verification/verify-email'
+import { Autocomplete } from '@mui/material'
+import countryList from 'react-select-country-list'
 
 const CustomDatePickerWrapper = styled(DatePickerWrapper)({
   '& .react-datepicker-popper': {
@@ -48,6 +50,7 @@ const RegisterV1 = () => {
 
   const [showPassword, setShowPassword] = useState(false)
   const [isregistedDone, setIsregistedDone] = useState(false)
+  const countryOptions = useMemo(() => countryList().getData(), [])
   const theme = useTheme()
 
   const schema = yup.object().shape({
@@ -373,7 +376,7 @@ const RegisterV1 = () => {
                               <DatePicker
                                 selected={value}
                                 onChange={onChange}
-                                dateFormat='dd/MM/yyyy'
+                                dateFormat='dd.MM.yyyy'
                                 showYearDropdown
                                 showMonthDropdown
                                 customInput={<CustomTextField label='Birthday' fullWidth />}
@@ -426,16 +429,33 @@ const RegisterV1 = () => {
                       <Controller
                         name='nationality'
                         control={control}
-                        render={({ field }) => (
-                          <CustomTextField
-                            {...field}
-                            fullWidth
-                            label='Nationality'
-                            placeholder='Enter your nationality'
-                            error={!!errors.nationality}
-                            helperText={errors.nationality?.message}
-                          />
-                        )}
+                        render={({ field }) => {
+                          const selectedCountry = countryOptions.find(country => country.label === field.value)
+
+                          return (
+                            <Autocomplete
+                              options={countryOptions.map(country => ({ value: country.label, label: country.label }))}
+                              getOptionLabel={option => option.label || ''}
+                              value={
+                                selectedCountry ? { value: selectedCountry.label, label: selectedCountry.label } : null
+                              }
+                              onChange={(event, newValue) => {
+                                field.onChange(newValue ? newValue.value : '')
+                              }}
+                              renderInput={params => (
+                                <CustomTextField
+                                  {...params}
+                                  fullWidth
+                                  placeholder=' Country / nationality'
+                                  label='Select Country / nationality'
+                                  variant='outlined'
+                                  error={!!errors.nationality}
+                                  helperText={errors.nationality?.message}
+                                />
+                              )}
+                            />
+                          )
+                        }}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>

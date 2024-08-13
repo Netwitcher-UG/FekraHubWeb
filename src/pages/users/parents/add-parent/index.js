@@ -1,5 +1,5 @@
 // ** React Imports
-import { forwardRef } from 'react'
+import { forwardRef, useMemo } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 
 // ** MUI Imports
@@ -16,8 +16,10 @@ import CardActions from '@mui/material/CardActions'
 import InputAdornment from '@mui/material/InputAdornment'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import CircularProgress from '@mui/material/CircularProgress'
+import { Autocomplete } from '@mui/material'
 import Alert from '@mui/material/Alert'
 import useBgColor from 'src/@core/hooks/useBgColor'
+import countryList from 'react-select-country-list'
 
 // ** Custom Component Import
 import CustomTextField from 'src/@core/components/mui/text-field'
@@ -91,6 +93,7 @@ const FormLayoutsSeparator = () => {
   })
   const auth = useAuth()
   const bgColors = useBgColor()
+  const countryOptions = useMemo(() => countryList().getData(), [])
   const onSubmit = async data => {
     const parsedDate = new Date(data?.birthday)
     const formattedDate = parsedDate?.toLocaleDateString('en-US')
@@ -347,7 +350,7 @@ const FormLayoutsSeparator = () => {
                       selected={field.value}
                       showYearDropdown
                       showMonthDropdown
-                      dateFormat='dd/MM/yyyy'
+                      dateFormat='dd.MM.yyyy'
                       placeholderText='birthDate'
                       customInput={<CustomInput />}
                       id='form-layouts-separator-date'
@@ -367,13 +370,34 @@ const FormLayoutsSeparator = () => {
                 )}
               />
             </Grid>
+
             <Grid item xs={12} sm={6}>
               <Controller
                 name='nationality'
                 control={control}
-                render={({ field }) => (
-                  <CustomTextField {...field} fullWidth label='Nationality' placeholder='Enter your nationality' />
-                )}
+                render={({ field }) => {
+                  const selectedCountry = countryOptions.find(country => country.label === field.value)
+
+                  return (
+                    <Autocomplete
+                      options={countryOptions.map(country => ({ value: country.label, label: country.label }))}
+                      getOptionLabel={option => option.label || ''}
+                      value={selectedCountry ? { value: selectedCountry.label, label: selectedCountry.label } : null}
+                      onChange={(event, newValue) => {
+                        field.onChange(newValue ? newValue.value : '')
+                      }}
+                      renderInput={params => (
+                        <CustomTextField
+                          {...params}
+                          fullWidth
+                          placeholder=' Country / nationality'
+                          label='Select Country / nationality'
+                          variant='outlined'
+                        />
+                      )}
+                    />
+                  )
+                }}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
