@@ -7,7 +7,7 @@ import CardContent from '@mui/material/CardContent'
 import Grid from '@mui/material/Grid'
 import { convertDate } from 'src/@core/utils/convert-date'
 import { useRouter } from 'next/router'
-import { getChildInvoiceFile } from 'src/store/apps/invoices'
+import { getChildInvoiceFile, getStudentInvoiceFile } from 'src/store/apps/invoices'
 import { useDispatch, useSelector } from 'react-redux'
 // ** Custom Component Imports
 import Icon from 'src/@core/components/icon'
@@ -22,6 +22,7 @@ const InvoiceCard = props => {
   const {
     invoice,
     sx,
+    byParent,
     avatarIcon = 'la:file-invoice-dollar',
     avatarSize = 100,
     avatarColor = 'secondary',
@@ -40,7 +41,7 @@ const InvoiceCard = props => {
 
   const handleViewContract = async () => {
     setInvoiceLoading(true)
-    const response = await dispatch(getChildInvoiceFile(id))
+    const response = byParent ? await dispatch(getChildInvoiceFile(id)) : await dispatch(getStudentInvoiceFile(id))
     if (response?.payload?.status == 200) {
       setSelectedFile(response?.payload?.data)
       setIsHovered(false)

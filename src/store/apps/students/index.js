@@ -70,6 +70,15 @@ export const fetchChildProfileInfo = createAsyncThunk('appStudents/fetchChildPro
   }
 })
 
+export const fetchStudentProfileInfo = createAsyncThunk('appStudents/fetchStudentProfileInfo', async id => {
+  try {
+    const response = await axiosInstance.get(`/api/Student/GetStudent/${id}`)
+
+    return response.data
+  } catch (error) {
+    return error.response
+  }
+})
 export const appStudentsSlice = createSlice({
   name: 'appStudents',
   initialState: {
@@ -84,7 +93,9 @@ export const appStudentsSlice = createSlice({
     parentStudents: [],
     childrenLoading: false,
     childProfileInfo: [],
-    childProfileLoading: false
+    childProfileLoading: false,
+    studentProfileInfo: [],
+    studentProfileLoading: false
   },
   reducers: {},
   extraReducers: builder => {
@@ -135,6 +146,17 @@ export const appStudentsSlice = createSlice({
       })
       .addCase(fetchChildProfileInfo.rejected, state => {
         state.childProfileLoading = false
+      })
+
+      .addCase(fetchStudentProfileInfo.pending, state => {
+        state.studentProfileLoading = true
+      })
+      .addCase(fetchStudentProfileInfo.fulfilled, (state, action) => {
+        state.studentProfileLoading = false
+        state.studentProfileInfo = action.payload
+      })
+      .addCase(fetchStudentProfileInfo.rejected, state => {
+        state.studentProfileLoading = false
       })
   }
 })

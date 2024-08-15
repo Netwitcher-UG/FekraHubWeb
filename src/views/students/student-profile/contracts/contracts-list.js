@@ -8,12 +8,12 @@ import Alert from '@mui/material/Alert'
 // import Button from '@mui/material/Button'
 // import Icon from 'src/@core/components/icon'
 
-const ContractsList = ({ contractsData, loading }) => {
+const ContractsList = ({ contractsData, loading, byParent }) => {
   const renderData =
     contractsData?.length > 0 && !loading ? (
       contractsData.map((contract, index) => (
         <Grid item xs={14} sm={7} md={4} lg={4} xl={4} key={index}>
-          <ContractCard contract={contract} />
+          <ContractCard contract={contract} byParent={byParent} />
         </Grid>
       ))
     ) : (

@@ -11,9 +11,9 @@ import Box from '@mui/material/Box'
 import TabContext from '@mui/lab/TabContext'
 import CircularProgress from '@mui/material/CircularProgress'
 import { fetchReportsByFilter, fetchChildReports } from 'src/store/apps/reports'
-import { fetchChildProfileInfo } from 'src/store/apps/students'
-import { fetchChildContracts } from 'src/store/apps/contracts'
-import { fetchChildInvoices } from 'src/store/apps/invoices'
+import { fetchChildProfileInfo, fetchStudentProfileInfo } from 'src/store/apps/students'
+import { fetchChildContracts, fetchStudentContracts } from 'src/store/apps/contracts'
+import { fetchChildInvoices, fetchStudentInvoices } from 'src/store/apps/invoices'
 import { useDispatch, useSelector } from 'react-redux'
 import StudentReportsTab from './reports-list/reports-tab'
 import ContractsList from './contracts/contracts-list'
@@ -24,10 +24,17 @@ const StudentProfile = ({ student, byParent = false }) => {
   const [value, setValue] = useState('1')
   const dispatch = useDispatch()
   const store = useSelector(state => state.reports)
-  const childProfileInfo = useSelector(state => state.students.childProfileInfo)
-  const childProfileLoading = useSelector(state => state.students.childProfileLoading)
-  const { childContracts, childContractsLoading } = useSelector(state => state.contracts)
-  const { childInvoices, childInvoicesLoading } = useSelector(state => state.invoices)
+
+  const { childProfileInfo, childProfileLoading, studentProfileInfo, studentProfileLoading } = useSelector(
+    state => state.students
+  )
+
+  const { childContracts, childContractsLoading, studentContracts, studentContractsLoading } = useSelector(
+    state => state.contracts
+  )
+  const { childInvoices, childInvoicesLoading, studentInvoices, studentInvoicesLoading } = useSelector(
+    state => state.invoices
+  )
 
   useEffect(() => {
     if (!student) return
@@ -36,7 +43,12 @@ const StudentProfile = ({ student, byParent = false }) => {
       dispatch(fetchChildProfileInfo(student))
       dispatch(fetchChildContracts(student))
       dispatch(fetchChildInvoices(student))
-    } else dispatch(fetchReportsByFilter({ student: student, improved: true }))
+    } else {
+      dispatch(fetchReportsByFilter({ student: student, improved: true }))
+      dispatch(fetchStudentProfileInfo(student))
+      dispatch(fetchStudentInvoices(student))
+      dispatch(fetchStudentContracts(student))
+    }
   }, [student])
 
   const handleChange = (event, newValue) => {
@@ -52,7 +64,7 @@ const StudentProfile = ({ student, byParent = false }) => {
         <Tab value='4' label={byParent ? 'Child Invoices' : 'Student Invoices'} />
       </TabList>
       <TabPanel value='1'>
-        {childProfileLoading ? (
+        {childProfileLoading || studentProfileLoading ? (
           <Box
             sx={{
               display: 'flex',
@@ -63,16 +75,16 @@ const StudentProfile = ({ student, byParent = false }) => {
           >
             <CircularProgress size={100} />
           </Box>
-        ) : childProfileInfo?.id ? (
-          <ProfileTab data={childProfileInfo} />
+        ) : childProfileInfo?.id || studentProfileInfo?.id ? (
+          <ProfileTab data={byParent ? childProfileInfo : studentProfileInfo} />
         ) : (
           <Grid item xs={12}>
             <Alert severity='error'>
               {' '}
-              No child with id: {student} , or Something went wrong.
+              No {byParent ? 'child' : 'student'} with id: {student} , or Something went wrong.
               <br />
               <br />
-              <small>Please refresh and check if this child exists</small>
+              <small>Please refresh and check if this {byParent ? 'child' : 'student'} exists</small>
             </Alert>
           </Grid>
         )}
@@ -82,11 +94,19 @@ const StudentProfile = ({ student, byParent = false }) => {
       </TabPanel>
       <TabPanel value='3'>
         {' '}
-        <ContractsList contractsData={childContracts} loading={childContractsLoading} />{' '}
+        <ContractsList
+          byParent={byParent}
+          contractsData={byParent ? childContracts : studentContracts}
+          loading={byParent ? childContractsLoading : studentContractsLoading}
+        />{' '}
       </TabPanel>
       <TabPanel value='4'>
         {' '}
-        <InvoicesList invoicesData={childInvoices} loading={childInvoicesLoading} />{' '}
+        <InvoicesList
+          invoicesData={byParent ? childInvoices : studentInvoices}
+          loading={byParent ? childInvoicesLoading : studentInvoicesLoading}
+          byParent={byParent}
+        />{' '}
       </TabPanel>
     </TabContext>
   )

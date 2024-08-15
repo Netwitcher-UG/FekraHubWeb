@@ -8,12 +8,12 @@ import Alert from '@mui/material/Alert'
 // import Button from '@mui/material/Button'
 // import Icon from 'src/@core/components/icon'
 
-const InvoicesList = ({ invoicesData, loading }) => {
+const InvoicesList = ({ invoicesData, loading, byParent }) => {
   const renderData =
     invoicesData?.length > 0 && !loading ? (
       invoicesData.map((invoice, index) => (
         <Grid item xs={14} sm={7} md={4} lg={4} xl={4} key={index}>
-          <InvoiceCard invoice={invoice} />
+          <InvoiceCard invoice={invoice} byParent={byParent} />
         </Grid>
       ))
     ) : (

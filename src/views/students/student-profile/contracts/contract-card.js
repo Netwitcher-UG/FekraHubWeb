@@ -7,7 +7,7 @@ import CardContent from '@mui/material/CardContent'
 import Grid from '@mui/material/Grid'
 import { convertDate } from 'src/@core/utils/convert-date'
 import { useRouter } from 'next/router'
-import { getContractFile } from 'src/store/apps/contracts'
+import { getContractFile, getStudentContract } from 'src/store/apps/contracts'
 import { useDispatch, useSelector } from 'react-redux'
 // ** Custom Component Imports
 import Icon from 'src/@core/components/icon'
@@ -21,6 +21,7 @@ const ContractCard = props => {
   // ** Props
   const {
     contract,
+    byParent,
     sx,
     avatarIcon = 'clarity:contract-line',
     avatarSize = 100,
@@ -40,7 +41,7 @@ const ContractCard = props => {
 
   const handleViewContract = async () => {
     setContractLoading(true)
-    const response = await dispatch(getContractFile(id))
+    const response = byParent ? await dispatch(getContractFile(id)) : await dispatch(getStudentContract(id))
     if (response?.payload?.status == 200) {
       setSelectedFile(response?.payload?.data)
       setIsHovered(false)
