@@ -8,11 +8,21 @@ import AdduWorksheets from '../add'
 import useWorksheetsColumns from '../hook/useWorksheetsColumns'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchCourses } from 'src/store/apps/courses'
+import ViewWorksheet from '../view'
 
 export default function WorksheetsDataGrid({ rows, SetSearch, status, dataUploadType }) {
-  console.log('🚀 ~ WorksheetsDataGrid ~ rows:', rows)
-  const { columns, isDialogOpen, handleCloseDialog, handleDelete, drawerData, open, handleCloseDrawer, DeleteName } =
-    useWorksheetsColumns()
+  const {
+    columns,
+    isDialogOpen,
+    handleCloseDialog,
+    handleDelete,
+    drawerData,
+    open,
+    handleCloseDrawer,
+    DeleteName,
+    selectedFile,
+    setSelectedFile
+  } = useWorksheetsColumns()
 
   const { data, error } = useSelector(state => state.courses)
 
@@ -54,6 +64,8 @@ export default function WorksheetsDataGrid({ rows, SetSearch, status, dataUpload
         decsription={`Are you sure you want to delete the Worksheets ${DeleteName} ? `}
         onDelete={handleDelete}
       />
+
+      <ViewWorksheet selectedFile={selectedFile} setSelectedFile={setSelectedFile} />
     </>
   )
 }

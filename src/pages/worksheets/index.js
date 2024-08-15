@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchUploadType, fetchWorksheet } from 'src/store/apps/worksheets/worksheets'
+import { fetchUploadType, fetchWorksheet } from 'src/store/apps/worksheets'
 
-import WorksheetsDataGrid from 'src/views/worksheets/worksheets/dataGrid'
+import WorksheetsDataGrid from 'src/views/worksheets/dataGrid'
 
 export default function Index() {
   const { status, error, data, dataUploadType } = useSelector(state => state.worksheet)
@@ -13,7 +13,6 @@ export default function Index() {
     dispatch(fetchWorksheet())
     dispatch(fetchUploadType())
   }, [dispatch])
-  console.log('🚀 ~ Index ~ data:', data)
 
   return <WorksheetsDataGrid rows={data} dataUploadType={dataUploadType} status={status} />
 }

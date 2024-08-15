@@ -21,7 +21,7 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 import { useAuth } from 'src/hooks/useAuth'
 
 // ** Util Import
-// import getHomeRoute from 'src/layouts/components/acl/getHomeRoute'
+import getHomeRoute from 'src/layouts/components/acl/getHomeRoute'
 
 const AclGuard = props => {
   // ** Props
@@ -32,12 +32,12 @@ const AclGuard = props => {
   const router = useRouter()
   // ** Vars
   let ability
-  // useEffect(() => {
-  //   if (auth.user && auth.user.role && !guestGuard && router.route === '/') {
-  //     const homeRoute = getHomeRoute(auth.user.role)
-  //     router.replace(homeRoute)
-  //   }
-  // }, [auth.user, guestGuard, router])
+  useEffect(() => {
+    if (auth.user && auth.user.role && !guestGuard && router.route === '/') {
+      const homeRoute = getHomeRoute(auth.user.role)
+      router.replace(homeRoute)
+    }
+  }, [auth.user, guestGuard, router])
 
   useEffect(() => {
     const getRoles = async () => {
@@ -67,7 +67,7 @@ const AclGuard = props => {
   }, [])
 
   useEffect(() => {
-    if (router.route === '/') router.replace('/dashboards/analytics/')
+    // if (router.route === '/') router.replace('/dashboards/analytics/')
     if (router.route === '/login' && window.localStorage.getItem('userData')) router.replace('/')
   }, [router])
 

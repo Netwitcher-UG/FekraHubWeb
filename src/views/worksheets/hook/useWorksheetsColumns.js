@@ -1,10 +1,9 @@
 import React, { useCallback, useContext, useMemo, useState } from 'react'
 import { Stack, IconButton, Typography } from '@mui/material'
 import Translations from 'src/layouts/components/Translations'
-import { useDispatch } from 'react-redux'
-import { deleteWorksheet } from 'src/store/apps/worksheets/worksheets'
-import { useRouter } from 'next/router'
-import Link from 'next/link'
+import { useDispatch, useSelector } from 'react-redux'
+import { deleteWorksheet, DownloadUploadFile } from 'src/store/apps/worksheets'
+import { CircularProgress } from '@mui/material'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 
 const useWorksheetsColumns = () => {
@@ -13,13 +12,23 @@ const useWorksheetsColumns = () => {
   const [DeleteName, setDeleteName] = useState(false)
   const [selectedId, setSelectedId] = useState(null)
   const [drawerData, setDrawerData] = useState(null)
+  const [selectedFile, setSelectedFile] = useState(null)
   const [open, setOpen] = useState(false)
   const ability = useContext(AbilityContext)
+  const [worksheetLoading, setWorsheetLoading] = useState(null)
+  const { ShowFile } = useSelector(state => state.worksheet)
 
   const handleOpenDrawer = useCallback(data => {
     setDrawerData(data)
     setOpen(true)
   }, [])
+
+  const handleViewWorksheet = async file => {
+    setWorsheetLoading(file?.id)
+    await dispatch(DownloadUploadFile(file?.id))
+    setSelectedFile({ file: ShowFile, name: file?.fileName })
+    setWorsheetLoading(null)
+  }
 
   const handleCloseDrawer = useCallback(() => {
     setOpen(false)
@@ -91,12 +100,10 @@ const useWorksheetsColumns = () => {
                   </svg>
                 </IconButton>
               )}
-              <IconButton>
-                <Link
-                  href={`/worksheets/worksheets/view/${params?.row?.id}`}
-                  target='_blank'
-                  style={{ color: 'inherit' }}
-                >
+              {worksheetLoading == params?.row?.id ? (
+                <CircularProgress sx={{ ml: 2 }} size={22} />
+              ) : (
+                <IconButton onClick={() => handleViewWorksheet(params?.row)}>
                   <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24'>
                     <g
                       fill='none'
@@ -109,8 +116,8 @@ const useWorksheetsColumns = () => {
                       <path d='M21 12q-3.6 6-9 6t-9-6q3.6-6 9-6t9 6' />
                     </g>
                   </svg>
-                </Link>
-              </IconButton>
+                </IconButton>
+              )}
             </Stack>
           )
         }
@@ -128,7 +135,9 @@ const useWorksheetsColumns = () => {
     open,
     handleOpenDrawer,
     handleCloseDrawer,
-    DeleteName
+    DeleteName,
+    selectedFile,
+    setSelectedFile
   }
 }
 

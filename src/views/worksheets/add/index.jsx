@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import Translations from 'src/layouts/components/Translations'
 import CustomTextField from 'src/@core/components/mui/text-field'
 import { fetchCourses } from 'src/store/apps/students'
-import { addWorksheet } from 'src/store/apps/worksheets/worksheets'
+import { addWorksheet } from 'src/store/apps/worksheets'
 import { Stack } from '@mui/system'
 
 const CustomCloseButton = styled(IconButton)(({ theme }) => ({

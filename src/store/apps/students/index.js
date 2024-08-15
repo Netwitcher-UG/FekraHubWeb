@@ -28,7 +28,7 @@ export const fetchAvailableCourses = createAsyncThunk('appStudents/fetchAvailabl
   return response.data
 })
 
-export const addStudent = createAsyncThunk('appUsers/addStudent', async data => {
+export const addStudent = createAsyncThunk('appStudents/addStudent', async data => {
   try {
     const response = await axiosInstance.post('/api/Student', data, {
       headers: {
@@ -41,7 +41,7 @@ export const addStudent = createAsyncThunk('appUsers/addStudent', async data => 
   }
 })
 
-export const acceptContract = createAsyncThunk('appUsers/acceptContract', async data => {
+export const acceptContract = createAsyncThunk('appStudents/acceptContract', async data => {
   try {
     const response = await axiosInstance.post('/api/Student/AcceptedContract', data, {
       headers: {
@@ -60,6 +60,16 @@ export const fetchParentStudents = createAsyncThunk('appStudents/fetchParentStud
   return response.data
 })
 
+export const fetchChildProfileInfo = createAsyncThunk('appStudents/fetchChildProfileInfo', async id => {
+  try {
+    const response = await axiosInstance.get(`/api/Student/GetStudentByParent/${id}`)
+
+    return response.data
+  } catch (error) {
+    return error.response
+  }
+})
+
 export const appStudentsSlice = createSlice({
   name: 'appStudents',
   initialState: {
@@ -72,7 +82,9 @@ export const appStudentsSlice = createSlice({
     availableCourses: [],
     acceptContractLoading: false,
     parentStudents: [],
-    childrenLoading: false
+    childrenLoading: false,
+    childProfileInfo: [],
+    childProfileLoading: false
   },
   reducers: {},
   extraReducers: builder => {
@@ -112,6 +124,17 @@ export const appStudentsSlice = createSlice({
       })
       .addCase(fetchParentStudents.rejected, state => {
         state.childrenLoading = false
+      })
+
+      .addCase(fetchChildProfileInfo.pending, state => {
+        state.childProfileLoading = true
+      })
+      .addCase(fetchChildProfileInfo.fulfilled, (state, action) => {
+        state.childProfileLoading = false
+        state.childProfileInfo = action.payload
+      })
+      .addCase(fetchChildProfileInfo.rejected, state => {
+        state.childProfileLoading = false
       })
   }
 })
