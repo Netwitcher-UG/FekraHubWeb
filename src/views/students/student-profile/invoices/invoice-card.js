@@ -1,6 +1,6 @@
 // ** MUI Imports
 import Card from '@mui/material/Card'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTheme } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
@@ -31,7 +31,6 @@ const InvoiceCard = props => {
   const { id, date } = invoice
   const router = useRouter()
   const [isHovered, setIsHovered] = useState(false)
-  const invoiceFile = useSelector(state => state.invoices.invoiceFile)
   const [selectedFile, setSelectedFile] = useState(null)
   const [invoiceLoading, setInvoiceLoading] = useState(false)
 
@@ -43,7 +42,7 @@ const InvoiceCard = props => {
     setInvoiceLoading(true)
     const response = await dispatch(getChildInvoiceFile(id))
     if (response?.payload?.status == 200) {
-      setSelectedFile(invoiceFile)
+      setSelectedFile(response?.payload?.data)
       setIsHovered(false)
     } else toast.error('Somthing went wrong !')
     setInvoiceLoading(false)

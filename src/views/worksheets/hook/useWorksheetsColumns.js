@@ -16,7 +16,6 @@ const useWorksheetsColumns = () => {
   const [open, setOpen] = useState(false)
   const ability = useContext(AbilityContext)
   const [worksheetLoading, setWorsheetLoading] = useState(null)
-  const { ShowFile } = useSelector(state => state.worksheet)
 
   const handleOpenDrawer = useCallback(data => {
     setDrawerData(data)
@@ -25,8 +24,8 @@ const useWorksheetsColumns = () => {
 
   const handleViewWorksheet = async file => {
     setWorsheetLoading(file?.id)
-    await dispatch(DownloadUploadFile(file?.id))
-    setSelectedFile({ file: ShowFile, name: file?.fileName })
+    const response = await dispatch(DownloadUploadFile(file?.id))
+    setSelectedFile({ file: response?.payload, name: file?.fileName })
     setWorsheetLoading(null)
   }
 

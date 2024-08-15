@@ -31,7 +31,6 @@ const ContractCard = props => {
   const { id, creationDate } = contract
   const router = useRouter()
   const [isHovered, setIsHovered] = useState(false)
-  const contractFile = useSelector(state => state.contracts.contractFile)
   const [selectedFile, setSelectedFile] = useState(null)
   const [contractLoading, setContractLoading] = useState(false)
 
@@ -43,7 +42,7 @@ const ContractCard = props => {
     setContractLoading(true)
     const response = await dispatch(getContractFile(id))
     if (response?.payload?.status == 200) {
-      setSelectedFile(contractFile)
+      setSelectedFile(response?.payload?.data)
       setIsHovered(false)
     } else toast.error('Somthing went wrong !')
     setContractLoading(false)

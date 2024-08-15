@@ -101,7 +101,7 @@ const navigation = () => {
     {
       title: 'Worksheets',
       icon: 'ph:files',
-      path: '/worksheets/worksheets',
+      path: '/worksheets',
       action: 'manage',
       subject: 'File'
     }
