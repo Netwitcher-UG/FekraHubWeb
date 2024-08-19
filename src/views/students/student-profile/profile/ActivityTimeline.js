@@ -57,7 +57,6 @@ const ActivityTimeline = ({ recent, setValue }) => {
               </Grid>
               {recent?.report.map((report, index) => (
                 <TimelineItem key={index}>
-                  {/* {console.log(rep)} */}
                   <TimelineSeparator>
                     <TimelineDot color='primary' />
                     <TimelineConnector />
@@ -100,8 +99,8 @@ const ActivityTimeline = ({ recent, setValue }) => {
                 </Typography>
               </Grid>
               {recent?.workSheet.map((workSheet, index) => (
-                <TimelineItem>
-                  <TimelineSeparator key={index}>
+                <TimelineItem key={index}>
+                  <TimelineSeparator>
                     <TimelineDot color='info' />
                     <TimelineConnector />
                   </TimelineSeparator>
