@@ -4,13 +4,17 @@ import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
+import { useContext } from 'react'
 import { convertDate } from 'src/@core/utils/convert-date'
+import { IconButton } from '@mui/material'
+import { AbilityContext } from 'src/layouts/components/acl/Can'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
 const AboutOverivew = props => {
-  const { about } = props
+  const { about, setEditDrawerOpen } = props
+  const ability = useContext(AbilityContext)
 
   return (
     <Grid container spacing={6}>
@@ -18,9 +22,21 @@ const AboutOverivew = props => {
         <Card>
           <CardContent>
             <Box sx={{ mb: 6 }}>
-              <Typography variant='body2' sx={{ mb: 6, color: 'primary.main', textTransform: 'uppercase' }}>
-                About
-              </Typography>
+              <Grid sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 6 }}>
+                <Typography variant='body2' sx={{ color: 'primary.main', textTransform: 'uppercase' }}>
+                  About
+                </Typography>
+                {ability.can('manage', 'Children') && (
+                  <IconButton onClick={() => setEditDrawerOpen(true)}>
+                    <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24'>
+                      <path
+                        fill='currentColor'
+                        d='M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83l3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z'
+                      ></path>
+                    </svg>
+                  </IconButton>
+                )}
+              </Grid>
               <Box
                 sx={{
                   display: 'flex',
@@ -79,18 +95,6 @@ const AboutOverivew = props => {
                   '&:not(:last-of-type)': { mb: 6 }
                 }}
               >
-                <Icon fontSize='1.25rem' icon={'ph:city'} />
-
-                <Typography sx={{ mx: 2, fontWeight: 500, color: 'text.secondary' }}>City:</Typography>
-                <Typography sx={{ color: 'text.secondary' }}>{about?.city}</Typography>
-              </Box>
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  '&:not(:last-of-type)': { mb: 6 }
-                }}
-              >
                 <Icon fontSize='1.25rem' icon={'streamline:street-road'} />
 
                 <Typography sx={{ mx: 2, fontWeight: 500, color: 'text.secondary' }}>Street:</Typography>
@@ -119,6 +123,19 @@ const AboutOverivew = props => {
 
                 <Typography sx={{ mx: 2, fontWeight: 500, color: 'text.secondary' }}>Zip Code:</Typography>
                 <Typography sx={{ color: 'text.secondary' }}>{about?.zipCode}</Typography>
+              </Box>
+
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  '&:not(:last-of-type)': { mb: 6 }
+                }}
+              >
+                <Icon fontSize='1.25rem' icon={'ph:city'} />
+
+                <Typography sx={{ mx: 2, fontWeight: 500, color: 'text.secondary' }}>City:</Typography>
+                <Typography sx={{ color: 'text.secondary' }}>{about?.city}</Typography>
               </Box>
             </Box>
           </CardContent>

@@ -3,6 +3,7 @@ import { ShowErrorToast } from 'src/@core/utils/showErrorToast'
 import { ShowSuccessToast } from 'src/@core/utils/ShowSuccesToast'
 
 import axiosInstance from 'src/lib/axiosInstance'
+import { identifier } from 'stylis'
 
 // ** Fetch hWorksheet
 export const fetchWorksheet = createAsyncThunk('worksheet/fetchWorksheet', async data => {
@@ -74,6 +75,34 @@ export const DownloadUploadFile = createAsyncThunk('worksheet/DownloadUploadFile
   }
 })
 
+export const fetchChildWorksheets = createAsyncThunk('worksheet/fetchChildWorksheets', async id => {
+  try {
+    const response = await axiosInstance.get(`/api/Upload/GetUploadForPerant?studentID=${id}`)
+    return response.data
+  } catch (error) {
+    return error.response
+  }
+})
+
+export const getChildWorksheetFile = createAsyncThunk('worksheet/getChildWorksheetFile', async id => {
+  try {
+    const response = await axiosInstance.get(`/api/Upload/FileForPernt?Id=${id}`)
+    return response
+  } catch (error) {
+    return error.response
+  }
+})
+
+export const fetchStudentWorsheets = createAsyncThunk('worksheet/fetchStudentWorsheets', async id => {
+  try {
+    const response = await axiosInstance.get(`/api/Upload?studentId=${id}`)
+
+    return response.data
+  } catch (error) {
+    return error.response
+  }
+})
+
 export const WorksheetsSlice = createSlice({
   name: 'worksheet',
   initialState: {
@@ -82,7 +111,11 @@ export const WorksheetsSlice = createSlice({
     ShowFile: [],
     loading: false,
     status: 'idle',
-    error: null
+    error: null,
+    childWorksheets: [],
+    childWorksheetsLoading: false,
+    studentWorksheets: [],
+    studentWorksheetsLoading: false
   },
   reducers: {},
   extraReducers: builder => {
@@ -120,6 +153,28 @@ export const WorksheetsSlice = createSlice({
       })
       .addCase(DownloadUploadFile.rejected, state => {
         state.loading = false
+      })
+
+      .addCase(fetchChildWorksheets.pending, state => {
+        state.childWorksheetsLoading = true
+      })
+      .addCase(fetchChildWorksheets.fulfilled, (state, action) => {
+        state.childWorksheetsLoading = false
+        state.childWorksheets = action.payload
+      })
+      .addCase(fetchChildWorksheets.rejected, state => {
+        state.childWorksheetsLoading = false
+      })
+
+      .addCase(fetchStudentWorsheets.pending, state => {
+        state.studentWorksheetsLoading = true
+      })
+      .addCase(fetchStudentWorsheets.fulfilled, (state, action) => {
+        state.studentWorksheetsLoading = false
+        state.studentWorksheets = action.payload
+      })
+      .addCase(fetchStudentWorsheets.rejected, state => {
+        state.studentWorksheetsLoading = false
       })
   }
 })

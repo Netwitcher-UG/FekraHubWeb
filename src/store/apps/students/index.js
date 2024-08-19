@@ -79,6 +79,20 @@ export const fetchStudentProfileInfo = createAsyncThunk('appStudents/fetchStuden
     return error.response
   }
 })
+
+export const updateChildInfo = createAsyncThunk('appStudents/updateChildInfo', async (data, thunkAPI) => {
+  try {
+    const response = await axiosInstance.post('/api/Student/UpdateSonDataFromProfile', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    thunkAPI.dispatch(fetchChildProfileInfo(data?.studentId))
+    return response
+  } catch (error) {
+    return error.response
+  }
+})
 export const appStudentsSlice = createSlice({
   name: 'appStudents',
   initialState: {
