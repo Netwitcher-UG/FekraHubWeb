@@ -15,7 +15,6 @@ import Pagination from '@mui/material/Pagination'
 import useStudentsColumns from 'src/views/students/hooks/useStudentsColumns'
 import AddReportDrawer from '../add-student-report/addReportDrawer'
 import { Autocomplete } from '@mui/material'
-import { eventListeners } from '@popperjs/core'
 
 const customScrollbarStyles = {
   '& ::-webkit-scrollbar': {

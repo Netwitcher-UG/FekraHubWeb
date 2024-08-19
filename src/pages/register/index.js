@@ -64,14 +64,21 @@ const RegisterV1 = () => {
         'Password must contain at least one lowercase letter, one uppercase letter, one digit, and one non-alphabetic character'
       ),
     email: yup.string().email('Invalid email').required('Email is required'),
-    phoneNumber: yup.number().typeError('Must be a number').min(9, 'Must be at least 9 digits'),
     firstName: yup.string().required('Firstname is required'),
     lastname: yup.string().required('Lastname is required'),
-    emergencyPhoneNumber: yup.number().typeError('Must be a number').min(9, 'Must be at least 9 digits'),
+    phoneNumber: yup
+      .string()
+      .required('Phone Number is required')
+      .matches(/^\d{10,}$/, 'Phone Number must be at least 10 digits'), // At least 10 digits
+    emergencyPhoneNumber: yup
+      .string()
+      .required('Emergency Phone Number is required')
+      .matches(/^\d{10,}$/, 'Emergency Phone Number must be at least 10 digits'),
     birthplace: yup.string().required('Birthplace is required'),
     nationality: yup.string().required('Nationality is required'),
     street: yup.string().required('Street is required'),
     streetNr: yup.string().required('Street number is required'),
+    zipCode: yup.string().required('ZipeCode is required'),
     city: yup.string().required('City is required'),
     job: yup.string().required('Job is required'),
     graduation: yup.string().required('Graduation is required'),
@@ -102,7 +109,8 @@ const RegisterV1 = () => {
       job: '',
       graduation: '',
       birthday: null,
-      gender: ''
+      gender: '',
+      zipCode: ''
     }
   })
   const emailValue = watch('email')
@@ -122,6 +130,7 @@ const RegisterV1 = () => {
       formData.append('nationality', data.nationality)
       formData.append('street', data.street)
       formData.append('streetNr', data.streetNr)
+      formData.append('zipCode', data.zipCode)
       formData.append('city', data.city)
       formData.append('job', data.job)
       formData.append('graduation', data.graduation)
@@ -502,6 +511,22 @@ const RegisterV1 = () => {
                             placeholder='Enter your city'
                             error={!!errors.city}
                             helperText={errors.city?.message}
+                          />
+                        )}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Controller
+                        name='zipCode'
+                        control={control}
+                        render={({ field }) => (
+                          <CustomTextField
+                            {...field}
+                            fullWidth
+                            error={!!errors.zipCode}
+                            helperText={errors.zipCode?.message}
+                            label='Zipcode'
+                            placeholder='Enter your Zipcode'
                           />
                         )}
                       />

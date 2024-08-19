@@ -38,7 +38,6 @@ import { boxSizing } from '@mui/system'
 
 // Validation Schema
 const schema = yup.object().shape({
-  // username: yup.string().required('Username is required'),
   email: yup.string().email('Email is invalid').required('Email is required'),
   password: yup
     .string()
@@ -47,23 +46,26 @@ const schema = yup.object().shape({
     .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
     .matches(/[0-9]/, 'Password must contain at least one number')
     .matches(/[\W_]/, 'Password must contain at least one non-alphanumeric character'),
-  //   password2: yup
-  //     .string()
-  //     .required('Confirm Password is required')
-  //     .oneOf([yup.ref('password'), null], 'Passwords must match'),
-  firstName: yup.string(),
-  lastname: yup.string(),
-  //   country: yup.string(),
-  //   language: yup.array().of(yup.string()),
-  birthday: yup.date().nullable(),
-  nationality: yup.string(),
-  phoneNumber: yup.number().typeError('Must be a number'),
-  emergencyPhoneNumber: yup.number().typeError('Must be a number'),
-  streetNr: yup.string(),
-  city: yup.string(),
-  job: yup.string(),
-  graduation: yup.string(),
-  gender: yup.string(),
+  firstName: yup.string().required('First Name is required'),
+  lastname: yup.string().required('Last Name is required'),
+  birthday: yup.date().nullable().required('Birthday is required'),
+  nationality: yup.string().required('Nationality is required'),
+  phoneNumber: yup
+    .string()
+    .required('Phone Number is required')
+    .matches(/^\d{10,}$/, 'Phone Number must be at least 10 digits'),
+  emergencyPhoneNumber: yup
+    .string()
+    .required('Emergency Phone Number is required')
+    .matches(/^\d{10,}$/, 'Emergency Phone Number must be at least 10 digits'),
+  street: yup.string().required('Street is required'),
+  streetNr: yup.string().required('Street Number is required'),
+  city: yup.string().required('City is required'),
+  zipCode: yup.string().required('ZipeCode is required'),
+  job: yup.string().required('Job is required'),
+  graduation: yup.string().required('Graduation is required'),
+  gender: yup.string().required('Gender is required'),
+  birthplace: yup.string().required('Birthplace is required'),
   Role: yup.string().required('Role is required')
 })
 
@@ -80,7 +82,6 @@ const FormLayoutsSeparator = () => {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      // username: '',
       email: '',
       password: '',
       firstName: '',
@@ -88,15 +89,16 @@ const FormLayoutsSeparator = () => {
       nationality: '',
       birthplace: '',
       birthday: null,
-      phoneNumber: Number(''),
-      emergencyPhoneNumber: Number(''),
+      phoneNumber: null,
+      emergencyPhoneNumber: null,
       street: '',
       streetNr: '',
       city: '',
       job: '',
       graduation: '',
       gender: '',
-      Role: ''
+      Role: '',
+      zipCode: ''
     }
   })
 
@@ -118,6 +120,10 @@ const FormLayoutsSeparator = () => {
       toast.success('Employee added successfully ', 1000)
       reset()
     } else toast.error(response?.payload?.data)
+  }
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword)
   }
 
   return (
@@ -158,7 +164,7 @@ const FormLayoutsSeparator = () => {
                     {...field}
                     fullWidth
                     label='Password'
-                    type='password'
+                    type={showPassword ? 'text' : 'password'}
                     placeholder='············'
                     id='auth-register-password'
                     error={Boolean(errors.password)}
@@ -168,11 +174,11 @@ const FormLayoutsSeparator = () => {
                         <InputAdornment position='end'>
                           <IconButton
                             edge='end'
-                            onClick={() => field.onChange(!field.value)}
+                            onClick={handleClickShowPassword}
                             onMouseDown={e => e.preventDefault()}
                             aria-label='toggle password visibility'
                           >
-                            <Icon fontSize='1.25rem' icon={field.value ? 'tabler:eye' : 'tabler:eye-off'} />
+                            <Icon fontSize='1.25rem' icon={showPassword ? 'tabler:eye' : 'tabler:eye-off'} />
                           </IconButton>
                         </InputAdornment>
                       )
@@ -301,6 +307,8 @@ const FormLayoutsSeparator = () => {
                     id='validation-gender-select'
                     aria-describedby='validation-gender-select'
                     defaultValue=''
+                    error={Boolean(errors.gender)}
+                    helperText={errors.gender?.message}
                     SelectProps={{
                       value: value,
                       onChange: e => onChange(e),
@@ -320,57 +328,7 @@ const FormLayoutsSeparator = () => {
                 )}
               />
             </Grid>
-            {/* <Grid item xs={12} sm={6}>
-              <Controller
-                name='country'
-                control={control}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    select
-                    fullWidth
-                    label='Country'
-                    defaultValue=''
-                    error={Boolean(errors.country)}
-                    helperText={errors.country?.message}
-                  >
-                    <MenuItem value='UK'>UK</MenuItem>
-                    <MenuItem value='USA'>USA</MenuItem>
-                    <MenuItem value='Australia'>Australia</MenuItem>
-                    <MenuItem value='Germany'>Germany</MenuItem>
-                  </CustomTextField>
-                )}
-              />
-            </Grid> */}
-            {/* <Grid item xs={12} sm={6}>
-              <Controller
-                name='language'
-                control={control}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    select
-                    fullWidth
-                    label='Language'
-                    SelectProps={{
-                      multiple: true,
-                      value: field.value,
-                      onChange: e => field.onChange(e.target.value)
-                    }}
-                    error={Boolean(errors.language)}
-                    helperText={errors.language?.message}
-                  >
-                    <MenuItem value='English'>English</MenuItem>
-                    <MenuItem value='French'>French</MenuItem>
-                    <MenuItem value='Spanish'>Spanish</MenuItem>
-                    <MenuItem value='Portuguese'>Portuguese</MenuItem>
-                    <MenuItem value='Italian'>Italian</MenuItem>
-                    <MenuItem value='German'>German</MenuItem>
-                    <MenuItem value='Arabic'>Arabic</MenuItem>
-                  </CustomTextField>
-                )}
-              />
-            </Grid> */}
+
             <Grid item xs={12} sm={6}>
               <DatePickerWrapper>
                 <Controller
@@ -383,7 +341,14 @@ const FormLayoutsSeparator = () => {
                       dateFormat='dd.MM.yyyy'
                       showYearDropdown
                       showMonthDropdown
-                      customInput={<CustomTextField label='Birthday' fullWidth />}
+                      customInput={
+                        <CustomTextField
+                          label='Birthday'
+                          fullWidth
+                          error={Boolean(errors.birthday)}
+                          helperText={errors.birthday?.message}
+                        />
+                      }
                       placeholderText='Birthday'
                       popperProps={{
                         modifiers: [
@@ -404,14 +369,20 @@ const FormLayoutsSeparator = () => {
                   )}
                 />
               </DatePickerWrapper>
-              {errors.birthday && <Typography color='error'>{errors.birthday.message}</Typography>}
             </Grid>
             <Grid item xs={12} sm={6}>
               <Controller
                 name='birthplace'
                 control={control}
                 render={({ field }) => (
-                  <CustomTextField {...field} fullWidth label='Birthplace' placeholder='Enter your birthplace' />
+                  <CustomTextField
+                    {...field}
+                    fullWidth
+                    label='Birthplace'
+                    error={Boolean(errors.birthplace)}
+                    helperText={errors.birthplace?.message}
+                    placeholder='Enter your birthplace'
+                  />
                 )}
               />
             </Grid>
@@ -437,6 +408,8 @@ const FormLayoutsSeparator = () => {
                           fullWidth
                           placeholder=' Country / nationality'
                           label='Select Country / nationality'
+                          error={Boolean(errors.nationality)}
+                          helperText={errors.nationality?.message}
                           variant='outlined'
                         />
                       )}
@@ -450,7 +423,14 @@ const FormLayoutsSeparator = () => {
                 name=''
                 control={control}
                 render={({ field }) => (
-                  <CustomTextField {...field} fullWidth label='Street' placeholder='Enter your street' />
+                  <CustomTextField
+                    {...field}
+                    error={Boolean(errors.street)}
+                    helperText={errors.street?.message}
+                    fullWidth
+                    label='Street'
+                    placeholder='Enter your street'
+                  />
                 )}
               />
             </Grid>
@@ -459,7 +439,14 @@ const FormLayoutsSeparator = () => {
                 name='streetNr'
                 control={control}
                 render={({ field }) => (
-                  <CustomTextField {...field} fullWidth label='Street Number' placeholder='Enter your street number' />
+                  <CustomTextField
+                    {...field}
+                    error={Boolean(errors.streetNr)}
+                    helperText={errors.streetNr?.message}
+                    fullWidth
+                    label='Street Number'
+                    placeholder='Enter your street number'
+                  />
                 )}
               />
             </Grid>
@@ -468,7 +455,30 @@ const FormLayoutsSeparator = () => {
                 name='city'
                 control={control}
                 render={({ field }) => (
-                  <CustomTextField {...field} fullWidth label='City' placeholder='Enter your city' />
+                  <CustomTextField
+                    {...field}
+                    error={Boolean(errors.city)}
+                    helperText={errors.city?.message}
+                    fullWidth
+                    label='City'
+                    placeholder='Enter your city'
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Controller
+                name='zipCode'
+                control={control}
+                render={({ field }) => (
+                  <CustomTextField
+                    {...field}
+                    error={Boolean(errors.zipCode)}
+                    helperText={errors.zipCode?.message}
+                    fullWidth
+                    label='Zipcode'
+                    placeholder='Enter your Zipcode'
+                  />
                 )}
               />
             </Grid>
@@ -477,7 +487,14 @@ const FormLayoutsSeparator = () => {
                 name='job'
                 control={control}
                 render={({ field }) => (
-                  <CustomTextField {...field} fullWidth label='Job' placeholder='Enter your job' />
+                  <CustomTextField
+                    {...field}
+                    fullWidth
+                    label='Job'
+                    error={Boolean(errors.job)}
+                    helperText={errors.job?.message}
+                    placeholder='Enter your job'
+                  />
                 )}
               />
             </Grid>
@@ -486,7 +503,14 @@ const FormLayoutsSeparator = () => {
                 name='graduation'
                 control={control}
                 render={({ field }) => (
-                  <CustomTextField {...field} fullWidth label='Graduation' placeholder='Enter your graduation' />
+                  <CustomTextField
+                    {...field}
+                    fullWidth
+                    error={Boolean(errors.graduation)}
+                    helperText={errors.graduation?.message}
+                    label='Graduation'
+                    placeholder='Enter your graduation'
+                  />
                 )}
               />
             </Grid>
@@ -517,8 +541,8 @@ const FormLayoutsSeparator = () => {
                     fullWidth
                     label='Emergency Phone Number'
                     placeholder='Enter your emergency phone number'
-                    type='tel' // Restrict input to numbers
-                    error={!!errors.emergencyPhoneNumber}
+                    type='number'
+                    error={Boolean(errors.emergencyPhoneNumber)}
                     helperText={errors.emergencyPhoneNumber?.message}
                   />
                 )}

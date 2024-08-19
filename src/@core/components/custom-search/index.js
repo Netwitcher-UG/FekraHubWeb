@@ -41,7 +41,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   }
 }))
 
-export default function CustomSearch({ SetSearch }) {
+export default function CustomSearch({ SetSearch, value, handleSearch, inTable = false }) {
   const handleChange = event => {
     SetSearch(event.target.value)
   }
@@ -68,7 +68,16 @@ export default function CustomSearch({ SetSearch }) {
           ></path>
         </svg>
       </SearchIconWrapper>
-      <StyledInputBase placeholder='search' inputProps={{ 'aria-label': 'search' }} onChange={handleChange} />
+      {inTable ? (
+        <StyledInputBase
+          value={value}
+          placeholder='search'
+          inputProps={{ 'aria-label': 'search' }}
+          onChange={handleSearch}
+        />
+      ) : (
+        <StyledInputBase placeholder='search' inputProps={{ 'aria-label': 'search' }} onChange={handleChange} />
+      )}
     </Search>
   )
 }

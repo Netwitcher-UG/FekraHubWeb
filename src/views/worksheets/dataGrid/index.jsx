@@ -35,8 +35,19 @@ export default function WorksheetsDataGrid({ rows, SetSearch, status, dataUpload
   return (
     <>
       <Card>
-        <Stack padding={4} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
-          <Box>
+        <Stack>
+          <Box
+            sx={{
+              py: 4,
+              px: 6,
+              rowGap: 2,
+              columnGap: 4,
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              justifyContent: 'flex-end'
+            }}
+          >
             <AdduWorksheets dataUploadType={dataUploadType} data={data} />
           </Box>
         </Stack>

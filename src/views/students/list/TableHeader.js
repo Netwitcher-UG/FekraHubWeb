@@ -5,7 +5,7 @@ import Button from '@mui/material/Button'
 // ** Custom Component Import
 import CustomTextField from 'src/@core/components/mui/text-field'
 import Translations from 'src/layouts/components/Translations'
-
+import CustomSearch from 'src/@core/components/custom-search'
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 import { t } from 'i18next'
@@ -33,8 +33,8 @@ const TableHeader = props => {
       }}
     >
       <Box sx={{ rowGap: 2, display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
-        <CustomTextField value={value} sx={{ mr: 4 }} placeholder={t('Search Students')} onChange={handleChange} />
-
+        {/* <CustomTextField value={value} sx={{ mr: 4 }} placeholder={t('Search Students')} onChange={handleChange} /> */}
+        <CustomSearch value={value} handleSearch={handleChange} inTable={true} />
         {/* <Button onClick={toggle} variant='contained' sx={{ '& svg': { mr: 2 } }}>
           <Icon fontSize='1.125rem' icon='tabler:plus' />
           <Translations text={'Add New Expense'} />
