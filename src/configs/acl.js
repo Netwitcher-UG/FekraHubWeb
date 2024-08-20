@@ -181,6 +181,8 @@ function defineAbilitiesFor(role, rolesPermissions) {
         break
       case 'ManageChildren':
         can('manage', 'Children')
+      case 'ShowParentInfo':
+        can('read', 'ParentInfo')
         break
       default:
         break
