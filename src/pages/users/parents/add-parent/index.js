@@ -103,6 +103,7 @@ const FormLayoutsSeparator = () => {
   const auth = useAuth()
   const bgColors = useBgColor()
   const countryOptions = useMemo(() => countryList().getData(), [])
+  const [showPassword, setShowPassword] = useState(false)
   const onSubmit = async data => {
     const parsedDate = new Date(data?.birthday)
     const formattedDate = parsedDate?.toLocaleDateString('en-US')
@@ -121,7 +122,7 @@ const FormLayoutsSeparator = () => {
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword)
   }
-  const [showPassword, setShowPassword] = useState(false)
+
   return (
     <Card>
       <CardHeader title='Add Parent' />

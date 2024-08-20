@@ -105,6 +105,7 @@ const FormLayoutsSeparator = () => {
   const dispatch = useDispatch()
   const bgColors = useBgColor()
   const countryOptions = useMemo(() => countryList().getData(), [])
+  const [showPassword, setShowPassword] = useState(false)
   const onSubmit = async data => {
     const parsedDate = new Date(data?.birthday)
     const formattedDate = parsedDate?.toLocaleDateString('en-US')

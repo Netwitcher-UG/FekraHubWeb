@@ -93,6 +93,7 @@ const StudentProfile = ({ student, byParent = false }) => {
           ) : childProfileInfo?.id || studentProfileInfo?.id ? (
             <ProfileTab
               data={byParent ? childProfileInfo : studentProfileInfo}
+              byParent={byParent}
               setValue={setValue}
               setEditDrawerOpen={setEditDrawerOpen}
             />

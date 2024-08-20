@@ -6,9 +6,17 @@ import AboutOverivew from './AboutOverivew'
 import SchoolOverview from './SchoolOverview'
 import ActivityTimeline from './ActivityTimeline'
 
-const ProfileTab = ({ data, setValue, setEditDrawerOpen }) => {
+const ProfileTab = ({ data, setValue, setEditDrawerOpen, byParent }) => {
   return data && Object.values(data).length ? (
     <Grid container spacing={6}>
+      <Grid item lg={4} md={5} xs={12}>
+        <AboutOverivew
+          about={data.parent}
+          setEditDrawerOpen={setEditDrawerOpen}
+          parentCard={true}
+          byParent={byParent}
+        />
+      </Grid>
       <Grid item lg={4} md={5} xs={12}>
         <AboutOverivew about={data} setEditDrawerOpen={setEditDrawerOpen} />
       </Grid>

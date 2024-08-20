@@ -13,8 +13,10 @@ import { AbilityContext } from 'src/layouts/components/acl/Can'
 import Icon from 'src/@core/components/icon'
 
 const AboutOverivew = props => {
-  const { about, setEditDrawerOpen } = props
+  const { about, setEditDrawerOpen, parentCard = false, byParent } = props
   const ability = useContext(AbilityContext)
+
+  console.log(about)
 
   return (
     <Grid container spacing={6}>
@@ -24,7 +26,7 @@ const AboutOverivew = props => {
             <Box sx={{ mb: 6 }}>
               <Grid sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 6 }}>
                 <Typography variant='body2' sx={{ color: 'primary.main', textTransform: 'uppercase' }}>
-                  About
+                  {parentCard ? 'Parent Info' : byParent ? 'About' : 'About Student'}
                 </Typography>
                 {ability.can('manage', 'Children') && (
                   <IconButton onClick={() => setEditDrawerOpen(true)}>
@@ -51,6 +53,46 @@ const AboutOverivew = props => {
                   {about?.firstName} {about?.lastName}
                 </Typography>
               </Box>
+              {parentCard && (
+                <>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      '&:not(:last-of-type)': { mb: 6 }
+                    }}
+                  >
+                    <Icon fontSize='1.25rem' icon={'ic:outline-email'} />
+
+                    <Typography sx={{ mx: 2, fontWeight: 500, color: 'text.secondary' }}>Email:</Typography>
+                    <Typography sx={{ color: 'text.secondary' }}>{about?.email}</Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      '&:not(:last-of-type)': { mb: 6 }
+                    }}
+                  >
+                    <Icon fontSize='1.25rem' icon={'ic:outline-phone'} />
+
+                    <Typography sx={{ mx: 2, fontWeight: 500, color: 'text.secondary' }}>Phone Number:</Typography>
+                    <Typography sx={{ color: 'text.secondary' }}>{about?.phoneNumber}</Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      '&:not(:last-of-type)': { mb: 6 }
+                    }}
+                  >
+                    <Icon fontSize='1.25rem' icon={'material-symbols:e911-emergency-outline'} />
+
+                    <Typography sx={{ mx: 2, fontWeight: 500, color: 'text.secondary' }}>Emergency Number:</Typography>
+                    <Typography sx={{ color: 'text.secondary' }}>{about?.emergencyPhoneNumber}</Typography>
+                  </Box>
+                </>
+              )}
               <Box
                 sx={{
                   display: 'flex',
@@ -87,7 +129,34 @@ const AboutOverivew = props => {
                 <Typography sx={{ mx: 2, fontWeight: 500, color: 'text.secondary' }}>Nationality:</Typography>
                 <Typography sx={{ color: 'text.secondary' }}>{about?.nationality}</Typography>
               </Box>
+              {parentCard && (
+                <>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      '&:not(:last-of-type)': { mb: 6 }
+                    }}
+                  >
+                    <Icon fontSize='1.25rem' icon={'material-symbols:work-outline'} />
 
+                    <Typography sx={{ mx: 2, fontWeight: 500, color: 'text.secondary' }}>Job:</Typography>
+                    <Typography sx={{ color: 'text.secondary' }}>{about?.job}</Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      '&:not(:last-of-type)': { mb: 6 }
+                    }}
+                  >
+                    <Icon fontSize='1.25rem' icon={'wpf:diploma-1'} />
+
+                    <Typography sx={{ mx: 2, fontWeight: 500, color: 'text.secondary' }}>University degree:</Typography>
+                    <Typography sx={{ color: 'text.secondary' }}>{about?.graduation}</Typography>
+                  </Box>
+                </>
+              )}
               <Box
                 sx={{
                   display: 'flex',
