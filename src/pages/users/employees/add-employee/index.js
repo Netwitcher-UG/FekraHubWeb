@@ -247,7 +247,7 @@ const FormLayoutsSeparator = () => {
                       displayEmpty: true
                     }}
                   >
-                    <MenuItem value='' disabled>
+                    <MenuItem value='' sx={{ display: 'none' }}>
                       <em>Select Role</em>
                     </MenuItem>
                     <MenuItem key={1} value={'Admin'}>
@@ -316,7 +316,7 @@ const FormLayoutsSeparator = () => {
                       displayEmpty: true
                     }}
                   >
-                    <MenuItem value='' disabled>
+                    <MenuItem value='' sx={{ display: 'none' }}>
                       <em>Select Gender</em>
                     </MenuItem>
                     <MenuItem key={1} value={'male'}>
@@ -421,7 +421,7 @@ const FormLayoutsSeparator = () => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <Controller
-                name=''
+                name='street'
                 control={control}
                 render={({ field }) => (
                   <CustomTextField
