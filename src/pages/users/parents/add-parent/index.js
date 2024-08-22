@@ -20,6 +20,7 @@ import { Autocomplete } from '@mui/material'
 import Alert from '@mui/material/Alert'
 import useBgColor from 'src/@core/hooks/useBgColor'
 import countryList from 'react-select-country-list'
+import { useRouter } from 'next/router'
 
 // ** Custom Component Import
 import CustomTextField from 'src/@core/components/mui/text-field'
@@ -89,8 +90,8 @@ const FormLayoutsSeparator = () => {
       nationality: '',
       birthplace: '',
       birthday: null,
-      phoneNumber: null,
-      emergencyPhoneNumber: null,
+      phoneNumber: '',
+      emergencyPhoneNumber: '',
       street: '',
       streetNr: '',
       city: '',
@@ -102,6 +103,7 @@ const FormLayoutsSeparator = () => {
   })
   const auth = useAuth()
   const bgColors = useBgColor()
+  const router = useRouter()
   const countryOptions = useMemo(() => countryList().getData(), [])
   const [showPassword, setShowPassword] = useState(false)
   const onSubmit = async data => {
@@ -116,6 +118,7 @@ const FormLayoutsSeparator = () => {
     else if (response?.status == 200) {
       toast.success('Parent added successfully and confirm email was sent to the parent ', 1000)
       reset()
+      router.push('/users/parents')
     } else toast.error(response.data)
   }
 

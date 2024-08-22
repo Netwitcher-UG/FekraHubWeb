@@ -23,6 +23,7 @@ import countryList from 'react-select-country-list'
 import { Autocomplete } from '@mui/material'
 // ** Custom Component Import
 import CustomTextField from 'src/@core/components/mui/text-field'
+import { useRouter } from 'next/router'
 
 // ** Third Party Imports
 import DatePicker from 'react-datepicker'
@@ -89,8 +90,8 @@ const FormLayoutsSeparator = () => {
       nationality: '',
       birthplace: '',
       birthday: null,
-      phoneNumber: null,
-      emergencyPhoneNumber: null,
+      phoneNumber: '',
+      emergencyPhoneNumber: '',
       street: '',
       streetNr: '',
       city: '',
@@ -106,6 +107,7 @@ const FormLayoutsSeparator = () => {
   const bgColors = useBgColor()
   const countryOptions = useMemo(() => countryList().getData(), [])
   const [showPassword, setShowPassword] = useState(false)
+  const router = useRouter()
   const onSubmit = async data => {
     const parsedDate = new Date(data?.birthday)
     const formattedDate = parsedDate?.toLocaleDateString('en-US')
@@ -120,6 +122,7 @@ const FormLayoutsSeparator = () => {
     else if (response?.payload?.status == 200) {
       toast.success('Employee added successfully ', 1000)
       reset()
+      router.push('/users/employees')
     } else toast.error(response?.payload?.data)
   }
 
