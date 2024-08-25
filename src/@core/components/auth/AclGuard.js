@@ -114,6 +114,7 @@ const AclGuard = props => {
     '/children/add-child': { action: 'manage', subject: 'Children' },
     '/roles': { action: 'manage', subject: 'Permission' },
     '/worksheets': { action: 'manage', subject: 'File' },
+    '/students-attendance': { action: 'read', subject: 'StudentAttendance' }
   }
 
   if (ability && auth.user) {

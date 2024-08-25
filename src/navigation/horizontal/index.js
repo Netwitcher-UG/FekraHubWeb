@@ -104,6 +104,18 @@ const navigation = () => {
       path: '/worksheets',
       action: 'manage',
       subject: 'File'
+    },
+    {
+      title: 'Attendance',
+      icon: 'basil:user-clock-solid',
+      children: [
+        {
+          title: 'Students Attendance',
+          path: '/students-attendance',
+          action: 'read',
+          subject: 'StudentAttendance'
+        }
+      ]
     }
 
     // {
