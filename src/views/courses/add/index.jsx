@@ -312,6 +312,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                       {...field}
                       label='StartDate'
                       variant='outlined'
+                      type='date'
                       fullWidth
                       error={!!errors.StartDate}
                       helperText={errors.StartDate ? errors.StartDate.message : ''}
@@ -328,6 +329,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                       {...field}
                       label='EndDate'
                       variant='outlined'
+                      type='date'
                       fullWidth
                       error={!!errors.EndDate}
                       helperText={errors.EndDate ? errors.EndDate.message : ''}

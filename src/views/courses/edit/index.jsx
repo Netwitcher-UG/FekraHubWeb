@@ -56,8 +56,9 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
     Capacity: dataDef?.capacity,
     StartDate: dataDef?.startDate?.slice(0, 10),
     EndDate: dataDef?.endDate.slice(0, 10),
-    UserId: dataDef?.teacher?.map(val => val.firstName) || '',
-    RoomId: dataDef?.id || ''
+    TeacherId: dataDef?.teacher[0]?.id  || '',
+    RoomId: dataDef?.room.id || '',
+    LocationId:dataDef?.location?.id || ''
   }
 
   const {
@@ -72,6 +73,12 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
     mode: 'onBlur'
   })
 
+  useEffect(() => {
+    if (dataDef?.room) {
+      setLocation(prevLocations => [...prevLocations, dataDef?.room]);
+    }
+  }, [dataDef?.room])
+
   const handleSaveData = data => {
     dispatch(editCourses({ ...data, id: dataDef.id }))
     handleCloseDrawer()
@@ -82,7 +89,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
   return (
     <Drawer
       open={open}
-      anchor='lift'
+      anchor='left'
       variant='temporary'
       onClose={handleCloseDrawer}
       ModalProps={{ keepMounted: true }}
@@ -196,6 +203,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
                     fullWidth
                     label={`${'StartDate'}`}
                     variant='outlined'
+                    type='date'
                     error={!!errors.StartDate}
                     helperText={errors.StartDate ? errors.StartDate.message : ''}
                   />
@@ -214,6 +222,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
                     fullWidth
                     label={`${'EndDate'}`}
                     variant='outlined'
+                    type='date'
                     error={!!errors.EndDate}
                     helperText={errors.EndDate ? errors.EndDate.message : ''}
                   />
@@ -221,78 +230,78 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
               />
             </Grid>
             <Grid item xs={12} sm={12} lg={12}>
-              <Controller
-                name='UserId'
-                control={control}
-                rules={{ required: true }}
-                render={({ field: { value, onChange, ref } }) => (
-                  <Autocomplete
-                    options={
-                      dataDef?.teacher?.map(teacher => ({
-                        value: teacher.id,
-                        label: teacher.firstName || 'No Name'
-                      })) || []
-                    }
-                    fullWidth
-                    id='autocomplete-UserId'
-                    getOptionLabel={option => option.label}
-                    value={
-                      value
-                        ? {
-                            value,
-                            label: dataDef?.teacher?.find(teacher => teacher.id === value)?.firstName || 'No Name'
-                          }
-                        : null
-                    }
-                    onChange={(event, newValue) => {
-                      onChange(newValue ? newValue.value : undefined)
-                    }}
-                    renderInput={params => (
-                      <CustomTextField
-                        {...params}
-                        fullWidth
-                        sx={{ mb: 4 }}
-                        placeholder=''
-                        label='Teacher'
-                        id='validation-billing-select'
-                        aria-describedby='validation-billing-select'
-                        error={Boolean(errors.UserId)}
-                        helperText={errors.UserId?.message || ''}
-                        inputRef={ref}
-                      />
-                    )}
-                  />
-                )}
-              />
+            <Controller
+  name='TeacherId'
+  control={control}
+  render={({ field: { onChange, value, ref } }) => (
+    <Autocomplete
+      options={dataTeacher}
+      getOptionLabel={option => option.firstName || ''}
+      renderInput={params => (
+        <CustomTextField
+          {...params}
+          label='Teacher'
+          variant='outlined'
+          placeholder='No teacher please select one'
+          inputRef={ref}
+          error={!!errors.TeacherId}
+          helperText={errors.TeacherId ? errors.TeacherId.message : ''}
+        />
+      )}
+
+      // Handle option selection
+      onChange={(event, newValue) => {
+        onChange(newValue ? newValue.id : '');
+      }}
+      value={dataTeacher.find(option => option.id === value) || null}
+    />
+  )}
+/>
+
+
             </Grid>
             <Grid item xs={12} sm={12} lg={12}>
-              <Controller
-                name='LocationId'
-                control={control}
-                render={({ field }) => (
-                  <Autocomplete
-                    {...field}
-                    fullWidth
-                    options={locationData}
-                    getOptionLabel={option => option.name || ''}
-                    onChange={(event, value) => {
-                      const selectedId = value ? value : ''
-                      field.onChange(selectedId)
-                      setLocation(selectedId)
-                    }}
-                    renderInput={params => (
-                      <CustomTextField
-                        fullWidth
-                        {...params}
-                        label='Select Location'
-                        variant='outlined'
-                        error={!!errors.LocationId}
-                        helperText={errors.LocationId ? errors.LocationId.message : ''}
-                      />
-                    )}
-                  />
-                )}
-              />
+            <Controller
+  name='LocationId'
+  control={control}
+  render={({ field }) => (
+    <Autocomplete
+      {...field}
+      fullWidth
+      options={locationData}
+
+      // Handle how to display the selected option
+      getOptionLabel={option => option.name || ''}
+
+      // Customize equality check
+      isOptionEqualToValue={(option, value) => option.id === value}
+
+      // Handle selection changes
+      onChange={(event, value) => {
+        const selectedId = value ? value.room : '';
+        field.onChange(value.id); // Update the form state with the selected option's ID
+        setLocation(selectedId);    // Optionally update local component state
+      }}
+
+      // Set the selected value
+      value={locationData.find(option => option.id === field.value) || null}
+
+      // Render the input field
+      renderInput={params => (
+        <CustomTextField
+          fullWidth
+          {...params}
+          label='Select Location'
+          variant='outlined'
+          error={!!errors.LocationId}
+          helperText={errors.LocationId ? errors.LocationId.message : ''}
+        />
+      )}
+    />
+  )}
+/>
+
+
             </Grid>
             {location.length !== 0 ? (
               <Grid item xs={12} sm={12} lg={12}>
@@ -301,7 +310,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
                   control={control}
                   render={({ field: { onChange, value, ref } }) => (
                     <Autocomplete
-                      options={location.room}
+                      options={location}
                       getOptionLabel={option => option.name || ''}
                       renderInput={params => (
                         <CustomTextField
@@ -316,7 +325,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
                       onChange={(event, newValue) => {
                         onChange(newValue ? newValue.id : '')
                       }}
-                      value={location.room.find(room => room.id === value) || null}
+                      value={location.find(room => room.id === value) || null}
                     />
                   )}
                 />
@@ -333,7 +342,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
             spacing={4}
           >
             <Button type='button' variant='contained' onClick={handleSubmit(handleSaveData)}>
-              Add Courses
+              Update Courses
             </Button>
             <Button type='button' variant='outlined' onClick={handleCloseDrawer}>
               cancel

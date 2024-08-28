@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 import { deleteCourse } from 'src/store/apps/courses'
 import Translations from 'src/layouts/components/Translations'
+import moment from 'moment'
 
 const useCoursesColumns = () => {
   const dispatch = useDispatch()
@@ -63,7 +64,7 @@ const useCoursesColumns = () => {
         field: 'startDate',
         headerName: <Translations text={'Start Date'} />,
         renderCell: params => {
-          return <Typography>{params.row.startDate?.slice(0, 10)}</Typography>
+          return <Typography>{moment(params.row.startDate).format('DD.MM.YYYY')}</Typography>
         }
       },
       {
@@ -71,7 +72,7 @@ const useCoursesColumns = () => {
         field: 'endDate',
         headerName: <Translations text={'End Date'} />,
         renderCell: params => {
-          return <Typography>{params.row.endDate?.slice(0, 10)}</Typography>
+          return <Typography>{moment(params.row.endDate).format('DD.MM.YYYY')}</Typography>
         }
       },
       {

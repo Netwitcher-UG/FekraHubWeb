@@ -99,6 +99,13 @@ const navigation = () => {
       ]
     },
     {
+      title: 'Calendar',
+      icon: 'tabler:calendar',
+      path: '/apps/calendar',
+          action: 'manage',
+      subject: 'calendar'
+    },
+    {
       title: 'Worksheets',
       icon: 'ph:files',
       path: '/worksheets',

@@ -79,7 +79,13 @@ const navigation = () => {
       action: 'manage',
       subject: 'Room'
     },
-
+    {
+      title: 'Calendar',
+      icon: 'tabler:calendar',
+      path: '/apps/calendar',
+          action: 'manage',
+      subject: 'calendar'
+    },
     {
       title: 'Children',
       icon: 'tabler:users',

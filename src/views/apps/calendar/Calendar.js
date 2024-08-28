@@ -11,6 +11,8 @@ import interactionPlugin from '@fullcalendar/interaction'
 
 // ** Third Party Style Import
 import 'bootstrap-icons/font/bootstrap-icons.css'
+import { useSelector } from 'react-redux'
+import { fetchEventsTypes } from 'src/store/apps/calendar'
 
 const blankEvent = {
   title: '',
@@ -26,6 +28,7 @@ const blankEvent = {
   }
 }
 
+
 const Calendar = props => {
   // ** Props
   const {
@@ -40,9 +43,12 @@ const Calendar = props => {
     handleLeftSidebarToggle,
     handleAddEventSidebarToggle
   } = props
+    console.log("🚀 ~ Calendar ~ calendarsColor:", calendarsColor)
+
 
   // ** Refs
   const calendarRef = useRef()
+
   useEffect(() => {
     if (calendarApi === null) {
       // @ts-ignore
@@ -52,7 +58,18 @@ const Calendar = props => {
   if (store) {
     // ** calendarOptions(Props)
     const calendarOptions = {
-      events: store.events.length ? store.events : [],
+      events: store.events.length ? store.events.map(event => ({
+      id:event.id,
+        title: event.eventName,
+        start: new Date(event.startDate), // Ensure start and end are Date objects
+        end: new Date(event.endDate),
+        extendedProps: {
+          calendar: event.eventType.id,
+          backgroundColor:event.eventType.typeTitle,
+          description: event.description,
+          guests:event.courseSchedule
+        }
+      })) : [],
       plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin, bootstrap5Plugin],
       initialView: 'dayGridMonth',
       headerToolbar: {
@@ -96,7 +113,7 @@ const Calendar = props => {
       navLinks: true,
       eventClassNames({ event: calendarEvent }) {
         // @ts-ignore
-        const colorName = calendarsColor[calendarEvent._def.extendedProps.calendar]
+        const colorName = calendarsColor[calendarEvent._def.extendedProps.backgroundColor]
 
         return [
           // Background Color

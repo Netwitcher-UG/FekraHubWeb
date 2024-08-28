@@ -31,6 +31,17 @@ export const fetchCoursesRoom = createAsyncThunk('courses/fetchCoursesRoom', asy
   }
 })
 
+
+export const fetchCourseSchedule = createAsyncThunk('courses/fetchCourseSchedule', async (_, { rejectWithValue }) => {
+  try {
+    const response = await axiosInstance.get('/api/CourseSchedule', {})
+
+    return response.data
+  } catch (error) {
+    ShowErrorToast(error.response?.data || error.message)
+    return rejectWithValue(error.response?.data || error.message)
+  }
+})
 export const addRoom = createAsyncThunk('courses/addRoom', async (data, { getState, dispatch }) => {
   try {
     const response = await axiosInstance.post(`/api/Rooms`, data, {
@@ -137,7 +148,8 @@ export const deleteCourse = createAsyncThunk(
       ShowSuccessToast('success')
       dispatch(fetchCourses(''))
     } catch (error) {
-      ShowErrorToast('Error')
+      console.log("🚀 ~ error:", error)
+      ShowErrorToast(error.response.data)
 
       return rejectWithValue(error.response.data)
     }
@@ -152,9 +164,11 @@ const CoursesSlice = createSlice({
     dataTeacher: [],
     status: 'idle',
     roomsStatus: 'idle',
+    CourseScheduleStatus:'idel',
     TeacherStatus: 'idle',
     error: null,
     deleteStatus: 'idle',
+    CourseSchedule:[],
     deleteError: null
   },
   reducers: {},
@@ -177,6 +191,10 @@ const CoursesSlice = createSlice({
       .addCase(fetchCoursesRoom.fulfilled, (state, action) => {
         state.roomsStatus = 'succeeded'
         state.dataRooms = action.payload
+      })
+      .addCase(fetchCourseSchedule.fulfilled, (state, action) => {
+        state.CourseScheduleStatus = 'succeeded'
+        state.CourseSchedule = action.payload
       })
       .addCase(fetchCoursesRoom.rejected, (state, action) => {
         state.roomsStatus = 'failed'

@@ -190,7 +190,7 @@ const AddLocation = () => {
             <Translations text={'cancel'} />
           </Button>
           <Button disabled={!isDirty} type='button' variant='contained' onClick={handleSubmit(handleSaveData)}>
-            <Translations text={'Add Courses'} />
+            <Translations text={'Add Location'} />
           </Button>
         </DialogActions>
       </Dialog>

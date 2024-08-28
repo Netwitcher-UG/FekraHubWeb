@@ -154,6 +154,7 @@ function defineAbilitiesFor(role, rolesPermissions) {
         break
       case 'ManageRoom':
         can('manage', 'Room')
+        can('manage', 'calendar')
         break
       case 'ManageExcelMigration':
         can('manage', 'ExcelMigration')

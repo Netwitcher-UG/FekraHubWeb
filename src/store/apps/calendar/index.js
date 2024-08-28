@@ -3,48 +3,86 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 // ** Axios Imports
 import axios from 'axios'
+import { ShowErrorToast } from 'src/@core/utils/showErrorToast'
+import { ShowSuccessToast } from 'src/@core/utils/ShowSuccesToast'
+import axiosInstance from 'src/lib/axiosInstance'
 
 // ** Fetch Events
-export const fetchEvents = createAsyncThunk('appCalendar/fetchEvents', async calendars => {
-  const response = await axios.get('/apps/calendar/events', {
-    params: {
-      calendars
-    }
+export const fetchEvents = createAsyncThunk('appCalendar/fetchEvents', async (selectedCalendars, { getState }) => {
+  try {
+    const queryString = selectedCalendars.map(id => `courseId=${id}`).join('&');
+
+    // Use the query string directly in the URL
+    const response = await axiosInstance.get(`/api/events?${queryString}`);
+
+    return response.data
+  } catch (error) {
+    ShowErrorToast(error.response.data)
+    throw error
+  }
+})
+
+
+export const fetchEventsTypes = createAsyncThunk('appCalendar/fetchEventsTypes', async _ => {
+  const response = await axiosInstance.get('/api/EventType', {
+
   })
 
   return response.data
 })
-
 // ** Add Event
 export const addEvent = createAsyncThunk('appCalendar/addEvent', async (event, { dispatch }) => {
-  const response = await axios.post('/apps/calendar/add-event', {
-    data: {
-      event
+  try {
+ const response = await axiosInstance.post('/api/events',
+    event, {
+      headers: {
+        accept: 'application/json',
+        'Content-Type': 'multipart/form-data'
+      }
     }
-  })
-  await dispatch(fetchEvents(['Personal', 'Business', 'Family', 'Holiday', 'ETC']))
+
+  )
+  await dispatch(fetchEvents())
+ShowSuccessToast('Added Event Successfully')
+  }catch(error){
+  console.log("🚀 ~ addEvent ~ error:", error)
+ShowErrorToast(error.response.data)
+  }
 
   return response.data.event
 })
 
 // ** Update Event
 export const updateEvent = createAsyncThunk('appCalendar/updateEvent', async (event, { dispatch }) => {
-  const response = await axios.post('/apps/calendar/update-event', {
-    data: {
-      event
-    }
-  })
-  await dispatch(fetchEvents(['Personal', 'Business', 'Family', 'Holiday', 'ETC']))
+  try{
+    const response = await axiosInstance.put(`/api/events/${event.id}`,    event, {
+      headers: {
+        accept: 'application/json',
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+  ShowSuccessToast('Updated Event Successfully')
+    await dispatch(fetchEvents())
+
+  }catch(error)
+  {
+    ShowErrorToast(error.response.data)
+  }
 
   return response.data.event
 })
 
 // ** Delete Event
 export const deleteEvent = createAsyncThunk('appCalendar/deleteEvent', async (id, { dispatch }) => {
-  const response = await axios.delete('/apps/calendar/remove-event', {
-    params: { id }
-  })
-  await dispatch(fetchEvents(['Personal', 'Business', 'Family', 'Holiday', 'ETC']))
+  try{
+    const response = await axiosInstance.delete(`/api/events/${id}`, {
+    })
+    await dispatch(fetchEvents())
+  ShowSuccessToast('Delete Event Successfully')
+  }catch(error)
+  {
+ShowErrorToast(error.response.data)
+  }
 
   return response.data
 })
@@ -53,8 +91,9 @@ export const appCalendarSlice = createSlice({
   name: 'appCalendar',
   initialState: {
     events: [],
+    types:[],
     selectedEvent: null,
-    selectedCalendars: ['Personal', 'Business', 'Family', 'Holiday', 'ETC']
+    selectedCalendars: []
   },
   reducers: {
     handleSelectEvent: (state, action) => {
@@ -71,10 +110,11 @@ export const appCalendarSlice = createSlice({
         state.events.length = 0
       }
     },
+
     handleAllCalendars: (state, action) => {
       const value = action.payload
       if (value === true) {
-        state.selectedCalendars = ['Personal', 'Business', 'Family', 'Holiday', 'ETC']
+        state.selectedCalendars = []
       } else {
         state.selectedCalendars = []
       }
@@ -83,6 +123,9 @@ export const appCalendarSlice = createSlice({
   extraReducers: builder => {
     builder.addCase(fetchEvents.fulfilled, (state, action) => {
       state.events = action.payload
+    })
+    builder.addCase(fetchEventsTypes.fulfilled, (state, action) => {
+      state.types = action.payload
     })
   }
 })

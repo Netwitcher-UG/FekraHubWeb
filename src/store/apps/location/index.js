@@ -51,7 +51,8 @@ export const deleteLocations = createAsyncThunk(
       ShowSuccessToast('success')
       dispatch(fetchLocation(''))
     } catch (error) {
-      ShowErrorToast(error?.message)
+      console.log("🚀 ~ error:", error)
+      ShowErrorToast('location has been assigned to course' )
 
       return rejectWithValue(error.response.data)
     }

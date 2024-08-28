@@ -24,8 +24,11 @@ import Icon from 'src/@core/components/icon'
 
 // ** Styled Components
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
+import { useSelector } from 'react-redux'
+import { fetchEventsTypes } from 'src/store/apps/calendar'
+import { fetchCourseSchedule } from 'src/store/apps/courses'
 
-const capitalize = string => string && string[0].toUpperCase() + string.slice(1)
+
 
 const defaultState = {
   url: '',
@@ -34,7 +37,8 @@ const defaultState = {
   allDay: true,
   description: '',
   endDate: new Date(),
-  calendar: 'Business',
+  calendar: 1,
+  course:1,
   startDate: new Date()
 }
 
@@ -62,7 +66,7 @@ const AddEventSidebar = props => {
     clearErrors,
     handleSubmit,
     formState: { errors }
-  } = useForm({ defaultValues: { title: '' } })
+  } = useForm({ defaultValues: { title: '', description: '' } })
 
   const handleSidebarClose = async () => {
     setValues(defaultState)
@@ -71,20 +75,27 @@ const AddEventSidebar = props => {
     handleAddEventSidebarToggle()
   }
 
+  const { types } = useSelector((state) => state.calendar);
+  const { CourseSchedule } = useSelector((state) => state.courses);
+  console.log("🚀 ~ AddEventSidebar ~ CourseSchedule:", CourseSchedule)
+
+
+  useEffect(() => {
+    dispatch(fetchEventsTypes());
+    dispatch(fetchCourseSchedule());
+  }, [dispatch]);
+
   const onSubmit = data => {
     const modifiedEvent = {
-      url: values.url,
-      display: 'block',
-      title: data.title,
-      end: values.endDate,
-      allDay: values.allDay,
-      start: values.startDate,
-      extendedProps: {
-        calendar: capitalize(values.calendar),
-        guests: values.guests && values.guests.length ? values.guests : undefined,
-        description: values.description.length ? values.description : undefined
-      }
+      eventName: data.title,
+      endDate: values.endDate,
+      scheduleId: values.guests && values.guests.length ? values.guests : undefined,
+      startDate: values.startDate,
+      typeID: values.calendar,
+      description: data.description,
+
     }
+
     if (store.selectedEvent === null || (store.selectedEvent !== null && !store.selectedEvent.title.length)) {
       dispatch(addEvent(modifiedEvent))
     } else {
@@ -108,17 +119,17 @@ const AddEventSidebar = props => {
       setValues({ ...values, startDate: new Date(date), endDate: new Date(date) })
     }
   }
+  console.log("🚀 ~ handleStartDate ~ values:", values)
 
   const resetToStoredValues = useCallback(() => {
     if (store.selectedEvent !== null) {
       const event = store.selectedEvent
       setValue('title', event.title || '')
+      setValue('description', event.extendedProps.description || '')
       setValues({
-        url: event.url || '',
         title: event.title || '',
-        allDay: event.allDay,
-        guests: event.extendedProps.guests || [],
         description: event.extendedProps.description || '',
+        guests: event.extendedProps.guests ? event.extendedProps.guests.map(guest => guest.id) : [],
         calendar: event.extendedProps.calendar || 'Business',
         endDate: event.end !== null ? event.end : event.start,
         startDate: event.start !== null ? event.start : new Date()
@@ -128,6 +139,7 @@ const AddEventSidebar = props => {
 
   const resetToEmptyValues = useCallback(() => {
     setValue('title', '')
+    setValue('description', '')
     setValues(defaultState)
   }, [setValue])
   useEffect(() => {
@@ -247,17 +259,38 @@ const AddEventSidebar = props => {
               select
               fullWidth
               sx={{ mb: 4 }}
-              label='Calendar'
+              label='Type'
               SelectProps={{
                 value: values.calendar,
                 onChange: e => setValues({ ...values, calendar: e.target.value })
               }}
             >
-              <MenuItem value='Personal'>Personal</MenuItem>
-              <MenuItem value='Business'>Business</MenuItem>
-              <MenuItem value='Family'>Family</MenuItem>
-              <MenuItem value='Holiday'>Holiday</MenuItem>
-              <MenuItem value='ETC'>ETC</MenuItem>
+              {types.map((type,index)=>(
+              <MenuItem key={index} value={type.id}>{type.typeTitle}</MenuItem>
+
+              ))
+
+              }
+            </CustomTextField>
+
+
+            <CustomTextField
+              select
+              fullWidth
+              label='Course Schedule'
+              sx={{ mb: 4 }}
+              SelectProps={{
+                multiple: true,
+                value: values?.guests,
+                onChange: e => setValues({ ...values, guests: e.target.value })
+              }}
+            >
+              {CourseSchedule.map((type,index)=>(
+              <MenuItem key={index} value={type.id}>{type.courseName}</MenuItem>
+
+              ))
+
+              }
             </CustomTextField>
             <Box sx={{ mb: 4 }}>
               <DatePicker
@@ -295,44 +328,28 @@ const AddEventSidebar = props => {
                 }
               />
             </FormControl>
-            <CustomTextField
-              fullWidth
-              type='url'
-              id='event-url'
-              sx={{ mb: 4 }}
-              label='Event URL'
-              value={values.url}
-              placeholder='https://www.google.com'
-              onChange={e => setValues({ ...values, url: e.target.value })}
-            />
+            <Controller
+  name="description"
+  control={control}
 
-            <CustomTextField
-              select
-              fullWidth
-              label='Guests'
-              sx={{ mb: 4 }}
-              SelectProps={{
-                multiple: true,
-                value: values.guests,
-                onChange: e => setValues({ ...values, guests: e.target.value })
-              }}
-            >
-              <MenuItem value='bruce'>Bruce</MenuItem>
-              <MenuItem value='clark'>Clark</MenuItem>
-              <MenuItem value='diana'>Diana</MenuItem>
-              <MenuItem value='john'>John</MenuItem>
-              <MenuItem value='barry'>Barry</MenuItem>
-            </CustomTextField>
-            <CustomTextField
-              rows={4}
-              multiline
-              fullWidth
-              sx={{ mb: 6.5 }}
-              label='Description'
-              id='event-description'
-              value={values.description}
-              onChange={e => setValues({ ...values, description: e.target.value })}
-            />
+  rules={{ required: true }} // Required rule
+  render={({ field: { value, onChange } }) => (
+    <CustomTextField
+      rows={4}
+      multiline
+      fullWidth
+      sx={{ mb: 6.5 }}
+      label="Description"
+      value={value   }
+      onChange={onChange}
+      error={Boolean(errors.description)} // Show error state
+      helperText={errors.description ? 'This field is required' : ''} // Show helper text
+    />
+  )}
+/>
+
+
+
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <RenderSidebarFooter />
             </Box>

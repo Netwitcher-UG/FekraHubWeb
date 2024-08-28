@@ -31,7 +31,7 @@ import {
 // ** CalendarColors
 const calendarsColor = {
   Personal: 'error',
-  Business: 'primary',
+  PARTY: 'error',
   Family: 'warning',
   Holiday: 'success',
   ETC: 'info'
@@ -47,15 +47,17 @@ const AppCalendar = () => {
   const { settings } = useSettings()
   const dispatch = useDispatch()
   const store = useSelector(state => state.calendar)
+  console.log("🚀 ~ AppCalendar ~ store:", store)
 
   // ** Vars
   const leftSidebarWidth = 300
   const addEventSidebarWidth = 400
   const { skin, direction } = settings
   const mdAbove = useMediaQuery(theme => theme.breakpoints.up('md'))
+
   useEffect(() => {
     dispatch(fetchEvents(store.selectedCalendars))
-  }, [dispatch, store.selectedCalendars])
+  }, [dispatch,store.selectedCalendars])
   const handleLeftSidebarToggle = () => setLeftSidebarOpen(!leftSidebarOpen)
   const handleAddEventSidebarToggle = () => setAddEventSidebarOpen(!addEventSidebarOpen)
 
