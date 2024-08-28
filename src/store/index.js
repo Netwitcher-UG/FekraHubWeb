@@ -31,7 +31,7 @@ export const store = configureStore({
     roles,
     contracts,
     invoices,
-    attendance
+    attendance,
     invoices,
     calendar
   },
