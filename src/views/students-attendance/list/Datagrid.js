@@ -87,102 +87,99 @@ const StudentsAttendanceDataGrid = ({
 
   return (
     <>
+      <CardHeader title='Search Filters' />
+      <CardContent>
+        <Grid container spacing={6} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Grid item sm={4} xs={12}>
+            <Autocomplete
+              options={coursesData?.map(course => ({ value: course.id, label: course.name }))}
+              fullWidth
+              disableClearable={true}
+              id='autocomplete-courseFilter'
+              getOptionLabel={option => option.label}
+              value={
+                selectedCourse
+                  ? {
+                      value: selectedCourse,
+                      label: coursesData?.find(course => course.id === selectedCourse)?.name || ''
+                    }
+                  : null
+              }
+              onChange={handleCourseChange}
+              renderInput={params => (
+                <CustomTextField
+                  {...params}
+                  fullWidth
+                  sx={{ mb: 4 }}
+                  placeholder='Select course'
+                  label='Course filter'
+                  id='validation-billing-select'
+                  aria-describedby='validation-billing-select'
+                />
+              )}
+            />
+          </Grid>
+          {!store?.studentsLoading && (
+            <Grid sm={4} xs={12} sx={{ display: 'flex', justifyContent: 'flex-end', height: '2.5rem', mt: 6 }}>
+              <Button
+                disabled={courseStatus || store?.submitLoading || isNotSchoolDay}
+                onClick={() => handelAttendanceSubmit()}
+                variant='contained'
+              >
+                {store?.submitLoading ? (
+                  <CircularProgress size={20} />
+                ) : (
+                  <>
+                    <Icon fontSize='1.125rem' icon='mdi:tick' />
+                    <Grid sx={{ ml: 2 }}>
+                      <Translations text={'Submit course attendance'} />
+                    </Grid>
+                  </>
+                )}
+              </Button>
+            </Grid>
+          )}
+        </Grid>
+      </CardContent>
+      <Divider sx={{ m: '0 !important' }} />
       {isNotSchoolDay ? (
-        <Grid item xs={12}>
-          <Alert severity='info'> Today is not a school day !</Alert>
+        <Grid item xs={12} sx={{ mt: 16, mb: 16, mx: 4 }}>
+          <Alert severity='info'> There is no course today !</Alert>
         </Grid>
       ) : (
-        <>
-          <CardHeader title='Search Filters' />
-          <CardContent>
-            <Grid container spacing={6} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Grid item sm={4} xs={12}>
-                <Autocomplete
-                  options={coursesData?.map(course => ({ value: course.id, label: course.name }))}
-                  fullWidth
-                  disableClearable={true}
-                  id='autocomplete-courseFilter'
-                  getOptionLabel={option => option.label}
-                  value={
-                    selectedCourse
-                      ? {
-                          value: selectedCourse,
-                          label: coursesData?.find(course => course.id === selectedCourse)?.name || ''
-                        }
-                      : null
-                  }
-                  onChange={handleCourseChange}
-                  renderInput={params => (
-                    <CustomTextField
-                      {...params}
-                      fullWidth
-                      sx={{ mb: 4 }}
-                      placeholder='Select course'
-                      label='Course filter'
-                      id='validation-billing-select'
-                      aria-describedby='validation-billing-select'
-                    />
-                  )}
-                />
-              </Grid>
-              {!store?.studentsLoading && (
-                <Grid sm={4} xs={12} sx={{ display: 'flex', justifyContent: 'flex-end', height: '2.5rem', mt: 6 }}>
-                  <Button
-                    disabled={courseStatus || store?.submitLoading}
-                    onClick={() => handelAttendanceSubmit()}
-                    variant='contained'
-                  >
-                    {store?.submitLoading ? (
-                      <CircularProgress size={20} />
-                    ) : (
-                      <>
-                        <Icon fontSize='1.125rem' icon='mdi:tick' />
-                        <Grid sx={{ ml: 2 }}>
-                          <Translations text={'Submit course attendance'} />
-                        </Grid>
-                      </>
-                    )}
-                  </Button>
-                </Grid>
-              )}
-            </Grid>
-          </CardContent>
-          <Divider sx={{ m: '0 !important' }} />
-
-          <Box sx={{ height: 'calc(100vh - 250px)' }}>
-            {store.studentsLoading ? (
-              <Box
+        <Box sx={{ height: 'calc(100vh - 250px)' }}>
+          {store.studentsLoading ? (
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '90%',
+                zIndex: 10
+              }}
+            >
+              <CircularProgress size={100} />
+            </Box>
+          ) : (
+            <>
+              <DataGrid
+                rowHeight={62}
+                rows={store?.students?.students || []}
+                columns={columns}
+                hideFooter={true}
+                disableRowSelectionOnClick
+                onRowClick={handleRowClick}
+                pagination={true}
                 sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: '90%',
-                  zIndex: 10
+                  // overflowY: 'scroll',
+                  overflowX: 'scroll',
+                  ...customScrollbarStyles,
+                  fontSize: '1rem'
                 }}
-              >
-                <CircularProgress size={100} />
-              </Box>
-            ) : (
-              <>
-                <DataGrid
-                  rowHeight={62}
-                  rows={store?.students?.students || []}
-                  columns={columns}
-                  hideFooter={true}
-                  disableRowSelectionOnClick
-                  onRowClick={handleRowClick}
-                  pagination={true}
-                  sx={{
-                    // overflowY: 'scroll',
-                    overflowX: 'scroll',
-                    ...customScrollbarStyles,
-                    fontSize: '1rem'
-                  }}
-                />
-              </>
-            )}
-          </Box>
-        </>
+              />
+            </>
+          )}
+        </Box>
       )}
     </>
   )

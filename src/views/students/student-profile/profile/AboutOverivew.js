@@ -15,7 +15,6 @@ import Icon from 'src/@core/components/icon'
 const AboutOverivew = props => {
   const { about, setEditDrawerOpen, parentCard = false, byParent } = props
   const ability = useContext(AbilityContext)
-  console.log(byParent)
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>

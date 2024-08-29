@@ -15,6 +15,19 @@ export const fetchStudentsWithAttendance = createAsyncThunk(
   }
 )
 
+export const editStudentAttendance = createAsyncThunk(
+  'appAttendance/editStudentAttendance',
+  async ({ statusId, id, studentId }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.patch(`/api/Attendance/Student?id=${id}&statusId=${statusId}`)
+      thunkAPI.dispatch(fetchStudentAttendance(studentId))
+      return response
+    } catch (error) {
+      return error.response
+    }
+  }
+)
+
 export const submitCourseAttendance = createAsyncThunk(
   'appAttendance/submitCourseAttendance',
   async ({ courseId, data }) => {
@@ -40,6 +53,54 @@ export const fetchAttendanceStatuses = createAsyncThunk('appAttendance/fetchAtte
   }
 })
 
+export const fetchStudentAttendance = createAsyncThunk('appAttendance/fetchStudentAttendance', async id => {
+  try {
+    const response = await axiosInstance.get(`/api/Attendance/StudentAttendance/${id}`)
+    return response?.data
+  } catch (error) {
+    return error.response
+  }
+})
+
+export const fetchChildAttendance = createAsyncThunk('appAttendance/fetchChildAttendance', async id => {
+  try {
+    const response = await axiosInstance.get(`/api/Attendance/StudentAttendanceForParent/${id}`)
+    return response?.data
+  } catch (error) {
+    return error.response
+  }
+})
+
+export const deleteAttendanceRecord = createAsyncThunk(
+  'appAttendance/deleteAttendanceRecord',
+  async ({ id, studentId }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.delete(`/api/Attendance/Student?id=${id}`)
+      thunkAPI.dispatch(fetchStudentAttendance(studentId))
+      return response
+    } catch (error) {
+      return error.response
+    }
+  }
+)
+
+export const addNewAttendanceRecord = createAsyncThunk(
+  'appAttendance/addNewAttendanceRecord',
+  async (data, thunkAPI) => {
+    try {
+      const response = await axiosInstance.post('/api/Attendance/newAttendanceForProfile', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      thunkAPI.dispatch(fetchStudentAttendance(data.studentId))
+      return response
+    } catch (error) {
+      return error.response
+    }
+  }
+)
+
 export const appSliceAttendance = createSlice({
   name: 'appAttendance',
   initialState: {
@@ -47,7 +108,11 @@ export const appSliceAttendance = createSlice({
 
     studentsLoading: false,
     attendanceStatuses: [],
-    submitLoading: false
+    submitLoading: false,
+    studentAttendance: [],
+    studentAttendanceLoading: false,
+    editLoading: false,
+    childAttendance: []
   },
   reducers: {},
   extraReducers: builder => {
@@ -74,6 +139,31 @@ export const appSliceAttendance = createSlice({
       })
       .addCase(submitCourseAttendance.rejected, state => {
         state.submitLoading = false
+      })
+
+      .addCase(fetchStudentAttendance.pending, state => {
+        state.studentAttendanceLoading = true
+      })
+      .addCase(fetchStudentAttendance.fulfilled, (state, action) => {
+        state.studentAttendanceLoading = false
+        state.studentAttendance = action.payload
+      })
+      .addCase(fetchStudentAttendance.rejected, state => {
+        state.studentAttendanceLoading = false
+      })
+
+      .addCase(editStudentAttendance.pending, state => {
+        state.editLoading = true
+      })
+      .addCase(editStudentAttendance.fulfilled, state => {
+        state.editLoading = false
+      })
+      .addCase(editStudentAttendance.rejected, state => {
+        state.editLoading = false
+      })
+
+      .addCase(fetchChildAttendance.fulfilled, (state, action) => {
+        state.childAttendance = action.payload
       })
   }
 })

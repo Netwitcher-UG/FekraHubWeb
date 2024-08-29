@@ -97,18 +97,15 @@ const SchoolOverview = props => {
               </Box>
               {about?.course?.teacher?.length > 0 && (
                 <Box
-                  sx={{
-                    mb: 6,
-                    display: 'flex',
-                    flexDirection: 'row',
-                    flexWrap: 'wrap',
-                    gap: '1.2rem',
-                    alignItems: 'flex-start'
-                  }}
+                // sx={{
+                //   display: 'flex',
+                //   alignItems: 'center',
+                //   '&:not(:last-of-type)': { mb: 6 }
+                // }}
                 >
                   <Typography
                     variant='body2'
-                    sx={{ mb: 4, color: 'primary.main', textTransform: 'uppercase', width: '100%', mt: 2 }}
+                    sx={{ mb: 6, color: 'primary.main', textTransform: 'uppercase', width: '100%', mt: 4 }}
                   >
                     Teachers
                   </Typography>
@@ -131,12 +128,6 @@ const SchoolOverview = props => {
                   ))}
                 </Box>
               )}
-              {/* <div>
-              <Typography variant='body2' sx={{ mb: 4, color: 'text.disabled', textTransform: 'uppercase' }}>
-                Teams
-              </Typography>
-              {renderTeams(teams)}
-            </div> */}
             </CardContent>
           </Card>
         </Grid>

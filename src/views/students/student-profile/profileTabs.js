@@ -15,8 +15,10 @@ import { fetchChildProfileInfo, fetchStudentProfileInfo } from 'src/store/apps/s
 import { fetchChildContracts, fetchStudentContracts } from 'src/store/apps/contracts'
 import { fetchChildInvoices, fetchStudentInvoices } from 'src/store/apps/invoices'
 import { fetchChildWorksheets, fetchStudentWorsheets } from 'src/store/apps/worksheets'
+import { fetchStudentAttendance, fetchAttendanceStatuses, fetchChildAttendance } from 'src/store/apps/attendance'
 import { useDispatch, useSelector } from 'react-redux'
 import StudentReportsTab from './reports-list/reports-tab'
+import StudentAttendanceTab from './attendance-list/attendance-tab'
 import ContractsList from './contracts/contracts-list'
 import InvoicesList from './invoices/invoices-list'
 import ProfileTab from './profile'
@@ -42,7 +44,7 @@ const StudentProfile = ({ student, byParent = false }) => {
   const { childWorksheets, childWorksheetLoading, studentWorksheets, studentWorksheetsLoading } = useSelector(
     state => state.worksheet
   )
-
+  const { studentAttendance, childAttendance } = useSelector(state => state.attendance)
   useEffect(() => {
     if (!student) return
     if (byParent) {
@@ -51,12 +53,15 @@ const StudentProfile = ({ student, byParent = false }) => {
       dispatch(fetchChildContracts(student))
       dispatch(fetchChildInvoices(student))
       dispatch(fetchChildWorksheets(student))
+      dispatch(fetchChildAttendance(student))
     } else {
       dispatch(fetchReportsByFilter({ student: student, improved: true }))
       dispatch(fetchStudentProfileInfo(student))
       dispatch(fetchStudentInvoices(student))
       dispatch(fetchStudentContracts(student))
       dispatch(fetchStudentWorsheets(student))
+      dispatch(fetchStudentAttendance(student))
+      dispatch(fetchAttendanceStatuses())
     }
   }, [student])
 
@@ -71,12 +76,28 @@ const StudentProfile = ({ student, byParent = false }) => {
   return (
     <>
       <TabContext value={value}>
-        <TabList variant='fullWidth' onChange={handleChange} aria-label='full width tabs example'>
+        <TabList
+          sx={{
+            '& .MuiTab-root': {
+              fontSize: {
+                xs: '0.5rem',
+                sm: '0.6rem',
+                md: '0.75rem',
+                lg: '0.82rem',
+                xl: '1.2rem'
+              }
+            }
+          }}
+          variant='fullWidth'
+          onChange={handleChange}
+          aria-label='full width tabs example'
+        >
           <Tab value='1' label='Profile info' />
           <Tab value='2' label={byParent ? 'Child Reports' : 'Student Reports'} />
           <Tab value='3' label={byParent ? 'Child Contracts' : 'Student Contracts'} />
           <Tab value='4' label={byParent ? 'Child Invoices' : 'Student Invoices'} />
           <Tab value='5' label={byParent ? 'Child Worksheets' : 'Student Worksheets'} />
+          <Tab value='6' label={byParent ? 'Child Attendance' : 'Student Attendance'} />
         </TabList>
         <TabPanel value='1'>
           {childProfileLoading || studentProfileLoading ? (
@@ -135,6 +156,10 @@ const StudentProfile = ({ student, byParent = false }) => {
             loading={byParent ? childWorksheetLoading : studentWorksheetsLoading}
             byParent={byParent}
           />{' '}
+        </TabPanel>
+        <TabPanel value='6'>
+          {' '}
+          <StudentAttendanceTab store={byParent ? childAttendance : studentAttendance} studentId={student} />{' '}
         </TabPanel>
       </TabContext>
 
