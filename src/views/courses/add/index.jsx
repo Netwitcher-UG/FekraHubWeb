@@ -8,15 +8,16 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import IconButton from '@mui/material/IconButton'
 import Grid from '@mui/material/Grid'
-import { Autocomplete, InputAdornment, TextField } from '@mui/material'
-import { useForm, Controller } from 'react-hook-form'
+import { Autocomplete, InputAdornment, Stack, TextField } from '@mui/material'
+import { useForm, Controller, useFieldArray } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import { addCourses } from 'src/store/apps/courses'
+import { addCourses, FetchCourseScheduleDaysOfWeek } from 'src/store/apps/courses'
 import { fetchLocation } from 'src/store/apps/location'
 import Icon from 'src/@core/components/icon'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import CustomTextField from 'src/@core/components/mui/text-field'
+import { Box } from '@mui/system'
 
 const CustomCloseButton = styled(IconButton)(({ theme }) => ({
   top: 0,
@@ -66,22 +67,26 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
 
   const dispatch = useDispatch()
   const { data: DataLocation } = useSelector(state => state.location)
-  console.log('🚀 ~ AddCourses ~ DataLocation:', DataLocation)
+  const {DaysOfWeeks} = useSelector(state => state.courses)
+  console.log("🚀 ~ AddCourses ~ DaysOfWeeks:", DaysOfWeeks)
 
   useEffect(() => {
     dispatch(fetchLocation(''))
+    dispatch(FetchCourseScheduleDaysOfWeek(''))
   }, [dispatch])
 
   const defaultValues = {
     LocationId: '',
-    RoomId: '',
-    Name: '',
-    Price: '',
-    Lessons: '',
-    Capacity: '',
-    StartDate: '',
-    EndDate: '',
-    UserId: ''
+    courseSchedule:[{dayOfWeek:'',endTime:'',startTime:''}],
+    course:{
+    roomId: '',
+    name: '',
+    price:0 ,
+    lessons: '',
+    capacity: '',
+    startDate: '',
+    endDate: '',
+  }
   }
 
   const {
@@ -89,7 +94,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
     handleSubmit,
     reset,
     formState: { errors, isDirty }
-  } = useForm({ defaultValues, resolver: yupResolver(schema) })
+  } = useForm({ defaultValues })
 
   const handleNextStep = () => {
     if (step === 0) {
@@ -98,8 +103,14 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
     }
     setStep(prev => prev + 1)
   }
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'courseSchedule'
+  });
 
   const handleSaveData = data => {
+
+
     dispatch(addCourses(data))
     reset()
     handleClose()
@@ -158,30 +169,14 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                   )}
                 />
               </Grid>
-              {/* <Grid item xs={12}>
-                <Controller
-                  name='RoomId'
-                  control={control}
-                  render={({ field }) => (
-                    <Autocomplete
-                      {...field}
-                      options={roomOptions}
-                      getOptionLabel={option => option.name}
-                      renderInput={params => <TextField {...params} label='Select Room' variant='outlined' />}
-                      onChange={(event, value) => {
-                        field.onChange(value ? value.id : '')
-                      }}
-                    />
-                  )}
-                />
-              </Grid> */}
+
             </Grid>
           )}
           {step === 1 && (
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <Controller
-                  name='RoomId'
+                  name='course.roomId'
                   control={control}
                   render={({ field: { onChange, value, ref } }) => (
                     <Autocomplete
@@ -193,8 +188,8 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                           label='Select Room'
                           variant='outlined'
                           inputRef={ref}
-                          error={!!errors.RoomId}
-                          helperText={errors.RoomId ? errors.RoomId.message : ''}
+                          error={!!errors.roomId}
+                          helperText={errors.roomId ? errors.roomId.message : ''}
                         />
                       )}
                       onChange={(event, newValue) => {
@@ -206,35 +201,38 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                 />
               </Grid>
               <Grid item xs={12}>
-                <Controller
-                  name='TeacherId'
-                  control={control}
-                  render={({ field: { onChange, value, ref } }) => (
-                    <Autocomplete
-                      options={dataTeacher}
-                      getOptionLabel={option => option.firstName || ''}
-                      renderInput={params => (
-                        <CustomTextField
-                          {...params}
-                          label='Teacher'
-                          variant='outlined'
-                          inputRef={ref}
-                          error={!!errors.TeacherId}
-                          helperText={errors.TeacherId ? errors.TeacherId.message : ''}
-                        />
-                      )}
-                      onChange={(event, newValue) => {
-                        onChange(newValue ? newValue.id : '')
-                      }}
-                      value={dataTeacher.find(t => t.id === value) || null}
-                    />
-                  )}
-                />
+              <Controller
+  name='TeacherId'
+  control={control}
+  render={({ field: { onChange, value, ref } }) => (
+    <Autocomplete
+      multiple
+      options={dataTeacher}
+      getOptionLabel={option => option.firstName || ''}
+      renderInput={params => (
+        <CustomTextField
+          {...params}
+          label='Teacher'
+          variant='outlined'
+          inputRef={ref}
+          error={!!errors.TeacherId}
+          helperText={errors.TeacherId ? errors.TeacherId.message : ''}
+        />
+      )}
+      onChange={(event, newValue) => {
+
+        onChange(newValue.map(option => option.id));
+      }}
+      value={dataTeacher.filter(t => value?.includes(t.id)) || []}
+    />
+  )}
+/>
+
               </Grid>
-              {/* Add other fields here like Name, Price, etc. */}
+
               <Grid item xs={12}>
                 <Controller
-                  name='Name'
+                  name='course.name'
                   control={control}
                   render={({ field }) => (
                     <CustomTextField
@@ -251,7 +249,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
 
               <Grid item xs={12}>
                 <Controller
-                  name='Price'
+                  name='course.price'
                   control={control}
                   render={({ field }) => (
                     <CustomTextField
@@ -272,7 +270,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
 
               <Grid item xs={12}>
                 <Controller
-                  name='Lessons'
+                  name='course.lessons'
                   control={control}
                   render={({ field }) => (
                     <CustomTextField
@@ -289,7 +287,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
 
               <Grid item xs={12}>
                 <Controller
-                  name='Capacity'
+                  name='course.capacity'
                   control={control}
                   render={({ field }) => (
                     <CustomTextField
@@ -305,12 +303,12 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
               </Grid>
               <Grid item xs={12}>
                 <Controller
-                  name='StartDate'
+                  name='course.startDate'
                   control={control}
                   render={({ field }) => (
                     <CustomTextField
                       {...field}
-                      label='StartDate'
+                      label='Start Date'
                       variant='outlined'
                       type='date'
                       fullWidth
@@ -322,12 +320,12 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
               </Grid>
               <Grid item xs={12}>
                 <Controller
-                  name='EndDate'
+                  name='course.endDate'
                   control={control}
                   render={({ field }) => (
                     <CustomTextField
                       {...field}
-                      label='EndDate'
+                      label='End Date'
                       variant='outlined'
                       type='date'
                       fullWidth
@@ -338,8 +336,101 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                 />
               </Grid>
 
-              {/* Add more fields as needed */}
+
             </Grid>
+          )}
+             {step === 2 && (
+          <>
+
+
+{fields.map((field, index) => (
+  <Box key={field.id} width={'100%'} sx={{ marginY: '24px' }}>
+    <Stack
+      direction="row"
+      spacing={3}
+
+    >
+      <Box flex={1}>
+        <Controller
+          name={`courseSchedule.${index}.dayOfWeek`}
+          control={control}
+          render={({ field: { onChange, value, ref } }) => (
+            <Autocomplete
+              options={DaysOfWeeks}
+              getOptionLabel={(option) => option || ''}
+              renderInput={(params) => (
+                <CustomTextField
+                  {...params}
+                  label='Day of the Week'
+                  variant='outlined'
+                  inputRef={ref}
+                  error={!!errors.courseSchedule?.[index]?.EmailServer}
+                  helperText={errors.courseSchedule?.[index]?.EmailServer?.message}
+                />
+              )}
+              onChange={(event, newValue) => {
+                onChange(newValue ? newValue : '')
+              }}
+              value={DaysOfWeeks.find(t => t === value) || null}
+            />
+          )}
+        />
+      </Box>
+
+      <Box flex={1}>
+        <Controller
+          name={`courseSchedule.${index}.startTime`}
+          control={control}
+          render={({ field }) => (
+            <CustomTextField
+              {...field}
+              fullWidth
+              type='time'
+              label={`Start Time ${index + 1}`}
+              error={!!errors.courseSchedule?.[index]?.startTime}
+              helperText={errors.courseSchedule?.[index]?.startTime?.message}
+            />
+          )}
+        />
+      </Box>
+
+      <Box flex={1}>
+        <Controller
+          name={`courseSchedule.${index}.endTime`}
+          control={control}
+          render={({ field }) => (
+            <CustomTextField
+              {...field}
+              fullWidth
+              type='time'
+              label={`End Time ${index + 1}`}
+              error={!!errors.courseSchedule?.[index]?.endTime}
+              helperText={errors.courseSchedule?.[index]?.endTime?.message}
+            />
+          )}
+        />
+      </Box>
+
+      <Button
+        sx={{ marginLeft: '16px' }}
+        variant='text'
+        color='error'
+        onClick={() => remove(index)}
+      >
+        Remove
+      </Button>
+    </Stack>
+  </Box>
+))}
+
+
+<Button variant='outlined' sx={{marginY:'24px'}}  onClick={() => append({ EmailServer: '' })}>
+  Add New course Schedule
+</Button>
+
+
+
+            </>
           )}
         </DialogContent>
         <DialogActions>
@@ -348,7 +439,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
               Back
             </Button>
           )}
-          {step < 1 ? (
+          {step < 2 ? (
             <Button onClick={handleNextStep} disabled={location.length === 0} color='primary'>
               Next
             </Button>

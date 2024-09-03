@@ -3,11 +3,11 @@ import { Box, Stack } from '@mui/system'
 import React, { useEffect, useState } from 'react'
 
 import styled from '@emotion/styled'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { useDispatch, useSelector } from 'react-redux'
-import { editCourses } from 'src/store/apps/courses'
+import { editCourses, FetchCourseScheduleDaysOfWeek } from 'src/store/apps/courses'
 import CustomTextField from 'src/@core/components/mui/text-field'
 
 const Header = styled(Box)(({ theme }) => ({
@@ -43,22 +43,29 @@ const schema = yup.object().shape({
 })
 
 export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationData }) {
+  console.log("🚀 ~ DrawerEdit ~ dataDef:", dataDef)
   const [location, setLocation] = useState('')
 
   const { status, error, dataRooms, dataTeacher } = useSelector(state => state.courses)
+  const {DaysOfWeeks} = useSelector(state => state.courses)
 
   const dispatch = useDispatch()
 
   const defaultValues = {
+
+  course:{
     Name: dataDef?.name,
     Price: dataDef?.price,
     Lessons: dataDef?.lessons,
     Capacity: dataDef?.capacity,
     StartDate: dataDef?.startDate?.slice(0, 10),
     EndDate: dataDef?.endDate.slice(0, 10),
-    TeacherId: dataDef?.teacher[0]?.id  || '',
     RoomId: dataDef?.room.id || '',
-    LocationId:dataDef?.location?.id || ''
+
+  },
+    TeacherId: dataDef?.teacher.map(teacher => teacher.id)||'',
+    LocationId:dataDef?.location?.id || '',
+    courseSchedule:dataDef?.courseSchedule || '',
   }
 
   const {
@@ -77,7 +84,8 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
     if (dataDef?.room) {
       setLocation(prevLocations => [...prevLocations, dataDef?.room]);
     }
-  }, [dataDef?.room])
+    dispatch(FetchCourseScheduleDaysOfWeek(''))
+  }, [dataDef?.room,dispatch])
 
   const handleSaveData = data => {
     dispatch(editCourses({ ...data, id: dataDef.id }))
@@ -85,6 +93,11 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
     reset()
     setLocation('')
   }
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'courseSchedule'
+  });
 
   return (
     <Drawer
@@ -117,7 +130,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
           <Grid container rowSpacing={4} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
             <Grid item xs={12} sm={12} lg={12}>
               <Controller
-                name='Name'
+                name='course.Name'
                 rules={{ required: true }}
                 defaultValue={dataDef?.name}
                 control={control}
@@ -136,7 +149,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
             </Grid>
             <Grid item xs={12} sm={12} lg={12}>
               <Controller
-                name='Price'
+                name='course.Price'
                 rules={{ required: true }}
                 control={control}
                 render={({ field }) => (
@@ -157,7 +170,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
             </Grid>
             <Grid item xs={12} sm={12} lg={12}>
               <Controller
-                name='Lessons'
+                name='course.Lessons'
                 rules={{ required: true }}
                 defaultValue=''
                 control={control}
@@ -175,7 +188,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
             </Grid>
             <Grid item xs={12} sm={12} lg={12}>
               <Controller
-                name='Capacity'
+                name='course.Capacity'
                 rules={{ required: true }}
                 defaultValue=''
                 control={control}
@@ -193,7 +206,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
             </Grid>
             <Grid item xs={12} sm={12} lg={12}>
               <Controller
-                name='StartDate'
+                name='course.StartDate'
                 rules={{ required: true }}
                 defaultValue=''
                 control={control}
@@ -212,7 +225,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
             </Grid>
             <Grid item xs={12} sm={12} lg={12}>
               <Controller
-                name='EndDate'
+                name='course.EndDate'
                 defaultValue=''
                 control={control}
                 rules={{ required: true }}
@@ -235,6 +248,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
   control={control}
   render={({ field: { onChange, value, ref } }) => (
     <Autocomplete
+      multiple
       options={dataTeacher}
       getOptionLabel={option => option.firstName || ''}
       renderInput={params => (
@@ -242,18 +256,16 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
           {...params}
           label='Teacher'
           variant='outlined'
-          placeholder='No teacher please select one'
           inputRef={ref}
           error={!!errors.TeacherId}
           helperText={errors.TeacherId ? errors.TeacherId.message : ''}
         />
       )}
-
-      // Handle option selection
       onChange={(event, newValue) => {
-        onChange(newValue ? newValue.id : '');
+
+        onChange(newValue.map(option => option.id));
       }}
-      value={dataTeacher.find(option => option.id === value) || null}
+      value={dataTeacher.filter(t => value?.includes(t.id)) || []}
     />
   )}
 />
@@ -303,10 +315,100 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
 
 
             </Grid>
+<Box sx={{marginLeft:'12px' ,width:'100%'}}>
+
+
+{fields.map((field, index) => (
+  <Box key={field.id}  sx={{ marginY: '24px' }}>
+
+<Grid item xs={12} sm={12} lg={12}>
+        <Controller
+          name={`courseSchedule.${index}.dayOfWeek`}
+          control={control}
+          render={({ field: { onChange, value, ref } }) => (
+            <Autocomplete
+              options={DaysOfWeeks}
+              getOptionLabel={(option) => option || ''}
+              renderInput={(params) => (
+                <CustomTextField
+                  {...params}
+                  label='Day of the Week'
+                  variant='outlined'
+                  inputRef={ref}
+                  sx={{marginBottom:'12px'}}
+                  error={!!errors.courseSchedule?.[index]?.EmailServer}
+                  helperText={errors.courseSchedule?.[index]?.EmailServer?.message}
+                />
+              )}
+              onChange={(event, newValue) => {
+                onChange(newValue ? newValue : '')
+              }}
+              value={DaysOfWeeks.find(t => t === value) || null}
+            />
+          )}
+        />
+
+
+</Grid>
+        <Controller
+          name={`courseSchedule.${index}.startTime`}
+          control={control}
+          render={({ field }) => (
+            <CustomTextField
+              {...field}
+              fullWidth
+              type='time'
+              label={`Start Time ${index + 1}`}
+              sx={{marginBottom:'12px'}}
+              error={!!errors.courseSchedule?.[index]?.startTime}
+              helperText={errors.courseSchedule?.[index]?.startTime?.message}
+            />
+          )}
+        />
+
+
+
+        <Controller
+          name={`courseSchedule.${index}.endTime`}
+          control={control}
+          render={({ field }) => (
+            <CustomTextField
+              {...field}
+              fullWidth
+              type='time'
+              sx={{marginBottom:'12px'}}
+              label={`End Time ${index + 1}`}
+              error={!!errors.courseSchedule?.[index]?.endTime}
+              helperText={errors.courseSchedule?.[index]?.endTime?.message}
+            />
+          )}
+        />
+
+
+      <Button
+
+        variant='text'
+        color='error'
+        onClick={() => remove(index)}
+      >
+        Remove
+      </Button>
+
+  </Box>
+))}
+
+
+
+<Button variant='outlined' sx={{marginY:'24px'}}  onClick={() => append({ EmailServer: '' })}>
+  Add New course Schedule
+</Button>
+
+</Box>
+
             {location.length !== 0 ? (
               <Grid item xs={12} sm={12} lg={12}>
                 <Controller
-                  name='RoomId'
+                  name='course.RoomId'
                   control={control}
                   render={({ field: { onChange, value, ref } }) => (
                     <Autocomplete

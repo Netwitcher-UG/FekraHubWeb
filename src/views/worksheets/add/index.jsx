@@ -94,6 +94,7 @@ const AdduWorksheets = ({ dataUploadType, data }) => {
       await dispatch(addWorksheet(formData))
       handleClose()
       reset()
+      setSelectedFile(null)
     } catch (error) {
       console.error('Error submitting data:', error)
     }

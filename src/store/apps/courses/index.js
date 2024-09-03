@@ -42,6 +42,17 @@ export const fetchCourseSchedule = createAsyncThunk('courses/fetchCourseSchedule
     return rejectWithValue(error.response?.data || error.message)
   }
 })
+
+export const FetchCourseScheduleDaysOfWeek = createAsyncThunk('courses/FetchCourseScheduleDaysOfWeek', async (_, { rejectWithValue }) => {
+  try {
+    const response = await axiosInstance.get('/api/CourseSchedule/daysOfWeek', {})
+
+    return response.data
+  } catch (error) {
+    ShowErrorToast(error.response?.data || error.message)
+    return rejectWithValue(error.response?.data || error.message)
+  }
+})
 export const addRoom = createAsyncThunk('courses/addRoom', async (data, { getState, dispatch }) => {
   try {
     const response = await axiosInstance.post(`/api/Rooms`, data, {
@@ -110,7 +121,7 @@ export const addCourses = createAsyncThunk('courses/addCourses', async (data, { 
     const response = await axiosInstance.post(`/api/Courses`, data, {
       headers: {
         accept: 'application/json',
-        'Content-Type': 'multipart/form-data'
+        'Content-Type': 'application/json'
       }
     })
     ShowSuccessToast('Success')
@@ -128,7 +139,8 @@ export const editCourses = createAsyncThunk('courses/editCourses', async (data, 
   try {
     const response = await axiosInstance.put(`/api/Courses/${data.id}`, data, {
       headers: {
-        'Content-Type': 'multipart/form-data'
+       accept: 'application/json',
+        'Content-Type': 'application/json'
       }
     })
     ShowSuccessToast('Success')
@@ -161,6 +173,7 @@ const CoursesSlice = createSlice({
   initialState: {
     data: {},
     dataRooms: [],
+    DaysOfWeeks:[],
     dataTeacher: [],
     status: 'idle',
     roomsStatus: 'idle',
@@ -184,6 +197,10 @@ const CoursesSlice = createSlice({
       .addCase(fetchCourses.rejected, (state, action) => {
         state.status = 'failed'
         state.error = action.payload
+      })
+      .addCase(FetchCourseScheduleDaysOfWeek.fulfilled, (state, action) => {
+        state.status = 'succeeded'
+        state.DaysOfWeeks = action.payload
       })
       .addCase(fetchCoursesRoom.pending, state => {
         state.roomsStatus = 'loading'

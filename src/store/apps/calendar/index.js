@@ -10,7 +10,7 @@ import axiosInstance from 'src/lib/axiosInstance'
 // ** Fetch Events
 export const fetchEvents = createAsyncThunk('appCalendar/fetchEvents', async (selectedCalendars, { getState }) => {
   try {
-    const queryString = selectedCalendars.map(id => `courseId=${id}`).join('&');
+    const queryString = selectedCalendars?.map(id => `courseId=${id}`).join('&');
 
     // Use the query string directly in the URL
     const response = await axiosInstance.get(`/api/events?${queryString}`);
@@ -61,8 +61,9 @@ export const updateEvent = createAsyncThunk('appCalendar/updateEvent', async (ev
         'Content-Type': 'multipart/form-data'
       }
     })
-  ShowSuccessToast('Updated Event Successfully')
     await dispatch(fetchEvents())
+  ShowSuccessToast('Updated Event Successfully')
+
 
   }catch(error)
   {

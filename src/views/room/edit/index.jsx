@@ -21,6 +21,7 @@ const Header = styled(Box)(({ theme }) => ({
 }))
 
 export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
+  console.log("🚀 ~ DrawerEdit ~ dataDef:", dataDef)
   const { data: dataTeacher, status, error } = useSelector(state => state.location)
 
   const dispatch = useDispatch()
