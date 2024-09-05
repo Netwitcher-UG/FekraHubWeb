@@ -29,7 +29,42 @@ import toast from 'react-hot-toast'
 import VerifyEmailV1 from 'src/@core/components/email-verification/verify-email'
 import { Autocomplete } from '@mui/material'
 import countryList from 'react-select-country-list'
+import { useTranslation } from 'react-i18next'
 
+const getValidationSchema = t =>
+  yup.object().shape({
+    password: yup
+      .string()
+      .required(t('Password is required'))
+      .min(6, t('Password must be at least 6 characters'))
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d])[\s\S]{6,}$/,
+        t(
+          'Password must contain at least one lowercase letter, one uppercase letter, one digit, and one non-alphabetic character'
+        )
+      ),
+    email: yup.string().email(t('Invalid email')).required(t('Email is required')),
+    firstName: yup.string().required(t('Firstname is required')),
+    lastname: yup.string().required(t('Lastname is required')),
+    phoneNumber: yup
+      .string()
+      .required(t('Phone Number is required'))
+      .matches(/^\d{10,}$/, t('Phone Number must be at least 10 digits')), // At least 10 digits
+    emergencyPhoneNumber: yup
+      .string()
+      .required(t('Emergency Phone Number is required'))
+      .matches(/^\d{10,}$/, t('Emergency Phone Number must be at least 10 digits')),
+    birthplace: yup.string().required(t('Birthplace is required')),
+    nationality: yup.string().required(t('Nationality is required')),
+    street: yup.string().required(t('Street is required')),
+    streetNr: yup.string().required(t('Street number is required')),
+    zipCode: yup.string().required(t('ZipCode is required')),
+    city: yup.string().required(t('City is required')),
+    job: yup.string().required(t('Job is required')),
+    graduation: yup.string().required(t('Graduation is required')),
+    birthday: yup.date().nullable().required(t('Birthday is required')),
+    gender: yup.string().required(t('Gender is required'))
+  })
 const CustomDatePickerWrapper = styled(DatePickerWrapper)({
   '& .react-datepicker-popper': {
     zIndex: 1500
@@ -52,39 +87,8 @@ const RegisterV1 = () => {
   const [isregistedDone, setIsregistedDone] = useState(false)
   const countryOptions = useMemo(() => countryList().getData(), [])
   const theme = useTheme()
-
-  const schema = yup.object().shape({
-    // username: yup.string().required('Username is required'),
-    password: yup
-      .string()
-      .required('Password is required')
-      .min(6, 'Password must be at least 6 characters')
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d])[\s\S]{6,}$/,
-        'Password must contain at least one lowercase letter, one uppercase letter, one digit, and one non-alphabetic character'
-      ),
-    email: yup.string().email('Invalid email').required('Email is required'),
-    firstName: yup.string().required('Firstname is required'),
-    lastname: yup.string().required('Lastname is required'),
-    phoneNumber: yup
-      .string()
-      .required('Phone Number is required')
-      .matches(/^\d{10,}$/, 'Phone Number must be at least 10 digits'), // At least 10 digits
-    emergencyPhoneNumber: yup
-      .string()
-      .required('Emergency Phone Number is required')
-      .matches(/^\d{10,}$/, 'Emergency Phone Number must be at least 10 digits'),
-    birthplace: yup.string().required('Birthplace is required'),
-    nationality: yup.string().required('Nationality is required'),
-    street: yup.string().required('Street is required'),
-    streetNr: yup.string().required('Street number is required'),
-    zipCode: yup.string().required('ZipeCode is required'),
-    city: yup.string().required('City is required'),
-    job: yup.string().required('Job is required'),
-    graduation: yup.string().required('Graduation is required'),
-    birthday: yup.date().nullable().required('Birthday is required'),
-    gender: yup.string().required('Gender is required')
-  })
+  const { t } = useTranslation()
+  const schema = useMemo(() => getValidationSchema(t), [t])
 
   const {
     watch,
@@ -189,14 +193,16 @@ const RegisterV1 = () => {
                     />
                   </svg>
                   <Typography variant='h3' sx={{ ml: 2.5, fontWeight: 700 }}>
-                    Register To {themeConfig.templateName}
+                    {t('Register To')} {themeConfig.templateName}
                   </Typography>
                 </Box>
                 <Box sx={{ mb: 6 }}>
                   <Typography variant='h4' sx={{ mb: 1.5 }}>
-                    Adventure starts here 🚀
+                    {t('Adventure starts here')} 🚀
                   </Typography>
-                  <Typography sx={{ color: 'text.secondary' }}>Make your app management easy and fun!</Typography>
+                  <Typography sx={{ color: 'text.secondary' }}>
+                    {t('Make your school management easy and fun!')}
+                  </Typography>
                 </Box>
 
                 <form
@@ -233,8 +239,8 @@ const RegisterV1 = () => {
                             {...field}
                             fullWidth
                             type='email'
-                            label='Email'
-                            placeholder='john.doe@gmail.com'
+                            label={t('Email')}
+                            placeholder={t('Enter your email')}
                             error={!!errors.email}
                             helperText={errors.email?.message}
                           />
@@ -249,8 +255,8 @@ const RegisterV1 = () => {
                           <CustomTextField
                             {...field}
                             fullWidth
-                            label='Password'
-                            placeholder='············'
+                            label={t('Password')}
+                            placeholder={t('············')}
                             id='auth-register-password'
                             type={showPassword ? 'text' : 'password'}
                             error={!!errors.password}
@@ -262,7 +268,7 @@ const RegisterV1 = () => {
                                     edge='end'
                                     onClick={handleClickShowPassword}
                                     onMouseDown={e => e.preventDefault()}
-                                    aria-label='toggle password visibility'
+                                    aria-label={t('Toggle password visibility')}
                                   >
                                     <Icon fontSize='1.25rem' icon={showPassword ? 'tabler:eye' : 'tabler:eye-off'} />
                                   </IconButton>
@@ -281,8 +287,8 @@ const RegisterV1 = () => {
                           <CustomTextField
                             {...field}
                             fullWidth
-                            label='Phone Number'
-                            placeholder='Enter your phone number'
+                            label={t('Phone Number')}
+                            placeholder={t('Enter your phone number')}
                             type='number'
                             error={!!errors.phoneNumber}
                             helperText={errors.phoneNumber?.message}
@@ -298,8 +304,8 @@ const RegisterV1 = () => {
                           <CustomTextField
                             {...field}
                             fullWidth
-                            label='First Name'
-                            placeholder='Enter your first name'
+                            label={t('First Name')}
+                            placeholder={t('Enter your first name')}
                             error={!!errors.firstName}
                             helperText={errors.firstName?.message}
                           />
@@ -314,8 +320,8 @@ const RegisterV1 = () => {
                           <CustomTextField
                             {...field}
                             fullWidth
-                            label='Last Name'
-                            placeholder='Enter your last name'
+                            label={t('Last Name')}
+                            placeholder={t('Enter your last name')}
                             error={!!errors.lastname}
                             helperText={errors.lastname?.message}
                           />
@@ -332,7 +338,7 @@ const RegisterV1 = () => {
                           <CustomTextField
                             select
                             fullWidth
-                            label='Gender'
+                            label={t('Gender')}
                             id='validation-gender-select'
                             aria-describedby='validation-gender-select'
                             error={!!errors.gender}
@@ -345,13 +351,13 @@ const RegisterV1 = () => {
                             }}
                           >
                             <MenuItem value='' sx={{ display: 'none' }}>
-                              <em>Select Gender</em>
+                              <em>{t('Select Gender')}</em>
                             </MenuItem>
                             <MenuItem key={1} value={'male'}>
-                              Male
+                              {t('Male')}
                             </MenuItem>
                             <MenuItem key={2} value={'female'}>
-                              Female
+                              {t('Female')}
                             </MenuItem>
                           </CustomTextField>
                         )}
@@ -366,8 +372,8 @@ const RegisterV1 = () => {
                           <CustomTextField
                             {...field}
                             fullWidth
-                            label='Emergency Phone Number'
-                            placeholder='Enter your emergency phone number'
+                            label={t('Emergency Phone Number')}
+                            placeholder={t('Enter your emergency phone number')}
                             type='number' // Restrict input to numbers
                             error={!!errors.emergencyPhoneNumber}
                             helperText={errors.emergencyPhoneNumber?.message}
@@ -388,8 +394,8 @@ const RegisterV1 = () => {
                                 dateFormat='dd.MM.yyyy'
                                 showYearDropdown
                                 showMonthDropdown
-                                customInput={<CustomTextField label='Birthday' fullWidth />}
-                                placeholderText='Birthday'
+                                customInput={<CustomTextField label={t('Birthday')} fullWidth />}
+                                placeholderText={t('Select a date')}
                                 error={!!errors.birthday}
                                 helperText={errors.birthday?.message}
                                 popperProps={{
@@ -426,10 +432,10 @@ const RegisterV1 = () => {
                           <CustomTextField
                             {...field}
                             fullWidth
-                            label='Birthplace'
+                            label={t('Birthplace')}
                             error={!!errors.birthplace}
                             helperText={errors.birthplace?.message}
-                            placeholder='Enter your birthplace'
+                            placeholder={t('Enter your birthplace')}
                           />
                         )}
                       />
@@ -455,8 +461,8 @@ const RegisterV1 = () => {
                                 <CustomTextField
                                   {...params}
                                   fullWidth
-                                  placeholder=' Country / nationality'
-                                  label='Select Country / nationality'
+                                  placeholder={t('Country / nationality')}
+                                  label={t('Select Country / nationality')}
                                   variant='outlined'
                                   error={!!errors.nationality}
                                   helperText={errors.nationality?.message}
@@ -475,10 +481,10 @@ const RegisterV1 = () => {
                           <CustomTextField
                             {...field}
                             fullWidth
-                            label='Street'
+                            label={t('Street')}
                             error={!!errors.street}
                             helperText={errors.street?.message}
-                            placeholder='Enter your street'
+                            placeholder={t('Enter your street')}
                           />
                         )}
                       />
@@ -493,8 +499,8 @@ const RegisterV1 = () => {
                             fullWidth
                             error={!!errors.streetNr}
                             helperText={errors.streetNr?.message}
-                            label='Street Number'
-                            placeholder='Enter your street number'
+                            label={t('Street Number')}
+                            placeholder={t('Enter your street number')}
                           />
                         )}
                       />
@@ -507,8 +513,8 @@ const RegisterV1 = () => {
                           <CustomTextField
                             {...field}
                             fullWidth
-                            label='City'
-                            placeholder='Enter your city'
+                            label={t('City')}
+                            placeholder={t('Enter your city')}
                             error={!!errors.city}
                             helperText={errors.city?.message}
                           />
@@ -525,8 +531,8 @@ const RegisterV1 = () => {
                             fullWidth
                             error={!!errors.zipCode}
                             helperText={errors.zipCode?.message}
-                            label='Zipcode'
-                            placeholder='Enter your Zipcode'
+                            label={t('Zipcode')}
+                            placeholder={t('Enter your zipcode')}
                           />
                         )}
                       />
@@ -539,8 +545,8 @@ const RegisterV1 = () => {
                           <CustomTextField
                             {...field}
                             fullWidth
-                            label='Job'
-                            placeholder='Enter your job'
+                            label={t('Job')}
+                            placeholder={t('Enter your job')}
                             error={!!errors.job}
                             helperText={errors.job?.message}
                           />
@@ -555,29 +561,30 @@ const RegisterV1 = () => {
                           <CustomTextField
                             {...field}
                             fullWidth
-                            label='Graduation'
+                            label={t('Graduation')}
                             error={!!errors.graduation}
                             helperText={errors.graduation?.message}
-                            placeholder='Enter your graduation'
+                            placeholder={t('Enter your graduation')}
                           />
                         )}
                       />
                     </Grid>
+
                     <Grid item xs={24} sm={12}>
                       <Button fullWidth disabled={isSubmitting} type='submit' variant='contained' sx={{ mb: 4 }}>
-                        {isSubmitting ? <CircularProgress size={25} /> : 'Sign up'}
+                        {isSubmitting ? <CircularProgress size={25} /> : t('Sign up')}
                       </Button>
                     </Grid>
                     <Box
                       sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center', ml: 4 }}
                     >
-                      <Typography sx={{ color: 'text.secondary', mr: 2 }}>Already have an account?</Typography>
+                      <Typography sx={{ color: 'text.secondary', mr: 2 }}>{t('Already have an account?')}</Typography>
                       <Typography
                         component={LinkStyled}
                         href='/login'
                         sx={{ fontSize: theme.typography.body1.fontSize }}
                       >
-                        Sign in instead
+                        {t('Sign in instead')}
                       </Typography>
                     </Box>
                     <Divider

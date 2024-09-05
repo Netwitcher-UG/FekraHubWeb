@@ -8,10 +8,12 @@ import CustomDialogDelete from 'src/@core/components/custom-delete'
 import DrawerEdit from '../edit'
 import CustomSearch from 'src/@core/components/custom-search'
 import AddRoom from '../add'
+import { useTranslation } from 'react-i18next'
 
 export default function RoomDataGrid({ rows, SetSearch, status }) {
   const { columns, isDialogOpen, handleCloseDialog, handleDelete, drawerData, open, handleCloseDrawer, DeleteName } =
     useRoomColumns()
+  const { t } = useTranslation()
 
   return (
     <>
@@ -45,7 +47,7 @@ export default function RoomDataGrid({ rows, SetSearch, status }) {
       <CustomDialogDelete
         open={isDialogOpen}
         handleClose={handleCloseDialog}
-        decsription={`Are you sure you want to delete the Room ${DeleteName} ? `}
+        decsription={`${t('Are you sure you want to delete the Room')} ${DeleteName} ? `}
         onDelete={handleDelete}
       />
       {open && <DrawerEdit open={open} handleCloseDrawer={handleCloseDrawer} dataDef={drawerData} />}

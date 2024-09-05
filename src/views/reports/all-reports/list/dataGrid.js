@@ -16,6 +16,7 @@ import { Autocomplete } from '@mui/material'
 import toast from 'react-hot-toast'
 import useReportsColumns from '../hooks/useReportsColumns'
 import EditReportDrawer from '../edit-report/edit-report-drawer'
+import { useTranslation } from 'react-i18next'
 
 const customScrollbarStyles = {
   '& ::-webkit-scrollbar': {
@@ -43,6 +44,7 @@ const ReportsDataGrid = ({
   dispatch,
   acceptAllReport
 }) => {
+  const { t } = useTranslation()
   const [drawerData, setDrawerData] = useState(null)
   const [open, setOpen] = useState(false)
 
@@ -84,7 +86,7 @@ const ReportsDataGrid = ({
 
   return (
     <>
-      <CardHeader title='Search Filters' />
+      <CardHeader title={t('Search Filters')} />
       <CardContent>
         <Grid container spacing={6}>
           <Grid item sm={4} xs={12}>
@@ -107,8 +109,8 @@ const ReportsDataGrid = ({
                   {...params}
                   fullWidth
                   sx={{ mb: 4 }}
-                  placeholder='Select course'
-                  label='Course filter'
+                  placeholder={t('Select course')}
+                  label={t('Course filter')}
                   id='validation-billing-select'
                   aria-describedby='validation-billing-select'
                 />

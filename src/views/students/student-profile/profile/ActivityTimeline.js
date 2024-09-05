@@ -14,6 +14,7 @@ import TimelineSeparator from '@mui/lab/TimelineSeparator'
 import TimelineConnector from '@mui/lab/TimelineConnector'
 import MuiTimeline from '@mui/lab/Timeline'
 import { convertDate } from 'src/@core/utils/convert-date'
+import { useTranslation } from 'react-i18next'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -31,10 +32,12 @@ const Timeline = styled(MuiTimeline)({
 })
 
 const ActivityTimeline = ({ recent, setValue }) => {
+  const { t } = useTranslation()
+
   return (
     <Card>
       <CardHeader
-        title='Recent Files'
+        title={t('Recent Files')}
         sx={{ '& .MuiCardHeader-avatar': { mr: 3 } }}
         titleTypographyProps={{ sx: { color: 'text.primary' } }}
         avatar={<Icon fontSize='1.25rem' icon='tabler:list-details' />}
@@ -45,14 +48,14 @@ const ActivityTimeline = ({ recent, setValue }) => {
             <>
               <Grid sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography variant='body2' sx={{ mb: 4, mt: 4, color: 'primary.main', textTransform: 'uppercase' }}>
-                  Reports
+                  {t('Reports')}
                 </Typography>
                 <Typography
                   onClick={() => setValue('2')}
                   variant='body2'
                   sx={{ mb: 4, mt: 4, color: 'primary.main', cursor: 'pointer' }}
                 >
-                  View all reports
+                  {t('View all reports')}
                 </Typography>
               </Grid>
               {recent?.report.map((report, index) => (
@@ -74,11 +77,12 @@ const ActivityTimeline = ({ recent, setValue }) => {
                         {report?.month}.{report?.year}
                       </Typography>
                       <Typography variant='caption' sx={{ color: 'text.disabled' }}>
-                        {' '}
                         {convertDate(report?.creationDate)}
                       </Typography>
                     </Box>
-                    <Typography variant='body2'>Recent report for the {report?.month}th month</Typography>
+                    <Typography variant='body2'>
+                      {t('Recent report for the {{month}}th month', { month: report?.month })}
+                    </Typography>
                   </TimelineContent>
                 </TimelineItem>
               ))}
@@ -88,14 +92,14 @@ const ActivityTimeline = ({ recent, setValue }) => {
             <>
               <Grid sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography variant='body2' sx={{ mb: 4, mt: 4, color: 'primary.main', textTransform: 'uppercase' }}>
-                  Worksheets
+                  {t('Worksheets')}
                 </Typography>
                 <Typography
                   onClick={() => setValue('5')}
                   variant='body2'
                   sx={{ mb: 4, mt: 4, color: 'primary.main', cursor: 'pointer' }}
                 >
-                  View all Worksheets
+                  {t('View all Worksheets')}
                 </Typography>
               </Grid>
               {recent?.workSheet.map((workSheet, index) => (
@@ -121,7 +125,7 @@ const ActivityTimeline = ({ recent, setValue }) => {
                       </Typography>
                     </Box>
                     <Typography variant='body2' sx={{ mb: 3 }}>
-                      Recent Worksheet file
+                      {t('Recent Worksheet file')}
                     </Typography>
                   </TimelineContent>
                 </TimelineItem>
@@ -132,14 +136,14 @@ const ActivityTimeline = ({ recent, setValue }) => {
             <>
               <Grid sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography variant='body2' sx={{ mb: 4, mt: 4, color: 'primary.main', textTransform: 'uppercase' }}>
-                  invoices
+                  {t('Invoices')}
                 </Typography>
                 <Typography
                   onClick={() => setValue('4')}
                   variant='body2'
                   sx={{ mb: 4, mt: 4, color: 'primary.main', cursor: 'pointer' }}
                 >
-                  View all invoices
+                  {t('View all invoices')}
                 </Typography>
               </Grid>
               {recent?.invoice.map((invoice, index) => (
@@ -164,7 +168,7 @@ const ActivityTimeline = ({ recent, setValue }) => {
                         {convertDate(invoice?.date)}
                       </Typography>
                     </Box>
-                    <Typography variant='body2'>Recent invoice</Typography>
+                    <Typography variant='body2'>{t('Recent invoice')}</Typography>
                   </TimelineContent>
                 </TimelineItem>
               ))}
@@ -178,12 +182,11 @@ const ActivityTimeline = ({ recent, setValue }) => {
               mb: 4,
               mt: 4,
               color: 'secondary.main',
-              // textTransform: 'uppercase',
               display: 'flex',
               justifyContent: 'center'
             }}
           >
-            None
+            {t('None')}
           </Typography>
         )}
       </CardContent>

@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import { styled, useTheme } from '@mui/material/styles'
 import MuiCard from '@mui/material/Card'
+import { useTranslation } from 'react-i18next'
 import Icon from 'src/@core/components/icon'
 
 // ** Configs
@@ -34,6 +35,7 @@ const EmailVerified = () => {
   // ** Hook
   const theme = useTheme()
   const router = useRouter()
+  const { t } = useTranslation()
 
   return (
     <Box className='content-center'>
@@ -78,10 +80,10 @@ const EmailVerified = () => {
                 <Icon icon={'lets-icons:check-ring'} fontSize={100} color={'success'} />
               </CustomAvatar>
 
-              <Typography sx={{ color: 'text.secondary' }}>Your email was successfully verified !</Typography>
+              <Typography sx={{ color: 'text.secondary' }}>{t('Your email was successfully verified !')}</Typography>
             </Box>
             <Button fullWidth variant='contained' onClick={() => router.push('/login')}>
-              Go To Login Page
+              {t('Go To Login Page')}
             </Button>
           </CardContent>
         </Card>

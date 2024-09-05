@@ -11,7 +11,6 @@ import { useRouter } from 'next/router'
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
-import { t } from 'i18next'
 
 const TableHeader = props => {
   // ** Props

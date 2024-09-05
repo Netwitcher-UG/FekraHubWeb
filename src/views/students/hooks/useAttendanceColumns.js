@@ -12,9 +12,11 @@ import MenuItem from '@mui/material/MenuItem'
 import CustomTextField from 'src/@core/components/mui/text-field'
 import { IconButton, Typography } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 
 const useAttendanceColumns = () => {
   const dispatch = useDispatch()
+  const { t, i18n } = useTranslation()
   const ability = useContext(AbilityContext)
   const { attendanceStatuses } = useSelector(state => state.attendance)
 
@@ -86,13 +88,13 @@ const useAttendanceColumns = () => {
                 >
                   {attendanceStatuses?.map(status => (
                     <MenuItem key={status.id} value={status.id}>
-                      <Chip label={status.title} color={status.title === 'Absent' ? 'error' : 'warning'} />
+                      <Chip label={t(status.title)} color={status.title === 'Absent' ? 'error' : 'warning'} />
                     </MenuItem>
                   ))}
                 </CustomTextField>
               ) : (
                 <Chip
-                  label={row.attendanceStatus?.title}
+                  label={t(row.attendanceStatus?.title)}
                   color={row.attendanceStatus?.title === 'Absent' ? 'error' : 'warning'}
                 />
               )}
@@ -144,7 +146,7 @@ const useAttendanceColumns = () => {
 
       return cols
     },
-    [attendanceStatuses, isEditEnabled, newStatus, ability] // Add 'ability' to the dependency array
+    [attendanceStatuses, isEditEnabled, newStatus, ability, i18n.language] // Add 'ability' to the dependency array
   )
 
   return { columns, DeleteName, isDialogOpen, handleCloseDialog, handleDelete }

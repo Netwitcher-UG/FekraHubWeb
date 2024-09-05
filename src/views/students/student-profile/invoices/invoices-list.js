@@ -7,6 +7,7 @@ import Alert from '@mui/material/Alert'
 // import Divider from '@mui/material/Divider'
 // import Button from '@mui/material/Button'
 // import Icon from 'src/@core/components/icon'
+import Translations from 'src/layouts/components/Translations'
 
 const InvoicesList = ({ invoicesData, loading, byParent }) => {
   const renderData =
@@ -18,7 +19,9 @@ const InvoicesList = ({ invoicesData, loading, byParent }) => {
       ))
     ) : (
       <Grid item xs={12}>
-        <Alert severity='info'> No invoices yet</Alert>
+        <Alert severity='info'>
+          <Translations text={'No invoices yet'} />
+        </Alert>
       </Grid>
     )
 

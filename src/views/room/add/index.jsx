@@ -16,7 +16,7 @@ import Translations from 'src/layouts/components/Translations'
 import CustomTextField from 'src/@core/components/mui/text-field'
 import { addLocation, fetchLocation } from 'src/store/apps/location'
 import { addRoom } from 'src/store/apps/courses'
-
+import { useTranslation } from 'react-i18next'
 const CustomCloseButton = styled(IconButton)(({ theme }) => ({
   top: 0,
   right: 0,
@@ -41,6 +41,7 @@ const Item = styled(Paper)(({ theme }) => ({
 }))
 
 const AddRoom = () => {
+  const { t } = useTranslation()
   const { data, status, error } = useSelector(state => state.location)
   console.log('🚀 ~ AddRoom ~ data:', data)
 
@@ -86,7 +87,7 @@ const AddRoom = () => {
     <div>
       <Button onClick={handleClickOpen} variant='contained' sx={{ '& svg': { mr: 2 } }}>
         <Icon fontSize='1.125rem' icon='tabler:plus' />
-        <Translations text={'Add Room'} />
+        <Translations text={t('Add Room')} />
       </Button>
 
       <Dialog
@@ -97,7 +98,7 @@ const AddRoom = () => {
       >
         <DialogTitle id='customized-dialog-title' sx={{ p: 4 }}>
           <Typography variant='h4' sx={{ fontWeight: '900' }}>
-            <Translations text={'Add Room'} />
+            <Translations text={t('Add Room')} />
           </Typography>
           <CustomCloseButton aria-label='close' onClick={handleClose}>
             <Icon icon='tabler:x' fontSize='1.25rem' />
@@ -116,7 +117,7 @@ const AddRoom = () => {
                     {...field}
                     fullWidth
                     autoFocus
-                    label={`${'name'}`}
+                    label={`${t('Name')}`}
                     variant='outlined'
                     error={!!errors.name}
                     helperText={errors.name ? errors.name.message : ''}
@@ -145,7 +146,7 @@ const AddRoom = () => {
                         fullWidth
                         sx={{ mb: 4 }}
                         placeholder=''
-                        label='location'
+                        label={t('Location')}
                         id='validation-billing-select'
                         aria-describedby='validation-billing-select'
                         error={Boolean(errors.locationID)}
@@ -159,11 +160,11 @@ const AddRoom = () => {
           </Grid>
         </DialogContent>
         <DialogActions sx={{ p: theme => `${theme.spacing(3)} !important` }}>
-          <Button type='button' variant='outlined' onClick={handleClose}>
-            <Translations text={'cancel'} />
-          </Button>
           <Button disabled={!isDirty} type='button' variant='contained' onClick={handleSubmit(handleSaveData)}>
-            <Translations text={'Add Room'} />
+            <Translations text={t('Add Room')} />
+          </Button>
+          <Button type='button' variant='outlined' onClick={handleClose}>
+            <Translations text={t('Cancel')} />
           </Button>
         </DialogActions>
       </Dialog>

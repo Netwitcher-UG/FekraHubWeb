@@ -1,4 +1,5 @@
 import Button from '@mui/material/Button'
+import { useMemo } from 'react'
 import Dialog from '@mui/material/Dialog'
 import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
@@ -20,6 +21,8 @@ import CustomTextField from 'src/@core/components/mui/text-field'
 import { addNewAttendanceRecord } from 'src/store/apps/attendance'
 import DatePicker from 'react-datepicker'
 import toast from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
+
 const CustomCloseButton = styled(IconButton)(({ theme }) => ({
   top: 0,
   right: 0,
@@ -34,13 +37,14 @@ const CustomCloseButton = styled(IconButton)(({ theme }) => ({
     transform: 'translate(7px, -5px)'
   }
 }))
-
-const schema = yup.object().shape({
-  statusId: yup.string().required('Status is required'),
-  date: yup.string().required('Date is required')
-})
-
-const AddReord = ({ open, setOpen, attendanceStatuses, studentId }) => {
+const getValidationSchema = t =>
+  yup.object().shape({
+    statusId: yup.string().required(t('Status is required')),
+    date: yup.string().required(t('Date is required'))
+  })
+const AddRecord = ({ open, setOpen, attendanceStatuses, studentId }) => {
+  const { t } = useTranslation()
+  const schema = useMemo(() => getValidationSchema(t), [t])
   const handleClose = () => setOpen(false)
   const dispatch = useDispatch()
 
@@ -67,11 +71,13 @@ const AddReord = ({ open, setOpen, attendanceStatuses, studentId }) => {
     const fullData = { ...data, date: formattedDate, studentId: studentId }
 
     const response = await dispatch(addNewAttendanceRecord(fullData))
-    if (response?.payload?.status == 200) {
-      toast.success('Successfully added')
+    if (response?.payload?.status === 200) {
+      toast.success(t('Successfully added'))
       reset()
       handleClose()
-    } else toast.error(response?.payload?.data)
+    } else {
+      toast.error(response?.payload?.data || t('Error occurred'))
+    }
   }
 
   return (
@@ -86,7 +92,7 @@ const AddReord = ({ open, setOpen, attendanceStatuses, studentId }) => {
       >
         <DialogTitle id='customized-dialog-title' sx={{ p: 4 }}>
           <Typography variant='h4' sx={{ fontWeight: '900' }}>
-            <Translations text={'Add new attendance record'} />
+            {t('Add new attendance record')}
           </Typography>
           <CustomCloseButton aria-label='close' onClick={handleClose}>
             <Icon icon='tabler:x' fontSize='1.25rem' />
@@ -110,13 +116,13 @@ const AddReord = ({ open, setOpen, attendanceStatuses, studentId }) => {
                         showMonthDropdown
                         customInput={
                           <CustomTextField
-                            label='Date'
+                            label={t('Date')}
                             fullWidth
                             error={Boolean(errors.date)}
                             helperText={errors.date?.message}
                           />
                         }
-                        placeholderText='Date'
+                        placeholderText={t('Date')}
                         popperProps={{
                           modifiers: [
                             {
@@ -146,7 +152,7 @@ const AddReord = ({ open, setOpen, attendanceStatuses, studentId }) => {
                     <CustomTextField
                       select
                       fullWidth
-                      label={'Status'}
+                      label={t('Status')}
                       id='attendance-status-select'
                       error={Boolean(errors.statusId)}
                       helperText={errors.statusId?.message}
@@ -159,7 +165,7 @@ const AddReord = ({ open, setOpen, attendanceStatuses, studentId }) => {
                     >
                       {attendanceStatuses?.map(status => (
                         <MenuItem key={status.id} value={status.id}>
-                          <Chip label={status.title} color={status.title === 'Absent' ? 'error' : 'warning'} />
+                          <Chip label={t(status.title)} color={status.title === 'Absent' ? 'error' : 'warning'} />
                         </MenuItem>
                       ))}
                     </CustomTextField>
@@ -170,10 +176,10 @@ const AddReord = ({ open, setOpen, attendanceStatuses, studentId }) => {
           </DialogContent>
           <DialogActions sx={{ p: theme => `${theme.spacing(3)} !important` }}>
             <Button type='button' disabled={isSubmitting} variant='outlined' onClick={handleClose}>
-              <Translations text={'cancel'} />
+              {t('Cancel')}
             </Button>
             <Button disabled={isSubmitting} type='submit' variant='contained'>
-              <Translations text={'Add'} />
+              {t('Add')}
             </Button>
           </DialogActions>
         </form>
@@ -182,4 +188,4 @@ const AddReord = ({ open, setOpen, attendanceStatuses, studentId }) => {
   )
 }
 
-export default AddReord
+export default AddRecord

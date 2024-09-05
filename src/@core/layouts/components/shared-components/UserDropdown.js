@@ -19,6 +19,7 @@ import Icon from 'src/@core/components/icon'
 
 // ** Context
 import { useAuth } from 'src/hooks/useAuth'
+import { useTranslation } from 'react-i18next'
 
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
@@ -38,7 +39,7 @@ const MenuItemStyled = styled(MenuItem)(({ theme }) => ({
 const UserDropdown = props => {
   // ** Props
   const { settings } = props
-
+  const { t } = useTranslation()
   // ** States
   const [anchorEl, setAnchorEl] = useState(null)
 
@@ -107,7 +108,7 @@ const UserDropdown = props => {
         anchorOrigin={{ vertical: 'bottom', horizontal: direction === 'ltr' ? 'right' : 'left' }}
         transformOrigin={{ vertical: 'top', horizontal: direction === 'ltr' ? 'right' : 'left' }}
       >
-        <Box sx={{ py: 1.75, px: 6 }}>
+        {/* <Box sx={{ py: 1.75, px: 6 }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Badge
               overlap='circular'
@@ -124,8 +125,8 @@ const UserDropdown = props => {
               <Typography variant='body2'>Admin</Typography>
             </Box>
           </Box>
-        </Box>
-        <Divider sx={{ my: theme => `${theme.spacing(2)} !important` }} />
+        </Box> */}
+        {/* <Divider sx={{ my: theme => `${theme.spacing(2)} !important` }} />
         <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose('/pages/user-profile/profile')}>
           <Box sx={styles}>
             <Icon icon='tabler:user-check' />
@@ -137,8 +138,8 @@ const UserDropdown = props => {
             <Icon icon='tabler:settings' />
             Settings
           </Box>
-        </MenuItemStyled>
-        <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose('/pages/account-settings/billing')}>
+        </MenuItemStyled> */}
+        {/* <MenuItemStyled sx={{ p: 0 }} onClick={() => handleDropdownClose('/pages/account-settings/billing')}>
           <Box sx={styles}>
             <Icon icon='tabler:credit-card' />
             Billing
@@ -163,11 +164,11 @@ const UserDropdown = props => {
             Pricing
           </Box>
         </MenuItemStyled>
-        <Divider sx={{ my: theme => `${theme.spacing(2)} !important` }} />
+        <Divider sx={{ my: theme => `${theme.spacing(2)} !important` }} /> */}
         <MenuItemStyled sx={{ p: 0 }} onClick={handleLogout}>
           <Box sx={styles}>
             <Icon icon='tabler:logout' />
-            Sign Out
+            {t('Sign Out')}
           </Box>
         </MenuItemStyled>
       </Menu>

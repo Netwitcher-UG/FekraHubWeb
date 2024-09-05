@@ -1,7 +1,4 @@
-// ** Next Import
 import Link from 'next/link'
-
-// ** MUI Components
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
@@ -15,19 +12,14 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import toast from 'react-hot-toast'
 import { useState } from 'react'
-
-// ** Configs
 import themeConfig from 'src/configs/themeConfig'
-
-// ** Layout Import
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 import { useRouter } from 'next/router'
-// ** Demo Imports
 import AuthIllustrationV1Wrapper from 'src/views/pages/auth/AuthIllustrationV1Wrapper'
 import CustomAvatar from 'src/@core/components/mui/avatar'
 import { useAuth } from 'src/hooks/useAuth'
+import { useTranslation } from 'react-i18next' // Import useTranslation
 
-// ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
   [theme.breakpoints.up('sm')]: { width: '25rem' }
 }))
@@ -38,13 +30,14 @@ const LinkStyled = styled(Link)(({ theme }) => ({
 }))
 
 const EmailNotVerified = () => {
-  // ** Hook
+  const { t } = useTranslation() // Initialize useTranslation
   const theme = useTheme()
   const router = useRouter()
   const auth = useAuth()
   const [isEmailSent, setIsEmailSent] = useState(false)
+
   const schema = yup.object().shape({
-    email: yup.string().email().required()
+    email: yup.string().email().required(t('Email is required'))
   })
 
   const defaultValues = {
@@ -53,8 +46,6 @@ const EmailNotVerified = () => {
 
   const {
     control,
-    setError,
-    watch,
     handleSubmit,
     formState: { errors }
   } = useForm({
@@ -65,10 +56,10 @@ const EmailNotVerified = () => {
 
   const onSubmit = async data => {
     const response = await auth.resendEmail(data.email)
-    if (response.status != 200) toast.error('Could not resend email !')
-    else if (response.status == 200) {
+    if (response.status !== 200) toast.error(t('Could not resend email!'))
+    else if (response.status === 200) {
       setIsEmailSent(true)
-      toast.success('Email Resent !')
+      toast.success(t('Email Resent!'))
     }
   }
 
@@ -107,7 +98,7 @@ const EmailNotVerified = () => {
                 />
               </svg>
               <Typography variant='h3' sx={{ ml: 2.5, fontWeight: 700 }}>
-                {themeConfig.templateName}
+                {t(themeConfig.templateName)}
               </Typography>
             </Box>
             <Box sx={{ mb: 6, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -115,36 +106,35 @@ const EmailNotVerified = () => {
                 <Icon icon={'mi:circle-error'} fontSize={100} color={'error'} />
               </CustomAvatar>
 
-              <Typography sx={{ color: 'text.secondary' }}>
-                Your email was not verified ! maybe the link is expired or invalid :(
+              <Typography sx={{ color: 'text.secondary', textAlign: 'center' }}>
+                {t('Your email was not verified! Maybe the link is expired or invalid :(')}
               </Typography>
             </Box>
             <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
               <Controller
                 name='email'
                 control={control}
-                rules={{ required: true }}
                 render={({ field: { value, onChange, onBlur } }) => (
                   <CustomTextField
                     fullWidth
                     autoFocus
-                    label='Email'
+                    label={t('Email')}
                     value={value}
                     onBlur={onBlur}
                     onChange={onChange}
                     sx={{ mb: 4 }}
-                    placeholder='Email'
+                    placeholder={t('Email')}
                     error={Boolean(errors.email)}
                     {...(errors.email && { helperText: errors.email.message })}
                   />
                 )}
               />
               <Button fullWidth disabled={isEmailSent} type='submit' variant='contained' sx={{ mb: 4 }}>
-                Resend email
+                {t('Resend email')}
               </Button>
             </form>
             <Button fullWidth variant='contained' onClick={() => router.push('/login')}>
-              Go To Login Page
+              {t('Go To Login Page')}
             </Button>
           </CardContent>
         </Card>
@@ -152,6 +142,7 @@ const EmailNotVerified = () => {
     </Box>
   )
 }
+
 EmailNotVerified.getLayout = page => <BlankLayout>{page}</BlankLayout>
 
 export default EmailNotVerified

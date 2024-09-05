@@ -24,10 +24,13 @@ import InvoicesList from './invoices/invoices-list'
 import ProfileTab from './profile'
 import ProfileEditDrawer from './profile/edit-profile/edit-profile-drawer'
 import WorksheetsList from './worksheets/worksheets-list'
+import { useTranslation } from 'react-i18next'
+
 const StudentProfile = ({ student, byParent = false }) => {
   // ** State
   const [value, setValue] = useState('1')
   const dispatch = useDispatch()
+  const { t } = useTranslation()
   const store = useSelector(state => state.reports)
   const [editDrawerOpen, setEditDrawerOpen] = useState(false)
 
@@ -45,6 +48,7 @@ const StudentProfile = ({ student, byParent = false }) => {
     state => state.worksheet
   )
   const { studentAttendance, childAttendance } = useSelector(state => state.attendance)
+
   useEffect(() => {
     if (!student) return
     if (byParent) {
@@ -90,14 +94,14 @@ const StudentProfile = ({ student, byParent = false }) => {
           }}
           variant='fullWidth'
           onChange={handleChange}
-          aria-label='full width tabs example'
+          aria-label={t('full width tabs example')}
         >
-          <Tab value='1' label='Profile info' />
-          <Tab value='2' label={byParent ? 'Child Reports' : 'Student Reports'} />
-          <Tab value='3' label={byParent ? 'Child Contracts' : 'Student Contracts'} />
-          <Tab value='4' label={byParent ? 'Child Invoices' : 'Student Invoices'} />
-          <Tab value='5' label={byParent ? 'Child Worksheets' : 'Student Worksheets'} />
-          <Tab value='6' label={byParent ? 'Child Attendance' : 'Student Attendance'} />
+          <Tab value='1' label={t('Profile info')} />
+          <Tab value='2' label={byParent ? t('Child Reports') : t('Student Reports')} />
+          <Tab value='3' label={byParent ? t('Child Contracts') : t('Student Contracts')} />
+          <Tab value='4' label={byParent ? t('Child Invoices') : t('Student Invoices')} />
+          <Tab value='5' label={byParent ? t('Child Worksheets') : t('Student Worksheets')} />
+          <Tab value='6' label={byParent ? t('Child Attendance') : t('Student Attendance')} />
         </TabList>
         <TabPanel value='1'>
           {childProfileLoading || studentProfileLoading ? (
@@ -121,11 +125,13 @@ const StudentProfile = ({ student, byParent = false }) => {
           ) : (
             <Grid item xs={12}>
               <Alert severity='error'>
-                {' '}
-                No {byParent ? 'child' : 'student'} with id: {student} , or Something went wrong.
+                {t('No')} {byParent ? t('child') : t('student')} {t('with id')}: {student} ,{' '}
+                {t('or Something went wrong.')}.
                 <br />
                 <br />
-                <small>Please refresh and check if this {byParent ? 'child' : 'student'} exists</small>
+                <small>
+                  {t('Please refresh and check if this')} {byParent ? t('child') : t('student')} {t('exists')}
+                </small>
               </Alert>
             </Grid>
           )}
@@ -134,32 +140,28 @@ const StudentProfile = ({ student, byParent = false }) => {
           <StudentReportsTab store={store} byParent={byParent} />
         </TabPanel>
         <TabPanel value='3'>
-          {' '}
           <ContractsList
             byParent={byParent}
             contractsData={byParent ? childContracts : studentContracts}
             loading={byParent ? childContractsLoading : studentContractsLoading}
-          />{' '}
+          />
         </TabPanel>
         <TabPanel value='4'>
-          {' '}
           <InvoicesList
             invoicesData={byParent ? childInvoices : studentInvoices}
             loading={byParent ? childInvoicesLoading : studentInvoicesLoading}
             byParent={byParent}
-          />{' '}
+          />
         </TabPanel>
         <TabPanel value='5'>
-          {' '}
           <WorksheetsList
             worksheetData={byParent ? childWorksheets : studentWorksheets}
             loading={byParent ? childWorksheetLoading : studentWorksheetsLoading}
             byParent={byParent}
-          />{' '}
+          />
         </TabPanel>
         <TabPanel value='6'>
-          {' '}
-          <StudentAttendanceTab store={byParent ? childAttendance : studentAttendance} studentId={student} />{' '}
+          <StudentAttendanceTab store={byParent ? childAttendance : studentAttendance} studentId={student} />
         </TabPanel>
       </TabContext>
 

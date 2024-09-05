@@ -74,7 +74,7 @@ const useWorksheetsColumns = () => {
       {
         flex: 1,
         field: 'typeUPload',
-        headerName: <Translations text={'TypeUPload'} />,
+        headerName: <Translations text={'Upload Type'} />,
         renderCell: params => {
           return <Typography>{params.row.typeUPload}</Typography>
         }

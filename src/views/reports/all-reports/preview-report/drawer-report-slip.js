@@ -14,6 +14,7 @@ import TableContainer from '@mui/material/TableContainer'
 import TableCell from '@mui/material/TableCell'
 import { convertDate } from 'src/@core/utils/convert-date'
 import CircularProgress from '@mui/material/CircularProgress'
+import { useTranslation } from 'react-i18next'
 
 // ** Configs
 import themeConfig from 'src/configs/themeConfig'
@@ -30,6 +31,7 @@ const MUITableCell = styled(TableCell)(({ theme }) => ({
 
 const DrawerReportSlip = ({ data }) => {
   // ** Hook
+  const { t } = useTranslation()
   const singleElement = data ? data : null
 
   const parsedData = JSON.parse(singleElement?.data)
@@ -78,7 +80,7 @@ const DrawerReportSlip = ({ data }) => {
                   </Typography>
                 </Box>
                 <div>
-                  <Typography sx={{ mb: 2, color: 'text.secondary' }}>Student's Monthly Report</Typography>
+                  <Typography sx={{ mb: 2, color: 'text.secondary' }}>{t("Student's Monthly Report")}</Typography>
                 </div>
               </Box>
             </Grid>
@@ -88,7 +90,7 @@ const DrawerReportSlip = ({ data }) => {
                   <TableBody sx={{ '& .MuiTableCell-root': { py: `${theme.spacing(1.5)} !important` } }}>
                     <TableRow>
                       <MUITableCell>
-                        <Typography variant='h5'>Report Date:</Typography>
+                        <Typography variant='h5'>{t('Report Date')}:</Typography>
                       </MUITableCell>
                       <MUITableCell>
                         <Typography variant='h5'>
@@ -98,7 +100,7 @@ const DrawerReportSlip = ({ data }) => {
                     </TableRow>
                     <TableRow>
                       <MUITableCell>
-                        <Typography sx={{ color: 'text.secondary' }}>Course Name:</Typography>
+                        <Typography sx={{ color: 'text.secondary' }}>{t('Course Name')}:</Typography>
                       </MUITableCell>
                       <MUITableCell>
                         <Typography sx={{ color: 'text.secondary' }}>{singleElement.student?.course?.name}</Typography>
@@ -117,7 +119,7 @@ const DrawerReportSlip = ({ data }) => {
           <Grid container>
             <Grid item xs={12} sm={6} sx={{ mb: { lg: 0, xs: 4 } }}>
               <Typography variant='h6' sx={{ mb: 6 }}>
-                Teacher Name:
+                {t('Teacher Name')}:
               </Typography>
               <Typography sx={{ mb: 1.5, color: 'text.secondary' }}>
                 {singleElement.teacherFirstName} {singleElement.teacherLastName}
@@ -126,7 +128,7 @@ const DrawerReportSlip = ({ data }) => {
             <Grid item xs={12} sm={6} sx={{ display: 'flex', justifyContent: ['flex-start', 'flex-end'] }}>
               <div>
                 <Typography variant='h6' sx={{ mb: 6 }}>
-                  Student:
+                  {t('Student')}:
                 </Typography>
                 <TableContainer>
                   <Table>
@@ -134,21 +136,21 @@ const DrawerReportSlip = ({ data }) => {
                       <TableRow>
                         <MUITableCell>
                           <Typography sx={{ color: 'text.secondary' }}>
-                            Name: {singleElement.student?.firstName} {singleElement.student?.lastName}
+                            {t('Name')}: {singleElement.student?.firstName} {singleElement.student?.lastName}
                           </Typography>
                         </MUITableCell>
                       </TableRow>
                       <TableRow>
                         <MUITableCell>
                           <Typography sx={{ color: 'text.secondary' }}>
-                            BirthDate: {convertDate(singleElement.student?.birthday)}
+                            {t('BirthDate')}: {convertDate(singleElement.student?.birthday)}
                           </Typography>
                         </MUITableCell>
                       </TableRow>
                       <TableRow>
                         <MUITableCell>
                           <Typography sx={{ color: 'text.secondary' }}>
-                            Nationality: {singleElement.student?.nationality}
+                            {t('Nationality')}: {singleElement.student?.nationality}
                           </Typography>
                         </MUITableCell>
                       </TableRow>
@@ -166,8 +168,8 @@ const DrawerReportSlip = ({ data }) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Type</TableCell>
-                <TableCell>Result</TableCell>
+                <TableCell>{t('Type')}</TableCell>
+                <TableCell>{t('Result')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody
@@ -180,8 +182,8 @@ const DrawerReportSlip = ({ data }) => {
             >
               {parsedDataArray.map((item, index) => (
                 <TableRow key={index}>
-                  <TableCell>{item.key}</TableCell>
-                  <TableCell>{item.value}</TableCell>
+                  <TableCell>{t(item.key)}</TableCell>
+                  <TableCell>{t(item.value)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

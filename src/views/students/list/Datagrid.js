@@ -14,6 +14,7 @@ import TableHeader from './TableHeader'
 import Pagination from '@mui/material/Pagination'
 import useStudentsColumns from 'src/views/students/hooks/useStudentsColumns'
 import AddReportDrawer from '../add-student-report/addReportDrawer'
+import { useTranslation } from 'react-i18next'
 import { Autocomplete } from '@mui/material'
 
 const customScrollbarStyles = {
@@ -43,7 +44,7 @@ const StudentsDataGrid = ({
     setCurrentPage(1)
     setSelectedCourse(newValue ? newValue.value : '')
   }
-
+  const { t } = useTranslation()
   const { columns, open, drawerData, handleCloseDrawer } = useStudentsColumns()
 
   useEffect(() => {
@@ -57,7 +58,7 @@ const StudentsDataGrid = ({
 
   return (
     <>
-      <CardHeader title='Search Filters' />
+      <CardHeader title={t('Search Filters')} />
       <CardContent>
         <Grid container spacing={6}>
           <Grid item sm={4} xs={12}>
@@ -80,8 +81,8 @@ const StudentsDataGrid = ({
                   {...params}
                   fullWidth
                   sx={{ mb: 4 }}
-                  placeholder='Select course'
-                  label='Course filter'
+                  placeholder={t('Select course')}
+                  label={t('Course filter')}
                   id='validation-billing-select'
                   aria-describedby='validation-billing-select'
                 />

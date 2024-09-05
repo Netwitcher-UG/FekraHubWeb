@@ -28,8 +28,11 @@ import CircularProgress from '@mui/material/CircularProgress'
 // import CustomTextField from 'src/@core/components/mui/text-field'
 import { assignPermissionToRole } from 'src/store/apps/roles'
 import toast from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
+import Translations from 'src/layouts/components/Translations'
 
 const RolesCards = props => {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const [dialogTitle, setDialogTitle] = useState('Add')
   const [selectedRole, setSelectedRole] = useState('')
@@ -41,7 +44,7 @@ const RolesCards = props => {
   const handleClickOpen = role => {
     setSelectedRole(role)
     setSelectedRolePermissions(schoolRolesAndPermissions[role] || [])
-    setDialogTitle('Edit')
+    setDialogTitle(t('Edit'))
     setOpen(true)
   }
 
@@ -59,7 +62,7 @@ const RolesCards = props => {
 
     if (response?.payload?.status == 200) {
       handleClose()
-      toast.success('Role updated successfully')
+      toast.success(t('Role updated successfully'))
     } else console.log(response)
   }
 
@@ -92,7 +95,7 @@ const RolesCards = props => {
                     handleClickOpen(role)
                   }}
                 >
-                  Edit Role
+                  <Translations text={'Edit Role'} />
                 </Typography>
               </Box>
             </Box>
@@ -128,8 +131,8 @@ const RolesCards = props => {
             pt: theme => [`${theme.spacing(8)} !important`, `${theme.spacing(12.5)} !important`]
           }}
         >
-          <Typography variant='h3'>{`${dialogTitle} Role`}</Typography>
-          <Typography color='text.secondary'>Set Role Permissions</Typography>
+          <Typography variant='h3'>{`${dialogTitle} ${t('Role')}`}</Typography>
+          <Typography color='text.secondary'>{t('Set Role Permissions')}</Typography>
         </DialogTitle>
         <DialogContent
           sx={{
@@ -138,7 +141,7 @@ const RolesCards = props => {
           }}
         >
           <Typography variant='h4' sx={{ mb: 4 }}>
-            {selectedRole} Permissions
+            {selectedRole} {t('Permissions')}
           </Typography>
           <TableContainer>
             <Table size='small'>
@@ -209,10 +212,10 @@ const RolesCards = props => {
         >
           <Box className='demo-space-x'>
             <Button type='submit' disabled={rolesData?.assignLoading} variant='contained' onClick={handleSubmit}>
-              {rolesData?.assignLoading ? <CircularProgress size={22} /> : 'Submit'}
+              {rolesData?.assignLoading ? <CircularProgress size={22} /> : t('Submit')}
             </Button>
             <Button color='secondary' disabled={rolesData?.assignLoading} variant='tonal' onClick={handleClose}>
-              Cancel
+              {t('Cancel')}
             </Button>
           </Box>
         </DialogActions>

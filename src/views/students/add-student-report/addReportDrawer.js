@@ -27,6 +27,7 @@ import { fetchReportKeys, addReport } from 'src/store/apps/reports'
 import styled from '@emotion/styled'
 import { useDispatch, useSelector } from 'react-redux'
 import CircularProgress from '@mui/material/CircularProgress'
+import { useTranslation } from 'react-i18next'
 
 const Header = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -71,11 +72,11 @@ export default function AddReportDrawer({ open, handleCloseDrawer, rowData }) {
   }, [dispatch])
 
   const { reportKeys } = useSelector(state => state.reports)
-
+  const { t } = useTranslation()
   const schema = yup.object().shape({
     // creationDate: yup.date().required(<Translations text={'Date is required'} />),
     ...reportKeys.reduce((acc, key) => {
-      acc[key] = yup.string().required(<Translations text={`${key} is required`} />)
+      acc[key] = yup.string().required(<Translations text={`${key} ${t('is required')}`} />)
       return acc
     }, {})
   })
@@ -139,7 +140,9 @@ export default function AddReportDrawer({ open, handleCloseDrawer, rowData }) {
     >
       <Header>
         <HeaderText>
-          <StudentName>Submitting report for :</StudentName>
+          <StudentName>
+            <Translations text={'Submitting report for :'} />
+          </StudentName>
           <Typography variant='h6' component='span'>
             {rowData.firstName} {rowData.lastName}
           </Typography>
@@ -213,7 +216,7 @@ export default function AddReportDrawer({ open, handleCloseDrawer, rowData }) {
               <Divider variant='middle' />
               <Grid sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Button disabled={isSubmitting} color='primary' sx={{ m: 2 }} variant='contained' type='submit'>
-                  {isSubmitting ? <CircularProgress size={25} color='secondary' /> : 'Submit report'}
+                  {isSubmitting ? <CircularProgress size={25} color='secondary' /> : t('Submit report')}
                 </Button>
                 <Button
                   type='button'
@@ -222,7 +225,7 @@ export default function AddReportDrawer({ open, handleCloseDrawer, rowData }) {
                   disabled={isSubmitting}
                   onClick={handleCloseDrawer}
                 >
-                  Close
+                  {t('Close')}
                 </Button>
               </Grid>
             </>

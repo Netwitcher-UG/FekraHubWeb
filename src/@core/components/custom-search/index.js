@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import styled from '@emotion/styled'
 import InputBase from '@mui/material/InputBase'
+import { useTranslation } from 'react-i18next'
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -42,6 +43,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }))
 
 export default function CustomSearch({ SetSearch, value, handleSearch, inTable = false }) {
+  const { t } = useTranslation()
   const handleChange = event => {
     SetSearch(event.target.value)
   }
@@ -71,12 +73,12 @@ export default function CustomSearch({ SetSearch, value, handleSearch, inTable =
       {inTable ? (
         <StyledInputBase
           value={value}
-          placeholder='search'
-          inputProps={{ 'aria-label': 'search' }}
+          placeholder={t('Search')}
+          inputProps={{ 'aria-label': 'Search' }}
           onChange={handleSearch}
         />
       ) : (
-        <StyledInputBase placeholder='search' inputProps={{ 'aria-label': 'search' }} onChange={handleChange} />
+        <StyledInputBase placeholder={t('Search')} inputProps={{ 'aria-label': 'search' }} onChange={handleChange} />
       )}
     </Search>
   )

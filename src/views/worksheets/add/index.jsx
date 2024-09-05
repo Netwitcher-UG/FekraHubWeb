@@ -17,6 +17,7 @@ import CustomTextField from 'src/@core/components/mui/text-field'
 import { fetchCourses } from 'src/store/apps/students'
 import { addWorksheet } from 'src/store/apps/worksheets'
 import { Stack } from '@mui/system'
+import { useTranslation } from 'react-i18next'
 
 const CustomCloseButton = styled(IconButton)(({ theme }) => ({
   top: 0,
@@ -64,7 +65,7 @@ const AdduWorksheets = ({ dataUploadType, data }) => {
   const handleClose = () => setOpen(false)
   const [selectedFile, setSelectedFile] = useState(null)
   const dispatch = useDispatch()
-
+  const { t } = useTranslation()
   const defaultValues = {
     courseId: [''],
     UploadTypeId: '',
@@ -145,7 +146,7 @@ const AdduWorksheets = ({ dataUploadType, data }) => {
                       renderInput={params => (
                         <TextField
                           {...params}
-                          label='Select Courses'
+                          label={t('Select Courses')}
                           error={Boolean(errors.courseId)}
                           helperText={errors.courseId ? 'This field is required' : ''}
                           inputRef={ref}
@@ -185,7 +186,7 @@ const AdduWorksheets = ({ dataUploadType, data }) => {
                           fullWidth
                           sx={{ mb: 4 }}
                           placeholder=''
-                          label='UploadTypeId'
+                          label={t('Upload Type')}
                           id='validation-billing-select'
                           aria-describedby='validation-billing-select'
                           error={Boolean(errors.locationID)}
@@ -208,7 +209,7 @@ const AdduWorksheets = ({ dataUploadType, data }) => {
                     }}
                   />
                   <CustomTextField
-                    label='Upload File'
+                    label={t('Upload File')}
                     value={selectedFile ? selectedFile.name : ''}
                     InputProps={{
                       endAdornment: <Icon icon='tabler:upload' fontSize='1.25rem' />
@@ -223,7 +224,7 @@ const AdduWorksheets = ({ dataUploadType, data }) => {
                 <Translations text={'Add Worksheets'} />
               </Button>
               <Button type='button' variant='outlined' onClick={handleClose}>
-                <Translations text={'cancel'} />
+                <Translations text={'Cancel'} />
               </Button>
             </Stack>
           </form>

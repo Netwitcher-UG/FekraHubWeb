@@ -1,7 +1,4 @@
-// ** Next Import
 import Link from 'next/link'
-
-// ** MUI Components
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
@@ -11,21 +8,15 @@ import * as yup from 'yup'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import CircularProgress from '@mui/material/CircularProgress'
-// ** Custom Component Import
 import CustomTextField from 'src/@core/components/mui/text-field'
 import { useAuth } from 'src/hooks/useAuth'
 import toast from 'react-hot-toast'
 import VerifyEmailV1 from '../pages/auth/verify-email-v1'
-
-// ** Icon Imports
 import Icon from 'src/@core/components/icon'
-
-// ** Layout Import
 import BlankLayout from 'src/@core/layouts/BlankLayout'
-
-// ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 // Styled Components
 const ForgotPasswordIllustration = styled('img')(({ theme }) => ({
@@ -54,14 +45,6 @@ const RightWrapper = styled(Box)(({ theme }) => ({
   }
 }))
 
-const schema = yup.object().shape({
-  email: yup.string().email().required()
-})
-
-const defaultValues = {
-  email: ''
-}
-
 const LinkStyled = styled(Link)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
@@ -72,11 +55,20 @@ const LinkStyled = styled(Link)(({ theme }) => ({
 }))
 
 const ForgotPassword = () => {
-  // ** Hooks
+  const { t } = useTranslation() // useTranslation hook for translations
   const theme = useTheme()
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
   const auth = useAuth()
   const [isEmailValid, setIsEmailValid] = useState(false)
+
+  const schema = yup.object().shape({
+    email: yup.string().email(t('Invalid email')).required(t('Email is required'))
+  })
+
+  const defaultValues = {
+    email: ''
+  }
+
   const {
     control,
     setError,
@@ -88,11 +80,13 @@ const ForgotPassword = () => {
     mode: 'onBlur',
     resolver: yupResolver(schema)
   })
+
   const emailValue = watch('email')
+
   const onSubmit = async data => {
     const response = await auth.forget(data.email)
-    if (response != 200) toast.error('Email is not registed !')
-    else if (response == 200) setIsEmailValid(true)
+    if (response !== 200) toast.error(t('Email is not registered!'))
+    else if (response === 200) setIsEmailValid(true)
   }
 
   return (
@@ -113,7 +107,7 @@ const ForgotPassword = () => {
               }}
             >
               <ForgotPasswordIllustration
-                alt='forgot-password-illustration'
+                alt={t('forgot-password-illustration')}
                 src={`/images/pages/auth-v2-forgot-password-illustration-${theme.palette.mode}.png`}
               />
               <FooterIllustrationsV2 />
@@ -160,10 +154,10 @@ const ForgotPassword = () => {
                 </svg>
                 <Box sx={{ my: 6 }}>
                   <Typography sx={{ mb: 1.5, fontWeight: 500, fontSize: '1.625rem', lineHeight: 1.385 }}>
-                    Forgot Password? 🔒
+                    {t('Forgot Password?')} 🔒
                   </Typography>
                   <Typography sx={{ color: 'text.secondary' }}>
-                    Enter your email and we&prime;ll send you instructions to reset your password
+                    {t("Enter your email and we'll send you instructions to reset your password")}
                   </Typography>
                 </Box>
                 <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
@@ -175,26 +169,26 @@ const ForgotPassword = () => {
                       <CustomTextField
                         fullWidth
                         autoFocus
-                        label='Email'
+                        label={t('Email')}
                         value={value}
                         onBlur={onBlur}
                         onChange={onChange}
                         sx={{ mb: 4 }}
-                        placeholder='Email'
+                        placeholder={t('Email')}
                         error={Boolean(errors.email)}
                         {...(errors.email && { helperText: errors.email.message })}
                       />
                     )}
                   />
                   <Button fullWidth disabled={isSubmitting} type='submit' variant='contained' sx={{ mb: 4 }}>
-                    {isSubmitting ? <CircularProgress size={25} /> : 'Send reset link'}
+                    {isSubmitting ? <CircularProgress size={25} /> : t('Send reset link')}
                   </Button>
                   <Typography
                     sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', '& svg': { mr: 1 } }}
                   >
                     <LinkStyled href='/login'>
                       <Icon fontSize='1.25rem' icon='tabler:chevron-left' />
-                      <span>Back to login</span>
+                      <span>{t('Back to login')}</span>
                     </LinkStyled>
                   </Typography>
                 </form>
@@ -206,7 +200,7 @@ const ForgotPassword = () => {
         <VerifyEmailV1
           email={emailValue}
           resend={true}
-          reason='Reset Password'
+          reason={t('Reset Password')}
           handleResend={() => auth.forget(emailValue)}
         />
       )}

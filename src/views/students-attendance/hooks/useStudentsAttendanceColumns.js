@@ -9,9 +9,11 @@ import { convertDate } from 'src/@core/utils/convert-date'
 import MenuItem from '@mui/material/MenuItem'
 import CustomTextField from 'src/@core/components/mui/text-field'
 import { useDispatch, useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 
 const useStudentAttendanceColumns = () => {
   const dispatch = useDispatch()
+  const { t } = useTranslation()
   const { attendanceStatuses } = useSelector(state => state.attendance)
 
   useEffect(() => {
@@ -90,18 +92,18 @@ const useStudentAttendanceColumns = () => {
                 }}
               >
                 <MenuItem value=''>
-                  <Chip label={'present'} color={'info'} />
+                  <Chip label={t('present')} color={'info'} />
                 </MenuItem>
                 {attendanceStatuses?.map(status => (
                   <MenuItem key={status.id} value={status.id}>
-                    <Chip label={status.title} color={status.title === 'Absent' ? 'error' : 'warning'} />
+                    <Chip label={t(status.title)} color={status.title === 'Absent' ? 'error' : 'warning'} />
                   </MenuItem>
                 ))}
               </CustomTextField>
             ) : row.studentAttendance == null ? (
-              <Chip label={'present'} color={'info'} />
+              <Chip label={t('present')} color={'info'} />
             ) : (
-              <Chip label={row.studentAttendance} color={row.studentAttendance === 'Absent' ? 'error' : 'warning'} />
+              <Chip label={t(row.studentAttendance)} color={row.studentAttendance === 'Absent' ? 'error' : 'warning'} />
             )}
           </>
         )

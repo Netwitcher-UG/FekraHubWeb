@@ -12,8 +12,10 @@ import { Box } from '@mui/system'
 import { Typography } from '@mui/material'
 import Translations from 'src/layouts/components/Translations'
 import Icon from 'src/@core/components/icon'
+import { useTranslation } from 'react-i18next'
 
 const CustomDialogDelete = ({ open, handleClose, decsription, onDelete }) => {
+  const { t } = useTranslation()
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
 
@@ -33,7 +35,7 @@ const CustomDialogDelete = ({ open, handleClose, decsription, onDelete }) => {
               fontSize: '1.5rem'
             }}
           >
-            <Translations text={'Alert'} />
+            <Translations text={t('Alert')} />
             <svg xmlns='http://www.w3.org/2000/svg' width='1.8rem' height='1.8rem' viewBox='0 0 24 24'>
               <g fill='none'>
                 <circle cx={12} cy={12} r={10} stroke='currentColor' strokeWidth={2.05}></circle>
@@ -67,7 +69,7 @@ const CustomDialogDelete = ({ open, handleClose, decsription, onDelete }) => {
                 }
               }}
             >
-              Delete
+              {t('Delete')}
             </Button>
 
             <Button
@@ -88,7 +90,7 @@ const CustomDialogDelete = ({ open, handleClose, decsription, onDelete }) => {
               }}
               variant='none'
             >
-              cancel
+              {t('Cancel')}
             </Button>
           </Box>
         </DialogActions>

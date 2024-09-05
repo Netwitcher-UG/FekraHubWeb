@@ -12,7 +12,7 @@ import OptionsMenu from 'src/@core/components/option-menu'
 
 const LanguageDropdown = ({ settings, saveSettings }) => {
   // ** Hook
-  const { i18n } = useTranslation()
+  const { i18n, t } = useTranslation()
 
   const handleLangItemClick = lang => {
     i18n.changeLanguage(lang)
@@ -30,7 +30,7 @@ const LanguageDropdown = ({ settings, saveSettings }) => {
       menuProps={{ sx: { '& .MuiMenu-paper': { mt: 4.25, minWidth: 130 } } }}
       options={[
         {
-          text: 'English',
+          text: t('English'),
           menuItemProps: {
             sx: { py: 2 },
             selected: i18n.language === 'en',
@@ -41,27 +41,27 @@ const LanguageDropdown = ({ settings, saveSettings }) => {
           }
         },
         {
-          text: 'French',
+          text: t('German'),
           menuItemProps: {
             sx: { py: 2 },
-            selected: i18n.language === 'fr',
+            selected: i18n.language === 'de',
             onClick: () => {
-              handleLangItemClick('fr')
+              handleLangItemClick('de')
               saveSettings({ ...settings, direction: 'ltr' })
             }
           }
-        },
-        {
-          text: 'Arabic',
-          menuItemProps: {
-            sx: { py: 2 },
-            selected: i18n.language === 'ar',
-            onClick: () => {
-              handleLangItemClick('ar')
-              saveSettings({ ...settings, direction: 'rtl' })
-            }
-          }
         }
+        // {
+        //   text: 'Arabic',
+        //   menuItemProps: {
+        //     sx: { py: 2 },
+        //     selected: i18n.language === 'ar',
+        //     onClick: () => {
+        //       handleLangItemClick('ar')
+        //       saveSettings({ ...settings, direction: 'rtl' })
+        //     }
+        //   }
+        // }
       ]}
     />
   )

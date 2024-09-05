@@ -22,6 +22,7 @@ import { Button } from '@mui/material'
 import Icon from 'src/@core/components/icon'
 import { downloadBase64File } from 'src/@core/utils/download-base64'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
+import { useTranslation } from 'react-i18next'
 // ** Configs
 import themeConfig from 'src/configs/themeConfig'
 
@@ -35,6 +36,7 @@ const MUITableCell = styled(TableCell)(({ theme }) => ({
 }))
 
 const PreviewReport = ({ data }) => {
+  const { t } = useTranslation()
   const ability = useContext(AbilityContext)
   // ** Hook
   const singleElement = data?.reports
@@ -54,14 +56,14 @@ const PreviewReport = ({ data }) => {
     const response = await dispatch(exportReport(singleElement?.id))
 
     if (response?.payload?.status != 200) {
-      toast.error(<Translations text={'Export failed try again !'} />, 1000)
+      toast.error(<Translations text={t('Export failed try again !')} />, 1000)
     } else if (response?.payload?.status == 200) {
       downloadBase64File(
         response.payload.data,
         `${singleElement?.student?.firstName} ${singleElement?.student?.lastName}-report.pdf`
       )
     } else {
-      toast.error('Something went wrong')
+      toast.error(t('Something went wrong'))
     }
   }
 
@@ -84,7 +86,7 @@ const PreviewReport = ({ data }) => {
                 <Box sx={{ mr: 2 }}>
                   <Icon fontSize='1.125rem' icon='ph:export-bold' />
                 </Box>
-                <Translations text={'Export'} />
+                <Translations text={t('Export')} />
               </>
             )}
           </Button>
@@ -128,7 +130,7 @@ const PreviewReport = ({ data }) => {
                     </Typography>
                   </Box>
                   <div>
-                    <Typography sx={{ mb: 2, color: 'text.secondary' }}>Student's Monthly Report</Typography>
+                    <Typography sx={{ mb: 2, color: 'text.secondary' }}>{t("Student's Monthly Report")}</Typography>
                   </div>
                 </Box>
               </Grid>
@@ -138,7 +140,7 @@ const PreviewReport = ({ data }) => {
                     <TableBody sx={{ '& .MuiTableCell-root': { py: `${theme.spacing(1.5)} !important` } }}>
                       <TableRow>
                         <MUITableCell>
-                          <Typography variant='h4'>Report Date:</Typography>
+                          <Typography variant='h4'>{t('Report Date')}:</Typography>
                         </MUITableCell>
                         <MUITableCell>
                           <Typography variant='h4'>
@@ -148,7 +150,7 @@ const PreviewReport = ({ data }) => {
                       </TableRow>
                       <TableRow>
                         <MUITableCell>
-                          <Typography sx={{ color: 'text.secondary' }}>Course Name:</Typography>
+                          <Typography sx={{ color: 'text.secondary' }}>{t('Course Name')}:</Typography>
                         </MUITableCell>
                         <MUITableCell>
                           <Typography sx={{ color: 'text.secondary' }}>
@@ -167,7 +169,7 @@ const PreviewReport = ({ data }) => {
             <Grid container>
               <Grid item xs={12} sm={6} sx={{ mb: { lg: 0, xs: 4 } }}>
                 <Typography variant='h6' sx={{ mb: 6 }}>
-                  Teacher Name:
+                  {t('Teacher Name')}:
                 </Typography>
                 <Typography sx={{ mb: 1.5, color: 'text.secondary' }}>
                   {singleElement.teacherFirstName} {singleElement.teacherLastName}
@@ -176,7 +178,7 @@ const PreviewReport = ({ data }) => {
               <Grid item xs={12} sm={6} sx={{ display: 'flex', justifyContent: ['flex-start', 'flex-end'] }}>
                 <div>
                   <Typography variant='h6' sx={{ mb: 6 }}>
-                    Student:
+                    {t('Student')}:
                   </Typography>
                   <TableContainer>
                     <Table>
@@ -184,21 +186,21 @@ const PreviewReport = ({ data }) => {
                         <TableRow>
                           <MUITableCell>
                             <Typography sx={{ color: 'text.secondary' }}>
-                              Name: {singleElement.student?.firstName} {singleElement.student?.lastName}
+                              {t('Name')}: {singleElement.student?.firstName} {singleElement.student?.lastName}
                             </Typography>
                           </MUITableCell>
                         </TableRow>
                         <TableRow>
                           <MUITableCell>
                             <Typography sx={{ color: 'text.secondary' }}>
-                              BirthDate: {convertDate(singleElement.student?.birthday)}
+                              {t('BirthDate')}: {convertDate(singleElement.student?.birthday)}
                             </Typography>
                           </MUITableCell>
                         </TableRow>
                         <TableRow>
                           <MUITableCell>
                             <Typography sx={{ color: 'text.secondary' }}>
-                              Nationality: {singleElement.student?.nationality}
+                              {t('Nationality')}: {singleElement.student?.nationality}
                             </Typography>
                           </MUITableCell>
                         </TableRow>
@@ -214,8 +216,8 @@ const PreviewReport = ({ data }) => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Type</TableCell>
-                  <TableCell>Result</TableCell>
+                  <TableCell>{t('Type')}</TableCell>
+                  <TableCell>{t('Result')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody
@@ -228,7 +230,7 @@ const PreviewReport = ({ data }) => {
               >
                 {parsedDataArray.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell>{item.key}</TableCell>
+                    <TableCell>{t(item.key)}</TableCell>
                     <TableCell>{item.value}</TableCell>
                   </TableRow>
                 ))}
@@ -238,8 +240,9 @@ const PreviewReport = ({ data }) => {
           <Divider />
           <CardContent sx={{ px: [6, 10] }}>
             <Typography sx={{ color: 'text.secondary' }}>
-              <Typography component='span' sx={{ fontWeight: 500, color: 'text.info !important' }}></Typography>
-              Report Genrated by {themeConfig.templateName}
+              <Typography component='span' sx={{ fontWeight: 500, color: 'text.info !important' }}>
+                {t('Report Generated by')} {themeConfig.templateName}
+              </Typography>
             </Typography>
           </CardContent>
         </Card>

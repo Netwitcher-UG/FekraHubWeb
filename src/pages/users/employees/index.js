@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 // ** Actions Imports
 import { fetchEmployees } from 'src/store/apps/users'
+import { convertDate } from 'src/@core/utils/convert-date'
 
 // ** Custom Table Components Imports
 import TableHeader from 'src/views/apps/users/employees/list/TableHeader'
@@ -80,7 +81,7 @@ const columns = [
   {
     width: 200,
     headerName: <Translations text={'BirthDay'} />,
-    field: 'birthday'
+    renderCell: ({ row }) => <div>{convertDate(row.birthday)}</div>
   },
   {
     width: 200,

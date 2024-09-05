@@ -49,7 +49,7 @@ export default function EditReportDrawer({ open, handleCloseDrawer, rowData }) {
 
   const schema = yup.object().shape(
     Object.keys(parsedReportData).reduce((acc, key) => {
-      acc[key] = yup.string().required(`${key} is required`)
+      acc[key] = yup.string().required(`${key} ${t('is required')}`)
       return acc
     }, {})
   )
@@ -89,9 +89,9 @@ export default function EditReportDrawer({ open, handleCloseDrawer, rowData }) {
     const response = await dispatch(updateReport(updatedReport))
     if (response?.payload?.status == 200) {
       handleCloseDrawer()
-      toast.success(<Translations text={'Report updated successfully '} />)
+      toast.success(<Translations text={t('Report updated successfully')} />)
     } else if (response?.payload?.status == 400) toast.error(<Translations text={response?.payload?.data} />)
-    else toast.error(<Translations text={'Something went wrong try again !'} />)
+    else toast.error(<Translations text={t('Something went wrong try again !')} />)
   }
 
   return (
@@ -110,7 +110,7 @@ export default function EditReportDrawer({ open, handleCloseDrawer, rowData }) {
     >
       <Header>
         <HeaderText>
-          <StudentName>Updating report for :</StudentName>
+          <StudentName>{t('Updating report for')}:</StudentName>
         </HeaderText>
         <Typography variant='h6' component='span'>
           {rowData?.student?.firstName} {rowData?.student?.lastName}
@@ -130,7 +130,7 @@ export default function EditReportDrawer({ open, handleCloseDrawer, rowData }) {
                   render={({ field }) => (
                     <CustomTextField
                       {...field}
-                      label={<Translations text={key} />}
+                      label={<Translations text={t(key)} />}
                       fullWidth
                       defaultValue={parsedReportData[key]}
                       error={Boolean(errors[key])}
@@ -151,7 +151,7 @@ export default function EditReportDrawer({ open, handleCloseDrawer, rowData }) {
               variant='contained'
               type='submit'
             >
-              {isSubmitting ? <CircularProgress size={25} color='secondary' /> : 'Update report'}
+              {isSubmitting ? <CircularProgress size={25} color='secondary' /> : t('Update report')}
             </Button>
             <Button
               type='button'
@@ -160,7 +160,7 @@ export default function EditReportDrawer({ open, handleCloseDrawer, rowData }) {
               disabled={isSubmitting}
               onClick={handleCloseDrawer}
             >
-              Close
+              {t('Close')}
             </Button>
           </Grid>
         </form>

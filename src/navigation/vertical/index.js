@@ -44,7 +44,7 @@ const navigation = () => {
       icon: 'ph:student',
       children: [
         {
-          title: 'Avilable Students',
+          title: 'Available Students',
           path: '/students',
           subject: 'StudentCourse',
           action: 'read'
@@ -83,7 +83,7 @@ const navigation = () => {
       title: 'Calendar',
       icon: 'tabler:calendar',
       path: '/apps/calendar',
-          action: 'manage',
+      action: 'manage',
       subject: 'calendar'
     },
     {

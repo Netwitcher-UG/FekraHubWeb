@@ -4,6 +4,7 @@ import Grid from '@mui/material/Grid'
 import CircularProgress from '@mui/material/CircularProgress'
 import Box from '@mui/material/Box'
 import Alert from '@mui/material/Alert'
+import Translations from 'src/layouts/components/Translations'
 // import Divider from '@mui/material/Divider'
 // import Button from '@mui/material/Button'
 // import Icon from 'src/@core/components/icon'
@@ -18,7 +19,9 @@ const ContractsList = ({ contractsData, loading, byParent }) => {
       ))
     ) : (
       <Grid item xs={12}>
-        <Alert severity='info'> No contracts yet</Alert>
+        <Alert severity='info'>
+          <Translations text={'No contracts yet'} />
+        </Alert>
       </Grid>
     )
 

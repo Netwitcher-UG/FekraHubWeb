@@ -31,6 +31,8 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import toast from 'react-hot-toast'
 import { addEmployee } from 'src/store/apps/users'
+import { useTranslation } from 'react-i18next'
+import Translations from 'src/layouts/components/Translations'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -38,43 +40,47 @@ import { Box } from '@mui/material'
 import { boxSizing } from '@mui/system'
 
 // Validation Schema
-const schema = yup.object().shape({
-  email: yup.string().email('Email is invalid').required('Email is required'),
-  password: yup
-    .string()
-    .required('Password is required')
-    .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
-    .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
-    .matches(/[0-9]/, 'Password must contain at least one number')
-    .matches(/[\W_]/, 'Password must contain at least one non-alphanumeric character'),
-  firstName: yup.string().required('First Name is required'),
-  lastname: yup.string().required('Last Name is required'),
-  birthday: yup.date().nullable().required('Birthday is required'),
-  nationality: yup.string().required('Nationality is required'),
-  phoneNumber: yup
-    .string()
-    .required('Phone Number is required')
-    .matches(/^\d{10,}$/, 'Phone Number must be at least 10 digits'),
-  emergencyPhoneNumber: yup
-    .string()
-    .required('Emergency Phone Number is required')
-    .matches(/^\d{10,}$/, 'Emergency Phone Number must be at least 10 digits'),
-  street: yup.string().required('Street is required'),
-  streetNr: yup.string().required('Street Number is required'),
-  city: yup.string().required('City is required'),
-  zipCode: yup.string().required('ZipeCode is required'),
-  job: yup.string().required('Job is required'),
-  graduation: yup.string().required('Graduation is required'),
-  gender: yup.string().required('Gender is required'),
-  birthplace: yup.string().required('Birthplace is required'),
-  Role: yup.string().required('Role is required')
-})
+const getValidationSchema = t =>
+  yup.object().shape({
+    email: yup.string().email(t('Email is invalid')).required(t('Email is required')),
+    password: yup
+      .string()
+      .required(t('Password is required'))
+      .matches(/[a-z]/, t('Password must contain at least one lowercase letter'))
+      .matches(/[A-Z]/, t('Password must contain at least one uppercase letter'))
+      .matches(/[0-9]/, t('Password must contain at least one number'))
+      .matches(/[\W_]/, t('Password must contain at least one non-alphanumeric character')),
+    firstName: yup.string().required(t('First Name is required')),
+    lastname: yup.string().required(t('Last Name is required')),
+    birthday: yup.date().nullable().required(t('Birthday is required')),
+    nationality: yup.string().required(t('Nationality is required')),
+    phoneNumber: yup
+      .string()
+      .required(t('Phone Number is required'))
+      .matches(/^\d{10,}$/, t('Phone Number must be at least 10 digits')),
+    emergencyPhoneNumber: yup
+      .string()
+      .required(t('Emergency Phone Number is required'))
+      .matches(/^\d{10,}$/, t('Emergency Phone Number must be at least 10 digits')),
+    street: yup.string().required(t('Street is required')),
+    streetNr: yup.string().required(t('Street Number is required')),
+    city: yup.string().required(t('City is required')),
+    zipCode: yup.string().required(t('Zip Code is required')), // Fixed typo here
+    job: yup.string().required(t('Job is required')),
+    graduation: yup.string().required(t('Graduation is required')),
+    gender: yup.string().required(t('Gender is required')),
+    birthplace: yup.string().required(t('Birthplace is required')),
+    Role: yup.string().required(t('Role is required'))
+  })
 
 const CustomInput = forwardRef((props, ref) => {
   return <CustomTextField fullWidth {...props} inputRef={ref} label='Birth Date' autoComplete='off' />
 })
 
 const FormLayoutsSeparator = () => {
+  const { t } = useTranslation() // Fetch t function from useTranslation
+
+  const schema = useMemo(() => getValidationSchema(t), [t])
   const {
     control,
     handleSubmit,
@@ -120,7 +126,7 @@ const FormLayoutsSeparator = () => {
 
     if (response?.payload?.status == 400) toast.error(response?.payload?.data)
     else if (response?.payload?.status == 200) {
-      toast.success('Employee added successfully ', 1000)
+      toast.success(<Translations text={'Employee added successfully '} />, 1000)
       reset()
       router.push('/users/employees')
     } else toast.error(response?.payload?.data)
@@ -132,14 +138,14 @@ const FormLayoutsSeparator = () => {
 
   return (
     <Card>
-      <CardHeader title='Add Employee' />
+      <CardHeader title={<Translations text={'Add Employee'} />} />
       <Divider sx={{ m: '0 !important' }} />
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent>
           <Grid container spacing={5}>
             <Grid item xs={12}>
               <Typography variant='body2' sx={{ fontWeight: 600 }}>
-                1. Account Details
+                1. <Translations text='Account Details' />
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -151,7 +157,7 @@ const FormLayoutsSeparator = () => {
                     {...field}
                     fullWidth
                     type='email'
-                    label='Email'
+                    label={<Translations text={'Email'} />}
                     placeholder='carterleonard@gmail.com'
                     error={Boolean(errors.email)}
                     helperText={errors.email?.message}
@@ -167,7 +173,7 @@ const FormLayoutsSeparator = () => {
                   <CustomTextField
                     {...field}
                     fullWidth
-                    label='Password'
+                    label={<Translations text='Password' />}
                     type={showPassword ? 'text' : 'password'}
                     placeholder='············'
                     id='auth-register-password'
@@ -191,42 +197,12 @@ const FormLayoutsSeparator = () => {
                 )}
               />
             </Grid>
-            {/* <Grid item xs={12} sm={6}>
-              <Controller
-                name='password2'
-                control={control}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    fullWidth
-                    label='Confirm Password'
-                    type='password'
-                    error={Boolean(errors.password2)}
-                    helperText={errors.password2?.message}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position='end'>
-                          <IconButton
-                            edge='end'
-                            onClick={() => field.onChange(!field.value)}
-                            onMouseDown={e => e.preventDefault()}
-                            aria-label='toggle password visibility'
-                          >
-                            <Icon fontSize='1.25rem' icon={field.value ? 'tabler:eye' : 'tabler:eye-off'} />
-                          </IconButton>
-                        </InputAdornment>
-                      )
-                    }}
-                  />
-                )}
-              />
-            </Grid> */}
             <Grid item xs={12}>
               <Divider sx={{ mb: '0 !important' }} />
             </Grid>
             <Grid item xs={12}>
               <Typography variant='body2' sx={{ fontWeight: 600 }}>
-                2. Personal Info
+                2. <Translations text={'Personal Info'} />
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -238,7 +214,7 @@ const FormLayoutsSeparator = () => {
                   <CustomTextField
                     select
                     fullWidth
-                    label='Role'
+                    label={<Translations text={'Role'} />}
                     id='validation-gender-select'
                     aria-describedby='validation-gender-select'
                     defaultValue=''
@@ -251,16 +227,18 @@ const FormLayoutsSeparator = () => {
                     }}
                   >
                     <MenuItem value='' sx={{ display: 'none' }}>
-                      <em>Select Role</em>
+                      <em>
+                        <Translations text={'Select Role'} />
+                      </em>
                     </MenuItem>
                     <MenuItem key={1} value={'Admin'}>
-                      Admin
+                      <Translations text={'Admin'} />
                     </MenuItem>
                     <MenuItem key={2} value={'Secretariat'}>
-                      Secretory
+                      <Translations text={'Secretory'} />
                     </MenuItem>
                     <MenuItem key={3} value={'Teacher'}>
-                      Teacher
+                      <Translations text={'Teacher'} />
                     </MenuItem>
                   </CustomTextField>
                 )}
@@ -274,7 +252,7 @@ const FormLayoutsSeparator = () => {
                   <CustomTextField
                     {...field}
                     fullWidth
-                    label='First Name'
+                    label={<Translations text={'First Name'} />}
                     placeholder='Leonard'
                     error={Boolean(errors.firstName)}
                     helperText={errors.firstName?.message}
@@ -290,7 +268,7 @@ const FormLayoutsSeparator = () => {
                   <CustomTextField
                     {...field}
                     fullWidth
-                    label='Last Name'
+                    label={<Translations text={'Last Name'} />}
                     placeholder='Carter'
                     error={Boolean(errors.lastname)}
                     helperText={errors.lastname?.message}
@@ -307,7 +285,7 @@ const FormLayoutsSeparator = () => {
                   <CustomTextField
                     select
                     fullWidth
-                    label='Gender'
+                    label={<Translations text={'Gender'} />}
                     id='validation-gender-select'
                     aria-describedby='validation-gender-select'
                     defaultValue=''
@@ -320,13 +298,15 @@ const FormLayoutsSeparator = () => {
                     }}
                   >
                     <MenuItem value='' sx={{ display: 'none' }}>
-                      <em>Select Gender</em>
+                      <em>
+                        <Translations text={'Select Gender'} />
+                      </em>
                     </MenuItem>
                     <MenuItem key={1} value={'male'}>
-                      Male
+                      <Translations text={'Male'} />
                     </MenuItem>
                     <MenuItem key={2} value={'female'}>
-                      Female
+                      <Translations text={'Female'} />
                     </MenuItem>
                   </CustomTextField>
                 )}
@@ -343,17 +323,17 @@ const FormLayoutsSeparator = () => {
                       selected={value}
                       onChange={onChange}
                       dateFormat='dd.MM.yyyy'
+                      placeholderText={t('Birthday')}
                       showYearDropdown
                       showMonthDropdown
                       customInput={
                         <CustomTextField
-                          label='Birthday'
+                          label={<Translations text={'Birthday'} />}
                           fullWidth
                           error={Boolean(errors.birthday)}
                           helperText={errors.birthday?.message}
                         />
                       }
-                      placeholderText='Birthday'
                       popperProps={{
                         modifiers: [
                           {
@@ -382,10 +362,10 @@ const FormLayoutsSeparator = () => {
                   <CustomTextField
                     {...field}
                     fullWidth
-                    label='Birthplace'
+                    label={<Translations text={'Birth Place'} />}
+                    placeholder={t('Enter your birthplace')}
                     error={Boolean(errors.birthplace)}
                     helperText={errors.birthplace?.message}
-                    placeholder='Enter your birthplace'
                   />
                 )}
               />
@@ -410,8 +390,8 @@ const FormLayoutsSeparator = () => {
                         <CustomTextField
                           {...params}
                           fullWidth
-                          placeholder=' Country / nationality'
-                          label='Select Country / nationality'
+                          placeholder={t('Country / nationality')}
+                          label={<Translations text={'Select Country / nationality'} />}
                           error={Boolean(errors.nationality)}
                           helperText={errors.nationality?.message}
                           variant='outlined'
@@ -432,8 +412,8 @@ const FormLayoutsSeparator = () => {
                     error={Boolean(errors.street)}
                     helperText={errors.street?.message}
                     fullWidth
-                    label='Street'
-                    placeholder='Enter your street'
+                    label={<Translations text={'Street'} />}
+                    placeholder={t('Enter your street')}
                   />
                 )}
               />
@@ -448,8 +428,8 @@ const FormLayoutsSeparator = () => {
                     error={Boolean(errors.streetNr)}
                     helperText={errors.streetNr?.message}
                     fullWidth
-                    label='Street Number'
-                    placeholder='Enter your street number'
+                    label={<Translations text={'Street Number'} />}
+                    placeholder={t('Enter your street number')}
                   />
                 )}
               />
@@ -464,8 +444,8 @@ const FormLayoutsSeparator = () => {
                     error={Boolean(errors.city)}
                     helperText={errors.city?.message}
                     fullWidth
-                    label='City'
-                    placeholder='Enter your city'
+                    label={<Translations text={'City'} />}
+                    placeholder={t('Enter your city')}
                   />
                 )}
               />
@@ -480,8 +460,8 @@ const FormLayoutsSeparator = () => {
                     error={Boolean(errors.zipCode)}
                     helperText={errors.zipCode?.message}
                     fullWidth
-                    label='Zipcode'
-                    placeholder='Enter your Zipcode'
+                    label={<Translations text={'Zip Code'} />}
+                    placeholder={t('Enter your Zipcode')}
                   />
                 )}
               />
@@ -494,10 +474,10 @@ const FormLayoutsSeparator = () => {
                   <CustomTextField
                     {...field}
                     fullWidth
-                    label='Job'
                     error={Boolean(errors.job)}
                     helperText={errors.job?.message}
-                    placeholder='Enter your job'
+                    label={<Translations text={'Job'} />}
+                    placeholder={t('Enter your job')}
                   />
                 )}
               />
@@ -512,8 +492,8 @@ const FormLayoutsSeparator = () => {
                     fullWidth
                     error={Boolean(errors.graduation)}
                     helperText={errors.graduation?.message}
-                    label='Graduation'
-                    placeholder='Enter your graduation'
+                    label={<Translations text={'Graduation'} />}
+                    placeholder={t('Enter your graduation')}
                   />
                 )}
               />
@@ -527,7 +507,7 @@ const FormLayoutsSeparator = () => {
                     {...field}
                     fullWidth
                     type='number'
-                    label='Phone No.'
+                    label={<Translations text={'Phone Number'} />}
                     placeholder='123-456-7890'
                     error={Boolean(errors.phoneNumber)}
                     helperText={errors.phoneNumber?.message}
@@ -543,8 +523,8 @@ const FormLayoutsSeparator = () => {
                   <CustomTextField
                     {...field}
                     fullWidth
-                    label='Emergency Phone Number'
-                    placeholder='Enter your emergency phone number'
+                    label={<Translations text={'Emergency Phone Number'} />}
+                    placeholder={t('Enter your emergency phone number')}
                     type='number'
                     error={Boolean(errors.emergencyPhoneNumber)}
                     helperText={errors.emergencyPhoneNumber?.message}
@@ -558,10 +538,10 @@ const FormLayoutsSeparator = () => {
         <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Box>
             <Button disabled={isSubmitting} type='submit' sx={{ mr: 2 }} variant='contained'>
-              {isSubmitting ? <CircularProgress size={22} /> : 'Submit'}
+              {isSubmitting ? <CircularProgress size={22} /> : <Translations text={'Submit'} />}
             </Button>
             <Button disabled={isSubmitting} type='button' color='secondary' variant='tonal' onClick={() => reset()}>
-              Reset
+              <Translations text={'Reset'} />
             </Button>
           </Box>
           <Box>

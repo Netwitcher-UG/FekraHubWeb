@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 
 // ** Next Import
 import Link from 'next/link'
@@ -15,6 +15,8 @@ import MuiCard from '@mui/material/Card'
 import InputAdornment from '@mui/material/InputAdornment'
 import { useRouter } from 'next/router'
 import FallbackSpinner from 'src/@core/components/spinner'
+import { useTranslation } from 'react-i18next'
+import CircularProgress from '@mui/material/CircularProgress'
 
 // ** Custom Component Import
 import CustomTextField from 'src/@core/components/mui/text-field'
@@ -53,16 +55,35 @@ const LinkStyled = styled(Link)(({ theme }) => ({
   color: `${theme.palette.primary.main} !important`
 }))
 
+// ** Form Validation Schema
+const getValidationSchema = t =>
+  yup.object().shape({
+    password: yup
+      .string()
+      .required(t('Password is required'))
+      .min(8, t('Password must be at least 8 characters'))
+      .matches(/[a-z]/, t('Password must contain at least one lowercase letter'))
+      .matches(/[A-Z]/, t('Password must contain at least one uppercase letter'))
+      .matches(/\d/, t('Password must contain at least one digit'))
+      .matches(/[^a-zA-Z0-9]/, t('Password must contain at least one non-alphabetic character')),
+    confirmPassword: yup
+      .string()
+      .required(t('Confirm Password is required'))
+      .oneOf([yup.ref('password'), null], t('Passwords must match'))
+  })
+
 const ResetPasswordV1 = () => {
   const auth = useAuth()
   const router = useRouter()
+  const { t } = useTranslation()
+  const schema = useMemo(() => getValidationSchema(t), [t])
 
   const [token, setToken] = useState(null)
   const [email, setEmail] = useState(null)
 
   // ** States
   const [values, setValues] = useState({
-    showpassword: false,
+    showPassword: false,
     showConfirmPassword: false
   })
 
@@ -77,27 +98,11 @@ const ResetPasswordV1 = () => {
   // ** Hook
   const theme = useTheme()
 
-  // ** Form Validation Schema
-  const schema = yup.object().shape({
-    password: yup
-      .string()
-      .required('Password is required')
-      .min(8, 'Password must be at least 8 characters')
-      .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
-      .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
-      .matches(/\d/, 'Password must contain at least one digit')
-      .matches(/[^a-zA-Z0-9]/, 'Password must contain at least one non-alphabetic character'),
-    confirmPassword: yup
-      .string()
-      .required('Confirm Password is required')
-      .oneOf([yup.ref('password'), null], 'Passwords must match')
-  })
-
   // ** React Hook Form
   const {
     control,
     handleSubmit,
-    formState: { errors }
+    formState: { errors, isSubmitting }
   } = useForm({
     resolver: yupResolver(schema)
   })
@@ -110,18 +115,17 @@ const ResetPasswordV1 = () => {
     }
     const response = await auth.resetPassword(resetData)
 
-    if (response?.status == 200) {
-      toast.success('The password was reset successfully !')
+    if (response?.status === 200) {
+      toast.success(t('The password was reset successfully!'))
       router.replace('/login')
-    } else if (response?.status != 200) {
-      toast.error('unable to reset password !')
+    } else {
+      toast.error(t('Unable to reset password!'))
       console.log(response)
     }
-    // Handle password reset logic here
   }
 
-  const handleClickShowpassword = () => {
-    setValues({ ...values, showpassword: !values.showpassword })
+  const handleClickShowPassword = () => {
+    setValues({ ...values, showPassword: !values.showPassword })
   }
 
   const handleClickShowConfirmPassword = () => {
@@ -172,10 +176,10 @@ const ResetPasswordV1 = () => {
                 </Box>
                 <Box sx={{ mb: 6 }}>
                   <Typography variant='h4' sx={{ mb: 1.5 }}>
-                    Reset Password 🔒
+                    {t('Reset Password')} 🔒
                   </Typography>
                   <Typography sx={{ display: 'flex' }}>
-                    for{' '}
+                    {t('for')}{' '}
                     <Typography component='span' sx={{ ml: 1, fontWeight: 500 }}>
                       {email}
                     </Typography>
@@ -191,22 +195,22 @@ const ResetPasswordV1 = () => {
                         {...field}
                         fullWidth
                         autoFocus
-                        label='New Password'
-                        placeholder='············'
-                        type={values.showpassword ? 'text' : 'password'}
+                        label={t('New Password')}
+                        placeholder={t('············')}
+                        type={values.showPassword ? 'text' : 'password'}
                         error={!!errors.password}
-                        helperText={errors.password ? errors.password.message : ''}
+                        helperText={errors.password ? t(errors.password.message) : ''}
                         sx={{ display: 'flex', mb: 4 }}
                         InputProps={{
                           endAdornment: (
                             <InputAdornment position='end'>
                               <IconButton
                                 edge='end'
-                                onClick={handleClickShowpassword}
+                                onClick={handleClickShowPassword}
                                 onMouseDown={e => e.preventDefault()}
-                                aria-label='toggle password visibility'
+                                aria-label={t('toggle password visibility')}
                               >
-                                <Icon fontSize='1.25rem' icon={values.showpassword ? 'tabler:eye' : 'tabler:eye-off'} />
+                                <Icon fontSize='1.25rem' icon={values.showPassword ? 'tabler:eye' : 'tabler:eye-off'} />
                               </IconButton>
                             </InputAdornment>
                           )
@@ -222,11 +226,11 @@ const ResetPasswordV1 = () => {
                       <CustomTextField
                         {...field}
                         fullWidth
-                        label='Confirm Password'
-                        placeholder='············'
+                        label={t('Confirm Password')}
+                        placeholder={t('············')}
                         type={values.showConfirmPassword ? 'text' : 'password'}
                         error={!!errors.confirmPassword}
-                        helperText={errors.confirmPassword ? errors.confirmPassword.message : ''}
+                        helperText={errors.confirmPassword ? t(errors.confirmPassword.message) : ''}
                         sx={{ display: 'flex', mb: 4 }}
                         InputProps={{
                           endAdornment: (
@@ -234,7 +238,7 @@ const ResetPasswordV1 = () => {
                               <IconButton
                                 edge='end'
                                 onMouseDown={e => e.preventDefault()}
-                                aria-label='toggle password visibility'
+                                aria-label={t('toggle password visibility')}
                                 onClick={handleClickShowConfirmPassword}
                               >
                                 <Icon
@@ -248,17 +252,19 @@ const ResetPasswordV1 = () => {
                       />
                     )}
                   />
-                  <Button fullWidth type='submit' variant='contained' sx={{ mb: 4 }}>
-                    Set New Password
+                  <Button disabled={isSubmitting} fullWidth type='submit' variant='contained' sx={{ mb: 4 }}>
+                    {isSubmitting ? <CircularProgress size={25} /> : t('Set New Password')}
                   </Button>
-                  <Typography
-                    sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', '& svg': { mr: 1 } }}
-                  >
-                    <Typography component={LinkStyled} href='/pages/auth/login-v1'>
-                      <Icon fontSize='1.25rem' icon='tabler:chevron-left' />
-                      <span>Back to login</span>
+                  {!isSubmitting && (
+                    <Typography
+                      sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', '& svg': { mr: 1 } }}
+                    >
+                      <Typography component={LinkStyled} href='/pages/auth/login-v1'>
+                        <Icon fontSize='1.25rem' icon='tabler:chevron-left' />
+                        <span>{t('Back to login')}</span>
+                      </Typography>
                     </Typography>
-                  </Typography>
+                  )}
                 </form>
               </CardContent>
             </Card>
@@ -268,6 +274,8 @@ const ResetPasswordV1 = () => {
     </>
   )
 }
+
 ResetPasswordV1.getLayout = page => <BlankLayout>{page}</BlankLayout>
 ResetPasswordV1.guestGuard = true
+
 export default ResetPasswordV1

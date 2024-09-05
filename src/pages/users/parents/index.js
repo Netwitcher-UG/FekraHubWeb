@@ -10,9 +10,9 @@ import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import Divider from '@mui/material/Divider'
-import Typography from '@mui/material/Typography'
 import { DataGrid } from '@mui/x-data-grid'
 import Translations from 'src/layouts/components/Translations'
+import { convertDate } from 'src/@core/utils/convert-date'
 
 // ** Store Imports
 import { useDispatch, useSelector } from 'react-redux'
@@ -80,7 +80,7 @@ const columns = [
   {
     width: 200,
     headerName: <Translations text={'BirthDay'} />,
-    field: 'birthday'
+    renderCell: ({ row }) => <div>{convertDate(row.birthday)}</div>
   },
   {
     width: 200,

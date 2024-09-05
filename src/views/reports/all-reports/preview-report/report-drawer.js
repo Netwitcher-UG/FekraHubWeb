@@ -21,6 +21,7 @@ import toast from 'react-hot-toast'
 import Icon from 'src/@core/components/icon'
 import { downloadBase64File } from 'src/@core/utils/download-base64'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
+import { useTranslation } from 'react-i18next'
 
 import styled from '@emotion/styled'
 import { useDispatch, useSelector } from 'react-redux'
@@ -35,6 +36,7 @@ const Header = styled(Box)(({ theme }) => ({
 
 export default function ReportPreviewDrawer({ open, handleCloseDrawer, rowData }) {
   const ability = useContext(AbilityContext)
+  const { t } = useTranslation()
   const dispatch = useDispatch()
   const { acceptLoading, unAcceptLoading, exportLoading } = useSelector(state => state.reports)
 
@@ -42,9 +44,9 @@ export default function ReportPreviewDrawer({ open, handleCloseDrawer, rowData }
     const response = await dispatch(acceptReport(rowData.id))
 
     if (response?.payload?.status != 200)
-      toast.error(<Translations text={'Report did not improved try again !'} />, 1000)
+      toast.error(<Translations text={'Report did not approve try again !'} />, 1000)
     else if (response?.payload?.status == 200) {
-      toast.success(<Translations text={'Report approved successfully '} />, 1000)
+      toast.success(<Translations text={'Report approved successfully'} />, 1000)
       handleCloseDrawer()
     } else toast.error('Something went wrong')
   }
@@ -52,26 +54,28 @@ export default function ReportPreviewDrawer({ open, handleCloseDrawer, rowData }
   const handleReportDisapprove = async () => {
     const response = await dispatch(unAcceptReport(rowData.id))
 
-    if (response?.payload?.status != 200)
-      toast.error(<Translations text={'Report did not disapproved try again !'} />, 1000)
-    else if (response?.payload?.status == 200) {
-      toast.success(<Translations text={'Report disapproved successfully '} />, 1000)
+    if (response?.payload?.status !== 200) {
+      toast.error(t('Report did not disapprove try again !'), 1000)
+    } else if (response?.payload?.status === 200) {
+      toast.success(t('Report disapproved successfully'), 1000)
       handleCloseDrawer()
-    } else toast.error('Something went wrong')
+    } else {
+      toast.error(t('Something went wrong'))
+    }
   }
 
   const handleExportReport = async () => {
     const response = await dispatch(exportReport(rowData.id))
 
-    if (response?.payload?.status != 200) {
-      toast.error(<Translations text={'Export failed try again !'} />, 1000)
-    } else if (response?.payload?.status == 200) {
+    if (response?.payload?.status !== 200) {
+      toast.error(t('Export failed try again !'), 1000)
+    } else if (response?.payload?.status === 200) {
       downloadBase64File(
         response.payload.data,
         `${rowData?.student?.firstName} ${rowData?.student?.lastName}-report.pdf`
       )
     } else {
-      toast.error('Something went wrong')
+      toast.error(t('Something went wrong'))
     }
   }
 
@@ -102,7 +106,7 @@ export default function ReportPreviewDrawer({ open, handleCloseDrawer, rowData }
             fontSize: '22px'
           }}
         >
-          Report Preview
+          {t('Report Preview')}
         </Typography>
         {reportStatus(rowData?.improved)}
       </Header>
@@ -148,7 +152,7 @@ export default function ReportPreviewDrawer({ open, handleCloseDrawer, rowData }
                       onClick={() => handleReportApprove()}
                       disabled={acceptLoading || unAcceptLoading}
                     >
-                      Approve
+                      {t('Approve')}
                     </Button>
 
                     <Button
@@ -158,7 +162,7 @@ export default function ReportPreviewDrawer({ open, handleCloseDrawer, rowData }
                       disabled={acceptLoading || unAcceptLoading}
                       onClick={() => handleReportDisapprove()}
                     >
-                      Disapprove
+                      {t('Disapprove')}
                     </Button>
                   </>
                 )}
@@ -171,7 +175,7 @@ export default function ReportPreviewDrawer({ open, handleCloseDrawer, rowData }
               disabled={acceptLoading || unAcceptLoading}
               onClick={handleCloseDrawer}
             >
-              Close
+              {t('Close')}
             </Button>
           </Stack>
         </>

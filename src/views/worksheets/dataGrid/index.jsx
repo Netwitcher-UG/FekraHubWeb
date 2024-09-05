@@ -9,6 +9,7 @@ import useWorksheetsColumns from '../hook/useWorksheetsColumns'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchCourses } from 'src/store/apps/courses'
 import ViewWorksheet from '../view'
+import { useTranslation } from 'react-i18next'
 
 export default function WorksheetsDataGrid({ rows, SetSearch, status, dataUploadType }) {
   const {
@@ -23,7 +24,7 @@ export default function WorksheetsDataGrid({ rows, SetSearch, status, dataUpload
     selectedFile,
     setSelectedFile
   } = useWorksheetsColumns()
-
+  const { t } = useTranslation()
   const { data, error } = useSelector(state => state.courses)
 
   const dispatch = useDispatch()
@@ -72,7 +73,7 @@ export default function WorksheetsDataGrid({ rows, SetSearch, status, dataUpload
       <CustomDialogDelete
         open={isDialogOpen}
         handleClose={handleCloseDialog}
-        decsription={`Are you sure you want to delete the Worksheets ${DeleteName} ? `}
+        decsription={`${t('Are you sure you want to delete the Worksheets')} ${DeleteName} ? `}
         onDelete={handleDelete}
       />
 

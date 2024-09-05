@@ -18,7 +18,7 @@ import useStudentAttendanceColumns from '../hooks/useStudentsAttendanceColumns'
 import { Autocomplete } from '@mui/material'
 import { useDispatch } from 'react-redux'
 import toast from 'react-hot-toast'
-
+import { useTranslation } from 'react-i18next'
 const customScrollbarStyles = {
   '& ::-webkit-scrollbar': {
     height: 8
@@ -43,6 +43,7 @@ const StudentsAttendanceDataGrid = ({
   setCurrentPage,
   coursesData
 }) => {
+  const { t } = useTranslation()
   const handleCourseChange = (event, newValue) => {
     setCurrentPage(1)
     setAttendanceData([])
@@ -52,7 +53,7 @@ const StudentsAttendanceDataGrid = ({
   const handelAttendanceSubmit = async () => {
     const response = await dispatch(submitCourseAttendance({ courseId: selectedCourse, data: attendanceData }))
     if (response?.payload?.status) {
-      toast.success('Course attendance submitted successfully')
+      toast.success(t('Course attendance submitted successfully'))
       dispatch(fetchStudentsWithAttendance({ courseId: selectedCourse }))
     } else {
       toast.error(response?.payload?.data)
@@ -87,7 +88,7 @@ const StudentsAttendanceDataGrid = ({
 
   return (
     <>
-      <CardHeader title='Search Filters' />
+      <CardHeader title={t('Search Filters')} />
       <CardContent>
         <Grid container spacing={6} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Grid item sm={4} xs={12}>
@@ -111,8 +112,8 @@ const StudentsAttendanceDataGrid = ({
                   {...params}
                   fullWidth
                   sx={{ mb: 4 }}
-                  placeholder='Select course'
-                  label='Course filter'
+                  placeholder={t('Select course')}
+                  label={t('Course filter')}
                   id='validation-billing-select'
                   aria-describedby='validation-billing-select'
                 />

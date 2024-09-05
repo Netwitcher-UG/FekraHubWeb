@@ -11,6 +11,7 @@ import CustomTextField from 'src/@core/components/mui/text-field'
 import Translations from 'src/layouts/components/Translations'
 import { editLocation, fetchLocation } from 'src/store/apps/location'
 import { editRoom } from 'src/store/apps/courses'
+import { useTranslation } from 'react-i18next'
 
 const Header = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -25,7 +26,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
   const { data: dataTeacher, status, error } = useSelector(state => state.location)
 
   const dispatch = useDispatch()
-
+  const { t } = useTranslation()
   const defaultValues = {
     name: dataDef?.name,
     locationID: dataDef?.locationCity
@@ -74,7 +75,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
             fontSize: '22px'
           }}
         >
-          <Translations text={'Edit Room'} />
+          <Translations text={t('Edit Room')} />
         </Typography>
         <Chip label={dataDef?.name} color='primary' />
       </Header>
@@ -91,7 +92,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                   <CustomTextField
                     {...field}
                     fullWidth
-                    label={`${'name'}`}
+                    label={`${'Name'}`}
                     variant='outlined'
                     error={!!errors.Name}
                     helperText={errors.Name ? errors.Name.message : ''}
@@ -124,7 +125,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                         fullWidth
                         sx={{ mb: 4 }}
                         placeholder=''
-                        label='location'
+                        label={t('Location')}
                         id='validation-billing-select'
                         aria-describedby='validation-billing-select'
                         error={Boolean(errors.locationID)}
@@ -146,10 +147,10 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
         spacing={4}
       >
         <Button disabled={!isDirty} type='button' variant='contained' onClick={handleSubmit(handleSaveData)}>
-          <Translations text={'Edit Room'} />
+          <Translations text={t('Edit Room')} />
         </Button>
         <Button type='button' variant='outlined' onClick={handleCloseDrawer}>
-          <Translations text={'cancel'} />
+          <Translations text={t('Cancel')} />
         </Button>
       </Stack>
     </Drawer>

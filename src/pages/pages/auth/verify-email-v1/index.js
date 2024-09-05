@@ -7,6 +7,7 @@ import { styled, useTheme } from '@mui/material/styles'
 import MuiCard from '@mui/material/Card'
 import themeConfig from 'src/configs/themeConfig'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
+import { useTranslation } from 'react-i18next'
 import AuthIllustrationV1Wrapper from 'src/views/pages/auth/AuthIllustrationV1Wrapper'
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -20,6 +21,7 @@ const LinkStyled = styled(Link)(({ theme }) => ({
 
 const VerifyEmailV1 = ({ email, reason = 'Account activation', resend = false, handleResend: customHandleResend }) => {
   const theme = useTheme()
+  const { t } = useTranslation()
   const [timer, setTimer] = useState(0)
   const [canResend, setCanResend] = useState(true)
 
@@ -89,15 +91,21 @@ const VerifyEmailV1 = ({ email, reason = 'Account activation', resend = false, h
             </Box>
             <Box sx={{ mb: 6 }}>
               <Typography variant='h4' sx={{ mb: 1.5 }}>
-                Verify your email ✉️
+                {t('Verify your email')} ✉️
               </Typography>
               <Typography sx={{ color: 'text.secondary' }}>
-                {reason} link sent to your email address: {email}. Please follow the link inside to continue.
+                {t(
+                  '{{reason}} link sent to your email address: {{email}}. Please follow the link inside to continue.',
+                  {
+                    reason: t(reason),
+                    email
+                  }
+                )}
               </Typography>
             </Box>
             {resend && (
               <Box sx={{ mt: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Typography sx={{ color: 'text.secondary' }}>Didn't get the mail?</Typography>
+                <Typography sx={{ color: 'text.secondary' }}>{t("Didn't get the mail?")}</Typography>
                 {canResend ? (
                   <Typography
                     component={LinkStyled}
@@ -108,10 +116,13 @@ const VerifyEmailV1 = ({ email, reason = 'Account activation', resend = false, h
                     }}
                     sx={{ ml: 1 }}
                   >
-                    Resend
+                    {t('Resend')}
                   </Typography>
                 ) : (
-                  <Typography sx={{ ml: 1, color: 'text.secondary' }}>Resend in {timer}s</Typography>
+                  <Typography sx={{ ml: 1, color: 'text.secondary' }}>
+                    {' '}
+                    {t('Resend in {{timer}}s', { timer })}
+                  </Typography>
                 )}
               </Box>
             )}

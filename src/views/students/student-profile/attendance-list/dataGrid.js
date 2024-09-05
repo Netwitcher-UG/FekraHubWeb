@@ -14,6 +14,7 @@ import CustomDialogDelete from 'src/@core/components/custom-delete'
 import TableHeader from './TableHeader'
 import AddReord from './add-record'
 import { useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 const customScrollbarStyles = {
   '& ::-webkit-scrollbar': {
     height: 8
@@ -39,6 +40,7 @@ const StudentAttendanceDataGrid = ({
   studentId
 }) => {
   const [open, setOpen] = useState(false)
+  const { t } = useTranslation()
   const handleClickOpen = () => setOpen(true)
   const { attendanceStatuses } = useSelector(state => state.attendance)
 
@@ -80,7 +82,7 @@ const StudentAttendanceDataGrid = ({
       <CustomDialogDelete
         open={isDialogOpen}
         handleClose={handleCloseDialog}
-        decsription={`Are you sure you want to delete record for ${DeleteName} ? `}
+        decsription={`${t('Are you sure you want to delete record for')} ${DeleteName} ? `}
         onDelete={handleDelete}
       />
       <AddReord open={open} setOpen={setOpen} attendanceStatuses={attendanceStatuses} studentId={studentId} />
