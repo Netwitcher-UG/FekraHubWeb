@@ -428,5 +428,9 @@
     "New Password": "Neues Passwort",
     "Set New Password": "Neues Passwort festlegen",
     "toggle password visibility": "Passwortsichtbarkeit umschalten",
-    "Sign Out": "Abmelden"
+    "Sign Out": "Abmelden",
+    "Email or Password are incorrect!": "E-Mail oder Passwort sind falsch!",
+    "Select Teacher": "Lehrer auswählen",
+    "Teachers filter": "Lehrerfilter",
+    "Teachers Attendance": "Lehrer Anwesenheit"
 }

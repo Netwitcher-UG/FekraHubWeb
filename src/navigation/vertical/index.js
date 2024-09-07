@@ -120,6 +120,12 @@ const navigation = () => {
           path: '/students-attendance',
           action: 'read',
           subject: 'StudentAttendance'
+        },
+        {
+          title: 'Teachers Attendance',
+          path: '/teachers-attendance',
+          action: 'read',
+          subject: 'TeacherAttendance'
         }
       ]
     }

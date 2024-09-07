@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 
 import toast from 'react-hot-toast'
 import jwt from 'jsonwebtoken'
+import { useTranslation } from 'react-i18next'
 
 // ** Axios
 import axios from 'axios'
@@ -37,6 +38,7 @@ const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(defaultProvider.loading)
   const [token, setToken] = useState(defaultProvider.token)
   const [rolesPermissions, setRolesPermissions] = useState(defaultProvider.rolesPermissions)
+  const { t } = useTranslation()
   // ** Hooks
   const router = useRouter()
   useEffect(() => {
@@ -203,7 +205,7 @@ const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       if (error?.response?.status == 401) {
-        toast.error('Email or Password are incorrect!')
+        toast.error(t('Email or Password are incorrect!'))
       } else if (error?.response?.status == 409) params.setEmailNotConfirmed(true)
       else console.log(error)
     }

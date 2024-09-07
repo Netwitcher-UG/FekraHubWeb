@@ -44,7 +44,7 @@ const navigation = () => {
       icon: 'ph:student',
       children: [
         {
-          title: 'Avilable Students',
+          title: 'Available Students',
           path: '/students',
           subject: 'StudentCourse',
           action: 'read'
@@ -79,7 +79,13 @@ const navigation = () => {
       action: 'manage',
       subject: 'Room'
     },
-
+    {
+      title: 'Calendar',
+      icon: 'tabler:calendar',
+      path: '/apps/calendar',
+      action: 'manage',
+      subject: 'calendar'
+    },
     {
       title: 'Children',
       icon: 'tabler:users',
@@ -99,13 +105,6 @@ const navigation = () => {
       ]
     },
     {
-      title: 'Calendar',
-      icon: 'tabler:calendar',
-      path: '/apps/calendar',
-          action: 'manage',
-      subject: 'calendar'
-    },
-    {
       title: 'Worksheets',
       icon: 'ph:files',
       path: '/worksheets',
@@ -121,6 +120,12 @@ const navigation = () => {
           path: '/students-attendance',
           action: 'read',
           subject: 'StudentAttendance'
+        },
+        {
+          title: 'Teachers Attendance',
+          path: '/teachers-attendance',
+          action: 'read',
+          subject: 'TeacherAttendance'
         }
       ]
     }

@@ -101,6 +101,69 @@ export const addNewAttendanceRecord = createAsyncThunk(
   }
 )
 
+// TEACHER ATTENDANCE
+
+export const fetchTeacherAttendance = createAsyncThunk('appAttendance/fetchTeacherAttendance', async id => {
+  try {
+    const response = await axiosInstance.get(`/api/Attendance/TeacherAttendance/${id}`)
+    return response?.data
+  } catch (error) {
+    return error.response
+  }
+})
+
+export const fetchTeacherNames = createAsyncThunk('appAttendance/fetchTeacherNames', async () => {
+  try {
+    const response = await axiosInstance.get(`/api/Attendance/TeachersName`)
+    return response?.data
+  } catch (error) {
+    return error.response
+  }
+})
+
+export const addNewTeacherAttendanceRecord = createAsyncThunk(
+  'appAttendance/addNewTeacherAttendanceRecord',
+  async (data, thunkAPI) => {
+    try {
+      const response = await axiosInstance.post('/api/Attendance/Teacher', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      thunkAPI.dispatch(fetchTeacherAttendance(data.teacherId))
+      return response
+    } catch (error) {
+      return error.response
+    }
+  }
+)
+
+export const editTeacherAttendance = createAsyncThunk(
+  'appAttendance/editTeacherAttendance',
+  async ({ statusId, id, teacherId }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.patch(`/api/Attendance/Teacher?id=${id}&statusId=${statusId}`)
+      thunkAPI.dispatch(fetchTeacherAttendance(teacherId))
+      return response
+    } catch (error) {
+      return error.response
+    }
+  }
+)
+
+export const deleteTeacherAttendanceRecord = createAsyncThunk(
+  'appAttendance/deleteTeacherAttendanceRecord',
+  async ({ id, teacherId }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.delete(`/api/Attendance/DeleteTeacherAttendance?id=${id}`)
+      thunkAPI.dispatch(fetchTeacherAttendance(teacherId))
+      return response
+    } catch (error) {
+      return error.response
+    }
+  }
+)
+
 export const appSliceAttendance = createSlice({
   name: 'appAttendance',
   initialState: {
@@ -112,7 +175,11 @@ export const appSliceAttendance = createSlice({
     studentAttendance: [],
     studentAttendanceLoading: false,
     editLoading: false,
-    childAttendance: []
+    childAttendance: [],
+    teacherAttendance: [],
+    teacherAttendanceLoading: false,
+    teacherNames: [],
+    teacherNamesLoading: false
   },
   reducers: {},
   extraReducers: builder => {
@@ -164,6 +231,28 @@ export const appSliceAttendance = createSlice({
 
       .addCase(fetchChildAttendance.fulfilled, (state, action) => {
         state.childAttendance = action.payload
+      })
+
+      .addCase(fetchTeacherNames.pending, state => {
+        state.teacherNamesLoading = true
+      })
+      .addCase(fetchTeacherNames.fulfilled, (state, action) => {
+        state.teacherNamesLoading = false
+        state.teacherNames = action.payload
+      })
+      .addCase(fetchTeacherNames.rejected, state => {
+        state.teacherNamesLoading = false
+      })
+
+      .addCase(fetchTeacherAttendance.pending, state => {
+        state.teacherAttendanceLoading = true
+      })
+      .addCase(fetchTeacherAttendance.fulfilled, (state, action) => {
+        state.teacherAttendanceLoading = false
+        state.teacherAttendance = action.payload
+      })
+      .addCase(fetchTeacherAttendance.rejected, state => {
+        state.teacherAttendanceLoading = false
       })
   }
 })
