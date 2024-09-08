@@ -12,6 +12,7 @@ import { useRouter } from 'next/router'
 import Icon from 'src/@core/components/icon'
 import CustomAvatar from 'src/@core/components/mui/avatar'
 // import PricingTable from 'src/views/pages/pricing/PricingTable'
+import { useTranslation } from 'react-i18next'
 
 const CourseCard = props => {
   // ** Props
@@ -25,7 +26,7 @@ const CourseCard = props => {
     setSelectedCourse,
     selectedCourse
   } = props
-
+  const { t } = useTranslation()
   const { id, name, capacity, startDate, endDate, lessons, price } = course
   const router = useRouter()
 
@@ -73,19 +74,20 @@ const CourseCard = props => {
         </Grid>
 
         <Typography variant='body2' sx={{ my: 0.5, display: 'flex', alignItems: 'center' }}>
-          Start Date: {convertDate(startDate)} &nbsp; <Icon icon={'uiw:date'} fontSize={'0.9rem'} />
+          {t('Start Date')}: {convertDate(startDate)} &nbsp; <Icon icon={'uiw:date'} fontSize={'0.9rem'} />
         </Typography>
         <Typography sx={{ my: 0.5, display: 'flex', alignItems: 'center' }} variant='body2'>
-          End Date: {convertDate(endDate)} &nbsp; <Icon icon={'uiw:date'} fontSize={'0.9rem'} />
+          {t('End Date')}: {convertDate(endDate)} &nbsp; <Icon icon={'uiw:date'} fontSize={'0.9rem'} />
         </Typography>
         <Typography sx={{ my: 0.5, display: 'flex', alignItems: 'center' }} variant='body2'>
-          Vacancies: {capacity} &nbsp; <Icon icon={'gravity-ui:persons'} fontSize={'0.9rem'} />
+          {t('Vacancies')}: {capacity} &nbsp; <Icon icon={'gravity-ui:persons'} fontSize={'0.9rem'} />
         </Typography>
         <Typography sx={{ my: 0.5, display: 'flex', alignItems: 'center' }} variant='body2'>
-          Lessons: {lessons} &nbsp; <Icon icon={'material-symbols-light:play-lesson-outline'} fontSize={'0.9rem'} />
+          {t('Lessons')}: {lessons} &nbsp;{' '}
+          <Icon icon={'material-symbols-light:play-lesson-outline'} fontSize={'0.9rem'} />
         </Typography>
         <Typography sx={{ my: 0.5, display: 'flex', alignItems: 'center' }} variant='body2'>
-          Price: {price} €
+          {t('Price')}: {price} €
         </Typography>
 
         {/* <FormControlLabel

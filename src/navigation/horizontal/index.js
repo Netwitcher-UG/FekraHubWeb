@@ -91,7 +91,7 @@ const navigation = () => {
       icon: 'tabler:users',
       children: [
         {
-          title: 'Registerd Children',
+          title: 'Registered Children',
           path: '/children',
           action: 'manage',
           subject: 'Children'

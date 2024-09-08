@@ -23,7 +23,7 @@ import { Autocomplete } from '@mui/material'
 import Checkbox from '@mui/material/Checkbox'
 import FormControlLabel from '@mui/material/FormControlLabel'
 
-import { t } from 'i18next'
+import { useTranslation } from 'react-i18next'
 import Translations from 'src/layouts/components/Translations'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import CircularProgress from '@mui/material/CircularProgress'
@@ -45,21 +45,6 @@ import CustomTextField from 'src/@core/components/mui/text-field'
 
 // ** Styled Components
 import StepperWrapper from 'src/@core/styles/mui/stepper'
-
-const steps = [
-  {
-    title: 'Personal Info',
-    subtitle: 'Setup Information'
-  },
-  {
-    title: 'Course Selection',
-    subtitle: 'Select Course'
-  },
-  {
-    title: 'Contract Approval',
-    subtitle: 'Approve the Contract'
-  }
-]
 
 const defaultAccountValues = {
   CourseID: ''
@@ -96,6 +81,23 @@ const personalSchema = yup.object().shape({
 })
 
 const AddChildWizard = ({ courses }) => {
+  const { t } = useTranslation()
+
+  const steps = [
+    {
+      title: t('Child Info'),
+      subtitle: t('Setup Information')
+    },
+    {
+      title: t('Course Selection'),
+      subtitle: t('Select Course')
+    },
+    {
+      title: t('Contract Approval'),
+      subtitle: t('Approve the Contract')
+    }
+  ]
+
   // ** States
   const [activeStep, setActiveStep] = useState(0)
   const [personalData, setPersonalData] = useState(defaultPersonalValues)
@@ -122,7 +124,7 @@ const AddChildWizard = ({ courses }) => {
     if (response?.payload?.status == 200) {
       setActiveStep(activeStep + 1)
     } else if (response?.payload?.status == 400) toast.error(<Translations text={response?.payload?.data} />)
-    else toast.error(<Translations text={'Something went wrong try again !'} />)
+    else toast.error(<Translations text={t('Something went wrong try again !')} />)
   }
 
   // ** Hooks
@@ -152,7 +154,7 @@ const AddChildWizard = ({ courses }) => {
   }
 
   const onSubmitAccount = async () => {
-    if (!selectedCourse) toast.error(<Translations text={'Please select a course '} />)
+    if (!selectedCourse) toast.error(<Translations text={t('Please select a course ')} />)
     else {
       setAccountData({ CourseID: selectedCourse })
       // const allData = { ...personalData, ...data }
@@ -166,7 +168,7 @@ const AddChildWizard = ({ courses }) => {
         setBase64File(response?.payload?.data)
         setActiveStep(activeStep + 1)
       } else if (response?.payload?.status == 400) toast.error(<Translations text={response?.payload?.data} />)
-      else toast.error(<Translations text={'Something went wrong try again !'} />)
+      else toast.error(<Translations text={t('Something went wrong try again !')} />)
     }
   }
 
@@ -197,10 +199,10 @@ const AddChildWizard = ({ courses }) => {
             <Grid container spacing={5}>
               <Grid item xs={12}>
                 <Typography variant='body2' sx={{ fontWeight: 600, color: 'text.primary' }}>
-                  {steps[0].title}
+                  {t(steps[0].title)}
                 </Typography>
                 <Typography variant='caption' component='p'>
-                  {steps[0].subtitle}
+                  {t(steps[0].subtitle)}
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -212,12 +214,12 @@ const AddChildWizard = ({ courses }) => {
                     <CustomTextField
                       fullWidth
                       value={value}
-                      label='First Name'
+                      label={t('First Name')}
                       onChange={onChange}
                       placeholder='Leonard'
                       error={Boolean(personalErrors.FirstName)}
                       aria-describedby='stepper-linear-personal-FirstName'
-                      {...(personalErrors.FirstName && { helperText: 'This field is required' })}
+                      {...(personalErrors.FirstName && { helperText: t('This field is required') })}
                     />
                   )}
                 />
@@ -231,12 +233,12 @@ const AddChildWizard = ({ courses }) => {
                     <CustomTextField
                       fullWidth
                       value={value}
-                      label='Last Name'
+                      label={t('Last Name')}
                       onChange={onChange}
                       placeholder='Carter'
                       error={Boolean(personalErrors.LastName)}
                       aria-describedby='stepper-linear-personal-LastName'
-                      {...(personalErrors.LastName && { helperText: 'This field is required' })}
+                      {...(personalErrors.LastName && { helperText: t('This field is required') })}
                     />
                   )}
                 />
@@ -250,10 +252,10 @@ const AddChildWizard = ({ courses }) => {
                     <CustomTextField
                       select
                       fullWidth
-                      label='Gender'
+                      label={t('Gender')}
                       id='validation-gender-select'
                       error={Boolean(personalErrors.gender)}
-                      {...(personalErrors.gender && { helperText: 'This field is required' })}
+                      {...(personalErrors.gender && { helperText: t('This field is required') })}
                       aria-describedby='validation-gender-select'
                       defaultValue=''
                       SelectProps={{
@@ -263,13 +265,13 @@ const AddChildWizard = ({ courses }) => {
                       }}
                     >
                       <MenuItem value='' sx={{ display: 'none' }}>
-                        <em>Select Gender</em>
+                        <em>{t('Select Gender')}</em>
                       </MenuItem>
                       <MenuItem key={1} value={'male'}>
-                        Male
+                        {t('Male')}
                       </MenuItem>
                       <MenuItem key={2} value={'female'}>
-                        Female
+                        {t('Female')}
                       </MenuItem>
                     </CustomTextField>
                   )}
@@ -290,12 +292,12 @@ const AddChildWizard = ({ courses }) => {
                         customInput={
                           <CustomTextField
                             error={Boolean(personalErrors.birthday)}
-                            {...(personalErrors.birthday && { helperText: 'This field is required' })}
-                            label='Birthday'
+                            {...(personalErrors.birthday && { helperText: t('This field is required') })}
+                            label={t('Birthday')}
                             fullWidth
                           />
                         }
-                        placeholderText='Birthday'
+                        placeholderText={t('Birthday')}
                         popperProps={{
                           modifiers: [
                             {
@@ -335,11 +337,11 @@ const AddChildWizard = ({ courses }) => {
                           <CustomTextField
                             {...params}
                             fullWidth
-                            placeholder=' Country / nationality'
-                            label='Select Country / nationality'
+                            placeholder={t('Country / nationality')}
+                            label={t('Select Country / nationality')}
                             variant='outlined'
                             error={Boolean(personalErrors.nationality)}
-                            {...(personalErrors.nationality && { helperText: 'This field is required' })}
+                            {...(personalErrors.nationality && { helperText: t('This field is required') })}
                           />
                         )}
                       />
@@ -354,11 +356,11 @@ const AddChildWizard = ({ courses }) => {
                   render={({ field }) => (
                     <CustomTextField
                       error={Boolean(personalErrors.street)}
-                      {...(personalErrors.street && { helperText: 'This field is required' })}
+                      {...(personalErrors.street && { helperText: t('This field is required') })}
                       {...field}
                       fullWidth
-                      label='Street'
-                      placeholder='Enter your street'
+                      label={t('Street')}
+                      placeholder={t('Enter your street')}
                     />
                   )}
                 />
@@ -371,10 +373,10 @@ const AddChildWizard = ({ courses }) => {
                     <CustomTextField
                       {...field}
                       error={Boolean(personalErrors.streetNr)}
-                      {...(personalErrors.streetNr && { helperText: 'This field is required' })}
+                      {...(personalErrors.streetNr && { helperText: t('This field is required') })}
                       fullWidth
-                      label='Street Number'
-                      placeholder='Enter your street number'
+                      label={t('Street Number')}
+                      placeholder={t('Enter your street number')}
                     />
                   )}
                 />
@@ -387,10 +389,10 @@ const AddChildWizard = ({ courses }) => {
                     <CustomTextField
                       {...field}
                       error={Boolean(personalErrors.city)}
-                      {...(personalErrors.city && { helperText: 'This field is required' })}
+                      {...(personalErrors.city && { helperText: t('This field is required') })}
                       fullWidth
-                      label='City'
-                      placeholder='Enter your city'
+                      label={t('City')}
+                      placeholder={t('Enter your city')}
                     />
                   )}
                 />
@@ -404,10 +406,10 @@ const AddChildWizard = ({ courses }) => {
                     <CustomTextField
                       {...field}
                       error={Boolean(personalErrors.ZipCode)}
-                      {...(personalErrors.ZipCode && { helperText: 'This field is required' })}
+                      {...(personalErrors.ZipCode && { helperText: t('This field is required') })}
                       fullWidth
-                      label='Zipcode'
-                      placeholder='Enter Zipcode'
+                      label={t('Zipcode')}
+                      placeholder={t('Enter Zipcode')}
                     />
                   )}
                 />
@@ -426,17 +428,17 @@ const AddChildWizard = ({ courses }) => {
                       label={<Translations text={'Special health care needs'} />}
                       placeholder={t('Special health care needs')}
                       error={Boolean(personalErrors.Note)}
-                      {...(personalErrors.Note && { helperText: 'This field is required' })}
+                      {...(personalErrors.Note && { helperText: t('This field is required') })}
                     />
                   )}
                 />
               </Grid>
               <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Button variant='tonal' color='secondary' disabled>
-                  Back
+                  {t('Back')}
                 </Button>
                 <Button type='submit' variant='contained'>
-                  Next
+                  {t('Next')}
                 </Button>
               </Grid>
             </Grid>
@@ -448,10 +450,10 @@ const AddChildWizard = ({ courses }) => {
             <Grid container spacing={5}>
               <Grid item xs={12}>
                 <Typography variant='body2' sx={{ fontWeight: 600, color: 'text.primary' }}>
-                  {steps[1].title}
+                  {t(steps[1].title)}
                 </Typography>
                 <Typography variant='caption' component='p'>
-                  {steps[1].subtitle}
+                  {t(steps[1].subtitle)}
                 </Typography>
               </Grid>
               {/* <Grid item xs={12} sm={6}>
@@ -476,7 +478,7 @@ const AddChildWizard = ({ courses }) => {
                             label='Select Course'
                             variant='outlined'
                             error={Boolean(accountErrors.CourseID)}
-                            {...(accountErrors.CourseID && { helperText: 'This field is required' })}
+                            {...(accountErrors.CourseID && { helperText: t('This field is required') })}
                           />
                         )}
                       />
@@ -490,10 +492,10 @@ const AddChildWizard = ({ courses }) => {
 
               <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Button variant='tonal' color='secondary' onClick={handleBack}>
-                  Back
+                  {t('Back')}
                 </Button>
                 <Button type='submit' disabled={isSubmitting} variant='contained'>
-                  {isSubmitting ? <CircularProgress size={25} /> : 'Confirm'}
+                  {isSubmitting ? <CircularProgress size={25} /> : t('Confirm')}
                 </Button>
               </Grid>
             </Grid>
@@ -575,7 +577,7 @@ const AddChildWizard = ({ courses }) => {
             <Typography
               sx={{ color: 'text.secondary', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
             >
-              Your child was registerd successfully ! and a copy of the Contract was sent to your email
+              {t('Your child was registerd successfully ! and a copy of the Contract was sent to your email')}
               <br />
               <Button sx={{ m: 2 }} color='primary' onClick={() => router.push('/children')} variant='contained'>
                 <Translations text={'Go to children page'} />

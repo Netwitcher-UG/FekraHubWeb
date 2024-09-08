@@ -8,9 +8,11 @@ import Divider from '@mui/material/Divider'
 import Button from '@mui/material/Button'
 import Icon from 'src/@core/components/icon'
 import { useRouter } from 'next/router'
+import { useTranslation } from 'react-i18next'
 
 const ChildrenList = ({ childrenData, loading }) => {
   const router = useRouter()
+  const { t } = useTranslation()
 
   const renderData =
     childrenData?.length > 0 && !loading ? (
@@ -21,7 +23,7 @@ const ChildrenList = ({ childrenData, loading }) => {
       ))
     ) : (
       <Grid item xs={12}>
-        <Alert severity='info'> No registered children yet</Alert>
+        <Alert severity='info'> {t('No registered children yet')}</Alert>
       </Grid>
     )
 
@@ -43,7 +45,7 @@ const ChildrenList = ({ childrenData, loading }) => {
           <Box sx={{ mr: 2 }}>
             <Icon fontSize='1.125rem' icon='mingcute:user-add-line' />
           </Box>
-          Add New Child
+          {t('Add New Child')}
         </Button>
         <Divider sx={{ my: 2 }} />
       </Grid>
