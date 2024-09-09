@@ -50,7 +50,6 @@ const useWorksheetsColumns = () => {
     setIsDialogOpen(false)
   }
 
-  // <Link href={`/contracts/view/${params?.row?.user_id}`}>
 
   const columns = useMemo(
     () => [

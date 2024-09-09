@@ -24,7 +24,7 @@ export default function LocationDataGrid({ rows, SetSearch, status }) {
             <AddLocation />
           </Box>
         </Stack>
-        <Box sx={{ height: 500 }}>
+        <Box sx={{ height: 'calc(100vh - 255px)' }}>
           {status === 'loading' ? (
             <Box
               sx={{

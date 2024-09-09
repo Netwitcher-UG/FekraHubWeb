@@ -29,7 +29,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
   const { t } = useTranslation()
   const defaultValues = {
     name: dataDef?.name,
-    locationID: dataDef?.locationCity
+    locationID: dataDef?.locationId
   }
 
   const {

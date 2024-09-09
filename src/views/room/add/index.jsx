@@ -3,6 +3,8 @@ import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
 import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
@@ -40,6 +42,15 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary
 }))
 
+
+const schema = yup.object().shape({
+  name: yup.string().required('name is required'),
+  street: yup.string().required('street is required'),
+  streetNr: yup.string().required('streetNr is required'),
+  zipCode: yup.string().required('zipCode is required'),
+  city: yup.string().required('city is required')
+})
+
 const AddRoom = () => {
   const { t } = useTranslation()
   const { data, status, error } = useSelector(state => state.location)
@@ -70,7 +81,7 @@ const AddRoom = () => {
     formState: { errors, isDirty },
     reset
   } = useForm({
-    // resolver: yupResolver(Schema),
+     resolver: yupResolver(schema),
     defaultValues,
     mode: 'onBlur'
   })

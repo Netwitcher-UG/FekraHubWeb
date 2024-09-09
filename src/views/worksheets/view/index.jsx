@@ -3,6 +3,7 @@ import Typography from '@mui/material/Typography'
 import { Dialog, DialogContent, DialogTitle } from '@mui/material'
 
 export default function ViewWorksheet({ selectedFile, setSelectedFile }) {
+  console.log("🚀 ~ ViewWorksheet ~ selectedFile:", selectedFile)
   return (
     <Dialog open={Boolean(selectedFile)} onClose={() => setSelectedFile(null)} maxWidth='xl' fullWidth>
       <DialogTitle>
@@ -11,7 +12,7 @@ export default function ViewWorksheet({ selectedFile, setSelectedFile }) {
       <DialogContent>
         <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
           <iframe
-            src={`data:application/pdf;base64,${selectedFile?.file}`}
+            src={`data:application/pdf;base64,${selectedFile?.file.data}`}
             style={{
               position: 'absolute',
               top: 0,

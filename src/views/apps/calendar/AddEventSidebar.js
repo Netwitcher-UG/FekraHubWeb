@@ -27,6 +27,8 @@ import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import { useSelector } from 'react-redux'
 import { fetchEventsTypes } from 'src/store/apps/calendar'
 import { fetchCourseSchedule } from 'src/store/apps/courses'
+import { FormateDateTime } from 'src/@core/utils/DateTimeFormat'
+import { FormateDate } from 'src/@core/utils/DateFormate'
 
 
 
@@ -34,7 +36,7 @@ const defaultState = {
   url: '',
   title: '',
   guests: [],
-  allDay: true,
+  allDay: false,
   description: '',
   endDate: new Date(),
   calendar: 1,
@@ -86,11 +88,22 @@ const AddEventSidebar = props => {
   }, [dispatch]);
 
   const onSubmit = data => {
+    let startDate,endDate
+
+    if(values.allDay ){
+      startDate= FormateDate(values.startDate)
+      endDate= FormateDate(values.endDate)
+    }
+    else {
+      startDate= FormateDateTime(values.startDate)
+      endDate= FormateDate(values.endDate)
+    }
+
     const modifiedEvent = {
       eventName: data.title,
-      endDate: values.endDate,
+      endDate: endDate,
       scheduleId: values.guests && values.guests.length ? values.guests : undefined,
-      startDate: values.startDate,
+      startDate: startDate,
       typeID: values.calendar,
       description: data.description,
 
@@ -297,10 +310,11 @@ const AddEventSidebar = props => {
                 selectsStart
                 id='event-start-date'
                 endDate={values.endDate}
+                timeFormat="HH:mm"
                 selected={values.startDate}
                 startDate={values.startDate}
                 showTimeSelect={!values.allDay}
-                dateFormat={!values.allDay ? 'yyyy-MM-dd hh:mm' : 'yyyy-MM-dd'}
+                dateFormat={!values.allDay ? 'yyyy-MM-dd HH:mm' : 'yyyy-MM-dd'}
                 customInput={<PickersComponent label='Start Date' registername='startDate' />}
                 onChange={date => setValues({ ...values, startDate: new Date(date) })}
                 onSelect={handleStartDate}
@@ -315,19 +329,13 @@ const AddEventSidebar = props => {
                 minDate={values.startDate}
                 startDate={values.startDate}
                 showTimeSelect={!values.allDay}
-                dateFormat={!values.allDay ? 'yyyy-MM-dd hh:mm' : 'yyyy-MM-dd'}
+                timeFormat="HH:mm"
+                dateFormat={!values.allDay ? 'yyyy-MM-dd HH:mm' : 'yyyy-MM-dd'}
                 customInput={<PickersComponent label='End Date' registername='endDate' />}
                 onChange={date => setValues({ ...values, endDate: new Date(date) })}
               />
             </Box>
-            <FormControl sx={{ mb: 4 }}>
-              <FormControlLabel
-                label='All Day'
-                control={
-                  <Switch checked={values.allDay} onChange={e => setValues({ ...values, allDay: e.target.checked })} />
-                }
-              />
-            </FormControl>
+
             <Controller
   name="description"
   control={control}

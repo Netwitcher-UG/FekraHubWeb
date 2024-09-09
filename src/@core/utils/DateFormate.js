@@ -4,9 +4,9 @@ export function FormateDate(date) {
   }
 
   var originalDate = new Date(date)
-  var day = originalDate.getUTCDate()
-  var month = originalDate.getUTCMonth() - 10
-  var year = originalDate.getUTCFullYear() + 1
+  var day = originalDate.getDate();
+  var month = originalDate.getMonth() + 1; // Months are zero-based, so we add 1
+  var year = originalDate.getFullYear();
 
   var formattedDate = year + '-' + month + '-' + day + ''
 

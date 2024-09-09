@@ -27,6 +27,7 @@ import WorksheetsList from './worksheets/worksheets-list'
 import { useTranslation } from 'react-i18next'
 
 const StudentProfile = ({ student, byParent = false }) => {
+  console.log("🚀 ~ StudentProfile ~ student:", student)
   // ** State
   const [value, setValue] = useState('1')
   const dispatch = useDispatch()
@@ -76,6 +77,8 @@ const StudentProfile = ({ student, byParent = false }) => {
   const handleEditDrawerClose = () => {
     setEditDrawerOpen(false)
   }
+
+
 
   return (
     <>
@@ -151,7 +154,8 @@ const StudentProfile = ({ student, byParent = false }) => {
             invoicesData={byParent ? childInvoices : studentInvoices}
             loading={byParent ? childInvoicesLoading : studentInvoicesLoading}
             byParent={byParent}
-          />
+            student={student}
+          />{' '}
         </TabPanel>
         <TabPanel value='5'>
           <WorksheetsList

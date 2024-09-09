@@ -1,4 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { ShowErrorToast } from 'src/@core/utils/showErrorToast'
+import { ShowSuccessToast } from 'src/@core/utils/ShowSuccesToast'
 
 // ** Axios Imports
 import axiosInstance from 'src/lib/axiosInstance'
@@ -36,6 +38,39 @@ export const getStudentInvoiceFile = createAsyncThunk('appInvoices/getStudentInv
     const response = await axiosInstance.get(`/api/Invoice/ReturnInvoice?Id=${id}`)
     return response
   } catch (error) {
+    return error.response
+  }
+})
+
+export const deleteInvoices = createAsyncThunk(
+  'courses/deleteInvoices',
+  async (data, { getState, rejectWithValue, dispatch }) => {
+    try {
+      await axiosInstance.delete(`/api/Invoice/${data.selectedId}`, {})
+
+      ShowSuccessToast('success')
+      dispatch(fetchStudentInvoices(data.studentId))
+    } catch (error) {
+      ShowErrorToast('Error')
+
+      return rejectWithValue(error.response.data)
+    }
+  }
+)
+export const AddStudentInvoiceFile = createAsyncThunk('appInvoices/addStudentInvoiceFile', async (data, { getState, dispatch }) => {
+  try {
+    const response = await axiosInstance.post(`/api/Invoice`,data.formData, {
+      headers: {
+        accept: 'application/json',
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    ShowSuccessToast('Success')
+dispatch(fetchStudentInvoices(data.id))
+
+    return response.data
+  } catch (error) {
+    ShowErrorToast(error)
     return error.response
   }
 })

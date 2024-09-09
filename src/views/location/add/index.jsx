@@ -3,14 +3,16 @@ import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
 import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import IconButton from '@mui/material/IconButton'
 import Paper from '@mui/material/Paper'
 import Icon from 'src/@core/components/icon'
-import { Grid } from '@mui/material'
-import { useForm, Controller } from 'react-hook-form'
+import { Box, Grid } from '@mui/material'
+import { useForm, Controller, useFieldArray } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import Translations from 'src/layouts/components/Translations'
 import CustomTextField from 'src/@core/components/mui/text-field'
@@ -39,6 +41,14 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary
 }))
 
+const schema = yup.object().shape({
+  name: yup.string().required('name is required'),
+  street: yup.string().required('street is required'),
+  streetNr: yup.string().required('streetNr is required'),
+  zipCode: yup.string().required('zipCode is required'),
+  city: yup.string().required('city is required')
+})
+
 const AddLocation = () => {
   const [open, setOpen] = useState(false)
   const handleClickOpen = () => setOpen(true)
@@ -50,7 +60,8 @@ const AddLocation = () => {
     street: '',
     streetNr: '',
     zipCode: '',
-    city: ''
+    city: '',
+    rooms:[]
   }
 
   const {
@@ -60,10 +71,16 @@ const AddLocation = () => {
     formState: { errors, isDirty },
     reset
   } = useForm({
-    // resolver: yupResolver(Schema),
+     resolver: yupResolver(schema),
     defaultValues,
-    mode: 'onBlur'
+    mode: 'onChange'
   })
+
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'Room'
+  });
 
   const handleSaveData = data => {
     try {
@@ -108,12 +125,12 @@ const AddLocation = () => {
                     autoFocus
                     label={`${'name'}`}
                     variant='outlined'
-                    error={!!errors.Name}
-                    helperText={errors.Name ? errors.Name.message : ''}
+                    error={!!errors.name}
+                    helperText={errors.name ? errors.name.message : ''}
                   />
                 )}
               />
-              <Typography>{errors.Name ? errors.Name.message : ''}</Typography>
+
             </Grid>
             <Grid item xs={6} sm={6} lg={6}>
               <Controller
@@ -126,8 +143,8 @@ const AddLocation = () => {
                     fullWidth
                     label={`${'street'}`}
                     variant='outlined'
-                    error={!!errors.name}
-                    helperText={errors.name ? errors.name.message : ''}
+                    error={!!errors.street}
+                    helperText={errors.street ? errors.street.message : ''}
                   />
                 )}
               />
@@ -143,8 +160,8 @@ const AddLocation = () => {
                     fullWidth
                     label={`${'streetNr'}`}
                     variant='outlined'
-                    error={!!errors.name}
-                    helperText={errors.name ? errors.name.message : ''}
+                    error={!!errors.streetNr}
+                    helperText={errors.streetNr ? errors.streetNr.message : ''}
                   />
                 )}
               />
@@ -160,8 +177,8 @@ const AddLocation = () => {
                     fullWidth
                     label={`${'zipCode'}`}
                     variant='outlined'
-                    error={!!errors.name}
-                    helperText={errors.name ? errors.name.message : ''}
+                    error={!!errors.zipCode}
+                    helperText={errors.zipCode ? errors.zipCode.message : ''}
                   />
                 )}
               />
@@ -177,12 +194,53 @@ const AddLocation = () => {
                     fullWidth
                     label={`${'city'}`}
                     variant='outlined'
-                    error={!!errors.name}
-                    helperText={errors.name ? errors.name.message : ''}
+                    error={!!errors.city}
+                    helperText={errors.city ? errors.city.message : ''}
                   />
                 )}
               />
             </Grid>
+
+<Grid item xs={6} sm={6} lg={6}>
+<Button variant='outlined' sx={{marginY:'20px'}}  onClick={() => append({   })}>
+  Add New Room
+</Button>
+</Grid>
+{fields.map((field, index) => (
+     <>
+     <Grid item xs={6} sm={6} lg={6}>
+
+
+
+
+        <Controller
+          name={`rooms.${index}`}
+          control={control}
+          render={({ field }) => (
+            <CustomTextField
+              {...field}
+              fullWidth
+              type='text'
+              label={`Room  ${index + 1}`}
+              error={!!errors.rooms?.[index]}
+              helperText={errors.rooms?.[index].message}
+            />
+          )}
+        />
+
+</Grid>
+    <Grid item xs={6} sm={6} lg={6} sx={{marginTop:'16px'}}>
+      <Button
+        variant='text'
+        color='error'
+        onClick={() => remove(index)}
+      >
+        Remove
+      </Button>
+</Grid>
+</>
+))}
+
           </Grid>
         </DialogContent>
         <DialogActions sx={{ p: theme => `${theme.spacing(3)} !important` }}>

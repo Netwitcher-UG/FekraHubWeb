@@ -52,7 +52,7 @@ export default function WorksheetsDataGrid({ rows, SetSearch, status, dataUpload
             <AdduWorksheets dataUploadType={dataUploadType} data={data} />
           </Box>
         </Stack>
-        <Box sx={{ height: 500 }}>
+        <Box sx={{ height: 'calc(100vh - 255px)' }}>
           {status === 'loading' ? (
             <Box
               sx={{

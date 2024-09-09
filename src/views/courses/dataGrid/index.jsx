@@ -1,7 +1,7 @@
 import { Card } from '@mui/material'
 import { Box, Stack } from '@mui/system'
 import React, { useEffect, useContext } from 'react'
-import CustomDataGrid from 'src/@core/components/custom-datagrid'
+import { DataGrid } from '@mui/x-data-grid'
 import useCoursesColumns from '../hook/useCoursesColumns'
 import CustomSearch from 'src/@core/components/custom-search'
 import AddCourses from '../add'
@@ -12,10 +12,24 @@ import CircularProgress from '@mui/material/CircularProgress'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchLocation } from 'src/store/apps/location'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
+import CustomDataGrid from 'src/@core/components/custom-datagrid'
 
 export default function CoursesDataGrid({ rows, dataRooms, dataTeacher, SetSearch, status }) {
   const { columns, isDialogOpen, handleCloseDialog, handleDelete, drawerData, open, handleCloseDrawer, DeleteName } =
     useCoursesColumns()
+
+    const customScrollbarStyles = {
+      '& ::-webkit-scrollbar': {
+        height: 8
+      },
+      '& ::-webkit-scrollbar-thumb': {
+        backgroundColor: '#888',
+        borderRadius: 10,
+        '&:hover': {
+          backgroundColor: '#555'
+        }
+      }
+    }
 
   const { data: locationData, error } = useSelector(state => state.location)
   const ability = useContext(AbilityContext)
@@ -28,7 +42,7 @@ export default function CoursesDataGrid({ rows, dataRooms, dataTeacher, SetSearc
 
   return (
     <>
-      <Card>
+      <Card >
         <Stack padding={4} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
           <Box>
             <CustomSearch SetSearch={SetSearch} />
@@ -40,7 +54,7 @@ export default function CoursesDataGrid({ rows, dataRooms, dataTeacher, SetSearc
           )}
         </Stack>
 
-        <Box sx={{ height: 500 }}>
+<Box sx={{ height: 'calc(100vh - 255px)' }}>
           {status === 'loading' ? (
             <Box
               sx={{
@@ -54,9 +68,10 @@ export default function CoursesDataGrid({ rows, dataRooms, dataTeacher, SetSearc
               <CircularProgress size={100} />
             </Box>
           ) : (
-            <CustomDataGrid columns={columns} rowHeight={62} rows={rows} />
+            <CustomDataGrid columns={columns} rowHeight={62} rows={rows}
+             />
           )}
-        </Box>
+</Box>
       </Card>
       <CustomDialogDelete
         open={isDialogOpen}

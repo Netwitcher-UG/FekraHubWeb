@@ -3,7 +3,7 @@ import { Box, Stack } from '@mui/system'
 import React, { useEffect } from 'react'
 
 import styled from '@emotion/styled'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { useDispatch } from 'react-redux'
@@ -18,8 +18,16 @@ const Header = styled(Box)(({ theme }) => ({
   justifyContent: 'space-between',
   margin: '0px'
 }))
+const schema = yup.object().shape({
+  name: yup.string().required('name is required'),
+  street: yup.string().required('street is required'),
+  streetNr: yup.string().required('streetNr is required'),
+  zipCode: yup.string().required('zipCode is required'),
+  city: yup.string().required('city is required')
+})
 
 export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
+  console.log("🚀 ~ DrawerEdit ~ dataDef:", dataDef)
   const dispatch = useDispatch()
 
   const defaultValues = {
@@ -27,7 +35,8 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
     street: dataDef?.street,
     streetNr: dataDef?.streetNr,
     zipCode: dataDef?.zipCode,
-    city: dataDef?.city
+    city: dataDef?.city,
+    rooms:dataDef?.room.map(item=>item.name)
   }
 
   const {
@@ -37,10 +46,14 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
     formState: { errors, isDirty },
     reset
   } = useForm({
-    // resolver: yupResolver(Schema),
+    resolver: yupResolver(schema),
     defaultValues,
     mode: 'onBlur'
   })
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'room'
+  });
 
   const handleSaveData = data => {
     dispatch(editLocation({ ...data, id: dataDef.id }))
@@ -163,6 +176,42 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                 )}
               />
             </Grid>
+
+{fields.map((field, index) => (
+     <>
+     <Grid item xs={8} sm={8} lg={8}>
+        <Controller
+          name={`rooms.${index}`}
+          control={control}
+          render={({ field }) => (
+            <CustomTextField
+              {...field}
+              fullWidth
+              type='text'
+              label={`Room  ${index + 1}`}
+              error={!!errors.rooms?.[index]}
+              helperText={errors.rooms?.[index].message}
+            />
+          )}
+        />
+
+</Grid>
+    <Grid item xs={4} sm={4} lg={4} sx={{marginTop:'16px'}}>
+      <Button
+        variant='text'
+        color='error'
+        onClick={() => remove(index)}
+      >
+        Remove
+      </Button>
+</Grid>
+</>
+))}
+<Grid item xs={6} sm={6} lg={6}>
+<Button variant='outlined' sx={{marginY:'20px'}}  onClick={() => append({   })}>
+  Add New Room
+</Button>
+</Grid>
           </Grid>
           <Stack
             sx={{ p: theme => `${theme.spacing(3)} !important` }}
