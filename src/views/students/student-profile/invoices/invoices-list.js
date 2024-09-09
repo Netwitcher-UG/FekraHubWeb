@@ -6,24 +6,37 @@ import Box from '@mui/material/Box'
 import Alert from '@mui/material/Alert'
 import StudentsInvoiceDataGrid from './list/Datagrid'
 import TableHeader from './list/TableHeader'
+import InvoiceCardbyParent from './invoice-card-byParent'
 import Add from './add'
 // import Divider from '@mui/material/Divider'
 // import Button from '@mui/material/Button'
 // import Icon from 'src/@core/components/icon'
 import Translations from 'src/layouts/components/Translations'
 
-const InvoicesList = ({ invoicesData,student, loading, byParent }) => {
+const InvoicesList = ({ invoicesData, student, loading, byParent }) => {
   const renderData =
     invoicesData?.length > 0 && !loading ? (
-
-<>
-      <Add student={student}/>
-          <StudentsInvoiceDataGrid invoice={invoicesData} byParent={byParent} />
+      <>
+        {byParent ? (
+          invoicesData?.map((invoice, index) => (
+            <Grid item xs={14} sm={7} md={4} lg={4} xl={4} key={index}>
+              <InvoiceCardbyParent invoice={invoice} byParent={byParent} />
+            </Grid>
+          ))
+        ) : (
+          <>
+            <Add student={student} />
+            <StudentsInvoiceDataGrid invoice={invoicesData} byParent={byParent} />
           </>
+        )}
+      </>
     ) : (
       <Grid item xs={12}>
-        <Alert severity='info'> No invoices yet</Alert>
-        <Add student={student}/>
+        <Alert severity='info'>
+          {' '}
+          <Translations text={'No invoices yet'} />{' '}
+        </Alert>
+        <Add student={student} />
       </Grid>
     )
 
