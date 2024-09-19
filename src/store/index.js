@@ -19,6 +19,7 @@ import contracts from 'src/store/apps/contracts'
 import invoices from 'src/store/apps/invoices'
 import attendance from 'src/store/apps/attendance'
 import calendar from './apps/calendar'
+import account from './apps/account'
 
 export const store = configureStore({
   reducer: {
@@ -33,7 +34,8 @@ export const store = configureStore({
     invoices,
     attendance,
     invoices,
-    calendar
+    calendar,
+    account
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
