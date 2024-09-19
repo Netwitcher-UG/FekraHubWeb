@@ -84,7 +84,11 @@ const StudentsAttendanceDataGrid = ({
   }, [coursesData, selectedCourse, setSelectedCourse])
 
   let isNotSchoolDay =
-    store?.students?.isTodayAWorkDay === false && !store?.studentsLoading && store?.students?.students[0]
+    store?.students?.isTodayAWorkDay === false &&
+    !store?.studentsLoading &&
+    Array.isArray(store?.students?.students) &&
+    store.students.students.length > 0 &&
+    store?.students?.students[0]
 
   return (
     <>
