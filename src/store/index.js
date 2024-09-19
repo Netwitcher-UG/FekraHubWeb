@@ -20,7 +20,7 @@ import invoices from 'src/store/apps/invoices'
 import attendance from 'src/store/apps/attendance'
 import calendar from './apps/calendar'
 import account from './apps/account'
-
+import payroll from './apps/payroll'
 export const store = configureStore({
   reducer: {
     users,
@@ -33,6 +33,7 @@ export const store = configureStore({
     contracts,
     invoices,
     attendance,
+    payroll,
     invoices,
     calendar,
     account

@@ -19,29 +19,36 @@ const Header = styled(Box)(({ theme }) => ({
 }))
 
 const schema = yup.object().shape({
-  Price: yup
-    .number()
-    .required('Price is required')
-    .positive('Price must be a positive number')
-    .min(1, 'Price must be at least 1'),
+  course: yup.object().shape({
+    price: yup
+      .number()
+      .required('Price is required')
+      .positive('Price must be a positive number')
+      .min(1, 'Price must be at least 1'),
+    lessons: yup
+      .number()
+      .required('Lessons are required')
+      .integer('Lessons must be an integer')
+      .min(1, 'Lessons must be at least 1'),
+    capacity: yup
+      .number()
+      .required('Capacity is required')
+      .integer('Capacity must be an integer')
+      .min(1, 'Capacity must be at least 1'),
+    name: yup
+      .string()
+      .required('Course Name is required')
+      .min(2, 'Course Name must be at least 2 characters'),
+    startDate: yup.date().required('Start Date is required').nullable(),
+    endDate: yup
+      .date()
+      .required('End Date is required')
+      .nullable()
+      .min(yup.ref('startDate'), 'End Date cannot be before Start Date'),
+  }),
 
-  Lessons: yup
-    .number()
-    .required('Lessons are required')
-    .integer('Lessons must be an integer')
-    .min(1, 'Lessons must be at least 1'),
-
-  Capacity: yup
-    .number()
-    .required('Capacity is required')
-    .integer('Capacity must be an integer')
-    .min(1, 'Capacity must be at least 1'),
-  Name: yup.string().required('Course Name is required').min(2, 'Course Name must be at least 2 characters'),
-  TeacherId: yup.string().required('Teacher is required'),
-  StartDate: yup.date().required('Start Date is required').nullable(),
-  EndDate: yup.date().required('End Date is required').nullable().min(yup.ref('StartDate'))
-})
-
+  // Additional validation for other fields can go here
+});
 export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationData }) {
   console.log("🚀 ~ DrawerEdit ~ dataDef:", dataDef)
   const [location, setLocation] = useState('')
@@ -77,7 +84,8 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
   } = useForm({
     // resolver: yupResolver(schema),
     defaultValues,
-    mode: 'onBlur'
+    mode: 'onBlur',
+    resolver: yupResolver(schema),
   })
 
   useEffect(() => {

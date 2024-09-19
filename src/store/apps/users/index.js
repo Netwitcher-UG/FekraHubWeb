@@ -9,8 +9,13 @@ export const fetchParents = createAsyncThunk('appUsers/fetchParents', async () =
 
   return response.data
 })
+<<<<<<< HEAD
 export const fetchEmployees = createAsyncThunk('appUsers/fetchEmployees', async ({ role }) => {
   const response = await axiosInstance.get(`/api/UsersManagment/GetEmployee?RoleName=${role}`)
+=======
+export const fetchEmployees = createAsyncThunk('appUsers/fetchEmployees', async (param) => {
+  const response = await axiosInstance.get(`/api/UsersManagment/GetEmployee?${param}`)
+>>>>>>> 38bac54 (feat:crud payrolls)
 
   return response.data
 })

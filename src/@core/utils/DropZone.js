@@ -26,7 +26,7 @@ const DropzoneWrapper = ({ row, onFileUpload }) => {
         {isDragActive ? (
           <p>Drop the files here ...</p>
         ) : (
-          <p>Drag 'n' drop a PDF here, or click to select a file</p>
+          <p>Drag & drop a PDF here</p>
         )}
       </div>
     )}

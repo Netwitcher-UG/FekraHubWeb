@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
 import { styled } from '@mui/material/styles'
@@ -8,7 +8,7 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import IconButton from '@mui/material/IconButton'
 import Grid from '@mui/material/Grid'
-import { Autocomplete, InputAdornment, Stack, TextField } from '@mui/material'
+import { Autocomplete, InputAdornment, Slide, Stack, TextField } from '@mui/material'
 import { useForm, Controller, useFieldArray } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { addCourses, FetchCourseScheduleDaysOfWeek } from 'src/store/apps/courses'
@@ -34,28 +34,40 @@ const CustomCloseButton = styled(IconButton)(({ theme }) => ({
 }))
 
 const schema = yup.object().shape({
-  Price: yup
-    .number()
-    .required('Price is required')
-    .positive('Price must be a positive number')
-    .min(1, 'Price must be at least 1'),
+  course: yup.object().shape({
+    price: yup
+      .number()
+      .required('Price is required')
+      .positive('Price must be a positive number')
+      .min(1, 'Price must be at least 1'),
+    lessons: yup
+      .number()
+      .required('Lessons are required')
+      .integer('Lessons must be an integer')
+      .min(1, 'Lessons must be at least 1'),
+    capacity: yup
+      .number()
+      .required('Capacity is required')
+      .integer('Capacity must be an integer')
+      .min(1, 'Capacity must be at least 1'),
+    name: yup
+      .string()
+      .required('Course Name is required')
+      .min(2, 'Course Name must be at least 2 characters'),
+    startDate: yup.date().required('Start Date is required').nullable(),
+    endDate: yup
+      .date()
+      .required('End Date is required')
+      .nullable()
+      .min(yup.ref('startDate'), 'End Date cannot be before Start Date'),
+  }),
 
-  Lessons: yup
-    .number()
-    .required('Lessons are required')
-    .integer('Lessons must be an integer')
-    .min(1, 'Lessons must be at least 1'),
+  // Additional validation for other fields can go here
+});
 
-  Capacity: yup
-    .number()
-    .required('Capacity is required')
-    .integer('Capacity must be an integer')
-    .min(1, 'Capacity must be at least 1'),
-  Name: yup.string().required('Course Name is required').min(2, 'Course Name must be at least 2 characters'),
-  TeacherId: yup.string().required('Teacher is required'),
-  StartDate: yup.date().required('Start Date is required').nullable(),
-  EndDate: yup.date().required('End Date is required').nullable().min(yup.ref('StartDate'))
-})
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const AddCourses = ({ dataRooms, dataTeacher }) => {
   console.log('🚀 ~ AddCourses ~ dataTeacher:', dataTeacher)
@@ -69,6 +81,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
   const { data: DataLocation } = useSelector(state => state.location)
   const {DaysOfWeeks} = useSelector(state => state.courses)
   console.log("🚀 ~ AddCourses ~ DaysOfWeeks:", DaysOfWeeks)
+
 
   useEffect(() => {
     dispatch(fetchLocation(''))
@@ -94,7 +107,10 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
     handleSubmit,
     reset,
     formState: { errors, isDirty }
-  } = useForm({ defaultValues })
+  } = useForm({ defaultValues,
+      mode: 'onChange',
+      resolver: yupResolver(schema),
+   })
 
   const handleNextStep = () => {
     if (step === 0) {
@@ -130,7 +146,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
         Add Courses
       </Button>
 
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open}  TransitionComponent={Transition} onClose={handleClose} >
         <DialogTitle>
           <Typography variant='h4'>Add Courses</Typography>
           <CustomCloseButton aria-label='close' onClick={handleClose}>
@@ -140,7 +156,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
         <DialogContent>
           {step === 0 && (
             <Grid container spacing={4}>
-              <Grid item xs={12} sm={12} lg={12} md={12} sx={{ width: '400px' }}>
+              <Grid item xs={12} sm={12} lg={12} md={12} sx={{ width: '800px' }}>
                 <Controller
                   name='LocationId'
                   control={control}
@@ -173,7 +189,8 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
             </Grid>
           )}
           {step === 1 && (
-            <Grid container spacing={2}>
+
+            <Grid container spacing={2} >
               <Grid item xs={12}>
                 <Controller
                   name='course.roomId'
@@ -188,8 +205,8 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                           label='Select Room'
                           variant='outlined'
                           inputRef={ref}
-                          error={!!errors.roomId}
-                          helperText={errors.roomId ? errors.roomId.message : ''}
+                          error={!!errors.course?.roomId}
+                          helperText={errors.course?.roomId ? errors.course?.roomId.message : ''}
                         />
                       )}
                       onChange={(event, newValue) => {
@@ -240,8 +257,8 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                       label='Course Name'
                       variant='outlined'
                       fullWidth
-                      error={!!errors.Name}
-                      helperText={errors.Name ? errors.Name.message : ''}
+                      error={!!errors.course?.name}
+                      helperText={errors.course?.name ? errors.course.name.message : ''}
                     />
                   )}
                 />
@@ -258,8 +275,8 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                       type='number'
                       variant='outlined'
                       fullWidth
-                      error={!!errors.Price}
-                      helperText={errors.Price ? errors.Price.message : ''}
+                      error={!!errors.course?.price}
+                      helperText={errors.course?.price ? errors.course.price.message : ''}
                       InputProps={{
                         endAdornment: <InputAdornment position='end'>€</InputAdornment>
                       }}
@@ -278,8 +295,8 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                       label='Lessons'
                       variant='outlined'
                       fullWidth
-                      error={!!errors.Lessons}
-                      helperText={errors.Lessons ? errors.Lessons.message : ''}
+                      error={!!errors.course?.lessons}
+                      helperText={errors.course?.lessons ? errors.course.lessons.message : ''}
                     />
                   )}
                 />
@@ -295,8 +312,8 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                       label='Capacity'
                       variant='outlined'
                       fullWidth
-                      error={!!errors.Capacity}
-                      helperText={errors.Capacity ? errors.Capacity.message : ''}
+                      error={!!errors.course?.capacity}
+                      helperText={errors.course?.capacity ? errors.course.capacity.message : ''}
                     />
                   )}
                 />
@@ -312,8 +329,8 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                       variant='outlined'
                       type='date'
                       fullWidth
-                      error={!!errors.StartDate}
-                      helperText={errors.StartDate ? errors.StartDate.message : ''}
+                      error={!!errors.course?.startDate}
+                      helperText={errors.course?.startDate ? errors.course.startDate : ''}
                     />
                   )}
                 />
@@ -329,8 +346,8 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                       variant='outlined'
                       type='date'
                       fullWidth
-                      error={!!errors.EndDate}
-                      helperText={errors.EndDate ? errors.EndDate.message : ''}
+                      error={!!errors.course?.endDate}
+                      helperText={errors.course?.endDate ? errors.course.endDate.message : ''}
                     />
                   )}
                 />
@@ -340,13 +357,13 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
             </Grid>
           )}
              {step === 2 && (
-          <>
+          <Box sx={{width:'400px'}}>
 
 
 {fields.map((field, index) => (
   <Box key={field.id} width={'100%'} sx={{ marginY: '24px' }}>
     <Stack
-      direction="row"
+      direction="column"
       spacing={3}
 
     >
@@ -364,8 +381,8 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                   label='Day of the Week'
                   variant='outlined'
                   inputRef={ref}
-                  error={!!errors.courseSchedule?.[index]?.EmailServer}
-                  helperText={errors.courseSchedule?.[index]?.EmailServer?.message}
+                  error={!!errors.courseSchedule?.[index]?.dayOfWeek}
+                  helperText={errors.courseSchedule?.[index]?.dayOfWeek.message}
                 />
               )}
               onChange={(event, newValue) => {
@@ -388,7 +405,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
               type='time'
               label={`Start Time ${index + 1}`}
               error={!!errors.courseSchedule?.[index]?.startTime}
-              helperText={errors.courseSchedule?.[index]?.startTime?.message}
+              helperText={errors.courseSchedule?.[index]?.startTime.message}
             />
           )}
         />
@@ -430,7 +447,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
 
 
 
-            </>
+            </Box>
           )}
         </DialogContent>
         <DialogActions>

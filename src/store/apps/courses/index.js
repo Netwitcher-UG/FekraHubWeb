@@ -129,7 +129,7 @@ export const addCourses = createAsyncThunk('courses/addCourses', async (data, { 
 
     return response.data
   } catch (errors) {
-    ShowErrorToast('Error')
+    ShowErrorToast(errors.response?.data || errors.message)
     return rejectWithValue(errors.response?.data || errors.message)
   }
 })
@@ -146,7 +146,10 @@ export const editCourses = createAsyncThunk('courses/editCourses', async (data, 
     ShowSuccessToast('Success')
     dispatch(fetchCourses(''))
     return response.data
-  } catch (error) {}
+  } catch (errors) {
+    ShowErrorToast(errors.response?.data || errors.message)
+    return rejectWithValue(errors.response?.data || errors.message)
+  }
 })
 
 // delete Courses
@@ -159,11 +162,10 @@ export const deleteCourse = createAsyncThunk(
 
       ShowSuccessToast('success')
       dispatch(fetchCourses(''))
-    } catch (error) {
-      console.log("🚀 ~ error:", error)
-      ShowErrorToast(error.response.data)
+    } catch (errors) {
+      ShowErrorToast(errors.response?.data || errors.message)
 
-      return rejectWithValue(error.response.data)
+      return rejectWithValue(errors.response.data)
     }
   }
 )

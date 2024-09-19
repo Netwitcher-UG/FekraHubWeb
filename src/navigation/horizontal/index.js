@@ -87,6 +87,13 @@ const navigation = () => {
       subject: 'calendar'
     },
     {
+      title: 'payroll',
+      icon: 'tabler:report-money',
+      path: '/payroll',
+      action: 'manage',
+      subject: 'payroll'
+    },
+    {
       title: 'Children',
       icon: 'tabler:users',
       children: [
