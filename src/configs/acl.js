@@ -103,6 +103,7 @@ function defineAbilitiesFor(role, rolesPermissions) {
         break
       case 'ManagePayrolls':
         can('manage', 'Payroll')
+        can('manage', 'messages')
         break
       case 'ManageBooks':
         can('manage', 'Book')

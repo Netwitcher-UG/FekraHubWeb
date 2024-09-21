@@ -94,6 +94,13 @@ const navigation = () => {
       subject: 'payroll'
     },
     {
+      title: 'messages',
+      icon: 'tabler:email-check',
+      path: '/messages',
+      action: 'manage',
+      subject: 'messages'
+    },
+    {
       title: 'Children',
       icon: 'tabler:users',
       children: [

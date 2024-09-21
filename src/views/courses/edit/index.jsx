@@ -20,31 +20,30 @@ const Header = styled(Box)(({ theme }) => ({
 
 const schema = yup.object().shape({
   course: yup.object().shape({
-    price: yup
+    Price: yup
       .number()
       .required('Price is required')
       .positive('Price must be a positive number')
       .min(1, 'Price must be at least 1'),
-    lessons: yup
+    Lessons: yup
       .number()
       .required('Lessons are required')
       .integer('Lessons must be an integer')
       .min(1, 'Lessons must be at least 1'),
-    capacity: yup
+    Capacity: yup
       .number()
       .required('Capacity is required')
       .integer('Capacity must be an integer')
       .min(1, 'Capacity must be at least 1'),
-    name: yup
+    Name: yup
       .string()
       .required('Course Name is required')
       .min(2, 'Course Name must be at least 2 characters'),
-    startDate: yup.date().required('Start Date is required').nullable(),
-    endDate: yup
+    StartDate: yup.date().required('Start Date is required').nullable(),
+    EndDate: yup
       .date()
       .required('End Date is required')
       .nullable()
-      .min(yup.ref('startDate'), 'End Date cannot be before Start Date'),
   }),
 
   // Additional validation for other fields can go here
@@ -244,8 +243,8 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
                     label={`${'EndDate'}`}
                     variant='outlined'
                     type='date'
-                    error={!!errors.EndDate}
-                    helperText={errors.EndDate ? errors.EndDate.message : ''}
+                    error={!!errors.course?.EndDate}
+                    helperText={errors.course?.EndDate ? errors.course.EndDate.message : ''}
                   />
                 )}
               />
