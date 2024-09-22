@@ -28,6 +28,21 @@ export const updateProfileInfo = createAsyncThunk('appAccount/updateProfileInfo'
   }
 })
 
+export const updateCredentials = createAsyncThunk('appAccount/updateCredentials', async (data, thunkAPI) => {
+  try {
+    const response = await axiosInstance.put('/api/UsersManagment/UserProfileAccount', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+
+    thunkAPI.dispatch(fetchUserProfileInfo())
+    return response
+  } catch (error) {
+    return error.response
+  }
+})
+
 export const appAccountSlice = createSlice({
   name: 'appAccount',
   initialState: {

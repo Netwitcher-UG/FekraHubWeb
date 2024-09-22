@@ -23,6 +23,7 @@ import Icon from 'src/@core/components/icon'
 // import Teams from 'src/views/pages/user-profile/teams'
 import Profile from './profile/index'
 import Courses from './courses'
+import AccountSettingsPage from './account-settings'
 // import Projects from 'src/views/pages/user-profile/projects'
 // import Connections from 'src/views/pages/user-profile/connections'
 import UserProfileHeader from './UserProfileHeader'
@@ -86,8 +87,8 @@ const UserProfile = ({ tab, data, isLoading }) => {
 
   const tabContentList = {
     profile: <Profile data={data} />,
-    courses: <Courses data={data?.course} />
-    // projects: <Projects data={data} />,
+    courses: <Courses data={data?.course} />,
+    settings: <AccountSettingsPage data={data} />
     // connections: <Connections data={data} />
   }
 
@@ -127,6 +128,16 @@ const UserProfile = ({ tab, data, isLoading }) => {
                       }
                     />
                   )}
+
+                  <Tab
+                    value='settings'
+                    label={
+                      <Box sx={{ display: 'flex', alignItems: 'center', ...(!hideText && { '& svg': { mr: 2 } }) }}>
+                        <Icon fontSize='1.125rem' icon='tabler:user-check' />
+                        {!hideText && 'Account Settings'}
+                      </Box>
+                    }
+                  />
                   {/* <Tab
                     value='projects'
                     label={

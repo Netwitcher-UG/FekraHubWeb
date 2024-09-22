@@ -21,7 +21,7 @@ export const getStaticPaths = () => {
     paths: [
       { params: { tab: 'profile' } },
       { params: { tab: 'courses' } },
-      { params: { tab: 'projects' } },
+      { params: { tab: 'settings' } },
       { params: { tab: 'connections' } }
     ],
     fallback: false
