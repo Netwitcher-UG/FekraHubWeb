@@ -1,6 +1,6 @@
 const DefaultPalette = (mode, skin) => {
   // ** Vars
-  const whiteColor = '#FFF'
+  const whiteColor = '#F5F0FE'
   const lightColor = '47, 43, 61'
   const darkColor = '208, 212, 241'
   const darkPaperBgColor = '#2F3349'
@@ -34,9 +34,9 @@ const DefaultPalette = (mode, skin) => {
       white: whiteColor
     },
     primary: {
-      light: '#8479F2',
-      main: '#7367F0',
-      dark: '#655BD3',
+      light: '#03bef7',
+      main: '#03bef7',
+      dark: '#03bef7',
       contrastText: whiteColor
     },
     secondary: {

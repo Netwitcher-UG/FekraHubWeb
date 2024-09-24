@@ -16,7 +16,7 @@ export default function LocationDataGrid({ rows, SetSearch, status }) {
   return (
     <>
       <Card>
-        <Stack padding={4} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
+        <Stack padding={4} direction={{ xs: 'column', sm: 'row' }} spacing={5} alignItems={'center'} justifyContent={'space-between'}>
           <Box>
             <CustomSearch SetSearch={SetSearch} />
           </Box>

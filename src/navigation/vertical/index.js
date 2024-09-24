@@ -119,7 +119,7 @@ const navigation = () => {
       ]
     },
     {
-      title: 'Worksheets',
+      title: 'Course files',
       icon: 'ph:files',
       path: '/worksheets',
       action: 'manage',

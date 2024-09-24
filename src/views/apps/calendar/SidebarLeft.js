@@ -33,7 +33,7 @@ const SidebarLeft = (props) => {
   const { data } = useSelector((state) => state.courses);
   const [search, SetSearch] = useState('');
   const [selectedAllCourses, setSelectedAllCourses] = useState([]);
-  console.log(store.selectedCalendars);
+
 
 
   useEffect(() => {
@@ -83,7 +83,7 @@ const SidebarLeft = (props) => {
 
   return (
     <Drawer
-      open={true}
+      open={leftSidebarOpen}
       onClose={handleLeftSidebarToggle}
       variant={mdAbove ? 'permanent' : 'temporary'}
       ModalProps={{

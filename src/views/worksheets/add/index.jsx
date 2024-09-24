@@ -9,8 +9,8 @@ import DialogActions from '@mui/material/DialogActions'
 import IconButton from '@mui/material/IconButton'
 import Paper from '@mui/material/Paper'
 import Icon from 'src/@core/components/icon'
-import { Autocomplete, Chip, Grid, TextField } from '@mui/material'
-import { useForm, Controller } from 'react-hook-form'
+import { Autocomplete, Box, Chip, Grid, TextField } from '@mui/material'
+import { useForm, Controller, useFieldArray } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import Translations from 'src/layouts/components/Translations'
 import CustomTextField from 'src/@core/components/mui/text-field'
@@ -59,17 +59,55 @@ const HiddenInput = styled('input')({
   display: 'none'
 })
 
+const CustomTextFieldFile = ({ field, label, error, helperText, ...props }) => {
+  return (
+    <div>
+      <label htmlFor={field.name}>{label}</label>
+      <input
+        {...field}
+        {...props}
+        id={field.name}
+        style={{ display: 'none' }} // Hide the default input
+        type="file"
+        onChange={(e) => {
+          field.onChange(e.target.files); // Pass files to the field
+        }}
+      />
+      <button
+        type="button"
+        onClick={() => document.getElementById(field.name).click()}
+        style={{
+          padding: '10px',
+          backgroundColor: '#007bff',
+          color: '#fff',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          border: 'none',
+        }}
+      >
+        Select File
+      </button>
+      <span>{field.value?.[0]?.name || 'No file selected'}</span>
+      {error && <p style={{ color: 'red' }}>{helperText}</p>}
+    </div>
+  );
+};
+
+
 const AdduWorksheets = ({ dataUploadType, data }) => {
+  console.log("🚀 ~ AdduWorksheets ~ data:", data)
   const [open, setOpen] = useState(false)
   const handleClickOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
   const [selectedFile, setSelectedFile] = useState(null)
+  const [selectedFiles, setSelectedFiles] = useState([]);
+
   const dispatch = useDispatch()
   const { t } = useTranslation()
   const defaultValues = {
     courseId: [''],
     UploadTypeId: '',
-    file: ''
+
   }
 
   const {
@@ -83,16 +121,12 @@ const AdduWorksheets = ({ dataUploadType, data }) => {
     mode: 'onBlur'
   })
 
+
+
   const onSubmit = async data => {
     console.log('🚀 ~ handleSaveData ~ data:', data)
-
-    const formData = new FormData()
-    formData.append('file', selectedFile)
-    data.courseId.forEach(id => formData.append('courseId', id))
-    formData.append('UploadTypeId', data.UploadTypeId)
-
     try {
-      await dispatch(addWorksheet(formData))
+      await dispatch(addWorksheet(data))
       handleClose()
       reset()
       setSelectedFile(null)
@@ -105,11 +139,16 @@ const AdduWorksheets = ({ dataUploadType, data }) => {
     document.getElementById('file-input').click()
   }
 
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'courseSchedule'
+  });
+
   return (
     <div>
       <Button onClick={handleClickOpen} variant='contained' sx={{ '& svg': { mr: 2 } }}>
         <Icon fontSize='1.125rem' icon='tabler:plus' />
-        <Translations text={'Add Worksheets'} />
+        <Translations text={'Add Files'} />
       </Button>
 
       <Dialog
@@ -130,32 +169,35 @@ const AdduWorksheets = ({ dataUploadType, data }) => {
           <form onSubmit={handleSubmit(onSubmit)}>
             <Grid container rowSpacing={4} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
               <Grid item xs={12} sm={12} lg={12}>
-                <Controller
+              <Controller
                   name='courseId'
                   control={control}
                   rules={{ required: true }}
-                  render={({ field: { onChange, value, ref } }) => (
+                  render={({ field: { value, onChange } }) => (
                     <Autocomplete
-                      multiple
-                      options={data}
-                      getOptionLabel={option => option.name}
-                      value={data?.filter(course => value.includes(course.id))}
+                      options={data.map(course => ({ value: course.id, label: course.name }))}
+                      fullWidth
+                      id='autocomplete-UserId'
+                      value={
+                        value
+                          ? { value, label: data?.find(course => course.id === value)?.name || '' }
+                          : null
+                      }
                       onChange={(event, newValue) => {
-                        onChange(newValue.map(item => item.id))
+                        onChange(newValue ? newValue.value : '')
                       }}
                       renderInput={params => (
-                        <TextField
+                        <CustomTextField
                           {...params}
+                          fullWidth
+                          sx={{ mb: 4 }}
+                          placeholder=''
                           label={t('Select Courses')}
+                          id='validation-billing-select'
+                          aria-describedby='validation-billing-select'
                           error={Boolean(errors.courseId)}
-                          helperText={errors.courseId ? 'This field is required' : ''}
-                          inputRef={ref}
+                          helperText={errors.courseId?.message || ''}
                         />
-                      )}
-                      renderOption={(props, option) => (
-                        <li {...props}>
-                          <Chip label={option.name} />
-                        </li>
                       )}
                     />
                   )}
@@ -198,25 +240,39 @@ const AdduWorksheets = ({ dataUploadType, data }) => {
                 />
               </Grid>
               <Grid item xs={12}>
-                <FileInputLabel onClick={handleFileInputClick}>
-                  <HiddenInput
-                    id='file-input'
-                    type='file'
-                    accept='application/pdf'
-                    onChange={e => {
-                      setSelectedFile(e.target.files[0])
-                      console.log(e.target.files[0])
-                    }}
-                  />
-                  <CustomTextField
-                    label={t('Upload File')}
-                    value={selectedFile ? selectedFile.name : ''}
-                    InputProps={{
-                      endAdornment: <Icon icon='tabler:upload' fontSize='1.25rem' />
-                    }}
-                    fullWidth
-                  />
-                </FileInputLabel>
+
+
+
+
+      <Controller
+  name={`files`}
+  control={control}
+  render={({ field }) => (
+    <FileInputLabel onClick={handleFileInputClick}>
+    <HiddenInput
+      id='file-input'
+      type='file'
+      accept='application/pdf'
+      multiple  // Enable multiple file selections
+      onChange={e => {
+        const files = Array.from(e.target.files);  // Convert FileList to an array
+        field.onChange(files);  // Update field with the array of files
+        setSelectedFiles(files);  // Update local state with selected files
+        console.log(files);  // Log array of files
+      }}
+    />
+    <CustomTextField
+      label={t('Upload Files')}
+      value={selectedFiles?.map(file => file.name).join(', ') || ''}  // Show names of all selected files
+      InputProps={{
+        endAdornment: <Icon icon='tabler:upload' fontSize='1.25rem' />
+      }}
+      fullWidth
+    />
+  </FileInputLabel>
+  )}
+/>
+
               </Grid>
             </Grid>
             <Stack direction={'row'} alignItems={'center'} justifyContent={'center'} spacing={5} marginTop={'2rem'}>

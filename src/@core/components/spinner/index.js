@@ -6,7 +6,66 @@ import CircularProgress from '@mui/material/CircularProgress'
 const FallbackSpinner = ({ sx }) => {
   // ** Hook
   const theme = useTheme()
+  const svgStyles = {
+    display: 'block',
+    width: '10em',
+    height: '10em',
+  };
 
+  const pencilRotate = {
+    animation: 'pencilRotate 3s linear infinite',
+  };
+
+  const pencilStroke = {
+    animation: 'pencilStroke 3s linear infinite',
+    strokeDashoffset: 439.82,
+    strokeDasharray: '439.82 439.82',
+    strokeWidth: 2,
+    stroke: 'currentColor',
+    fill: 'none',
+    transform: 'translate(100px,100px) rotate(-113deg)',
+  };
+
+  const pencilBody1 = {
+    animation: 'pencilBody1 3s linear infinite',
+    strokeDashoffset: 402,
+    strokeDasharray: '402.12 402.12',
+    strokeWidth: 30,
+    stroke: 'hsl(223,90%,50%)',
+    fill: 'none',
+  };
+
+  const pencilBody2 = {
+    animation: 'pencilBody2 3s linear infinite',
+    strokeDashoffset: 465,
+    strokeDasharray: '464.96 464.96',
+    strokeWidth: 10,
+    stroke: 'hsl(223,90%,60%)',
+    fill: 'none',
+  };
+
+  const pencilBody3 = {
+    animation: 'pencilBody3 3s linear infinite',
+    strokeDashoffset: 339,
+    strokeDasharray: '339.29 339.29',
+    strokeWidth: 10,
+    stroke: 'hsl(223,90%,40%)',
+    fill: 'none',
+  };
+
+  const pencilEraser = {
+    animation: 'pencilEraser 3s linear infinite',
+    transform: 'rotate(-90deg) translate(49px,0)',
+  };
+
+  const pencilEraserSkew = {
+    animation: 'pencilEraserSkew 3s ease-in-out infinite',
+  };
+
+  const pencilPoint = {
+    animation: 'pencilPoint 3s linear infinite',
+    transform: 'rotate(-90deg) translate(49px,-30px)',
+  };
   return (
     <Box
       sx={{
@@ -18,35 +77,44 @@ const FallbackSpinner = ({ sx }) => {
         ...sx
       }}
     >
-      <svg width={82} height={56.375} viewBox='0 0 32 22' fill='none' xmlns='http://www.w3.org/2000/svg'>
-        <path
-          fillRule='evenodd'
-          clipRule='evenodd'
-          fill={theme.palette.primary.main}
-          d='M0.00172773 0V6.85398C0.00172773 6.85398 -0.133178 9.01207 1.98092 10.8388L13.6912 21.9964L19.7809 21.9181L18.8042 9.88248L16.4951 7.17289L9.23799 0H0.00172773Z'
-        />
-        <path
-          fill='#161616'
-          opacity={0.06}
-          fillRule='evenodd'
-          clipRule='evenodd'
-          d='M7.69824 16.4364L12.5199 3.23696L16.5541 7.25596L7.69824 16.4364Z'
-        />
-        <path
-          fill='#161616'
-          opacity={0.06}
-          fillRule='evenodd'
-          clipRule='evenodd'
-          d='M8.07751 15.9175L13.9419 4.63989L16.5849 7.28475L8.07751 15.9175Z'
-        />
-        <path
-          fillRule='evenodd'
-          clipRule='evenodd'
-          fill={theme.palette.primary.main}
-          d='M7.77295 16.3566L23.6563 0H32V6.88383C32 6.88383 31.8262 9.17836 30.6591 10.4057L19.7824 22H13.6938L7.77295 16.3566Z'
-        />
-      </svg>
-      <CircularProgress disableShrink sx={{ mt: 6 }} />
+      <img src='/images/logos/logo ferka2.png' alt='fekraHub' width={500} height={500}/>
+     <svg xmlns="http://www.w3.org/2000/svg" height="200px" width="200px" viewBox="0 0 200 200" style={svgStyles}>
+      <defs>
+        <clipPath id="pencil-eraser">
+          <rect height="30" width="30" ry="5" rx="5"></rect>
+        </clipPath>
+      </defs>
+      <circle
+        transform="rotate(-113,100,100)"
+        strokeLinecap="round"
+        style={pencilStroke}
+        r="70"
+        className="pencil__stroke"
+      ></circle>
+      <g transform="translate(100,100)" style={pencilRotate}>
+        <g fill="none">
+          <circle transform="rotate(-90)" style={pencilBody1} r="64" className="pencil__body1"></circle>
+          <circle transform="rotate(-90)" style={pencilBody2} r="74" className="pencil__body2"></circle>
+          <circle transform="rotate(-90)" style={pencilBody3} r="54" className="pencil__body3"></circle>
+        </g>
+        <g transform="rotate(-90) translate(49,0)" style={pencilEraser} className="pencil__eraser">
+          <g style={pencilEraserSkew} className="pencil__eraser-skew">
+            <rect height="30" width="30" ry="5" rx="5" fill="hsl(223,90%,70%)"></rect>
+            <rect clipPath="url(#pencil-eraser)" height="30" width="5" fill="hsl(223,90%,60%)"></rect>
+            <rect height="20" width="30" fill="hsl(223,10%,90%)"></rect>
+            <rect height="20" width="15" fill="hsl(223,10%,70%)"></rect>
+            <rect height="20" width="5" fill="hsl(223,10%,80%)"></rect>
+            <rect height="2" width="30" y="6" fill="hsla(223,10%,10%,0.2)"></rect>
+            <rect height="2" width="30" y="13" fill="hsla(223,10%,10%,0.2)"></rect>
+          </g>
+        </g>
+        <g transform="rotate(-90) translate(49,-30)" style={pencilPoint} className="pencil__point">
+          <polygon points="15 0,30 30,0 30" fill="hsl(33,90%,70%)"></polygon>
+          <polygon points="15 0,6 30,0 30" fill="hsl(33,90%,50%)"></polygon>
+          <polygon points="15 0,20 10,10 10" fill="hsl(223,10%,10%)"></polygon>
+        </g>
+      </g>
+    </svg>
     </Box>
   )
 }
