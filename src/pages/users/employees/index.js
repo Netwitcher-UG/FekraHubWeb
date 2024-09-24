@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react'
-// import withRoleRestriction from 'src/@core/utils/withAuth'
+import { useState, useEffect, useCallback, useContext } from 'react'
 import { useRouter } from 'next/router'
-// import Chip from '@mui/material/Chip'
-// import Pagination from '@mui/material/Pagination'
 import CircularProgress from '@mui/material/CircularProgress'
+import { AbilityContext } from 'src/layouts/components/acl/Can'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
+import { Stack } from '@mui/system'
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import Divider from '@mui/material/Divider'
@@ -15,7 +14,6 @@ import Chip from '@mui/material/Chip'
 import { DataGrid } from '@mui/x-data-grid'
 import Translations from 'src/layouts/components/Translations'
 import { useTranslation } from 'react-i18next'
-
 // ** Store Imports
 import { useDispatch, useSelector } from 'react-redux'
 import CardHeader from '@mui/material/CardHeader'
@@ -27,7 +25,8 @@ import CustomTextField from 'src/@core/components/mui/text-field'
 import CardContent from '@mui/material/CardContent'
 // ** Custom Table Components Imports
 import TableHeader from 'src/views/apps/users/employees/list/TableHeader'
-
+import { IconButton, Typography } from '@mui/material'
+import EditEmployeeDialog from './edit-employee'
 const customScrollbarStyles = {
   '& ::-webkit-scrollbar': {
     height: 8 // Set the thickness for the horizontal scrollbar
@@ -41,81 +40,133 @@ const customScrollbarStyles = {
   }
 }
 
-const columns = [
-  {
-    width: 250,
-    headerName: <Translations text={'Email'} />,
-    field: 'email'
-  },
-  {
-    width: 250,
-    headerName: <Translations text={'Role'} />,
-    field: 'roles',
-    renderCell: ({ row }) => <Chip label={row.roles} color={'primary'} sx={{ textTransform: 'capitalize' }} />
-  },
-  {
-    width: 200,
-    headerName: <Translations text={'First Name'} />,
-    field: 'firstName'
-  },
-  {
-    width: 200,
-    headerName: <Translations text={'Last Name'} />,
-    field: 'lastName'
-  },
-  {
-    width: 100,
-    headerName: <Translations text={'Gender'} />,
-    field: 'gender'
-  },
-  {
-    width: 200,
-    headerName: <Translations text={'Nationality'} />,
-    field: 'nationality'
-  },
-  {
-    width: 200,
-    headerName: <Translations text={'Phone Number'} />,
-    field: 'phoneNumber'
-  },
-  {
-    width: 200,
-    headerName: <Translations text={'Job'} />,
-    field: 'job'
-  },
-  {
-    width: 200,
-    headerName: <Translations text={'BirthDay'} />,
-    renderCell: ({ row }) => <div>{convertDate(row.birthday)}</div>
-  },
-  {
-    width: 200,
-    headerName: <Translations text={'City'} />,
-    field: 'city'
-  },
-  {
-    width: 200,
-    headerName: <Translations text={'Street'} />,
-    field: 'street'
-  },
-  {
-    width: 200,
-    headerName: <Translations text={'Street'} />,
-    field: 'emergencyPhoneNumber'
-  },
-  {
-    width: 200,
-    headerName: <Translations text={'Birth Place'} />,
-    field: 'birthplace'
-  },
-  {
-    width: 200,
-    headerName: <Translations text={'Street Num'} />,
-    field: 'streetNr'
-  }
-]
-
 const EmployeesList = () => {
+  const ability = useContext(AbilityContext)
+  const [dialogData, setDialogData] = useState(null)
+  const [open, setOpen] = useState(false)
+  const handleEditClick = (e, row) => {
+    e.stopPropagation()
+    handleOpenDialog(row)
+  }
+  const handleOpenDialog = useCallback(data => {
+    setDialogData(data)
+    setOpen(true)
+  }, [])
+  const handleCloseDrawer = useCallback(() => {
+    setOpen(false)
+    setDialogData(null)
+  }, [])
+  const columns = [
+    {
+      width: 100,
+      field: 'action',
+      headerName: <Translations text={'Action'} />,
+      renderCell: params => {
+        return (
+          <>
+            {ability.can('update', 'User') && (
+              <Stack direction={'row'} alignItems={'center'}>
+                <IconButton onClick={e => handleEditClick(e, params.row)}>
+                  <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24'>
+                    <path
+                      fill='currentColor'
+                      d='M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83l3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z'
+                    ></path>
+                  </svg>
+                </IconButton>
+              </Stack>
+            )}
+          </>
+        )
+      }
+    },
+    {
+      width: 250,
+      headerName: <Translations text={'Email'} />,
+      field: 'email'
+    },
+    {
+      width: 250,
+      headerName: <Translations text={'Role'} />,
+      field: 'roles',
+      renderCell: ({ row }) => <Chip label={row.roles} color={'primary'} sx={{ textTransform: 'capitalize' }} />
+    },
+    {
+      width: 200,
+      headerName: <Translations text={'First Name'} />,
+      field: 'firstName'
+    },
+    {
+      width: 200,
+      headerName: <Translations text={'Last Name'} />,
+      field: 'lastName'
+    },
+    {
+      width: 200,
+      headerName: <Translations text={'User Status'} />,
+      field: 'activeUser',
+      renderCell: ({ row }) => (
+        <>
+          {row.activeUser ? (
+            <Chip label={'Active'} color={'success'} sx={{ textTransform: 'capitalize' }} />
+          ) : (
+            <Chip label={'Inactive'} color={'secondary'} sx={{ textTransform: 'capitalize' }} />
+          )}
+        </>
+      )
+    },
+    {
+      width: 100,
+      headerName: <Translations text={'Gender'} />,
+      field: 'gender'
+    },
+    {
+      width: 200,
+      headerName: <Translations text={'Nationality'} />,
+      field: 'nationality'
+    },
+    {
+      width: 200,
+      headerName: <Translations text={'Phone Number'} />,
+      field: 'phoneNumber'
+    },
+    {
+      width: 200,
+      headerName: <Translations text={'Job'} />,
+      field: 'job'
+    },
+    {
+      width: 200,
+      headerName: <Translations text={'BirthDay'} />,
+      renderCell: ({ row }) => <div>{convertDate(row.birthday)}</div>
+    },
+    {
+      width: 200,
+      headerName: <Translations text={'City'} />,
+      field: 'city'
+    },
+    {
+      width: 200,
+      headerName: <Translations text={'Street'} />,
+      field: 'street'
+    },
+    {
+      width: 200,
+      headerName: <Translations text={'Street'} />,
+      field: 'emergencyPhoneNumber'
+    },
+    {
+      width: 200,
+      headerName: <Translations text={'Birth Place'} />,
+      field: 'birthplace'
+    },
+    {
+      width: 200,
+      headerName: <Translations text={'Street Num'} />,
+      field: 'streetNr'
+    }
+  ]
+
   // ** State
   const { t } = useTranslation()
   const [selectedRole, setSelectedRole] = useState('')
@@ -140,11 +191,7 @@ const EmployeesList = () => {
   }, [dispatch])
 
   const fetchDataWithPagination = roleValue => {
-    dispatch(
-      fetchEmployees({
-        role: roleValue
-      })
-    )
+    dispatch(fetchEmployees(roleValue == '' ? '' : `RoleName=${roleValue}`))
   }
 
   useEffect(() => {
@@ -224,18 +271,10 @@ const EmployeesList = () => {
             )}
           </Box>
           <Divider sx={{ m: '0 !important' }} />
-          {/* <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-            <Pagination
-              count={store?.data?.total_number_page || 1} // Total pages
-              page={currentPage}
-              onChange={handlePageChange}
-              color='primary'
-            />
-          </Box> */}
         </Card>
       </Grid>
 
-      {/* <AddExpenseDrawer open={addUserOpen} toggle={toggleAddUserDrawer} store={store} /> */}
+      <EditEmployeeDialog open={open} setOpen={setOpen} profileData={dialogData} />
     </Grid>
   )
 }

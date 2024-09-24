@@ -56,7 +56,7 @@ function defineAbilitiesFor(role, rolesPermissions) {
         can('delete', 'User')
         break
       case 'ResetPasswordUser':
-        can('update', 'User', 'password')
+        can('reset', 'password')
         break
       case 'GetStudentsCourse':
         can('read', 'StudentCourse')
