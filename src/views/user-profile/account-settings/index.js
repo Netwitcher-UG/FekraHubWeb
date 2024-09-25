@@ -301,14 +301,13 @@ const AccountSettingsPage = ({ data }) => {
       <Grid sx={{ mx: 8, mt: 2 }}>
         <Alert icon={false} sx={{ py: 3, ...bgColors.warningLight, '& .MuiAlert-message': { p: 0 } }}>
           <Typography variant='body2' sx={{ mb: 2, color: 'primary.warning' }}>
-            <strong>
-              <Translations text={'Warning: '} />
-            </strong>
-            <Translations
-              text={
-                ' When changing email a confirmation link will be sent to your email, Please make sure that the new email is valid and working , otherwise you will not be able to access the app !  '
-              }
-            />
+            <strong>{t('Warning')}:</strong>
+            {/* First part of the warning message */}
+            {t('When changing email a confirmation link will be sent to your email.')}{' '}
+            {/* Second part of the warning message */}
+            {t(
+              'Please make sure that the new email is valid and working, otherwise you will not be able to access the app!'
+            )}
           </Typography>
         </Alert>
       </Grid>

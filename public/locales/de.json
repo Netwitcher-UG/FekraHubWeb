@@ -454,5 +454,10 @@
     "Your child was registerd successfully ! and a copy of the Contract was sent to your email": "Ihr Kind wurde erfolgreich registriert! Eine Kopie des Vertrags wurde an Ihre E-Mail gesendet.",
     "Go to children page": "Zur Kinderseite gehen",
     "Accept": "Akzeptieren",
-    "Lessons": "Lektionen"
+    "Lessons": "Lektionen",
+    "Account credentials": "Kontodaten",
+    "Warning": "Warnung",
+    "When changing email a confirmation link will be sent to your email.": "Beim Ändern der E-Mail wird ein Bestätigungslink an Ihre E-Mail-Adresse gesendet.",
+    "Please make sure that the new email is valid and working, otherwise you will not be able to access the app!": "Bitte stellen Sie sicher, dass die neue E-Mail-Adresse gültig und funktionsfähig ist, sonst können Sie nicht auf die App zugreifen!",
+    "Save": "Speichern"
 }

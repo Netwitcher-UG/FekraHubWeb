@@ -15,6 +15,7 @@ import { styled } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import MuiTabList from '@mui/lab/TabList'
 import CircularProgress from '@mui/material/CircularProgress'
+import { useTranslation } from 'react-i18next'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -60,6 +61,7 @@ const TabList = styled(MuiTabList)(({ theme }) => ({
 const UserProfile = ({ tab, data, isLoading }) => {
   // ** State
   const [activeTab, setActiveTab] = useState(tab)
+  const { t } = useTranslation()
 
   // ** Hooks
   const router = useRouter()
@@ -123,7 +125,7 @@ const UserProfile = ({ tab, data, isLoading }) => {
                       label={
                         <Box sx={{ display: 'flex', alignItems: 'center', ...(!hideText && { '& svg': { mr: 2 } }) }}>
                           <Icon fontSize='1.125rem' icon='fluent-mdl2:publish-course' />
-                          {!hideText && 'Courses'}
+                          {!hideText && t('Courses')}
                         </Box>
                       }
                     />
@@ -134,7 +136,7 @@ const UserProfile = ({ tab, data, isLoading }) => {
                     label={
                       <Box sx={{ display: 'flex', alignItems: 'center', ...(!hideText && { '& svg': { mr: 2 } }) }}>
                         <Icon fontSize='1.125rem' icon='tabler:user-check' />
-                        {!hideText && 'Account Settings'}
+                        {!hideText && t('Account Settings')}
                       </Box>
                     }
                   />
