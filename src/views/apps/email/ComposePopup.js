@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -22,7 +22,8 @@ import CustomAutocomplete from 'src/@core/components/mui/autocomplete'
 import Icon from 'src/@core/components/icon'
 
 // ** Third Party Components
-import { EditorState } from 'draft-js'
+import { EditorState, convertToRaw } from 'draft-js'
+
 
 // ** Custom Components Imports
 import OptionsMenu from 'src/@core/components/option-menu'
@@ -34,59 +35,41 @@ import { EditorWrapper } from 'src/@core/styles/libs/react-draft-wysiwyg'
 
 // ** Utils Import
 import { getInitials } from 'src/@core/utils/get-initials'
-
+import { stateToHTML } from 'draft-js-export-html';
 // ** Styles
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
+import { fetchEmployees } from 'src/store/apps/users'
+import { useDispatch, useSelector } from 'react-redux'
+import { postMail } from 'src/store/apps/email'
 
-const menuItemsArr = [
-  {
-    name: 'Ross Geller',
-    value: 'ross',
-    src: '/images/avatars/1.png'
-  },
-  {
-    name: 'Pheobe Buffay',
-    value: 'pheobe',
-    src: '/images/avatars/2.png'
-  },
-  {
-    name: 'Joey Tribbiani',
-    value: 'joey',
-    src: '/images/avatars/3.png'
-  },
-  {
-    name: 'Rachel Green',
-    value: 'rachel',
-    src: '/images/avatars/4.png'
-  },
-  {
-    name: 'Chandler Bing',
-    value: 'chandler',
-    src: '/images/avatars/5.png'
-  },
-  {
-    name: 'Monica Geller',
-    value: 'monica',
-    src: '/images/avatars/8.png'
-  }
-]
 const filter = createFilterOptions()
 
 const ComposePopup = props => {
   // ** Props
   const { mdAbove, composeOpen, composePopupWidth, toggleComposeOpen } = props
-
+  const { employeesData } = useSelector(state => state.users)
+  const dispatch =useDispatch()
+  useEffect(() => {
+    dispatch(fetchEmployees())
+  }, [dispatch])
   // ** States
   const [emailTo, setEmailTo] = useState([])
   const [ccValue, setccValue] = useState([])
   const [subjectValue, setSubjectValue] = useState('')
   const [bccValue, setbccValue] = useState([])
   const [messageValue, setMessageValue] = useState(EditorState.createEmpty())
+  const [messageSend, setMessageSend] = useState()
 
   const [visibility, setVisibility] = useState({
     cc: false,
     bcc: false
   })
+
+  const getRawContentState = () => {
+    const contentState = messageValue.getCurrentContent();
+
+    return JSON.stringify(convertToRaw(contentState));
+  };
   const toggleVisibility = value => setVisibility({ ...visibility, [value]: !visibility[value] })
 
   const handleMailDelete = (value, state, setState) => {
@@ -95,7 +78,29 @@ const ComposePopup = props => {
     arr.splice(index, 1)
     setState([...arr])
   }
+  const handleEmailSend = () => {
+    const contentState = messageValue.getCurrentContent();
+    const htmlContent = stateToHTML(contentState);
 
+    setEmailTo(emailTo)
+    setccValue(ccValue)
+    setbccValue(bccValue)
+    setVisibility(visibility)
+    setMessageValue(messageValue)
+    setSubjectValue(subjectValue)
+
+    const EmailData={
+      subject:subjectValue,
+      ExternalEmails:emailTo,
+      Message:htmlContent,
+      Files:messageValue
+
+    }
+
+
+    dispatch(postMail(EmailData));
+    handlePopupClose()
+  }
   const handlePopupClose = () => {
     toggleComposeOpen()
     setEmailTo([])
@@ -124,7 +129,7 @@ const ComposePopup = props => {
       <Chip
         size='small'
         key={item.value}
-        label={item.name}
+        label={item}
         {...getTagProps({ index })}
         deleteIcon={<Icon icon='tabler:x' />}
         onDelete={() => handleMailDelete(item.value, state, setState)}
@@ -134,30 +139,43 @@ const ComposePopup = props => {
 
   const renderListItem = (props, option, array, setState) => {
     return (
-      <ListItem {...props} key={option.value} sx={{ cursor: 'pointer' }} onClick={() => setState([...array, option])}>
+      <ListItem {...props} key={option.value} sx={{ cursor: 'pointer' }} onClick={() => setState([...array, option.email])}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {option.src.length ? (
-            <CustomAvatar src={option.src} alt={option.name} sx={{ mr: 3, width: 22, height: 22 }} />
+          {option.length ? (
+            <CustomAvatar src={option.email} alt={option.email} sx={{ mr: 3, width: 22, height: 22 }} />
           ) : (
             <CustomAvatar skin='light' color='primary' sx={{ mr: 3, width: 22, height: 22, fontSize: '.75rem' }}>
-              {getInitials(option.name)}
+              {getInitials(option.email)}
             </CustomAvatar>
           )}
-          <Typography sx={{ fontSize: theme => theme.typography.body2.fontSize }}>{option.name}</Typography>
+          <Typography sx={{ fontSize: theme => theme.typography.body2.fontSize }}>{option.email}</Typography>
         </Box>
       </ListItem>
     )
   }
+  // Local image upload callback
+  const uploadImageCallback = (file) => {
+    return new Promise((resolve, reject) => {
+      try {
+        // Create a local URL for the uploaded image
+        const imageUrl = URL.createObjectURL(file);
 
+        // Resolve with the local image URL (this will insert the image into the editor)
+        resolve({ data: { link: imageUrl } });
+      } catch (error) {
+        reject(error.toString());
+      }
+    });
+  }
   const addNewOption = (options, params) => {
     const filtered = filter(options, params)
     const { inputValue } = params
-    const isExisting = options.some(option => inputValue === option.name)
+    const isExisting = options.some(option => inputValue === option.email)
     if (inputValue !== '' && !isExisting) {
       filtered.push({
-        name: inputValue,
+        email: inputValue,
         value: inputValue,
-        src: ''
+
       })
     }
 
@@ -235,10 +253,10 @@ const ComposePopup = props => {
             clearIcon={false}
             id='email-to-select'
             filterSelectedOptions
-            options={menuItemsArr}
+            options={employeesData}
             ListboxComponent={List}
             filterOptions={addNewOption}
-            getOptionLabel={option => option.name}
+            getOptionLabel={option => option.email}
             renderOption={(props, option) => renderListItem(props, option, emailTo, setEmailTo)}
             renderTags={(array, getTagProps) => renderCustomChips(array, getTagProps, emailTo, setEmailTo)}
             sx={{
@@ -261,62 +279,9 @@ const ComposePopup = props => {
             )}
           />
         </Box>
-        <Typography variant='body2' sx={{ color: 'primary.main' }}>
-          <Box component='span' sx={{ cursor: 'pointer' }} onClick={() => toggleVisibility('cc')}>
-            Cc
-          </Box>
-          <Box component='span' sx={{ mx: 1 }}>
-            |
-          </Box>
-          <Box component='span' sx={{ cursor: 'pointer' }} onClick={() => toggleVisibility('bcc')}>
-            Bcc
-          </Box>
-        </Typography>
+
       </Box>
-      {visibility.cc ? (
-        <Box
-          sx={{
-            px: 5,
-            display: 'flex',
-            alignItems: 'center',
-            borderBottom: theme => `1px solid ${theme.palette.divider}`
-          }}
-        >
-          <div>
-            <InputLabel sx={{ mr: 3, fontSize: theme => theme.typography.body2.fontSize }} htmlFor='email-cc-select'>
-              Cc:
-            </InputLabel>
-          </div>
-          <CustomTextField
-            fullWidth
-            sx={{
-              '& .MuiFilledInput-root.MuiInputBase-sizeSmall': { border: '0 !important', p: '0 !important' }
-            }}
-          />
-        </Box>
-      ) : null}
-      {visibility.bcc ? (
-        <Box
-          sx={{
-            px: 5,
-            display: 'flex',
-            alignItems: 'center',
-            borderBottom: theme => `1px solid ${theme.palette.divider}`
-          }}
-        >
-          <div>
-            <InputLabel sx={{ mr: 3, fontSize: theme => theme.typography.body2.fontSize }} htmlFor='email-bcc-select'>
-              Bcc:
-            </InputLabel>
-          </div>
-          <CustomTextField
-            fullWidth
-            sx={{
-              '& .MuiFilledInput-root.MuiInputBase-sizeSmall': { border: '0 !important', p: '0 !important' }
-            }}
-          />
-        </Box>
-      ) : null}
+
       <Box
         sx={{
           px: 5,
@@ -347,26 +312,24 @@ const ComposePopup = props => {
           '& .rdw-editor-wrapper, & .rdw-option-wrapper': { border: 0 }
         }}
       >
-        <ReactDraftWysiwyg
-          editorState={messageValue}
-          onEditorStateChange={editorState => setMessageValue(editorState)}
-          placeholder='Write your message...'
-          toolbar={{
-            options: ['inline', 'list', 'link', 'image'],
-            inline: {
-              inDropdown: false,
-              options: ['bold', 'italic', 'underline']
-            },
-            list: {
-              inDropdown: false,
-              options: ['unordered', 'ordered']
-            },
-            link: {
-              inDropdown: false,
-              options: ['link']
-            }
-          }}
-        />
+  <ReactDraftWysiwyg
+        editorState={messageValue}
+        onEditorStateChange={(newEditorState) => setMessageValue(newEditorState)}
+        placeholder="Write your message..."
+        toolbar={{
+          options: ['inline', 'list', 'link', 'image'],
+          inline: { inDropdown: false, options: ['bold', 'italic', 'underline'] },
+          list: { inDropdown: false, options: ['unordered', 'ordered'] },
+          link: { inDropdown: false, options: ['link'] },
+          image: {
+            uploadCallback: uploadImageCallback, // Add the file upload function here
+            alt: { present: true, mandatory: false },
+            previewImage: true,
+            inputAccept: 'image/*',
+
+          },
+        }}
+      />
       </EditorWrapper>
       <Box
         sx={{
@@ -379,24 +342,14 @@ const ComposePopup = props => {
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Button variant='contained' onClick={handlePopupClose} sx={{ '& svg': { mr: 2 } }}>
+          <Button variant='contained' onClick={handleEmailSend} sx={{ '& svg': { mr: 2 } }}>
             <Icon icon='tabler:send' fontSize='1.125rem' />
             Send
           </Button>
-          <IconButton size='small' sx={{ ml: 3, color: 'text.secondary' }}>
-            <Icon icon='tabler:paperclip' fontSize='1.25rem' />
-          </IconButton>
+
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <OptionsMenu
-            iconButtonProps={{ size: 'small' }}
-            iconProps={{ fontSize: '1.25rem' }}
-            options={['Print', 'Check spelling', 'Plain text mode']}
-            menuProps={{
-              anchorOrigin: { vertical: 'top', horizontal: 'right' },
-              transformOrigin: { vertical: 'bottom', horizontal: 'right' }
-            }}
-          />
+
           <IconButton size='small' onClick={handlePopupClose}>
             <Icon icon='tabler:trash' fontSize='1.25rem' />
           </IconButton>

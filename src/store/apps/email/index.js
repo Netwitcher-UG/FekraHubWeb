@@ -36,7 +36,8 @@ export const postMail = createAsyncThunk('appEmail/postMail', async (data, { dis
   ShowSuccessToast('Success')
     return response.data
   }catch(error){
-    ShowErrorToast(error)
+
+    ShowErrorToast(error.response.data)
   }
 
 })

@@ -12,7 +12,7 @@ export default function ViewWorksheet({ selectedFile, setSelectedFile }) {
       <DialogContent>
         <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
           <iframe
-            src={`data:application/pdf;base64,${selectedFile?.file.data}`}
+            src={`data:application/pdf;base64,${selectedFile?.file}`}
             style={{
               position: 'absolute',
               top: 0,

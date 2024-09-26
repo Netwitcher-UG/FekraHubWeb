@@ -18,7 +18,8 @@ import { fetchCourses } from 'src/store/apps/students'
 import { addWorksheet } from 'src/store/apps/worksheets'
 import { Stack } from '@mui/system'
 import { useTranslation } from 'react-i18next'
-
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
 const CustomCloseButton = styled(IconButton)(({ theme }) => ({
   top: 0,
   right: 0,
@@ -59,43 +60,21 @@ const HiddenInput = styled('input')({
   display: 'none'
 })
 
-const CustomTextFieldFile = ({ field, label, error, helperText, ...props }) => {
-  return (
-    <div>
-      <label htmlFor={field.name}>{label}</label>
-      <input
-        {...field}
-        {...props}
-        id={field.name}
-        style={{ display: 'none' }} // Hide the default input
-        type="file"
-        onChange={(e) => {
-          field.onChange(e.target.files); // Pass files to the field
-        }}
-      />
-      <button
-        type="button"
-        onClick={() => document.getElementById(field.name).click()}
-        style={{
-          padding: '10px',
-          backgroundColor: '#007bff',
-          color: '#fff',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          border: 'none',
-        }}
-      >
-        Select File
-      </button>
-      <span>{field.value?.[0]?.name || 'No file selected'}</span>
-      {error && <p style={{ color: 'red' }}>{helperText}</p>}
-    </div>
-  );
-};
+const schema = yup.object().shape({
+  courseId: yup
+  .number()
+  .required('course Id is required'),
+  UploadTypeId: yup
+  .number()
+  .required('course Id is required'),
+
+  files: yup.array().required('File is required'),
+  // Additional validation for other fields can go here
+});
 
 
-const AdduWorksheets = ({ dataUploadType, data }) => {
-  console.log("🚀 ~ AdduWorksheets ~ data:", data)
+const AddWorksheets = ({ dataUploadType, data }) => {
+
   const [open, setOpen] = useState(false)
   const handleClickOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
@@ -105,8 +84,9 @@ const AdduWorksheets = ({ dataUploadType, data }) => {
   const dispatch = useDispatch()
   const { t } = useTranslation()
   const defaultValues = {
-    courseId: [''],
+    courseId: '',
     UploadTypeId: '',
+    files:[],
 
   }
 
@@ -118,6 +98,7 @@ const AdduWorksheets = ({ dataUploadType, data }) => {
     reset
   } = useForm({
     defaultValues,
+    resolver: yupResolver(schema),
     mode: 'onBlur'
   })
 
@@ -125,10 +106,18 @@ const AdduWorksheets = ({ dataUploadType, data }) => {
 
   const onSubmit = async data => {
     console.log('🚀 ~ handleSaveData ~ data:', data)
+    const formData = new FormData
+    formData.append('courseId',data.courseId)
+    formData.append('UploadTypeId',data.UploadTypeId)
+
+    for (let i = 0; i < selectedFiles.length; i++) {
+      formData.append('files', selectedFiles[i]); // Append each file, 'files[]' indicates an array
+    }
     try {
-      await dispatch(addWorksheet(data))
+      await dispatch(addWorksheet(formData))
       handleClose()
       reset()
+      setSelectedFiles(null)
       setSelectedFile(null)
     } catch (error) {
       console.error('Error submitting data:', error)
@@ -268,6 +257,8 @@ const AdduWorksheets = ({ dataUploadType, data }) => {
         endAdornment: <Icon icon='tabler:upload' fontSize='1.25rem' />
       }}
       fullWidth
+      error={Boolean(errors.files)}
+      helperText={errors.files?.message || ''}
     />
   </FileInputLabel>
   )}
@@ -291,4 +282,4 @@ const AdduWorksheets = ({ dataUploadType, data }) => {
   )
 }
 
-export default AdduWorksheets
+export default AddWorksheets

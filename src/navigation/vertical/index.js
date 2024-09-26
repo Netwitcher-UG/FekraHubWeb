@@ -96,7 +96,7 @@ const navigation = () => {
     {
       title: 'messages',
       icon: 'tabler:mail',
-      path: '/messages',
+      path: '/apps/email',
       action: 'manage',
       subject: 'messages'
     },

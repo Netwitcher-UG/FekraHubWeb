@@ -1,5 +1,5 @@
 // ** React Imports
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -29,6 +29,8 @@ import OptionsMenu from 'src/@core/components/option-menu'
 // ** Email App Component Imports
 import { setTimeout } from 'timers'
 import MailDetails from './MailDetails'
+import { fetchMails } from 'src/store/apps/email'
+import { useSelector } from 'react-redux'
 
 const MailItem = styled(ListItem)(({ theme }) => ({
   cursor: 'pointer',
@@ -90,6 +92,15 @@ const MailLog = props => {
 
   // ** State
   const [refresh, setRefresh] = useState(false)
+
+  const {messages} = useSelector(state => state.email)
+  console.log("🚀 ~ MailLog ~ messages:", messages)
+
+
+  useEffect(() => {
+    dispatch(fetchMails())
+  }, [dispatch])
+
 
   // ** Vars
   const folders = [
@@ -327,57 +338,22 @@ const MailLog = props => {
         <Box sx={{ py: 2, px: { xs: 2.5, sm: 5 } }}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              {store && store.mails && store.selectedMails ? (
-                <Checkbox
-                  onChange={e => dispatch(handleSelectAllMail(e.target.checked))}
-                  checked={(store.mails.length && store.mails.length === store.selectedMails.length) || false}
-                  indeterminate={
-                    !!(
-                      store.mails.length &&
-                      store.selectedMails.length &&
-                      store.mails.length !== store.selectedMails.length
-                    )
-                  }
-                />
-              ) : null}
-
-              {store && store.selectedMails.length && store.mails && store.mails.length ? (
-                <Fragment>
-                  {routeParams && routeParams.folder !== 'trash' ? (
-                    <IconButton onClick={handleMoveToTrash}>
-                      <Icon icon='tabler:trash' />
-                    </IconButton>
-                  ) : null}
-                  <IconButton onClick={() => handleReadMail(store.selectedMails, false)}>
-                    <Icon icon='tabler:mail-opened' />
-                  </IconButton>
-                  <OptionsMenu leftAlignMenu options={handleFoldersMenu()} icon={<Icon icon='tabler:folder' />} />
-                  <OptionsMenu leftAlignMenu options={handleLabelsMenu()} icon={<Icon icon='tabler:tag' />} />
-                </Fragment>
-              ) : null}
-            </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <IconButton size='small' onClick={handleRefreshMailsClick}>
-                <Icon icon='tabler:reload' />
-              </IconButton>
-              <IconButton size='small'>
-                <Icon icon='tabler:dots-vertical' />
-              </IconButton>
+<Typography sx={{fontSize:'20px'}}>Sent</Typography>
             </Box>
           </Box>
         </Box>
         <Divider sx={{ m: '0 !important' }} />
         <Box sx={{ p: 0, position: 'relative', overflowX: 'hidden', height: 'calc(100% - 7.5625rem)' }}>
           <ScrollWrapper hidden={hidden}>
-            {store && store.mails && store.mails.length ? (
+            {messages && messages.messages && messages.messages.length ? (
               <List sx={{ p: 0 }}>
-                {store.mails.map(mail => {
-                  const mailReadToggleIcon = mail.isRead ? 'tabler:mail' : 'tabler:mail-opened'
+                {messages.messages.map(mail => {
+                  const mailReadToggleIcon = true ? 'tabler:mail' : 'tabler:mail-opened'
 
                   return (
                     <MailItem
                       key={mail.id}
-                      sx={{ backgroundColor: mail.isRead ? 'action.hover' : 'background.paper' }}
+                      sx={{ backgroundColor: true ? 'action.hover' : 'background.paper' }}
                       onClick={() => {
                         setMailDetailsOpen(true)
                         dispatch(getCurrentMail(mail.id))
@@ -388,27 +364,10 @@ const MailLog = props => {
                       }}
                     >
                       <Box sx={{ mr: 4, display: 'flex', overflow: 'hidden', alignItems: 'center' }}>
-                        <Checkbox
-                          onClick={e => e.stopPropagation()}
-                          onChange={() => dispatch(handleSelectMail(mail.id))}
-                          checked={store.selectedMails.includes(mail.id) || false}
-                        />
-                        <IconButton
-                          size='small'
-                          onClick={e => handleStarMail(e, mail.id, !mail.isStarred)}
-                          sx={{
-                            mr: { xs: 0, sm: 3 },
-                            color: mail.isStarred ? 'warning.main' : 'text.secondary',
-                            '& svg': {
-                              display: { xs: 'none', sm: 'block' }
-                            }
-                          }}
-                        >
-                          <Icon icon={mail.isStarred ? 'tabler:star-filled' : 'tabler:star'} />
-                        </IconButton>
+
                         <Avatar
-                          alt={mail.from.name}
-                          src={mail.from.avatar}
+                          alt={mail.user[0].firstName}
+                          src={mail.user[0].firstName}
                           sx={{ mr: 3, width: '2rem', height: '2rem' }}
                         />
                         <Box
@@ -430,61 +389,24 @@ const MailLog = props => {
                               textOverflow: ['ellipsis', 'unset']
                             }}
                           >
-                            {mail.from.name}
+                            {mail.user[0].firstName + ' '+mail.user[0].lastName}
                           </Typography>
                           <Typography noWrap sx={{ width: '100%', color: 'text.secondary' }}>
-                            {mail.subject}
+                          {mail.message}
                           </Typography>
                         </Box>
                       </Box>
-                      <Box
-                        className='mail-actions'
-                        sx={{ display: 'none', alignItems: 'center', justifyContent: 'flex-end' }}
-                      >
-                        {routeParams && routeParams.folder !== 'trash' ? (
-                          <Tooltip placement='top' title='Delete Mail'>
-                            <IconButton
-                              onClick={e => {
-                                e.stopPropagation()
-                                dispatch(updateMail({ emailIds: [mail.id], dataToUpdate: { folder: 'trash' } }))
-                              }}
-                            >
-                              <Icon icon='tabler:trash' />
-                            </IconButton>
-                          </Tooltip>
-                        ) : null}
 
-                        <Tooltip placement='top' title={mail.isRead ? 'Unread Mail' : 'Read Mail'}>
-                          <IconButton
-                            onClick={e => {
-                              e.stopPropagation()
-                              handleReadMail([mail.id], !mail.isRead)
-                            }}
-                          >
-                            <Icon icon={mailReadToggleIcon} />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip placement='top' title='Move to Spam'>
-                          <IconButton
-                            onClick={e => {
-                              e.stopPropagation()
-                              handleFolderUpdate([mail.id], 'spam')
-                            }}
-                          >
-                            <Icon icon='tabler:alert-octagon' />
-                          </IconButton>
-                        </Tooltip>
-                      </Box>
                       <Box
                         className='mail-info-right'
                         sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}
                       >
-                        <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>{renderMailLabels(mail.labels)}</Box>
+                        {/* <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>{mail.message}</Box> */}
                         <Typography
                           variant='body2'
                           sx={{ minWidth: '50px', textAlign: 'right', whiteSpace: 'nowrap', color: 'text.disabled' }}
                         >
-                          {new Date(mail.time).toLocaleTimeString('en-US', {
+                          {new Date(mail.date).toLocaleTimeString('en-US', {
                             hour: '2-digit',
                             minute: '2-digit',
                             hour12: true

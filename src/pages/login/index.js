@@ -42,31 +42,35 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
 
-// ** Styled Components
 const LoginIllustration = styled('img')(({ theme }) => ({
-
-  maxHeight: '100vh',
-
-
+  maxHeight: '100vh',  // Adjust max height to fit the viewport
+  objectFit: 'contain', // Ensure the image scales properly
+  width: '100%',  // Allow image to scale based on its aspect ratio
+  [theme.breakpoints.down('md')]: {
+    display: 'none'  // Hide image on small screens
+  }
 }))
 
 const RightWrapper = styled(Box)(({ theme }) => ({
   width: '100%',
-   boxShadow: '5px 10px 20px #808080',
+  boxShadow: '0px 0px 20px rgba(128, 128, 128, 0.2)',  // Soft shadow effect
   [theme.breakpoints.up('md')]: {
-    maxWidth: 450
+    maxWidth: 450  // Adjust width for medium screens
   },
   [theme.breakpoints.up('lg')]: {
-    maxWidth: 600
+    maxWidth: 600  // Adjust width for large screens
   },
   [theme.breakpoints.up('xl')]: {
-    maxWidth: 750
+    maxWidth: '100%'  // Limit to half the screen on extra-large screens
   }
 }))
 
 const LinkStyled = styled(Link)(({ theme }) => ({
   textDecoration: 'none',
-  color: `${theme.palette.primary.main} !important`
+  color: `${theme.palette.primary.main} !important`,
+  '&:hover': {
+    textDecoration: 'underline'  // Add underline on hover for accessibility
+  }
 }))
 
 const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
@@ -74,7 +78,6 @@ const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
     color: theme.palette.text.secondary
   }
 }))
-
 const getValidationSchema = t =>
   yup.object().shape({
     email: yup.string().email(t('Email must be valid')).required(t('Email is required')),
