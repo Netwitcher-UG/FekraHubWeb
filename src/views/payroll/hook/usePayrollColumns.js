@@ -14,7 +14,6 @@ import { deleteInvoices, getStudentInvoiceFile } from 'src/store/apps/invoices'
 import DropzoneWrapper from 'src/@core/utils/DropZone'
 import { AddPayrollFile, deletePayroll, getPayrollTeacherFile } from 'src/store/apps/payroll'
 
-
 const usePayrollColumns = () => {
   const dispatch = useDispatch()
   const { attendanceStatuses } = useSelector(state => state.attendance)
@@ -29,10 +28,9 @@ const usePayrollColumns = () => {
     setIsDialogOpen(true)
     setSelectedId(params)
     setDeleteName(params.name)
-
   }
   const handleDelete = () => {
-    dispatch(deletePayroll({selectedId:selectedId.payrolls[0].id,studentId:selectedId.payrolls[0].id}))
+    dispatch(deletePayroll({ selectedId: selectedId.payrolls[0].id, studentId: selectedId.payrolls[0].id }))
     setIsDialogOpen(false)
   }
   const handleCloseDialog = () => {
@@ -48,24 +46,23 @@ const usePayrollColumns = () => {
 
   const handleFileUpload = useCallback((acceptedFiles, row) => {
     // Handle the uploaded file, e.g., sending to the server
-    console.log('File uploaded:', acceptedFiles, 'for row:', row);
+    console.log('File uploaded:', acceptedFiles, 'for row:', row)
     const formData = new FormData()
-    formData.append('file',acceptedFiles[0])
-    formData.append('UserID',row.id)
+    console.log(acceptedFiles[0])
+    formData.append('file', acceptedFiles[0])
+    formData.append('UserID', row.id)
     dispatch(AddPayrollFile(formData))
-  }, []);
+  }, [])
 
   const [attendanceData, setAttendanceData] = useState([])
   const ability = useContext(AbilityContext)
-
-
 
   const columns = useMemo(
     () => [
       {
         headerName: <Translations text={'Full Name'} />,
         field: 'FullName',
-        flex:3,
+        flex: 3,
         renderCell: ({ row }) => (
           <div>
             {row.firstName} {row.lastName}
@@ -73,9 +70,9 @@ const usePayrollColumns = () => {
         )
       },
       {
-        flex:3,
+        flex: 3,
         headerName: <Translations text={'Date'} />,
-        renderCell: ({ row }) => <div>{row.payrolls? convertDate( row.payrolls?.[0].timestamp):'------'}</div>
+        renderCell: ({ row }) => <div>{row.payrolls ? convertDate(row.payrolls?.[0].timestamp) : '------'}</div>
       },
       {
         headerName: <Translations text={'Upload PDF'} />,
@@ -83,26 +80,19 @@ const usePayrollColumns = () => {
         flex: 2,
         renderCell: ({ row }) => {
           if (row.roles === 'Admin') {
-            return <DropzoneWrapper row={row} onFileUpload={handleFileUpload} />;
+            return <DropzoneWrapper row={row} onFileUpload={handleFileUpload} />
           } else if (row.payrolls) {
-            return (
-              <Typography sx={{ color: '#7E73F1' }}>
-                already has payroll
-              </Typography>
-            );
+            return <Typography sx={{ color: '#7E73F1' }}>already has payroll</Typography>
           } else {
-            return <DropzoneWrapper row={row} onFileUpload={handleFileUpload} />;
+            return <DropzoneWrapper row={row} onFileUpload={handleFileUpload} />
           }
         }
-
-
-        ,
       },
       {
         width: 200,
         field: 'action',
         headerName: <Translations text={'Action'} />,
-        renderCell: (params) => {
+        renderCell: params => {
           return (
             <Stack direction={'row'} alignItems={'center'}>
               {params.row.payrolls && (
@@ -138,23 +128,25 @@ const usePayrollColumns = () => {
                 </>
               )}
             </Stack>
-          );
+          )
         }
       }
-
-
     ],
     [attendanceStatuses]
   )
 
-  return { columns, attendanceData, setAttendanceData,
+  return {
+    columns,
+    attendanceData,
+    setAttendanceData,
     handleDeleteClick,
     handleDelete,
     handleCloseDialog,
     isDialogOpen,
     selectedFile,
     setSelectedFile,
-    DeleteName }
+    DeleteName
+  }
 }
 
 export default usePayrollColumns

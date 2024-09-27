@@ -41,7 +41,8 @@ const useTeacherPayrollColumns = ({ teacher }) => {
 
   const handleDelete = async () => {
     const response = await dispatch(deleteteacherPayroll({ id: selectedId.id, teacherId: selectedId.selectedId }))
-    if (response?.payload?.status !== 200) toast.error(response?.payload?.data)
+    // if (response?.payload?.status !== 200) toast.error(response?.payload?.data)
+    toast.success(t('File deleted successfully'))
     setIsDialogOpen(false)
   }
 

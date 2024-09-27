@@ -41,6 +41,20 @@ export const editEmployee = createAsyncThunk('appUsers/editEmployee', async ({ i
   }
 })
 
+export const uploadPaysilp = createAsyncThunk('appUsers/uploadPaysilp', async ({ data, teacherId }, { dispatch }) => {
+  try {
+    const response = await axiosInstance.post(`/api/PayRolls`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    dispatch(fetchTeacherPayroll(teacherId))
+    return response
+  } catch (error) {
+    return error.response
+  }
+})
+
 export const editParent = createAsyncThunk('appUsers/editParent', async ({ id, data }, thunkAPI) => {
   try {
     const response = await axiosInstance.put(`/api/UsersManagment/parentData/${id}`, data, {
@@ -92,7 +106,7 @@ export const deleteteacherPayroll = createAsyncThunk(
     try {
       const response = await axiosInstance.delete(`/api/PayRolls/${id}`)
       thunkAPI.dispatch(fetchTeacherPayroll(teacherId))
-      return response.data
+      return response
     } catch (error) {
       return error.response
     }

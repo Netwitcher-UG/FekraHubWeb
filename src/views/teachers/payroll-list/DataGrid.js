@@ -12,6 +12,12 @@ import { DataGrid } from '@mui/x-data-grid'
 import useTeacherPayrollColumns from './hooks/useTeacherPayrollColumns'
 import { useTranslation } from 'react-i18next'
 import ViewPayrollSlip from './view'
+import DropzoneWrapper from 'src/@core/styles/libs/react-dropzone'
+import { uploadPaysilp } from 'src/store/apps/users'
+import FileUploaderRestrictions from 'src/@core/components/inputs/FileUploaderRestrictions'
+import toast from 'react-hot-toast'
+import { useDispatch } from 'react-redux'
+import Translations from 'src/layouts/components/Translations'
 const customScrollbarStyles = {
   '& ::-webkit-scrollbar': {
     height: 8
@@ -27,7 +33,32 @@ const customScrollbarStyles = {
 
 const TeacherPayrollDatagrid = ({ loading, teacherPayrollData, teacher }) => {
   const { t } = useTranslation()
-  const [open, setOpen] = useState(false)
+  const dispatch = useDispatch()
+  // const [open, setOpen] = useState(false)
+  const [fileBase64, setFileBase64] = useState(null)
+  const [fileName, setFileName] = useState(null)
+  const [removeFile, setRemoveFile] = useState(false)
+  const handleUploadSlip = async () => {
+    const formData = new FormData()
+    formData.append('file', new Blob([fileBase64]))
+    formData.append('UserID', teacher)
+
+    const response = await dispatch(uploadPaysilp({ data: formData, teacherId: teacher }))
+    // Check the structure of response and handle messages accordingly
+    const errorMessage = response?.payload?.data || 'Something went wrong, please try again!'
+    const successMessage = response?.payload?.data || 'File uploaded successfully'
+
+    if (response?.payload?.status == 400) {
+      toast.error(errorMessage)
+    } else if (response?.payload?.status == 200) {
+      toast.success(<Translations text={successMessage} />, { duration: 1000 })
+      setFileBase64(null)
+      setFileName(null)
+      setRemoveFile(true)
+    } else {
+      toast.error(errorMessage)
+    }
+  }
   // const handleClickOpen = () => setOpen(true)
   const {
     columns,
@@ -42,6 +73,15 @@ const TeacherPayrollDatagrid = ({ loading, teacherPayrollData, teacher }) => {
 
   return (
     <>
+      <DropzoneWrapper sx={{ mb: 4, width: '100%' }}>
+        <FileUploaderRestrictions
+          setFileBase64={setFileBase64}
+          setFileName={setFileName}
+          handleUpload={handleUploadSlip}
+          removeFile={removeFile}
+          setRemoveFile={setRemoveFile}
+        />
+      </DropzoneWrapper>
       {/* <TableHeader toggle={handleClickOpen} /> */}
       <Box sx={{ height: 500 }}>
         {loading ? (
