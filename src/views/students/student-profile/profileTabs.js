@@ -25,9 +25,11 @@ import ProfileTab from './profile'
 import ProfileEditDrawer from './profile/edit-profile/edit-profile-drawer'
 import WorksheetsList from './worksheets/worksheets-list'
 import { useTranslation } from 'react-i18next'
+import { useContext } from 'react'
+import { AbilityContext } from 'src/layouts/components/acl/Can'
 
 const StudentProfile = ({ student, byParent = false }) => {
-  console.log("🚀 ~ StudentProfile ~ student:", student)
+  const ability = useContext(AbilityContext)
   // ** State
   const [value, setValue] = useState('1')
   const dispatch = useDispatch()
@@ -60,13 +62,13 @@ const StudentProfile = ({ student, byParent = false }) => {
       dispatch(fetchChildWorksheets(student))
       dispatch(fetchChildAttendance(student))
     } else {
-      dispatch(fetchReportsByFilter({ student: student, improved: true }))
+      ability.can('read', 'StudentReport') && dispatch(fetchReportsByFilter({ student: student, improved: true }))
       dispatch(fetchStudentProfileInfo(student))
-      dispatch(fetchStudentInvoices(student))
-      dispatch(fetchStudentContracts(student))
-      dispatch(fetchStudentWorsheets(student))
-      dispatch(fetchStudentAttendance(student))
-      dispatch(fetchAttendanceStatuses())
+      ability.can('manage', 'Invoices') && dispatch(fetchStudentInvoices(student))
+      ability.can('read', 'Contract') && dispatch(fetchStudentContracts(student))
+      ability.can('manage', 'File') && dispatch(fetchStudentWorsheets(student))
+      ability.can('read', 'StudentAttendance') && dispatch(fetchStudentAttendance(student))
+      ability.can('read', 'StudentAttendance') && dispatch(fetchAttendanceStatuses())
     }
   }, [student])
 
@@ -77,8 +79,6 @@ const StudentProfile = ({ student, byParent = false }) => {
   const handleEditDrawerClose = () => {
     setEditDrawerOpen(false)
   }
-
-
 
   return (
     <>
@@ -100,11 +100,34 @@ const StudentProfile = ({ student, byParent = false }) => {
           aria-label={t('full width tabs example')}
         >
           <Tab value='1' label={t('Profile info')} />
-          <Tab value='2' label={byParent ? t('Child Reports') : t('Student Reports')} />
-          <Tab value='3' label={byParent ? t('Child Contracts') : t('Student Contracts')} />
-          <Tab value='4' label={byParent ? t('Child Invoices') : t('Student Invoices')} />
-          <Tab value='5' label={byParent ? t('Child Worksheets') : t('Student Worksheets')} />
-          <Tab value='6' label={byParent ? t('Child Attendance') : t('Student Attendance')} />
+          {byParent ? (
+            <Tab value='2' label={byParent ? t('Child Reports') : t('Student Reports')} />
+          ) : ability.can('read', 'StudentReport') ? (
+            <Tab value='2' label={byParent ? t('Child Reports') : t('Student Reports')} />
+          ) : null}
+
+          {byParent ? (
+            <Tab value='3' label={byParent ? t('Child Contracts') : t('Student Contracts')} />
+          ) : ability.can('read', 'Contract') ? (
+            <Tab value='3' label={byParent ? t('Child Contracts') : t('Student Contracts')} />
+          ) : null}
+
+          {byParent ? (
+            <Tab value='4' label={byParent ? t('Child Invoices') : t('Student Invoices')} />
+          ) : ability.can('manage', 'Invoices') ? (
+            <Tab value='4' label={byParent ? t('Child Invoices') : t('Student Invoices')} />
+          ) : null}
+
+          {byParent ? (
+            <Tab value='5' label={byParent ? t('Child Worksheets') : t('Student Worksheets')} />
+          ) : ability.can('manage', 'File') ? (
+            <Tab value='5' label={byParent ? t('Child Worksheets') : t('Student Worksheets')} />
+          ) : null}
+          {byParent ? (
+            <Tab value='6' label={byParent ? t('Child Attendance') : t('Student Attendance')} />
+          ) : ability.can('read', 'StudentAttendance') ? (
+            <Tab value='6' label={byParent ? t('Child Attendance') : t('Student Attendance')} />
+          ) : null}
         </TabList>
         <TabPanel value='1'>
           {childProfileLoading || studentProfileLoading ? (
@@ -139,34 +162,81 @@ const StudentProfile = ({ student, byParent = false }) => {
             </Grid>
           )}
         </TabPanel>
-        <TabPanel value='2'>
-          <StudentReportsTab store={store} byParent={byParent} />
-        </TabPanel>
-        <TabPanel value='3'>
-          <ContractsList
-            byParent={byParent}
-            contractsData={byParent ? childContracts : studentContracts}
-            loading={byParent ? childContractsLoading : studentContractsLoading}
-          />
-        </TabPanel>
-        <TabPanel value='4'>
-          <InvoicesList
-            invoicesData={byParent ? childInvoices : studentInvoices}
-            loading={byParent ? childInvoicesLoading : studentInvoicesLoading}
-            byParent={byParent}
-            student={student}
-          />{' '}
-        </TabPanel>
-        <TabPanel value='5'>
-          <WorksheetsList
-            worksheetData={byParent ? childWorksheets : studentWorksheets}
-            loading={byParent ? childWorksheetLoading : studentWorksheetsLoading}
-            byParent={byParent}
-          />
-        </TabPanel>
-        <TabPanel value='6'>
-          <StudentAttendanceTab store={byParent ? childAttendance : studentAttendance} studentId={student} />
-        </TabPanel>
+        {byParent ? (
+          <TabPanel value='2'>
+            <StudentReportsTab store={store} byParent={byParent} />
+          </TabPanel>
+        ) : ability.can('read', 'StudentReport') ? (
+          <TabPanel value='2'>
+            <StudentReportsTab store={store} byParent={byParent} />
+          </TabPanel>
+        ) : null}
+
+        {byParent ? (
+          <TabPanel value='3'>
+            <ContractsList
+              byParent={byParent}
+              contractsData={byParent ? childContracts : studentContracts}
+              loading={byParent ? childContractsLoading : studentContractsLoading}
+            />
+          </TabPanel>
+        ) : ability.can('manage', 'File') ? (
+          <TabPanel value='3'>
+            <ContractsList
+              byParent={byParent}
+              contractsData={byParent ? childContracts : studentContracts}
+              loading={byParent ? childContractsLoading : studentContractsLoading}
+            />
+          </TabPanel>
+        ) : null}
+
+        {byParent ? (
+          <TabPanel value='4'>
+            <InvoicesList
+              invoicesData={byParent ? childInvoices : studentInvoices}
+              loading={byParent ? childInvoicesLoading : studentInvoicesLoading}
+              byParent={byParent}
+              student={student}
+            />{' '}
+          </TabPanel>
+        ) : ability.can('manage', 'Invoices') ? (
+          <TabPanel value='4'>
+            <InvoicesList
+              invoicesData={byParent ? childInvoices : studentInvoices}
+              loading={byParent ? childInvoicesLoading : studentInvoicesLoading}
+              byParent={byParent}
+              student={student}
+            />{' '}
+          </TabPanel>
+        ) : null}
+
+        {byParent ? (
+          <TabPanel value='5'>
+            <WorksheetsList
+              worksheetData={byParent ? childWorksheets : studentWorksheets}
+              loading={byParent ? childWorksheetLoading : studentWorksheetsLoading}
+              byParent={byParent}
+            />
+          </TabPanel>
+        ) : ability.can('manage', 'File') ? (
+          <TabPanel value='5'>
+            <WorksheetsList
+              worksheetData={byParent ? childWorksheets : studentWorksheets}
+              loading={byParent ? childWorksheetLoading : studentWorksheetsLoading}
+              byParent={byParent}
+            />
+          </TabPanel>
+        ) : null}
+
+        {byParent ? (
+          <TabPanel value='6'>
+            <StudentAttendanceTab store={byParent ? childAttendance : studentAttendance} studentId={student} />
+          </TabPanel>
+        ) : ability.can('read', 'StudentAttendance') ? (
+          <TabPanel value='6'>
+            <StudentAttendanceTab store={byParent ? childAttendance : studentAttendance} studentId={student} />
+          </TabPanel>
+        ) : null}
       </TabContext>
 
       <ProfileEditDrawer open={editDrawerOpen} handleCloseDrawer={handleEditDrawerClose} dataDef={childProfileInfo} />

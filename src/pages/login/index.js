@@ -16,6 +16,7 @@ import { styled, useTheme } from '@mui/material/styles'
 import InputAdornment from '@mui/material/InputAdornment'
 import MuiFormControlLabel from '@mui/material/FormControlLabel'
 import { useTranslation } from 'react-i18next'
+import { Grid } from '@mui/material'
 
 // ** Custom Component Import
 import CustomTextField from 'src/@core/components/mui/text-field'
@@ -43,25 +44,25 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
 
 const LoginIllustration = styled('img')(({ theme }) => ({
-  maxHeight: '100vh',  // Adjust max height to fit the viewport
+  maxHeight: '100vh', // Adjust max height to fit the viewport
   objectFit: 'contain', // Ensure the image scales properly
-  width: '100%',  // Allow image to scale based on its aspect ratio
+  width: '100%', // Allow image to scale based on its aspect ratio
   [theme.breakpoints.down('md')]: {
-    display: 'none'  // Hide image on small screens
+    display: 'none' // Hide image on small screens
   }
 }))
 
 const RightWrapper = styled(Box)(({ theme }) => ({
   width: '100%',
-  boxShadow: '0px 0px 20px rgba(128, 128, 128, 0.2)',  // Soft shadow effect
+  boxShadow: '0px 0px 20px rgba(128, 128, 128, 0.2)', // Soft shadow effect
   [theme.breakpoints.up('md')]: {
-    maxWidth: 450  // Adjust width for medium screens
+    maxWidth: 450 // Adjust width for medium screens
   },
   [theme.breakpoints.up('lg')]: {
-    maxWidth: 600  // Adjust width for large screens
+    maxWidth: 600 // Adjust width for large screens
   },
   [theme.breakpoints.up('xl')]: {
-    maxWidth: '100%'  // Limit to half the screen on extra-large screens
+    maxWidth: '100%' // Limit to half the screen on extra-large screens
   }
 }))
 
@@ -69,7 +70,7 @@ const LinkStyled = styled(Link)(({ theme }) => ({
   textDecoration: 'none',
   color: `${theme.palette.primary.main} !important`,
   '&:hover': {
-    textDecoration: 'underline'  // Add underline on hover for accessibility
+    textDecoration: 'underline' // Add underline on hover for accessibility
   }
 }))
 
@@ -91,6 +92,7 @@ const defaultValues = {
 
 const LoginPage = () => {
   const [emailNotConfirmed, setEmailNotConfirmed] = useState(false)
+  const [badRequestError, setBadRequestError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const { t } = useTranslation()
   const schema = useMemo(() => getValidationSchema(t), [t])
@@ -118,7 +120,8 @@ const LoginPage = () => {
   const onSubmit = async data => {
     const { email, password } = data
     setEmailNotConfirmed(false)
-    await auth.login({ email, password, setEmailNotConfirmed }, () => {
+    setBadRequestError('')
+    await auth.login({ email, password, setEmailNotConfirmed, setBadRequestError }, () => {
       setError('email', {
         type: 'manual',
         message: t('Email or Password is invalid')
@@ -129,15 +132,7 @@ const LoginPage = () => {
 
   return (
     <Box className='content-right' sx={{ backgroundColor: 'background.paper' }}>
-      {!hidden ? (
-
-          <LoginIllustration
-            alt={t('login-illustration')}
-            src={`/images/logos/loginpage.png`}
-          />
-
-
-      ) : null}
+      {!hidden ? <LoginIllustration alt={t('login-illustration')} src={`/images/logos/loginpage.png`} /> : null}
       <RightWrapper>
         <Box
           sx={{
@@ -150,8 +145,8 @@ const LoginPage = () => {
         >
           <Box sx={{ width: '100%', maxWidth: 400 }}>
             <Box display={'flex'} justifyContent={'center'} alignItems={'center'} width={'100%'}>
-           <img src='/images/logos/logo.svg' alt='logo' width={150} height={150}/>
-           </Box>
+              <img src='/images/logos/logo.svg' alt='logo' width={150} height={150} />
+            </Box>
             <Box sx={{ my: 6 }}>
               <Typography variant='h3' sx={{ mb: 1.5 }}>
                 {t('Welcome to')} {`${themeConfig.templateName}`}! 👋🏻
@@ -159,11 +154,22 @@ const LoginPage = () => {
               <Typography sx={{ color: 'text.secondary' }}>{t('Please sign-in to your account')}</Typography>
             </Box>
             {emailNotConfirmed && (
-              <Alert icon={false} sx={{ py: 3, mb: 6, ...bgColors.primaryLight, '& .MuiAlert-message': { p: 0 } }}>
-                <Typography variant='body2' sx={{ mb: 2, color: 'warning.main' }}>
+              // <Alert icon={false} sx={{ py: 3, mb: 6, ...bgColors.primaryLight, '& .MuiAlert-message': { p: 0 } }}>
+              //   <Typography variant='body2' sx={{ mb: 2, color: 'warning.main' }}>
+              //     {t('Your account is not activated! The confirmation link was resent to your email please check it')}
+              //   </Typography>
+              // </Alert>
+              <Grid item xs={12} sm={6} sx={{ m: 4 }}>
+                <Alert severity='warning'>
+                  {' '}
                   {t('Your account is not activated! The confirmation link was resent to your email please check it')}
-                </Typography>
-              </Alert>
+                </Alert>
+              </Grid>
+            )}
+            {badRequestError != '' && (
+              <Grid item xs={12} sm={6} sx={{ m: 4 }}>
+                <Alert severity='error'> {t(badRequestError)}</Alert>
+              </Grid>
             )}
             <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
               <Box sx={{ mb: 4 }}>
