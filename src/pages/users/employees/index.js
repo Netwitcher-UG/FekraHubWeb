@@ -10,7 +10,6 @@ import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import Divider from '@mui/material/Divider'
 import Chip from '@mui/material/Chip'
-// import Typography from '@mui/material/Typography'
 import { DataGrid } from '@mui/x-data-grid'
 import Translations from 'src/layouts/components/Translations'
 import { useTranslation } from 'react-i18next'
@@ -27,6 +26,7 @@ import CardContent from '@mui/material/CardContent'
 import TableHeader from 'src/views/apps/users/employees/list/TableHeader'
 import { IconButton, Typography } from '@mui/material'
 import EditEmployeeDialog from './edit-employee'
+
 const customScrollbarStyles = {
   '& ::-webkit-scrollbar': {
     height: 8 // Set the thickness for the horizontal scrollbar
@@ -44,6 +44,10 @@ const EmployeesList = () => {
   const ability = useContext(AbilityContext)
   const [dialogData, setDialogData] = useState(null)
   const [open, setOpen] = useState(false)
+
+  // New State for User Status Filter
+  const [selectedStatus, setSelectedStatus] = useState('true') // Default is 'Active'
+
   const handleEditClick = (e, row) => {
     e.stopPropagation()
     handleOpenDialog(row)
@@ -56,6 +60,15 @@ const EmployeesList = () => {
     setOpen(false)
     setDialogData(null)
   }, [])
+
+  // Updated fetch method with role and status filter
+  const fetchDataWithPagination = (roleValue, statusValue) => {
+    const query = []
+    if (roleValue) query.push(`RoleName=${roleValue}`)
+    query.push(`IsActive=${statusValue}`)
+    dispatch(fetchEmployees(query.join('&')))
+  }
+
   const columns = [
     {
       width: 100,
@@ -187,16 +200,8 @@ const EmployeesList = () => {
   }
 
   useEffect(() => {
-    dispatch(fetchEmployees())
-  }, [dispatch])
-
-  const fetchDataWithPagination = roleValue => {
-    dispatch(fetchEmployees(roleValue == '' ? '' : `RoleName=${roleValue}`))
-  }
-
-  useEffect(() => {
-    fetchDataWithPagination(selectedRole)
-  }, [dispatch, selectedRole])
+    fetchDataWithPagination(selectedRole, selectedStatus) // Fetch with status filter
+  }, [dispatch, selectedRole, selectedStatus])
 
   return (
     <Grid container spacing={6.5}>
@@ -205,13 +210,13 @@ const EmployeesList = () => {
           <CardHeader title={t('Search Filters')} />
           <CardContent>
             <Grid container spacing={6}>
+              {/* Role Filter */}
               <Grid item sm={4} xs={12}>
                 <CustomTextField
                   select
                   fullWidth
                   label={<Translations text={'Role filter'} />}
-                  id='validation-gender-select'
-                  aria-describedby='validation-gender-select'
+                  id='validation-role-select'
                   defaultValue=''
                   SelectProps={{
                     onChange: e => setSelectedRole(e.target.value),
@@ -234,6 +239,28 @@ const EmployeesList = () => {
                   </MenuItem>
                 </CustomTextField>
               </Grid>
+
+              {/* User Status Filter */}
+              <Grid item sm={4} xs={12}>
+                <CustomTextField
+                  select
+                  fullWidth
+                  label={<Translations text={'User Status'} />}
+                  id='validation-status-select'
+                  defaultValue='true'
+                  SelectProps={{
+                    onChange: e => setSelectedStatus(e.target.value),
+                    displayEmpty: true
+                  }}
+                >
+                  <MenuItem value='true'>
+                    <Translations text={'Active'} />
+                  </MenuItem>
+                  <MenuItem value='false'>
+                    <Translations text={'Inactive'} />
+                  </MenuItem>
+                </CustomTextField>
+              </Grid>
             </Grid>
           </CardContent>
           <Divider sx={{ m: '0 !important' }} />
@@ -253,7 +280,6 @@ const EmployeesList = () => {
               </Box>
             ) : (
               <DataGrid
-                //   autoHeight
                 rowHeight={62}
                 rows={store?.employeesData || []}
                 columns={columns}
@@ -280,4 +306,3 @@ const EmployeesList = () => {
 }
 
 export default EmployeesList
-// export default withRoleRestriction(EmployeesList)

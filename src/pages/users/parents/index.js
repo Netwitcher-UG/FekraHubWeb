@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useContext } from 'react'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 import { useRouter } from 'next/router'
-// import Pagination from '@mui/material/Pagination'
 import CircularProgress from '@mui/material/CircularProgress'
 import Chip from '@mui/material/Chip'
 // ** MUI Imports
@@ -13,8 +12,12 @@ import { DataGrid } from '@mui/x-data-grid'
 import Translations from 'src/layouts/components/Translations'
 import { convertDate } from 'src/@core/utils/convert-date'
 import { Stack } from '@mui/system'
-import { IconButton, Typography } from '@mui/material'
+import CardHeader from '@mui/material/CardHeader'
+import CardContent from '@mui/material/CardContent'
+import { IconButton, Typography, MenuItem } from '@mui/material'
+import CustomTextField from 'src/@core/components/mui/text-field'
 import EditParentDialog from './edit-parent'
+import { useTranslation } from 'react-i18next'
 // ** Store Imports
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -38,9 +41,14 @@ const customScrollbarStyles = {
 }
 
 const ParentsList = () => {
+  const { t } = useTranslation()
   const ability = useContext(AbilityContext)
   const [dialogData, setDialogData] = useState(null)
   const [open, setOpen] = useState(false)
+
+  // New State for User Status Filter
+  const [selectedStatus, setSelectedStatus] = useState('true') // Default is 'Active'
+
   const handleEditClick = (e, row) => {
     e.stopPropagation()
     handleOpenDialog(row)
@@ -49,6 +57,7 @@ const ParentsList = () => {
     setDialogData(data)
     setOpen(true)
   }, [])
+
   const columns = [
     {
       width: 100,
@@ -144,7 +153,7 @@ const ParentsList = () => {
     },
     {
       width: 200,
-      headerName: <Translations text={'Street'} />,
+      headerName: <Translations text={'Emergency Phone Number'} />,
       field: 'emergencyPhoneNumber'
     },
     {
@@ -158,28 +167,54 @@ const ParentsList = () => {
       field: 'streetNr'
     }
   ]
-  // ** State
-  //   const [value, setValue] = useState('')
-
-  //   const [currentPage, setCurrentPage] = useState(1)
-  //   const [searchTerm, setSearchTerm] = useState('')
-  //   const pageSize = 10 // Page size
 
   // ** Hooks
   const dispatch = useDispatch()
   const router = useRouter()
   const store = useSelector(state => state.users)
 
+  // Fetch data with status filter
+  const fetchDataWithPagination = statusValue => {
+    dispatch(fetchParents(`IsActive=${statusValue}`))
+  }
+
   useEffect(() => {
-    dispatch(fetchParents())
-  }, [dispatch])
+    fetchDataWithPagination(selectedStatus) // Fetch active parents by default
+  }, [dispatch, selectedStatus])
 
   return (
     <Grid container spacing={6.5}>
       <Grid item xs={12}>
         <Card>
-          {/* <Divider sx={{ m: '0 !important' }} /> */}
+          <CardHeader title={t('Search Filters')} />
+          <CardContent>
+            <Grid container spacing={6}>
+              <Grid item sm={4} xs={12}>
+                <CustomTextField
+                  select
+                  fullWidth
+                  label={<Translations text={'Parent Status'} />}
+                  id='validation-status-select'
+                  defaultValue='true'
+                  SelectProps={{
+                    onChange: e => setSelectedStatus(e.target.value),
+                    displayEmpty: true
+                  }}
+                >
+                  <MenuItem value='true'>
+                    <Translations text={'Active'} />
+                  </MenuItem>
+                  <MenuItem value='false'>
+                    <Translations text={'Inactive'} />
+                  </MenuItem>
+                </CustomTextField>
+              </Grid>
+            </Grid>
+          </CardContent>
+          {/* Table Header */}
+          <Divider sx={{ m: '0 !important' }} />
           <TableHeader />
+
           <Box sx={{ height: 'calc(100vh - 250px)' }}>
             {store.loading ? (
               <Box
@@ -195,13 +230,9 @@ const ParentsList = () => {
               </Box>
             ) : (
               <DataGrid
-                //   autoHeight
                 rowHeight={62}
                 rows={store?.data || []}
                 columns={columns}
-                //   pageSize={5} // Set the page size to 5
-                //   pageSizeOptions={[5, 10, 25]} // Add 5 as an option in the page size dropdown
-                //   rowsPerPageOptions={[5]}
                 hideFooter={true}
                 disableRowSelectionOnClick
                 pagination={true}
@@ -217,6 +248,7 @@ const ParentsList = () => {
           <Divider sx={{ m: '0 !important' }} />
         </Card>
       </Grid>
+
       <EditParentDialog open={open} setOpen={setOpen} profileData={dialogData} />
     </Grid>
   )

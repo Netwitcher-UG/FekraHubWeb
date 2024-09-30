@@ -21,7 +21,7 @@ const WorksheetsList = ({ worksheetData, loading, byParent }) => {
       <Grid item xs={12}>
         <Alert severity='info'>
           {' '}
-          <Translations text={'No worksheets yet'} />
+          <Translations text={'No files yet'} />
         </Alert>
       </Grid>
     )

@@ -4,8 +4,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axiosInstance from 'src/lib/axiosInstance'
 
 // ** Fetch Users
-export const fetchParents = createAsyncThunk('appUsers/fetchParents', async () => {
-  const response = await axiosInstance.get('/api/UsersManagment/GetPerent')
+export const fetchParents = createAsyncThunk('appUsers/fetchParents', async params => {
+  const response = await axiosInstance.get(`/api/UsersManagment/GetPerent?${params}`)
 
   return response.data
 })

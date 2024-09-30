@@ -101,32 +101,32 @@ const StudentProfile = ({ student, byParent = false }) => {
         >
           <Tab value='1' label={t('Profile info')} />
           {byParent ? (
-            <Tab value='2' label={byParent ? t('Child Reports') : t('Student Reports')} />
+            <Tab value='2' label={byParent ? t('Reports') : t('Reports')} />
           ) : ability.can('read', 'StudentReport') ? (
-            <Tab value='2' label={byParent ? t('Child Reports') : t('Student Reports')} />
+            <Tab value='2' label={byParent ? t('Reports') : t('Reports')} />
           ) : null}
 
           {byParent ? (
-            <Tab value='3' label={byParent ? t('Child Contracts') : t('Student Contracts')} />
+            <Tab value='3' label={byParent ? t('Contracts') : t('Contracts')} />
           ) : ability.can('read', 'Contract') ? (
-            <Tab value='3' label={byParent ? t('Child Contracts') : t('Student Contracts')} />
+            <Tab value='3' label={byParent ? t('Contracts') : t('Contracts')} />
           ) : null}
 
           {byParent ? (
-            <Tab value='4' label={byParent ? t('Child Invoices') : t('Student Invoices')} />
+            <Tab value='4' label={byParent ? t('Invoices') : t('Invoices')} />
           ) : ability.can('manage', 'Invoices') ? (
-            <Tab value='4' label={byParent ? t('Child Invoices') : t('Student Invoices')} />
+            <Tab value='4' label={byParent ? t('Invoices') : t('Invoices')} />
           ) : null}
 
           {byParent ? (
-            <Tab value='5' label={byParent ? t('Child Worksheets') : t('Student Worksheets')} />
+            <Tab value='5' label={byParent ? t('Course Files') : t('Course Files')} />
           ) : ability.can('manage', 'File') ? (
-            <Tab value='5' label={byParent ? t('Child Worksheets') : t('Student Worksheets')} />
+            <Tab value='5' label={byParent ? t('Course Files') : t('Course Files')} />
           ) : null}
           {byParent ? (
-            <Tab value='6' label={byParent ? t('Child Attendance') : t('Student Attendance')} />
+            <Tab value='6' label={byParent ? t('Attendance') : t('Attendance')} />
           ) : ability.can('read', 'StudentAttendance') ? (
-            <Tab value='6' label={byParent ? t('Child Attendance') : t('Student Attendance')} />
+            <Tab value='6' label={byParent ? t('Attendance') : t('Attendance')} />
           ) : null}
         </TabList>
         <TabPanel value='1'>
