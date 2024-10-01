@@ -48,7 +48,7 @@ const ParentsList = () => {
 
   // New State for User Status Filter
   const [selectedStatus, setSelectedStatus] = useState('true') // Default is 'Active'
-
+  const [paramsQuery, setParamsQuery] = useState('')
   const handleEditClick = (e, row) => {
     e.stopPropagation()
     handleOpenDialog(row)
@@ -175,6 +175,7 @@ const ParentsList = () => {
 
   // Fetch data with status filter
   const fetchDataWithPagination = statusValue => {
+    setParamsQuery(`IsActive=${statusValue}`)
     dispatch(fetchParents(`IsActive=${statusValue}`))
   }
 
@@ -249,7 +250,7 @@ const ParentsList = () => {
         </Card>
       </Grid>
 
-      <EditParentDialog open={open} setOpen={setOpen} profileData={dialogData} />
+      <EditParentDialog paramsQuery={paramsQuery} open={open} setOpen={setOpen} profileData={dialogData} />
     </Grid>
   )
 }

@@ -12,7 +12,7 @@ import MenuItem from '@mui/material/MenuItem'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import Switch from '@mui/material/Switch'
-import { changeUserStatus } from 'src/store/apps/users'
+import { changeUserStatus, changeParentStatus } from 'src/store/apps/users'
 import FormControlLabel from '@mui/material/FormControlLabel'
 // import CircularProgress from '@mui/material/CircularProgress'
 import Dialog from '@mui/material/Dialog'
@@ -82,7 +82,7 @@ const CustomCloseButton = styled(IconButton)(({ theme }) => ({
   }
 }))
 
-const EditParentDialog = ({ open, setOpen, profileData }) => {
+const EditParentDialog = ({ open, setOpen, profileData, paramsQuery }) => {
   const ability = useContext(AbilityContext)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const handleCloseDialog = () => {
@@ -148,7 +148,7 @@ const EditParentDialog = ({ open, setOpen, profileData }) => {
   const countryOptions = useMemo(() => countryList().getData(), [])
   const router = useRouter()
   const onSubmit = async data => {
-    const response = await dispatch(editParent({ id: profileData?.id, data: data }))
+    const response = await dispatch(editParent({ id: profileData?.id, data: data, paramsQuery: paramsQuery }))
 
     if (response?.payload?.status == 400) toast.error(response?.payload?.data)
     else if (response?.payload?.status == 200) {
@@ -164,7 +164,9 @@ const EditParentDialog = ({ open, setOpen, profileData }) => {
     setIsDialogOpen(true)
   }
   const handleChageUserState = async status => {
-    const response = await dispatch(changeUserStatus(`${profileData?.id}?activate=${status}`))
+    const response = await dispatch(
+      changeParentStatus({ params: `${profileData?.id}?activate=${status}`, paramsQuery: paramsQuery })
+    )
 
     if (response?.payload?.status == 400) toast.error(response?.payload?.data)
     else if (response?.payload?.status == 200) {

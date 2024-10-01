@@ -89,7 +89,7 @@ const CustomCloseButton = styled(IconButton)(({ theme }) => ({
   }
 }))
 
-const EditEmployeeDialog = ({ open, setOpen, profileData }) => {
+const EditEmployeeDialog = ({ open, setOpen, profileData, paramsQuery }) => {
   const ability = useContext(AbilityContext)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const handleCloseDialog = () => {
@@ -158,7 +158,7 @@ const EditEmployeeDialog = ({ open, setOpen, profileData }) => {
   const countryOptions = useMemo(() => countryList().getData(), [])
   const router = useRouter()
   const onSubmit = async data => {
-    const response = await dispatch(editEmployee({ id: profileData?.id, data: data }))
+    const response = await dispatch(editEmployee({ id: profileData?.id, data: data, paramsQuery: paramsQuery }))
 
     if (response?.payload?.status == 400) toast.error(response?.payload?.data)
     else if (response?.payload?.status == 200) {
@@ -174,7 +174,9 @@ const EditEmployeeDialog = ({ open, setOpen, profileData }) => {
     setIsDialogOpen(true)
   }
   const handleChageUserState = async status => {
-    const response = await dispatch(changeUserStatus(`${profileData?.id}?activate=${status}`))
+    const response = await dispatch(
+      changeUserStatus({ params: `${profileData?.id}?activate=${status}`, paramsQuery: paramsQuery })
+    )
 
     if (response?.payload?.status == 400) toast.error(response?.payload?.data)
     else if (response?.payload?.status == 200) {

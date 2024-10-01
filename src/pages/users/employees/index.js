@@ -47,6 +47,7 @@ const EmployeesList = () => {
 
   // New State for User Status Filter
   const [selectedStatus, setSelectedStatus] = useState('true') // Default is 'Active'
+  const [paramsQuery, setParamsQuery] = useState([])
 
   const handleEditClick = (e, row) => {
     e.stopPropagation()
@@ -66,6 +67,7 @@ const EmployeesList = () => {
     const query = []
     if (roleValue) query.push(`RoleName=${roleValue}`)
     query.push(`IsActive=${statusValue}`)
+    setParamsQuery(query)
     dispatch(fetchEmployees(query.join('&')))
   }
 
@@ -300,7 +302,7 @@ const EmployeesList = () => {
         </Card>
       </Grid>
 
-      <EditEmployeeDialog open={open} setOpen={setOpen} profileData={dialogData} />
+      <EditEmployeeDialog open={open} paramsQuery={paramsQuery} setOpen={setOpen} profileData={dialogData} />
     </Grid>
   )
 }

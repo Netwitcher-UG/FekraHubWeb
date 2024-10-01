@@ -27,14 +27,14 @@ export const addEmployee = createAsyncThunk('appUsers/addEmployee', async data =
   }
 })
 
-export const editEmployee = createAsyncThunk('appUsers/editEmployee', async ({ id, data }, thunkAPI) => {
+export const editEmployee = createAsyncThunk('appUsers/editEmployee', async ({ id, data, paramsQuery }, thunkAPI) => {
   try {
     const response = await axiosInstance.put(`/api/UsersManagment/userData/${id}`, data, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     })
-    thunkAPI.dispatch(fetchEmployees())
+    thunkAPI.dispatch(fetchEmployees(paramsQuery.join('&')))
     return response
   } catch (error) {
     return error.response
@@ -55,30 +55,45 @@ export const uploadPaysilp = createAsyncThunk('appUsers/uploadPaysilp', async ({
   }
 })
 
-export const editParent = createAsyncThunk('appUsers/editParent', async ({ id, data }, thunkAPI) => {
+export const editParent = createAsyncThunk('appUsers/editParent', async ({ id, data, paramsQuery }, thunkAPI) => {
   try {
     const response = await axiosInstance.put(`/api/UsersManagment/parentData/${id}`, data, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     })
-    thunkAPI.dispatch(fetchParents())
+    thunkAPI.dispatch(fetchParents(paramsQuery))
     return response
   } catch (error) {
     return error.response
   }
 })
 
-export const changeUserStatus = createAsyncThunk('appUsers/changeUserStatus', async (params, thunkAPI) => {
-  try {
-    const response = await axiosInstance.put(`/api/UsersManagment/DeactivateUser/${params}`)
-    thunkAPI.dispatch(fetchEmployees())
-    thunkAPI.dispatch(fetchParents())
-    return response
-  } catch (error) {
-    return error.response
+export const changeUserStatus = createAsyncThunk(
+  'appUsers/changeUserStatus',
+  async ({ params, paramsQuery }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.put(`/api/UsersManagment/DeactivateUser/${params}`)
+      thunkAPI.dispatch(fetchEmployees(paramsQuery.join('&')))
+      return response
+    } catch (error) {
+      return error.response
+    }
   }
-})
+)
+
+export const changeParentStatus = createAsyncThunk(
+  'appUsers/changeUserStatus',
+  async ({ params, paramsQuery }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.put(`/api/UsersManagment/DeactivateUser/${params}`)
+      thunkAPI.dispatch(fetchParents(paramsQuery))
+      return response
+    } catch (error) {
+      return error.response
+    }
+  }
+)
 
 export const fetchTeacherProfileInfo = createAsyncThunk('appUsers/fetchTeacherProfileInfo', async id => {
   try {
