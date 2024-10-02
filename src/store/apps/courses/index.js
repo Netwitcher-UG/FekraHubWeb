@@ -31,7 +31,6 @@ export const fetchCoursesRoom = createAsyncThunk('courses/fetchCoursesRoom', asy
   }
 })
 
-
 export const fetchCourseSchedule = createAsyncThunk('courses/fetchCourseSchedule', async (_, { rejectWithValue }) => {
   try {
     const response = await axiosInstance.get('/api/CourseSchedule', {})
@@ -43,16 +42,19 @@ export const fetchCourseSchedule = createAsyncThunk('courses/fetchCourseSchedule
   }
 })
 
-export const FetchCourseScheduleDaysOfWeek = createAsyncThunk('courses/FetchCourseScheduleDaysOfWeek', async (_, { rejectWithValue }) => {
-  try {
-    const response = await axiosInstance.get('/api/CourseSchedule/daysOfWeek', {})
+export const FetchCourseScheduleDaysOfWeek = createAsyncThunk(
+  'courses/FetchCourseScheduleDaysOfWeek',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get('/api/CourseSchedule/daysOfWeek', {})
 
-    return response.data
-  } catch (error) {
-    ShowErrorToast(error.response?.data || error.message)
-    return rejectWithValue(error.response?.data || error.message)
+      return response.data
+    } catch (error) {
+      ShowErrorToast(error.response?.data || error.message)
+      return rejectWithValue(error.response?.data || error.message)
+    }
   }
-})
+)
 export const addRoom = createAsyncThunk('courses/addRoom', async (data, { getState, dispatch }) => {
   try {
     const response = await axiosInstance.post(`/api/Rooms`, data, {
@@ -93,7 +95,7 @@ export const deleteRoom = createAsyncThunk(
       ShowSuccessToast('success')
       dispatch(fetchCoursesRoom(''))
     } catch (error) {
-      ShowErrorToast('Error')
+      ShowErrorToast(error.response.data)
 
       return rejectWithValue(error.response.data)
     }
@@ -139,7 +141,7 @@ export const editCourses = createAsyncThunk('courses/editCourses', async (data, 
   try {
     const response = await axiosInstance.put(`/api/Courses/${data.id}`, data, {
       headers: {
-       accept: 'application/json',
+        accept: 'application/json',
         'Content-Type': 'application/json'
       }
     })
@@ -175,15 +177,15 @@ const CoursesSlice = createSlice({
   initialState: {
     data: {},
     dataRooms: [],
-    DaysOfWeeks:[],
+    DaysOfWeeks: [],
     dataTeacher: [],
     status: 'idle',
     roomsStatus: 'idle',
-    CourseScheduleStatus:'idel',
+    CourseScheduleStatus: 'idel',
     TeacherStatus: 'idle',
     error: null,
     deleteStatus: 'idle',
-    CourseSchedule:[],
+    CourseSchedule: [],
     deleteError: null
   },
   reducers: {},

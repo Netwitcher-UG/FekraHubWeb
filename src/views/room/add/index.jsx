@@ -42,19 +42,14 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary
 }))
 
-
 const schema = yup.object().shape({
   name: yup.string().required('name is required'),
-  street: yup.string().required('street is required'),
-  streetNr: yup.string().required('streetNr is required'),
-  zipCode: yup.string().required('zipCode is required'),
-  city: yup.string().required('city is required')
+  locationID: yup.string().required('city is required')
 })
 
 const AddRoom = () => {
   const { t } = useTranslation()
   const { data, status, error } = useSelector(state => state.location)
-  console.log('🚀 ~ AddRoom ~ data:', data)
 
   const dispatch = useDispatch()
 
@@ -68,10 +63,7 @@ const AddRoom = () => {
 
   const defaultValues = {
     name: '',
-    street: '',
-    streetNr: '',
-    zipCode: '',
-    city: ''
+    locationID: ''
   }
 
   const {
@@ -81,12 +73,13 @@ const AddRoom = () => {
     formState: { errors, isDirty },
     reset
   } = useForm({
-     resolver: yupResolver(schema),
+    resolver: yupResolver(schema),
     defaultValues,
     mode: 'onBlur'
   })
 
-  const handleSaveData = data => {
+  const onSubmit = async data => {
+    console.log(data)
     try {
       dispatch(addRoom(data))
       handleClose()
@@ -102,8 +95,10 @@ const AddRoom = () => {
       </Button>
 
       <Dialog
+        maxWidth={'md'}
         open={open}
         onClose={handleClose}
+        fullWidth
         aria-labelledby='customized-dialog-title'
         sx={{ '& .MuiDialog-paper': { overflow: 'visible' } }}
       >
@@ -115,69 +110,71 @@ const AddRoom = () => {
             <Icon icon='tabler:x' fontSize='1.25rem' />
           </CustomCloseButton>
         </DialogTitle>
-        <DialogContent dividers sx={{ p: theme => `${theme.spacing(4)} !important`, border: 'none' }}>
-          <Grid container rowSpacing={4} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-            <Grid item xs={12} sm={12} lg={12}>
-              <Controller
-                name='name'
-                defaultValue=''
-                control={control}
-                rules={(require = true)}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    fullWidth
-                    autoFocus
-                    label={`${t('Name')}`}
-                    variant='outlined'
-                    error={!!errors.name}
-                    helperText={errors.name ? errors.name.message : ''}
-                  />
-                )}
-              />
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <DialogContent dividers sx={{ p: theme => `${theme.spacing(4)} !important`, border: 'none' }}>
+            <Grid container rowSpacing={4} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+              <Grid item xs={12} sm={12} lg={12}>
+                <Controller
+                  name='name'
+                  defaultValue=''
+                  control={control}
+                  rules={(require = true)}
+                  render={({ field }) => (
+                    <CustomTextField
+                      {...field}
+                      fullWidth
+                      autoFocus
+                      label={`${t('Name')}`}
+                      variant='outlined'
+                      error={!!errors.name}
+                      helperText={errors.name ? errors.name.message : ''}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} lg={12}>
+                <Controller
+                  name='locationID'
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange } }) => (
+                    <Autocomplete
+                      options={data?.map(teacher => ({ value: teacher.id, label: teacher.name }))}
+                      fullWidth
+                      id='autocomplete-UserId'
+                      getOptionLabel={option => option.label}
+                      value={value ? { value, label: data.find(teacher => teacher.id === value)?.name || '' } : null}
+                      onChange={(event, newValue) => {
+                        onChange(newValue ? newValue.value : '')
+                      }}
+                      renderInput={params => (
+                        <CustomTextField
+                          {...params}
+                          fullWidth
+                          sx={{ mb: 4 }}
+                          placeholder=''
+                          label={t('Location')}
+                          id='validation-billing-select'
+                          aria-describedby='validation-billing-select'
+                          error={Boolean(errors.locationID)}
+                          helperText={errors.locationID?.message || ''}
+                        />
+                      )}
+                    />
+                  )}
+                />
+              </Grid>
             </Grid>
-            <Grid item xs={12} sm={12} lg={12}>
-              <Controller
-                name='locationID'
-                control={control}
-                rules={{ required: true }}
-                render={({ field: { value, onChange } }) => (
-                  <Autocomplete
-                    options={data?.map(teacher => ({ value: teacher.id, label: teacher.name }))}
-                    fullWidth
-                    id='autocomplete-UserId'
-                    getOptionLabel={option => option.label}
-                    value={value ? { value, label: data.find(teacher => teacher.id === value)?.name || '' } : null}
-                    onChange={(event, newValue) => {
-                      onChange(newValue ? newValue.value : '')
-                    }}
-                    renderInput={params => (
-                      <CustomTextField
-                        {...params}
-                        fullWidth
-                        sx={{ mb: 4 }}
-                        placeholder=''
-                        label={t('Location')}
-                        id='validation-billing-select'
-                        aria-describedby='validation-billing-select'
-                        error={Boolean(errors.locationID)}
-                        helperText={errors.locationID?.message || ''}
-                      />
-                    )}
-                  />
-                )}
-              />
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions sx={{ p: theme => `${theme.spacing(3)} !important` }}>
-          <Button disabled={!isDirty} type='button' variant='contained' onClick={handleSubmit(handleSaveData)}>
-            <Translations text={t('Add Room')} />
-          </Button>
-          <Button type='button' variant='outlined' onClick={handleClose}>
-            <Translations text={t('Cancel')} />
-          </Button>
-        </DialogActions>
+          </DialogContent>
+          <DialogActions sx={{ p: theme => `${theme.spacing(3)} !important` }}>
+            <Button disabled={!isDirty} type='submit' variant='contained'>
+              <Translations text={t('Add Room')} />
+            </Button>
+            <Button type='button' variant='outlined' onClick={handleClose}>
+              <Translations text={t('Cancel')} />
+            </Button>
+          </DialogActions>
+        </form>
       </Dialog>
     </div>
   )
