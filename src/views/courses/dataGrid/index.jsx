@@ -48,9 +48,9 @@ export default function CoursesDataGrid({ rows, dataRooms, dataTeacher, SetSearc
             <CustomSearch SetSearch={SetSearch} />
           </Box>
           {ability.can('create', 'Course') && (
-            <Box>
+
               <AddCourses dataRooms={dataRooms} dataTeacher={dataTeacher} />
-            </Box>
+
           )}
         </Stack>
 

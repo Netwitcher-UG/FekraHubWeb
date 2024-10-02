@@ -149,7 +149,7 @@ export const editCourses = createAsyncThunk('courses/editCourses', async (data, 
     dispatch(fetchCourses(''))
     return response.data
   } catch (errors) {
-    ShowErrorToast(errors.response?.data || errors.message)
+    ShowErrorToast(errors.response?.data.title || errors.message)
     return rejectWithValue(errors.response?.data || errors.message)
   }
 })

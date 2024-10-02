@@ -50,6 +50,9 @@ const schema = yup.object().shape({
       .required('Capacity is required')
       .integer('Capacity must be an integer')
       .min(1, 'Capacity must be at least 1'),
+      roomId: yup
+      .string()
+      .required('roomId is required'),
     name: yup
       .string()
       .required('Course Name is required')
@@ -108,10 +111,11 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
     reset,
     formState: { errors, isDirty }
   } = useForm({ defaultValues,
-      mode: 'onChange',
+      mode: 'onBlur',
       resolver: yupResolver(schema),
    })
 
+   console.log("🚀 ~ AddCourses ~ errors:", errors)
   const handleNextStep = () => {
     if (step === 0) {
       const selectedRooms = dataRooms.filter(room => room.LocationId === location)
@@ -131,7 +135,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
     reset()
     handleClose()
   }
-
+console.log(isDirty)
   const handleClose = () => {
     setOpen(false)
     setStep(0)
@@ -146,7 +150,8 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
         Add Courses
       </Button>
 
-      <Dialog open={open}  TransitionComponent={Transition} onClose={handleClose} >
+      <Dialog open={open}  TransitionComponent={Transition} onClose={handleClose}     aria-labelledby='customized-dialog-title'
+        sx={{ '& .MuiDialog-paper': { overflow: 'visible' } }} >
         <DialogTitle>
           <Typography variant='h4'>Add Courses</Typography>
           <CustomCloseButton aria-label='close' onClick={handleClose}>
@@ -155,8 +160,8 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
         </DialogTitle>
         <DialogContent>
           {step === 0 && (
-            <Grid container spacing={4}>
-              <Grid item xs={12} sm={12} lg={12} md={12} sx={{ width: '800px' }}>
+            <Grid container >
+              <Grid item xs={12} sm={12} lg={12} md={12} sx={{ width: '700px' }}>
                 <Controller
                   name='LocationId'
                   control={control}
@@ -213,6 +218,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                         onChange(newValue ? newValue.id : '')
                       }}
                       value={location.room.find(room => room.id === value) || null}
+
                     />
                   )}
                 />
@@ -293,6 +299,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                     <CustomTextField
                       {...field}
                       label='Lessons'
+                      type='number'
                       variant='outlined'
                       fullWidth
                       error={!!errors.course?.lessons}
@@ -311,6 +318,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                       {...field}
                       label='Capacity'
                       variant='outlined'
+                      type='number'
                       fullWidth
                       error={!!errors.course?.capacity}
                       helperText={errors.course?.capacity ? errors.course.capacity.message : ''}
@@ -461,8 +469,8 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
               Next
             </Button>
           ) : (
-            <Button onClick={handleSubmit(handleSaveData)} color='primary'>
-              Save
+            <Button onClick={handleSubmit(handleSaveData)} disabled={isDirty} color='primary'>
+              {isDirty ? 'please have required fields' : 'save'}
             </Button>
           )}
         </DialogActions>

@@ -322,6 +322,38 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
 
 
             </Grid>
+            <Grid item xs={12} sm={12} lg={12}>
+            {location.length !== 0 ? (
+              <Grid item xs={12} sm={12} lg={12}>
+                <Controller
+                  name='course.RoomId'
+                  control={control}
+                  render={({ field: { onChange, value, ref } }) => (
+                    <Autocomplete
+                      options={location}
+                      getOptionLabel={option => option.name || ''}
+                      renderInput={params => (
+                        <CustomTextField
+                          {...params}
+                          label='Select Room'
+                          variant='outlined'
+                          inputRef={ref}
+                          error={!!errors.RoomId}
+                          helperText={errors.RoomId ? errors.RoomId.message : ''}
+                        />
+                      )}
+                      onChange={(event, newValue) => {
+                        onChange(newValue ? newValue.id : '')
+                      }}
+                      value={location.find(room => room.id === value) || null}
+                    />
+                  )}
+                />
+              </Grid>
+            ) : (
+              ''
+            )}
+              </Grid>
 <Box sx={{marginLeft:'12px' ,width:'100%'}}>
 
 
@@ -406,42 +438,13 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
 
 
 
-<Button variant='outlined' sx={{marginY:'24px'}}  onClick={() => append({ EmailServer: '' })}>
+<Button variant='outlined' sx={{marginY:'14px'}}  onClick={() => append({ EmailServer: '' })}>
   Add New course Schedule
 </Button>
 
 </Box>
 
-            {location.length !== 0 ? (
-              <Grid item xs={12} sm={12} lg={12}>
-                <Controller
-                  name='course.RoomId'
-                  control={control}
-                  render={({ field: { onChange, value, ref } }) => (
-                    <Autocomplete
-                      options={location}
-                      getOptionLabel={option => option.name || ''}
-                      renderInput={params => (
-                        <CustomTextField
-                          {...params}
-                          label='Select Room'
-                          variant='outlined'
-                          inputRef={ref}
-                          error={!!errors.RoomId}
-                          helperText={errors.RoomId ? errors.RoomId.message : ''}
-                        />
-                      )}
-                      onChange={(event, newValue) => {
-                        onChange(newValue ? newValue.id : '')
-                      }}
-                      value={location.find(room => room.id === value) || null}
-                    />
-                  )}
-                />
-              </Grid>
-            ) : (
-              ''
-            )}
+
           </Grid>
           <Stack
             sx={{ p: theme => `${theme.spacing(3)} !important` }}

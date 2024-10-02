@@ -41,6 +41,8 @@ import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 import { fetchEmployees } from 'src/store/apps/users'
 import { useDispatch, useSelector } from 'react-redux'
 import { postMail } from 'src/store/apps/email'
+import { fetchCourses } from 'src/store/apps/courses'
+import { fetchAllPermissions } from 'src/store/apps/roles'
 
 const filter = createFilterOptions()
 
@@ -48,9 +50,16 @@ const ComposePopup = props => {
   // ** Props
   const { mdAbove, composeOpen, composePopupWidth, toggleComposeOpen } = props
   const { employeesData } = useSelector(state => state.users)
+  const { data, status, error, dataRooms, dataTeacher } = useSelector(state => state.courses)
+  const {allPermissions} = useSelector(state => state.roles)
+  console.log("🚀 ~ ComposePopup ~ rolesData:", allPermissions)
+
   const dispatch =useDispatch()
   useEffect(() => {
     dispatch(fetchEmployees())
+    dispatch(fetchCourses(''))
+    dispatch(fetchAllPermissions())
+
   }, [dispatch])
   // ** States
   const [emailTo, setEmailTo] = useState([])
@@ -91,9 +100,11 @@ const ComposePopup = props => {
 
     const EmailData={
       subject:subjectValue,
-      ExternalEmails:emailTo,
+      Emails:emailTo,
+      CourseId:ccValue,
+      Role:bccValue,
       Message:htmlContent,
-      Files:messageValue
+
 
     }
 
@@ -137,6 +148,7 @@ const ComposePopup = props => {
     ))
   }
 
+
   const renderListItem = (props, option, array, setState) => {
     return (
       <ListItem {...props} key={option.value} sx={{ cursor: 'pointer' }} onClick={() => setState([...array, option.email])}>
@@ -149,6 +161,38 @@ const ComposePopup = props => {
             </CustomAvatar>
           )}
           <Typography sx={{ fontSize: theme => theme.typography.body2.fontSize }}>{option.email}</Typography>
+        </Box>
+      </ListItem>
+    )
+  }
+  const renderListItemCourses = (props, option, array, setState) => {
+    return (
+      <ListItem {...props} key={option.value} sx={{ cursor: 'pointer' }} onClick={() => setState([...array, option.name])}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {option.length ? (
+            <CustomAvatar src={option.name} alt={option.name} sx={{ mr: 3, width: 22, height: 22 }} />
+          ) : (
+            <CustomAvatar skin='light' color='primary' sx={{ mr: 3, width: 22, height: 22, fontSize: '.75rem' }}>
+              {getInitials(option.name)}
+            </CustomAvatar>
+          )}
+          <Typography sx={{ fontSize: theme => theme.typography.body2.fontSize }}>{option.name}</Typography>
+        </Box>
+      </ListItem>
+    )
+  }
+  const renderListItemRoles = (props, option, array, setState) => {
+    return (
+      <ListItem {...props} key={option.value} sx={{ cursor: 'pointer' }} onClick={() => setState([...array, option])}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {option.length ? (
+            <CustomAvatar src={option} alt={option} sx={{ mr: 3, width: 22, height: 22 }} />
+          ) : (
+            <CustomAvatar skin='light' color='primary' sx={{ mr: 3, width: 22, height: 22, fontSize: '.75rem' }}>
+              {getInitials(option)}
+            </CustomAvatar>
+          )}
+          <Typography sx={{ fontSize: theme => theme.typography.body2.fontSize }}>{option}</Typography>
         </Box>
       </ListItem>
     )
@@ -279,8 +323,112 @@ const ComposePopup = props => {
             )}
           />
         </Box>
-
+        <Typography variant='body2' sx={{ color: 'primary.main' }}>
+          <Box component='span' sx={{ cursor: 'pointer' }} onClick={() => toggleVisibility('cc')}>
+            roles
+          </Box>
+          <Box component='span' sx={{ mx: 1 }}>
+            |
+          </Box>
+          <Box component='span' sx={{ cursor: 'pointer' }} onClick={() => toggleVisibility('bcc')}>
+            courses
+          </Box>
+        </Typography>
       </Box>
+      {visibility.bcc ? (
+        <Box
+          sx={{
+            px: 5,
+            display: 'flex',
+            alignItems: 'center',
+            borderBottom: theme => `1px solid ${theme.palette.divider}`
+          }}
+        >
+          <div>
+            <InputLabel sx={{ mr: 3, fontSize: theme => theme.typography.body2.fontSize }} htmlFor='email-bcc-select'>
+              Course:
+            </InputLabel>
+          </div>
+          <CustomAutocomplete
+            multiple
+            freeSolo
+            value={ccValue}
+            clearIcon={false}
+            id='email-to-select'
+            filterSelectedOptions
+            options={data}
+            ListboxComponent={List}
+            getOptionLabel={option => option.name}
+            renderOption={(props, option) => renderListItemCourses(props, option, ccValue, setccValue)}
+            renderTags={(array, getTagProps) => renderCustomChips(array, getTagProps, ccValue, setccValue)}
+            sx={{
+              width: '100%',
+              '& .MuiOutlinedInput-root': { p: 2 },
+              '& .MuiAutocomplete-endAdornment': { display: 'none' }
+            }}
+            renderInput={params => (
+              <CustomTextField
+                {...params}
+                autoComplete='new-password'
+                sx={{
+                  '& .MuiFilledInput-root.MuiInputBase-sizeSmall': { border: '0 !important', p: '0 !important' },
+                  '& .MuiFilledInput-input.MuiInputBase-inputSizeSmall': {
+                    px: theme => `${theme.spacing(1.5)} !important`,
+                    py: theme => `${theme.spacing(2.125)} !important`
+                  }
+                }}
+              />
+            )}
+          />
+        </Box>
+      ) : null}
+      {visibility.cc ? (
+        <Box
+          sx={{
+            px: 5,
+            display: 'flex',
+            alignItems: 'center',
+            borderBottom: theme => `1px solid ${theme.palette.divider}`
+          }}
+        >
+          <div>
+            <InputLabel sx={{ mr: 3, fontSize: theme => theme.typography.body2.fontSize }} htmlFor='email-cc-select'>
+              Role:
+            </InputLabel>
+          </div>
+          <CustomAutocomplete
+            multiple
+            freeSolo
+            value={bccValue}
+            clearIcon={false}
+            id='email-to-select'
+            filterSelectedOptions
+            options={allPermissions.allRoles}
+            ListboxComponent={List}
+            getOptionLabel={option => option}
+            renderOption={(props, option) => renderListItemRoles(props, option, bccValue, setbccValue)}
+            renderTags={(array, getTagProps) => renderCustomChips(array, getTagProps, bccValue, setbccValue)}
+            sx={{
+              width: '100%',
+              '& .MuiOutlinedInput-root': { p: 2 },
+              '& .MuiAutocomplete-endAdornment': { display: 'none' }
+            }}
+            renderInput={params => (
+              <CustomTextField
+                {...params}
+                autoComplete='new-password'
+                sx={{
+                  '& .MuiFilledInput-root.MuiInputBase-sizeSmall': { border: '0 !important', p: '0 !important' },
+                  '& .MuiFilledInput-input.MuiInputBase-inputSizeSmall': {
+                    px: theme => `${theme.spacing(1.5)} !important`,
+                    py: theme => `${theme.spacing(2.125)} !important`
+                  }
+                }}
+              />
+            )}
+          />
+        </Box>
+      ) : null}
 
       <Box
         sx={{

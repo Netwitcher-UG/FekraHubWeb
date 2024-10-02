@@ -62,8 +62,8 @@ const HiddenInput = styled('input')({
 
 const schema = yup.object().shape({
   courseId: yup
-  .number()
-  .required('course Id is required'),
+  .string()
+  .required('select course is required'),
   UploadTypeId: yup
   .number()
   .required('course Id is required'),
@@ -148,7 +148,7 @@ const AddWorksheets = ({ dataUploadType, data }) => {
       >
         <DialogTitle id='customized-dialog-title' sx={{ p: 4 }}>
           <Typography variant='h4' sx={{ fontWeight: '900' }}>
-            <Translations text={'Add Worksheets'} />
+            <Translations text={'Add Course Files'} />
           </Typography>
           <CustomCloseButton aria-label='close' onClick={handleClose}>
             <Icon icon='tabler:x' fontSize='1.25rem' />
@@ -247,7 +247,6 @@ const AddWorksheets = ({ dataUploadType, data }) => {
         const files = Array.from(e.target.files);  // Convert FileList to an array
         field.onChange(files);  // Update field with the array of files
         setSelectedFiles(files);  // Update local state with selected files
-        console.log(files);  // Log array of files
       }}
     />
     <CustomTextField
@@ -268,7 +267,7 @@ const AddWorksheets = ({ dataUploadType, data }) => {
             </Grid>
             <Stack direction={'row'} alignItems={'center'} justifyContent={'center'} spacing={5} marginTop={'2rem'}>
               <Button disabled={!isDirty} type='submit' variant='contained'>
-                <Translations text={'Add Worksheets'} />
+                <Translations text={'Add Course Files'} />
               </Button>
               <Button type='button' variant='outlined' onClick={handleClose}>
                 <Translations text={'Cancel'} />

@@ -14,7 +14,7 @@ export const fetchMails = createAsyncThunk('appEmail/fetchMails', async params =
 
 // ** Get Current Mail
 export const getCurrentMail = createAsyncThunk('appEmail/selectMail', async id => {
-  const response = await axiosInstance.get('/apps/email/get-email', {
+  const response = await axiosInstance.get('/api/MessageSender/UserMessages', {
     params: {
       id
     }
@@ -37,7 +37,7 @@ export const postMail = createAsyncThunk('appEmail/postMail', async (data, { dis
     return response.data
   }catch(error){
 
-    ShowErrorToast(error.response.data)
+    ShowErrorToast(error.response.data.title)
   }
 
 })

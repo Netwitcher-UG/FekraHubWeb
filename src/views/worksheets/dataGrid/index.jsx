@@ -4,12 +4,12 @@ import React, { useEffect } from 'react'
 import CustomDataGrid from 'src/@core/components/custom-datagrid'
 import CircularProgress from '@mui/material/CircularProgress'
 import CustomDialogDelete from 'src/@core/components/custom-delete'
-import AdduWorksheets from '../add'
 import useWorksheetsColumns from '../hook/useWorksheetsColumns'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchCourses } from 'src/store/apps/courses'
 import ViewWorksheet from '../view'
 import { useTranslation } from 'react-i18next'
+import AddWorksheets from '../add'
 
 export default function WorksheetsDataGrid({ rows, SetSearch, status, dataUploadType }) {
   const {
@@ -49,7 +49,7 @@ export default function WorksheetsDataGrid({ rows, SetSearch, status, dataUpload
               justifyContent: 'flex-end'
             }}
           >
-            <AdduWorksheets dataUploadType={dataUploadType} data={data} />
+            <AddWorksheets dataUploadType={dataUploadType} data={data} />
           </Box>
         </Stack>
         <Box sx={{ height: 'calc(100vh - 255px)' }}>

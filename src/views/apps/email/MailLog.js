@@ -63,7 +63,7 @@ const ScrollWrapper = ({ children, hidden }) => {
   if (hidden) {
     return <Box sx={{ height: '100%', overflowY: 'auto', overflowX: 'hidden' }}>{children}</Box>
   } else {
-    return <PerfectScrollbar options={{ wheelPropagation: false, suppressScrollX: true }}>{children}</PerfectScrollbar>
+    return <PerfectScrollbar options={{ wheelPropagation: false, suppressScrollX: true }} >{children}</PerfectScrollbar>
   }
 }
 
@@ -181,21 +181,12 @@ const MailLog = props => {
     trash: [foldersConfig.inbox, foldersConfig.spam]
   }
 
-  const handleMoveToTrash = () => {
-    dispatch(updateMail({ emailIds: store.selectedMails, dataToUpdate: { folder: 'trash' } }))
-    dispatch(handleSelectAllMail(false))
-  }
 
   const handleStarMail = (e, id, value) => {
     e.stopPropagation()
     dispatch(updateMail({ emailIds: [id], dataToUpdate: { isStarred: value } }))
   }
 
-  const handleReadMail = (id, value) => {
-    const arr = Array.isArray(id) ? [...id] : [id]
-    dispatch(updateMail({ emailIds: arr, dataToUpdate: { isRead: value } }))
-    dispatch(handleSelectAllMail(false))
-  }
 
   const handleLabelUpdate = (id, label) => {
     const arr = Array.isArray(id) ? [...id] : [id]
@@ -207,91 +198,6 @@ const MailLog = props => {
     dispatch(updateMail({ emailIds: arr, dataToUpdate: { folder } }))
   }
 
-  const handleRefreshMailsClick = () => {
-    setRefresh(true)
-    setTimeout(() => setRefresh(false), 1000)
-  }
-
-  const handleLabelsMenu = () => {
-    const array = []
-    Object.entries(labelColors).map(([key, value]) => {
-      array.push({
-        text: <Typography sx={{ textTransform: 'capitalize' }}>{key}</Typography>,
-        icon: (
-          <Box component='span' sx={{ mr: 2, color: `${value}.main` }}>
-            <Icon icon='mdi:circle' fontSize='0.75rem' />
-          </Box>
-        ),
-        menuItemProps: {
-          onClick: () => {
-            handleLabelUpdate(store.selectedMails, key)
-            dispatch(handleSelectAllMail(false))
-          }
-        }
-      })
-    })
-
-    return array
-  }
-
-  const handleFoldersMenu = () => {
-    const array = []
-    if (routeParams && routeParams.folder && !routeParams.label && foldersObj[routeParams.folder]) {
-      foldersObj[routeParams.folder].map(folder => {
-        array.length = 0
-        array.push({
-          icon: folder.icon,
-          text: <Typography sx={{ textTransform: 'capitalize' }}>{folder.name}</Typography>,
-          menuItemProps: {
-            onClick: () => {
-              handleFolderUpdate(store.selectedMails, folder.name)
-              dispatch(handleSelectAllMail(false))
-            }
-          }
-        })
-      })
-    } else if (routeParams && routeParams.label) {
-      folders.map(folder => {
-        array.length = 0
-        array.push({
-          icon: folder.icon,
-          text: <Typography sx={{ textTransform: 'capitalize' }}>{folder.name}</Typography>,
-          menuItemProps: {
-            onClick: () => {
-              handleFolderUpdate(store.selectedMails, folder.name)
-              dispatch(handleSelectAllMail(false))
-            }
-          }
-        })
-      })
-    } else {
-      foldersObj['inbox'].map(folder => {
-        array.length = 0
-        array.push({
-          icon: folder.icon,
-          text: <Typography sx={{ textTransform: 'capitalize' }}>{folder.name}</Typography>,
-          menuItemProps: {
-            onClick: () => {
-              handleFolderUpdate(store.selectedMails, folder.name)
-              dispatch(handleSelectAllMail(false))
-            }
-          }
-        })
-      })
-    }
-
-    return array
-  }
-
-  const renderMailLabels = arr => {
-    return arr.map((label, index) => {
-      return (
-        <Box key={index} component='span' sx={{ mr: 3, color: `${labelColors[label]}.main` }}>
-          <Icon icon='mdi:circle' fontSize='0.625rem' />
-        </Box>
-      )
-    })
-  }
 
   const mailDetailsProps = {
     hidden,
@@ -345,9 +251,9 @@ const MailLog = props => {
         <Divider sx={{ m: '0 !important' }} />
         <Box sx={{ p: 0, position: 'relative', overflowX: 'hidden', height: 'calc(100% - 7.5625rem)' }}>
           <ScrollWrapper hidden={hidden}>
-            {messages && messages.messages && messages.messages.length ? (
+            {messages && messages.length ? (
               <List sx={{ p: 0 }}>
-                {messages.messages.map(mail => {
+                {messages.map(mail => {
                   const mailReadToggleIcon = true ? 'tabler:mail' : 'tabler:mail-opened'
 
                   return (
@@ -356,8 +262,8 @@ const MailLog = props => {
                       sx={{ backgroundColor: true ? 'action.hover' : 'background.paper' }}
                       onClick={() => {
                         setMailDetailsOpen(true)
-                        dispatch(getCurrentMail(mail.id))
-                        dispatch(updateMail({ emailIds: [mail.id], dataToUpdate: { isRead: true } }))
+                        dispatch(getCurrentMail(mail.user[0].email))
+
                         setTimeout(() => {
                           dispatch(handleSelectAllMail(false))
                         }, 600)
@@ -366,8 +272,8 @@ const MailLog = props => {
                       <Box sx={{ mr: 4, display: 'flex', overflow: 'hidden', alignItems: 'center' }}>
 
                         <Avatar
-                          alt={mail.user[0].firstName}
-                          src={mail.user[0].firstName}
+                          alt={mail.user[0]?.firstName}
+                          src={mail.user[0]?.firstName}
                           sx={{ mr: 3, width: '2rem', height: '2rem' }}
                         />
                         <Box
@@ -378,22 +284,69 @@ const MailLog = props => {
                             alignItems: { xs: 'flex-start', sm: 'center' }
                           }}
                         >
-                          <Typography
-                            variant='h6'
-                            sx={{
-                              mr: 3,
-                              fontWeight: 500,
-                              whiteSpace: 'nowrap',
-                              width: ['100%', 'auto'],
-                              overflow: ['hidden', 'unset'],
-                              textOverflow: ['ellipsis', 'unset']
-                            }}
-                          >
-                            {mail.user[0].firstName + ' '+mail.user[0].lastName}
-                          </Typography>
-                          <Typography noWrap sx={{ width: '100%', color: 'text.secondary' }}>
-                          {mail.message}
-                          </Typography>
+
+                           {mail.user.slice(0, 3).map((user, index) => (
+  <Typography
+    key={index}
+    variant='h6'
+    sx={{
+      mr: 3,
+      fontWeight: 500,
+      whiteSpace: 'nowrap',
+      width: ['100%', 'auto'],
+      overflow: ['hidden', 'unset'],
+      textOverflow: ['ellipsis', 'unset'],
+    }}
+  >
+    {user?.firstName +' '+user?.lastName + (index < 2 ? ' - ' : '')} {/* Add dash after all but last */}
+  </Typography>
+))}
+
+{/* If more than 3 emails, show "..." */}
+{mail.user.length > 3 && (
+  <Typography
+    variant='h6'
+    sx={{
+      fontWeight: 500,
+      whiteSpace: 'nowrap',
+    }}
+  >
+    ...
+  </Typography>
+)}
+
+
+                           {mail.externalEmails.slice(0, 3).map((user, index) => (
+  <Typography
+    key={index}
+    variant='h6'
+    sx={{
+      mr: 3,
+      fontWeight: 500,
+      whiteSpace: 'nowrap',
+      width: ['100%', 'auto'],
+      overflow: ['hidden', 'unset'],
+      textOverflow: ['ellipsis', 'unset'],
+    }}
+  >
+    {user?.email + (index < 2 ? ' - ' : '')} {/* Add dash after all but last */}
+  </Typography>
+))}
+
+{/* If more than 3 emails, show "..." */}
+{mail.externalEmails.length > 3 && (
+  <Typography
+    variant='h6'
+    sx={{
+      fontWeight: 500,
+      whiteSpace: 'nowrap',
+    }}
+  >
+    ...
+  </Typography>
+)}
+
+
                         </Box>
                       </Box>
 
@@ -401,6 +354,9 @@ const MailLog = props => {
                         className='mail-info-right'
                         sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}
                       >
+                          <Typography noWrap sx={{ width: '100%', color: 'text.secondary' }}>
+                          {mail?.subject}
+                          </Typography>
                         {/* <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>{mail.message}</Box> */}
                         <Typography
                           variant='body2'

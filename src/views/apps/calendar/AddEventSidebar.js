@@ -29,6 +29,7 @@ import { fetchEventsTypes } from 'src/store/apps/calendar'
 import { fetchCourseSchedule } from 'src/store/apps/courses'
 import { FormateDateTime } from 'src/@core/utils/DateTimeFormat'
 import { FormateDate } from 'src/@core/utils/DateFormate'
+import { Autocomplete } from '@mui/material'
 
 
 
@@ -287,24 +288,31 @@ const AddEventSidebar = props => {
             </CustomTextField>
 
 
-            <CustomTextField
-              select
-              fullWidth
-              label='Course Schedule'
-              sx={{ mb: 4 }}
-              SelectProps={{
-                multiple: true,
-                value: values?.guests,
-                onChange: e => setValues({ ...values, guests: e.target.value })
-              }}
-            >
-              {CourseSchedule.map((type,index)=>(
-              <MenuItem key={index} value={type.id}>{type.courseName}</MenuItem>
+            <Autocomplete
+  multiple // Enables multiple selection
+  options={CourseSchedule} // List of course schedules
+  getOptionLabel={(option) => option.courseName || ''} // Label shown for each option
+  isOptionEqualToValue={(option, value) => option.id === value.id} // Proper comparison for selected value
+  value={CourseSchedule.filter(course => values.guests.includes(course.id)) || []} // Finds selected values
 
-              ))
+  onChange={(event, newValue) => {
+    const selectedIds = newValue.map((option) => option.id); // Extracts selected course IDs
+    setValues({ ...values,  guests:  selectedIds }); // Updates state with selected course IDs
+  }}
+  renderInput={(params) => (
+    <CustomTextField
+      {...params}
+      fullWidth
+      sx={{ mb: 4 }}
+      label="Select Course" // Label for the Autocomplete input field
+      variant="outlined"
 
-              }
-            </CustomTextField>
+    />
+  )}
+/>
+
+
+
             <Box sx={{ mb: 4 }}>
               <DatePicker
                 selectsStart

@@ -43,7 +43,7 @@ const Calendar = props => {
     handleLeftSidebarToggle,
     handleAddEventSidebarToggle
   } = props
-    console.log("🚀 ~ Calendar ~ calendarsColor:", calendarsColor)
+    console.log("🚀 ~ Calendar ~ calendarsColor:", store.events)
 
 
   // ** Refs
@@ -64,8 +64,8 @@ const Calendar = props => {
         start: new Date(event.startDate), // Ensure start and end are Date objects
         end: new Date(event.endDate),
         extendedProps: {
-          calendar: event.eventType.id,
-          backgroundColor:event.eventType.typeTitle,
+          calendar: event?.eventType?.id,
+          backgroundColor:event?.eventType?.typeTitle,
           description: event.description,
           guests:event.courseSchedule
         }

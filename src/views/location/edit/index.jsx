@@ -19,11 +19,13 @@ const Header = styled(Box)(({ theme }) => ({
   margin: '0px'
 }))
 const schema = yup.object().shape({
+  locationMdl: yup.object().shape({
   name: yup.string().required('name is required'),
   street: yup.string().required('street is required'),
   streetNr: yup.string().required('streetNr is required'),
   zipCode: yup.string().required('zipCode is required'),
   city: yup.string().required('city is required')
+  })
 })
 
 export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
@@ -31,12 +33,14 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
   const dispatch = useDispatch()
 
   const defaultValues = {
-    name: dataDef?.name,
-    street: dataDef?.street,
-    streetNr: dataDef?.streetNr,
-    zipCode: dataDef?.zipCode,
-    city: dataDef?.city,
-    rooms:dataDef?.room.map(item=>item.name)
+    locationMdl:{
+      name: dataDef?.name,
+      street: dataDef?.street,
+      streetNr: dataDef?.streetNr,
+      zipCode: dataDef?.zipCode,
+      city: dataDef?.city,
+    },
+    rooms:dataDef?.room
   }
 
   const {
@@ -44,6 +48,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
     handleSubmit,
     resetField,
     formState: { errors, isDirty },
+    setValue,
     reset
   } = useForm({
     resolver: yupResolver(schema),
@@ -52,11 +57,12 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
   })
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'room'
+    name: 'rooms'
   });
 
   const handleSaveData = data => {
-    dispatch(editLocation({ ...data, id: dataDef.id }))
+    setValue('id',dataDef.id)
+    dispatch(editLocation({ formData:data, id: dataDef.id }))
     handleCloseDrawer()
     reset()
   }
@@ -92,7 +98,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
           <Grid container rowSpacing={4} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
             <Grid item xs={12} sm={12} lg={12}>
               <Controller
-                name='name'
+                name='locationMdl.name'
                 defaultValue={dataDef?.name}
                 control={control}
                 render={({ field }) => (
@@ -101,16 +107,16 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                     fullWidth
                     label={`${'name'}`}
                     variant='outlined'
-                    error={!!errors.Name}
-                    helperText={errors.Name ? errors.Name.message : ''}
+                    error={!!errors.locationMdl?.name}
+                    helperText={errors.locationMdl?.name ? errors.locationMdl.name.message : ''}
                   />
                 )}
               />
-              <Typography>{errors.Name ? errors.Name.message : ''}</Typography>
+              <Typography>{errors.locationMdl?.name ? errors.locationMdl.name.message : ''}</Typography>
             </Grid>
             <Grid item xs={12} sm={12} lg={12}>
               <Controller
-                name='street'
+                name='locationMdl.street'
                 defaultValue=''
                 control={control}
                 render={({ field }) => (
@@ -119,15 +125,15 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                     fullWidth
                     label={`${'street'}`}
                     variant='outlined'
-                    error={!!errors.name}
-                    helperText={errors.name ? errors.name.message : ''}
+                    error={!!errors.locationMdl?.street}
+                    helperText={errors.locationMdl?.street ? errors.locationMdl?.street.message : ''}
                   />
                 )}
               />
             </Grid>
             <Grid item xs={12} sm={12} lg={12}>
               <Controller
-                name='streetNr'
+                name='locationMdl.streetNr'
                 defaultValue=''
                 control={control}
                 render={({ field }) => (
@@ -136,15 +142,15 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                     fullWidth
                     label={`${'streetNr'}`}
                     variant='outlined'
-                    error={!!errors.name}
-                    helperText={errors.name ? errors.name.message : ''}
+                    error={!!errors.locationMdl?.streetNr}
+                    helperText={errors.locationMdl?.streetNr ? errors.locationMdl?.streetNr?.message : ''}
                   />
                 )}
               />
             </Grid>
             <Grid item xs={12} sm={12} lg={12}>
               <Controller
-                name='zipCode'
+                name='locationMdl.zipCode'
                 defaultValue=''
                 control={control}
                 render={({ field }) => (
@@ -153,15 +159,15 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                     fullWidth
                     label={`${'zipCode'}`}
                     variant='outlined'
-                    error={!!errors.name}
-                    helperText={errors.name ? errors.name.message : ''}
+                    error={!!errors.locationMdl?.zipCode}
+                    helperText={errors.locationMdl?.zipCode ? errors.locationMdl?.zipCode?.message : ''}
                   />
                 )}
               />
             </Grid>
             <Grid item xs={12} sm={12} lg={12}>
               <Controller
-                name='city'
+                name='locationMdl.city'
                 defaultValue=''
                 control={control}
                 render={({ field }) => (
@@ -170,48 +176,42 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                     fullWidth
                     label={`${'city'}`}
                     variant='outlined'
-                    error={!!errors.name}
-                    helperText={errors.name ? errors.name.message : ''}
+                    error={!!errors.locationMdl?.city}
+                    helperText={errors.locationMdl?.city ? errors.locationMdl?.city.message : ''}
                   />
                 )}
               />
             </Grid>
 
-{fields.map((field, index) => (
-     <>
-     <Grid item xs={8} sm={8} lg={8}>
-        <Controller
-          name={`rooms.${index}`}
-          control={control}
-          render={({ field }) => (
-            <CustomTextField
-              {...field}
-              fullWidth
-              type='text'
-              label={`Room  ${index + 1}`}
-              error={!!errors.rooms?.[index]}
-              helperText={errors.rooms?.[index].message}
-            />
-          )}
-        />
+            {fields.map((field, index) => (
+  <>
+   <Controller
+    name={`rooms.${index}.id`}
+    control={control}
+    defaultValue={field.id} // Make sure the ID value is provided
+    render={({ field }) => <input type="hidden" {...field} />}
+  />
+    <Grid item xs={8} sm={8} lg={8} key={field.id}>
+      <Controller
+        name={`rooms.${index}.name`}
+        control={control}
+        render={({ field }) => (
+          <CustomTextField
+            {...field}
+            fullWidth
+            type="text"
+            label={`Room ${index + 1}`}
+            error={!!errors.rooms?.[index]}
+            helperText={errors.rooms?.[index]?.message}
+          />
+        )}
+      />
+    </Grid>
 
-</Grid>
-    <Grid item xs={4} sm={4} lg={4} sx={{marginTop:'16px'}}>
-      <Button
-        variant='text'
-        color='error'
-        onClick={() => remove(index)}
-      >
-        Remove
-      </Button>
-</Grid>
-</>
+
+  </>
 ))}
-<Grid item xs={6} sm={6} lg={6}>
-<Button variant='outlined' sx={{marginY:'20px'}}  onClick={() => append({   })}>
-  Add New Room
-</Button>
-</Grid>
+
           </Grid>
           <Stack
             sx={{ p: theme => `${theme.spacing(3)} !important` }}

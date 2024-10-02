@@ -31,9 +31,9 @@ export const addLocation = createAsyncThunk('location/addLocation', async (data,
 
 export const editLocation = createAsyncThunk('location/editLocation', async (data, { getState, dispatch }) => {
   try {
-    const response = await axiosInstance.put(`/api/Locations/${data.id}`, data, {
+    const response = await axiosInstance.put(`/api/Locations/${data.id}`, data.formData, {
       headers: {
-        'Content-Type': 'multipart/form-data'
+        'Content-Type': 'application/json'
       }
     })
     ShowSuccessToast('Success')
