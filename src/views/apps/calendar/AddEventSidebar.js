@@ -26,7 +26,7 @@ import Icon from 'src/@core/components/icon'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import { useSelector } from 'react-redux'
 import { fetchEventsTypes } from 'src/store/apps/calendar'
-import { fetchCourseSchedule } from 'src/store/apps/courses'
+import { fetchCourses, fetchCourseSchedule } from 'src/store/apps/courses'
 import { FormateDateTime } from 'src/@core/utils/DateTimeFormat'
 import { FormateDate } from 'src/@core/utils/DateFormate'
 import { Autocomplete } from '@mui/material'
@@ -79,13 +79,13 @@ const AddEventSidebar = props => {
   }
 
   const { types } = useSelector((state) => state.calendar);
-  const { CourseSchedule } = useSelector((state) => state.courses);
+  const { data:CourseSchedule } = useSelector((state) => state.courses);
   console.log("🚀 ~ AddEventSidebar ~ CourseSchedule:", CourseSchedule)
 
 
   useEffect(() => {
     dispatch(fetchEventsTypes());
-    dispatch(fetchCourseSchedule());
+    dispatch(fetchCourses());
   }, [dispatch]);
 
   const onSubmit = data => {
@@ -97,7 +97,7 @@ const AddEventSidebar = props => {
     }
     else {
       startDate= FormateDateTime(values.startDate)
-      endDate= FormateDate(values.endDate)
+      endDate= FormateDateTime(values.endDate)
     }
 
     const modifiedEvent = {
@@ -130,8 +130,14 @@ const AddEventSidebar = props => {
 
   const handleStartDate = date => {
     if (date > values.endDate) {
-      setValues({ ...values, startDate: new Date(date), endDate: new Date(date) })
+      setValues({ ...values, startDate: new Date(date) })
     }
+  }
+  const handleEndDate = date => {
+    console.log("🚀 ~ handleEndDate ~ date:", date)
+
+      setValues({ ...values, endDate: new Date(date) })
+
   }
   console.log("🚀 ~ handleStartDate ~ values:", values)
 
@@ -291,9 +297,9 @@ const AddEventSidebar = props => {
             <Autocomplete
   multiple // Enables multiple selection
   options={CourseSchedule} // List of course schedules
-  getOptionLabel={(option) => option.courseName || ''} // Label shown for each option
+  getOptionLabel={(option) => option.name || ''} // Label shown for each option
   isOptionEqualToValue={(option, value) => option.id === value.id} // Proper comparison for selected value
-  value={CourseSchedule.filter(course => values.guests.includes(course.id)) || []} // Finds selected values
+  value={CourseSchedule?.filter(course => values.guests.includes(course.id)) || []} // Finds selected values
 
   onChange={(event, newValue) => {
     const selectedIds = newValue.map((option) => option.id); // Extracts selected course IDs
@@ -338,9 +344,10 @@ const AddEventSidebar = props => {
                 startDate={values.startDate}
                 showTimeSelect={!values.allDay}
                 timeFormat="HH:mm"
-                dateFormat={!values.allDay ? 'yyyy-MM-dd HH:mm' : 'yyyy-MM-dd'}
+                dateFormat={!values.allDay ? 'yyyy-MM-dd HH:mm' : 'yyyy-MM-dd HH:mm'}
                 customInput={<PickersComponent label='End Date' registername='endDate' />}
                 onChange={date => setValues({ ...values, endDate: new Date(date) })}
+                onSelect={handleEndDate}
               />
             </Box>
 

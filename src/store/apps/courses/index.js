@@ -175,7 +175,7 @@ export const deleteCourse = createAsyncThunk(
 const CoursesSlice = createSlice({
   name: 'courses',
   initialState: {
-    data: {},
+    data: [],
     dataRooms: [],
     DaysOfWeeks: [],
     dataTeacher: [],
