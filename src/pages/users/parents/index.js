@@ -109,9 +109,9 @@ const ParentsList = () => {
       renderCell: ({ row }) => (
         <>
           {row.activeUser ? (
-            <Chip label={'Active'} color={'success'} sx={{ textTransform: 'capitalize' }} />
+            <Chip label={t('Active')} color={'success'} sx={{ textTransform: 'capitalize' }} />
           ) : (
-            <Chip label={'Inactive'} color={'secondary'} sx={{ textTransform: 'capitalize' }} />
+            <Chip label={t('Inactive')} color={'secondary'} sx={{ textTransform: 'capitalize' }} />
           )}
         </>
       )

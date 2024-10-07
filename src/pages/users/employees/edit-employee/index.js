@@ -222,21 +222,21 @@ const EditEmployeeDialog = ({ open, setOpen, profileData, paramsQuery }) => {
                       color='success'
                     />
                   }
-                  label={isActive ? 'User is active' : 'User is inactive'}
+                  label={isActive ? t('User is active') : t('User is inactive')}
                 />
               </Grid>
               {auth?.user?.id == profileData?.id ? (
                 <Grid item xs={12} sm={6} sx={{ m: 4 }}>
                   <Alert severity='info'>
                     {' '}
-                    <Translations text={'You cannot deactivate your own account '} />{' '}
+                    <Translations text={'You cannot deactivate your own account'} />{' '}
                   </Alert>
                 </Grid>
               ) : (
                 <Grid item xs={12} sm={6} sx={{ m: 4 }}>
                   <Alert severity='warning'>
                     {' '}
-                    <Translations text={'Deactivated users cannot login into the app '} />{' '}
+                    <Translations text={'Deactivated users cannot login into the app'} />{' '}
                   </Alert>
                 </Grid>
               )}
@@ -653,7 +653,7 @@ const EditEmployeeDialog = ({ open, setOpen, profileData, paramsQuery }) => {
       <CustumWarningDialog
         open={isDialogOpen}
         handleClose={handleCloseDialog}
-        decsription={`Are you sure you want to ${isActive ? 'Deactivate' : 'Activate'} the user ${
+        decsription={`${t('Are you sure you want to')} ${isActive ? t('Deactivate') : t('Activate')} ${t('the user')} ${
           profileData?.firstName
         } ${profileData?.lastName}? `}
         onConfirm={() => handleChageUserState(!isActive)} // Wrap in an arrow function
