@@ -212,7 +212,7 @@ const EditParentDialog = ({ open, setOpen, profileData, paramsQuery }) => {
                       color='success'
                     />
                   }
-                  label={isActive ? 'Parent is active' : 'Parent is inactive'}
+                  label={isActive ? t('Parent is active') : t('Parent is inactive')}
                 />
               </Grid>
               {auth?.user?.id == profileData?.id ? (
@@ -226,7 +226,7 @@ const EditParentDialog = ({ open, setOpen, profileData, paramsQuery }) => {
                 <Grid item xs={12} sm={6} sx={{ m: 4 }}>
                   <Alert severity='warning'>
                     {' '}
-                    <Translations text={'Deactivated users cannot login into the app '} />{' '}
+                    <Translations text={'Deactivated parents cannot login into the app'} />{' '}
                   </Alert>
                 </Grid>
               )}
@@ -572,9 +572,9 @@ const EditParentDialog = ({ open, setOpen, profileData, paramsQuery }) => {
       <CustumWarningDialog
         open={isDialogOpen}
         handleClose={handleCloseDialog}
-        decsription={`Are you sure you want to ${isActive ? 'Deactivate' : 'Activate'} the user ${
-          profileData?.firstName
-        } ${profileData?.lastName}? `}
+        decsription={`${t('Are you sure you want to')} ${isActive ? t('Deactivate') : t('Activate')} ${t(
+          'the parent'
+        )} ${profileData?.firstName} ${profileData?.lastName}? `}
         onConfirm={() => handleChageUserState(!isActive)} // Wrap in an arrow function
       />
     </Dialog>
