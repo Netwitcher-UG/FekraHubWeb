@@ -1,35 +1,47 @@
 import { useMemo, useState, useCallback, useContext, useEffect } from 'react'
 import Translations from 'src/layouts/components/Translations'
 import Chip from '@mui/material/Chip'
-// import Icon from 'src/@core/components/icon'
 import { fetchAttendanceStatuses } from 'src/store/apps/attendance'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 import { convertDate } from 'src/@core/utils/convert-date'
-// import IconButton from '@mui/material/IconButton'
 import MenuItem from '@mui/material/MenuItem'
 import CustomTextField from 'src/@core/components/mui/text-field'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 
-const useStudentAttendanceColumns = () => {
+const useStudentAttendanceColumns = students => {
   const dispatch = useDispatch()
   const { t } = useTranslation()
   const { attendanceStatuses } = useSelector(state => state.attendance)
+
+  const [attendanceData, setAttendanceData] = useState([])
+  const ability = useContext(AbilityContext)
 
   useEffect(() => {
     dispatch(fetchAttendanceStatuses())
   }, [dispatch])
 
-  const [attendanceData, setAttendanceData] = useState([])
-  const ability = useContext(AbilityContext)
+  // Set default attendance to "Present" for all students
+  useEffect(() => {
+    // console.log(students)
+    if (attendanceStatuses?.length && students?.length) {
+      const presentStatusId = attendanceStatuses.find(status => status.title === 'Present')?.id || ''
+
+      const initialAttendance = students.map(student => ({
+        studentID: student.id,
+        statusID: presentStatusId
+      }))
+
+      setAttendanceData(initialAttendance)
+    }
+  }, [attendanceStatuses, students])
 
   const handleStatusChange = (studentId, statusId) => {
     setAttendanceData(prevData => {
       if (statusId === '') {
-        // If the "present" option is selected (empty value), remove the student from the attendanceData
+        // Remove the student from attendanceData if "present" (empty value) is selected
         return prevData.filter(entry => entry.studentID !== studentId)
       } else {
-        // Check if the student already has a status recorded
         const existingEntry = prevData.find(entry => entry.studentID === studentId)
 
         if (existingEntry) {
@@ -74,42 +86,46 @@ const useStudentAttendanceColumns = () => {
       {
         width: 400,
         headerName: <Translations text={`Today's attendance`} />,
-        field: `attendance`,
+        field: 'attendance',
         align: 'center',
         headerAlign: 'center',
-        renderCell: ({ row }) => (
-          <>
-            {!row?.course?.courseAttendance && ability.can('create', 'StudentAttendance') ? (
-              <CustomTextField
-                select
-                fullWidth
-                id='attendance-status-select'
-                aria-describedby='attendance-status-select'
-                defaultValue=''
-                SelectProps={{
-                  onChange: e => handleStatusChange(row.id, e.target.value),
-                  displayEmpty: true
-                }}
-              >
-                <MenuItem value=''>
-                  <Chip label={t('present')} color={'info'} />
-                </MenuItem>
-                {attendanceStatuses?.map(status => (
-                  <MenuItem key={status.id} value={status.id}>
-                    <Chip label={t(status.title)} color={status.title === 'Absent' ? 'error' : 'warning'} />
-                  </MenuItem>
-                ))}
-              </CustomTextField>
-            ) : row.studentAttendance == null ? (
-              <Chip label={t('present')} color={'info'} />
-            ) : (
-              <Chip label={t(row.studentAttendance)} color={row.studentAttendance === 'Absent' ? 'error' : 'warning'} />
-            )}
-          </>
-        )
+        renderCell: ({ row }) => {
+          const presentStatusId = attendanceStatuses?.find(status => status.title === 'Present')?.id || ''
+
+          return (
+            <>
+              {!row?.course?.courseAttendance && ability.can('create', 'StudentAttendance') ? (
+                <CustomTextField
+                  select
+                  fullWidth
+                  id='attendance-status-select'
+                  aria-describedby='attendance-status-select'
+                  defaultValue={presentStatusId}
+                  SelectProps={{
+                    onChange: e => handleStatusChange(row.id, e.target.value),
+                    displayEmpty: true
+                  }}
+                >
+                  {attendanceStatuses?.map(status => (
+                    <MenuItem key={status.id} value={status.id}>
+                      <Chip label={t(status.title)} color={status.title === 'Absent' ? 'error' : 'info'} />
+                    </MenuItem>
+                  ))}
+                </CustomTextField>
+              ) : row.studentAttendance == null ? (
+                <Chip label={t('present')} color={'info'} />
+              ) : (
+                <Chip
+                  label={t(row.studentAttendance)}
+                  color={row.studentAttendance === 'Absent' ? 'error' : 'warning'}
+                />
+              )}
+            </>
+          )
+        }
       }
     ],
-    [attendanceStatuses]
+    [attendanceStatuses, ability, t, handleStatusChange]
   )
 
   return { columns, attendanceData, setAttendanceData }
