@@ -165,7 +165,7 @@ const AddRecord = ({ open, setOpen, attendanceStatuses, studentId }) => {
                     >
                       {attendanceStatuses?.map(status => (
                         <MenuItem key={status.id} value={status.id}>
-                          <Chip label={t(status.title)} color={status.title === 'Absent' ? 'error' : 'warning'} />
+                          <Chip label={t(status.title)} color={status.title === 'Absent' ? 'error' : 'info'} />
                         </MenuItem>
                       ))}
                     </CustomTextField>

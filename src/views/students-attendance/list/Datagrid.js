@@ -62,7 +62,7 @@ const StudentsAttendanceDataGrid = ({
 
   const [courseStatus, setCourseStatus] = useState(true)
 
-  const { columns, attendanceData, setAttendanceData } = useStudentAttendanceColumns()
+  const { columns, attendanceData, setAttendanceData } = useStudentAttendanceColumns(store?.students?.students)
   useEffect(() => {
     const timer = setTimeout(() => {
       setCurrentPage(1)
@@ -83,12 +83,11 @@ const StudentsAttendanceDataGrid = ({
     }
   }, [coursesData, selectedCourse, setSelectedCourse])
 
-  let isNotSchoolDay =
-    store?.students?.isTodayAWorkDay === false &&
-    !store?.studentsLoading &&
-    Array.isArray(store?.students?.students) &&
-    store.students.students.length > 0 &&
-    store?.students?.students[0]
+  let isNotSchoolDay = store?.students?.isTodayAWorkDay === false && !store?.studentsLoading
+  //  &&
+  // Array.isArray(store?.students?.students) &&
+  // store.students.students.length > 0 &&
+  // store?.students?.students[0]
 
   return (
     <>
