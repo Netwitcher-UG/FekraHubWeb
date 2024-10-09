@@ -36,20 +36,30 @@ const CustomCloseButton = styled(IconButton)(({ theme }) => ({
 const schema = yup.object().shape({
   course: yup.object().shape({
     price: yup
-      .number()
-      .required('Price is required')
-      .positive('Price must be a positive number')
-      .min(1, 'Price must be at least 1'),
+    .number()
+    .transform((value, originalValue) => {
+
+      return originalValue === "" ? undefined : value;
+    })
+    .required('Price is required')
+    .positive('Price must be a positive number')
+    .min(1, 'Price must be at least 1'),
     lessons: yup
-      .number()
-      .required('Lessons are required')
-      .integer('Lessons must be an integer')
-      .min(1, 'Lessons must be at least 1'),
-    capacity: yup
-      .number()
-      .required('Capacity is required')
-      .integer('Capacity must be an integer')
-      .min(1, 'Capacity must be at least 1'),
+    .number()
+    .transform((value, originalValue) => {
+      return originalValue === "" ? undefined : value;
+    })
+    .required('Lessons are required')
+    .integer('Lessons must be an integer')
+    .min(1, 'Lessons must be at least 1'),
+  capacity: yup
+    .number()
+    .transform((value, originalValue) => {
+      return originalValue === "" ? undefined : value;
+    })
+    .required('Capacity is required')
+    .integer('Capacity must be an integer')
+    .min(1, 'Capacity must be at least 1'),
       roomId: yup
       .string()
       .required('roomId is required'),
@@ -57,9 +67,17 @@ const schema = yup.object().shape({
       .string()
       .required('Course Name is required')
       .min(2, 'Course Name must be at least 2 characters'),
-    startDate: yup.date().required('Start Date is required').nullable(),
+    startDate: yup.date()
+    .transform((value, originalValue) => {
+      return originalValue === "" ? undefined : value;
+    })
+    .required('Start Date is required')
+    .nullable(),
     endDate: yup
       .date()
+      .transform((value, originalValue) => {
+        return originalValue === "" ? undefined : value;
+      })
       .required('End Date is required')
       .nullable()
       .min(yup.ref('startDate'), 'End Date cannot be before Start Date'),
@@ -338,7 +356,7 @@ console.log(isDirty)
                       type='date'
                       fullWidth
                       error={!!errors.course?.startDate}
-                      helperText={errors.course?.startDate ? errors.course.startDate : ''}
+                      helperText={errors.course?.startDate ? errors.course.startDate.message : ''}
                     />
                   )}
                 />
@@ -465,7 +483,7 @@ console.log(isDirty)
             </Button>
           )}
           {step < 2 ? (
-            <Button onClick={handleNextStep} disabled={location.length === 0} color='primary'>
+            <Button onClick={handleNextStep} disabled={location.length === 0 } color='primary'>
               Next
             </Button>
           ) : (

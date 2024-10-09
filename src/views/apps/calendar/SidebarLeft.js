@@ -11,7 +11,7 @@ import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { fetchCourses } from 'src/store/apps/courses';
-import { TextField } from '@mui/material';
+import { CircularProgress, TextField } from '@mui/material';
 import CustomTextField from 'src/@core/components/mui/text-field';
 
 const SidebarLeft = (props) => {
@@ -30,7 +30,7 @@ const SidebarLeft = (props) => {
     handleAddEventSidebarToggle,
   } = props;
 
-  const { data } = useSelector((state) => state.courses);
+  const { data,loading } = useSelector((state) => state.courses);
   const [search, SetSearch] = useState('');
   const [selectedAllCourses, setSelectedAllCourses] = useState([]);
 
@@ -158,7 +158,23 @@ const SidebarLeft = (props) => {
             />
           }
         />
-        {renderFilters}
+        {loading ? (
+               <Box
+               sx={{
+                 display: 'flex',
+                 justifyContent: 'center',
+                 alignItems: 'center',
+                 width:'100%',
+                 height:'100%',
+                 zIndex: 10
+               }}
+             >
+               <CircularProgress size={50} />
+             </Box>
+        ):renderFilters
+
+
+        }
       </Box>
     </Drawer>
   );

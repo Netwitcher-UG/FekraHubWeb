@@ -266,7 +266,7 @@ const AddWorksheets = ({ dataUploadType, data }) => {
               </Grid>
             </Grid>
             <Stack direction={'row'} alignItems={'center'} justifyContent={'center'} spacing={5} marginTop={'2rem'}>
-              <Button disabled={!isDirty} type='submit' variant='contained'>
+              <Button disabled={selectedFiles.length === 0 } type='submit' variant='contained'>
                 <Translations text={'Add Course Files'} />
               </Button>
               <Button type='button' variant='outlined' onClick={handleClose}>

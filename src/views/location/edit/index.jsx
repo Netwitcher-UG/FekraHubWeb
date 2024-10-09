@@ -112,7 +112,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                   />
                 )}
               />
-              <Typography>{errors.locationMdl?.name ? errors.locationMdl.name.message : ''}</Typography>
+
             </Grid>
             <Grid item xs={12} sm={12} lg={12}>
               <Controller

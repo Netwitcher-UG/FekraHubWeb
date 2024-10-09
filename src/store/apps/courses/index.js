@@ -185,6 +185,7 @@ const CoursesSlice = createSlice({
     TeacherStatus: 'idle',
     error: null,
     deleteStatus: 'idle',
+    loading:false,
     CourseSchedule: [],
     deleteError: null
   },
@@ -193,9 +194,12 @@ const CoursesSlice = createSlice({
     builder
       .addCase(fetchCourses.pending, state => {
         state.status = 'loading'
+        state.loading = true
       })
       .addCase(fetchCourses.fulfilled, (state, action) => {
         state.status = 'succeeded'
+        state.loading = false
+
         state.data = action.payload
       })
       .addCase(fetchCourses.rejected, (state, action) => {

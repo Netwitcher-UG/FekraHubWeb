@@ -8,6 +8,7 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import bootstrap5Plugin from '@fullcalendar/bootstrap5'
 import interactionPlugin from '@fullcalendar/interaction'
+import multiMonthPlugin from '@fullcalendar/multimonth'
 
 // ** Third Party Style Import
 import 'bootstrap-icons/font/bootstrap-icons.css'
@@ -43,7 +44,27 @@ const Calendar = props => {
     handleLeftSidebarToggle,
     handleAddEventSidebarToggle
   } = props
-    console.log("🚀 ~ Calendar ~ calendarsColor:", store.events)
+    console.log("🚀 ~ Calendar ~ store:", store)
+
+
+  // Function to combine the course start date with each schedule
+  function combineStartDateTime(schedule) {
+    return schedule.map(course => ({
+        ...course,
+        startDateTime: new Date(course.startDate.split("T")[0] + "T" + course.startTime).toISOString(),
+        endDateTime: new Date(course.endDate.split("T")[0] + "T" + course.endTime).toISOString(),
+    }));
+}
+
+// Use the function to update the course schedule
+let updatedCourseSchedule = combineStartDateTime(store.eventcourse ||  []);
+const mergedArray = [
+  ...(store.events?.events || []),  // If store.events?.events is undefined or null, default to an empty array
+  ...(updatedCourseSchedule || [])  // If updatedCourseSchedule is undefined, default to an empty array
+];
+console.log("🚀 ~ Calendar ~ mergedArray:", mergedArray)
+
+
 
 
   // ** Refs
@@ -58,25 +79,30 @@ const Calendar = props => {
   if (store) {
     // ** calendarOptions(Props)
     const calendarOptions = {
-      events: store.events.length ? store.events.map(event => ({
+      events: mergedArray.length ? mergedArray.map(event => ({
       id:event.id,
-        title: event.eventName,
-        start: new Date(event.startDate), // Ensure start and end are Date objects
-        end: new Date(event.endDate),
+        title: event.eventName ?event.eventName : event.name ,
+        start: new Date(event.startDate ? event.startDate : event.startDateTime), // Ensure start and end are Date objects
+        end: new Date(event.endDate ? event.endDate : event.endDateTime  ),
         extendedProps: {
           calendar: event?.eventType?.id,
-          backgroundColor:event?.eventType?.typeTitle,
-          description: event.description,
-          guests:event.courseSchedule
+          description: event?.description,
+          guests:event?.courseSchedule,
+          backgroundColor: event.eventName ? 'ETC' :'Holiday'
         }
       })) : [],
-      plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin, bootstrap5Plugin],
+
+      plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin,multiMonthPlugin, listPlugin, bootstrap5Plugin],
       initialView: 'dayGridMonth',
       headerToolbar: {
         start: 'sidebarToggle, prev, next, title',
-        end: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+        end: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth,multiMonthFourMonth'
       },
       views: {
+        multiMonthFourMonth: {
+          type: 'multiMonth',
+          duration: { months: 4 }
+        },
         week: {
           titleFormat: { year: 'numeric', month: 'long', day: 'numeric' }
         }
@@ -104,7 +130,7 @@ const Calendar = props => {
               Max number of events within a given day
               ? Docs: https://fullcalendar.io/docs/dayMaxEvents
             */
-      dayMaxEvents: 2,
+      dayMaxEvents: 4,
 
       /*
               Determines if day names and week names are clickable

@@ -163,12 +163,9 @@ const AddEventSidebar = props => {
     setValues(defaultState)
   }, [setValue])
   useEffect(() => {
-    if (store.selectedEvent !== null) {
-      resetToStoredValues()
-    } else {
-      resetToEmptyValues()
-    }
-  }, [addEventSidebarOpen, resetToStoredValues, resetToEmptyValues, store.selectedEvent])
+    const resetFunction = store.selectedEvent !== null ? resetToStoredValues : resetToEmptyValues
+    resetFunction()
+  }, [store.selectedEvent, resetToStoredValues, resetToEmptyValues])
 
   const PickersComponent = forwardRef(({ ...props }, ref) => {
     return (

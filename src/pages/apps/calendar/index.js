@@ -25,8 +25,10 @@ import {
   updateEvent,
   handleSelectEvent,
   handleAllCalendars,
-  handleCalendarsUpdate
+  handleCalendarsUpdate,
+  fetchCourseForCalender
 } from 'src/store/apps/calendar'
+import FallbackSpinner from 'src/@core/components/spinner'
 
 // ** CalendarColors
 const calendarsColor = {
@@ -57,6 +59,8 @@ const AppCalendar = () => {
 
   useEffect(() => {
     dispatch(fetchEvents(store.selectedCalendars))
+    dispatch(fetchCourseForCalender(store.selectedCalendars))
+
   }, [dispatch,store.selectedCalendars])
   const handleLeftSidebarToggle = () => setLeftSidebarOpen(!leftSidebarOpen)
   const handleAddEventSidebarToggle = () => setAddEventSidebarOpen(!addEventSidebarOpen)
@@ -83,6 +87,7 @@ const AppCalendar = () => {
         handleLeftSidebarToggle={handleLeftSidebarToggle}
         handleAddEventSidebarToggle={handleAddEventSidebarToggle}
       />
+
       <Box
         sx={{
           p: 6,

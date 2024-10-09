@@ -22,6 +22,20 @@ export const fetchEvents = createAsyncThunk('appCalendar/fetchEvents', async (se
   }
 })
 
+// ** Fetch Events
+export const fetchCourseForCalender = createAsyncThunk('appCalendar/fetchCourseForCalender', async (selectedCalendars, { getState }) => {
+  try {
+    const queryString = selectedCalendars?.map(id => `courseId=${id}`).join('&');
+
+    // Use the query string directly in the URL
+    const response = await axiosInstance.get(`/api/Courses/CourseForCalender?${queryString}&date=2024-10`);
+
+    return response.data
+  } catch (error) {
+    ShowErrorToast(error.response.data)
+    throw error
+  }
+})
 
 export const fetchEventsTypes = createAsyncThunk('appCalendar/fetchEventsTypes', async _ => {
   const response = await axiosInstance.get('/api/EventType', {
@@ -94,6 +108,7 @@ export const appCalendarSlice = createSlice({
     events: [],
     types:[],
     selectedEvent: null,
+    eventcourse:[],
     selectedCalendars: []
   },
   reducers: {
@@ -124,6 +139,9 @@ export const appCalendarSlice = createSlice({
   extraReducers: builder => {
     builder.addCase(fetchEvents.fulfilled, (state, action) => {
       state.events = action.payload
+    })
+     builder.addCase(fetchCourseForCalender.fulfilled, (state, action) => {
+      state.eventcourse = action.payload
     })
     builder.addCase(fetchEventsTypes.fulfilled, (state, action) => {
       state.types = action.payload
