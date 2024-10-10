@@ -40,7 +40,7 @@ import { stateToHTML } from 'draft-js-export-html';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 import { fetchEmployees } from 'src/store/apps/users'
 import { useDispatch, useSelector } from 'react-redux'
-import { postMail } from 'src/store/apps/email'
+import { fetchUsersMail, postMail } from 'src/store/apps/email'
 import { fetchCourses } from 'src/store/apps/courses'
 import { fetchAllPermissions } from 'src/store/apps/roles'
 
@@ -49,14 +49,14 @@ const filter = createFilterOptions()
 const ComposePopup = props => {
   // ** Props
   const { mdAbove, composeOpen, composePopupWidth, toggleComposeOpen } = props
-  const { employeesData } = useSelector(state => state.users)
+  const { users } = useSelector(state => state.email)
   const { data, status, error, dataRooms, dataTeacher } = useSelector(state => state.courses)
   const {allPermissions} = useSelector(state => state.roles)
-  console.log("🚀 ~ ComposePopup ~ rolesData:", allPermissions)
+  console.log("🚀 ~ ComposePopup ~ rolesData:", users)
 
   const dispatch =useDispatch()
   useEffect(() => {
-    dispatch(fetchEmployees())
+    dispatch(fetchUsersMail())
     dispatch(fetchCourses(''))
     dispatch(fetchAllPermissions())
 
@@ -66,6 +66,7 @@ const ComposePopup = props => {
   const [ccValue, setccValue] = useState([])
   const [subjectValue, setSubjectValue] = useState('')
   const [bccValue, setbccValue] = useState([])
+  const [CoursesValue , setCoursesValue] = useState([])
   const [messageValue, setMessageValue] = useState(EditorState.createEmpty())
   const [messageSend, setMessageSend] = useState()
 
@@ -101,7 +102,7 @@ const ComposePopup = props => {
     const EmailData={
       subject:subjectValue,
       Emails:emailTo,
-      CourseId:ccValue,
+      CourseId:CoursesValue,
       Role:bccValue,
       Message:htmlContent,
 
@@ -117,6 +118,7 @@ const ComposePopup = props => {
     setEmailTo([])
     setccValue([])
     setbccValue([])
+    setCoursesValue([])
     setSubjectValue('')
     setMessageValue(EditorState.createEmpty())
     setVisibility({
@@ -160,14 +162,14 @@ const ComposePopup = props => {
               {getInitials(option.email)}
             </CustomAvatar>
           )}
-          <Typography sx={{ fontSize: theme => theme.typography.body2.fontSize }}>{option.email}</Typography>
+          <Typography sx={{ fontSize: theme => theme.typography.body2.fontSize }}>{option.role+' : ' + option.email}</Typography>
         </Box>
       </ListItem>
     )
   }
-  const renderListItemCourses = (props, option, array, setState) => {
+  const renderListItemCourses = (props, option, array,CoursesValue, setState,setCourse) => {
     return (
-      <ListItem {...props} key={option.value} sx={{ cursor: 'pointer' }} onClick={() => setState([...array, option.name])}>
+      <ListItem {...props} key={option.value} sx={{ cursor: 'pointer' }} onClick={() => {setState([...array, option.name]); setCourse([...CoursesValue, option.id]) } }>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {option.length ? (
             <CustomAvatar src={option.name} alt={option.name} sx={{ mr: 3, width: 22, height: 22 }} />
@@ -297,7 +299,7 @@ const ComposePopup = props => {
             clearIcon={false}
             id='email-to-select'
             filterSelectedOptions
-            options={employeesData}
+            options={users}
             ListboxComponent={List}
             filterOptions={addNewOption}
             getOptionLabel={option => option.email}
@@ -359,7 +361,7 @@ const ComposePopup = props => {
             options={data}
             ListboxComponent={List}
             getOptionLabel={option => option.name}
-            renderOption={(props, option) => renderListItemCourses(props, option, ccValue, setccValue)}
+            renderOption={(props, option) => renderListItemCourses(props, option, ccValue,CoursesValue, setccValue,setCoursesValue)}
             renderTags={(array, getTagProps) => renderCustomChips(array, getTagProps, ccValue, setccValue)}
             sx={{
               width: '100%',

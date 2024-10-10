@@ -7,9 +7,9 @@ import List from '@mui/material/List'
 import Input from '@mui/material/Input'
 import Avatar from '@mui/material/Avatar'
 import Divider from '@mui/material/Divider'
-import Tooltip from '@mui/material/Tooltip'
+
 import Backdrop from '@mui/material/Backdrop'
-import Checkbox from '@mui/material/Checkbox'
+
 import { styled } from '@mui/material/styles'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
@@ -24,11 +24,11 @@ import Icon from 'src/@core/components/icon'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 
 // ** Custom Components Imports
-import OptionsMenu from 'src/@core/components/option-menu'
+
 
 // ** Email App Component Imports
-import { setTimeout } from 'timers'
-import MailDetails from './MailDetails'
+
+
 import { fetchMails } from 'src/store/apps/email'
 import { useSelector } from 'react-redux'
 
@@ -102,120 +102,6 @@ const MailLog = props => {
   }, [dispatch])
 
 
-  // ** Vars
-  const folders = [
-    {
-      name: 'draft',
-      icon: (
-        <Box component='span' sx={{ mr: 2, display: 'flex' }}>
-          <Icon icon='tabler:pencil' fontSize={20} />
-        </Box>
-      )
-    },
-    {
-      name: 'spam',
-      icon: (
-        <Box component='span' sx={{ mr: 2, display: 'flex' }}>
-          <Icon icon='tabler:alert-octagon' fontSize={20} />
-        </Box>
-      )
-    },
-    {
-      name: 'trash',
-      icon: (
-        <Box component='span' sx={{ mr: 2, display: 'flex' }}>
-          <Icon icon='tabler:trash' fontSize={20} />
-        </Box>
-      )
-    },
-    {
-      name: 'inbox',
-      icon: (
-        <Box component='span' sx={{ mr: 2, display: 'flex' }}>
-          <Icon icon='tabler:mail' fontSize={20} />
-        </Box>
-      )
-    }
-  ]
-
-  const foldersConfig = {
-    draft: {
-      name: 'draft',
-      icon: (
-        <Box component='span' sx={{ mr: 2, display: 'flex' }}>
-          <Icon icon='tabler:pencil' fontSize={20} />
-        </Box>
-      )
-    },
-    spam: {
-      name: 'spam',
-      icon: (
-        <Box component='span' sx={{ mr: 2, display: 'flex' }}>
-          <Icon icon='tabler:alert-octagon' fontSize={20} />
-        </Box>
-      )
-    },
-    trash: {
-      name: 'trash',
-      icon: (
-        <Box component='span' sx={{ mr: 2, display: 'flex' }}>
-          <Icon icon='tabler:trash' fontSize={20} />
-        </Box>
-      )
-    },
-    inbox: {
-      name: 'inbox',
-      icon: (
-        <Box component='span' sx={{ mr: 2, display: 'flex' }}>
-          <Icon icon='tabler:mail' fontSize={20} />
-        </Box>
-      )
-    }
-  }
-
-  const foldersObj = {
-    inbox: [foldersConfig.spam, foldersConfig.trash],
-    sent: [foldersConfig.trash],
-    draft: [foldersConfig.trash],
-    spam: [foldersConfig.inbox, foldersConfig.trash],
-    trash: [foldersConfig.inbox, foldersConfig.spam]
-  }
-
-
-  const handleStarMail = (e, id, value) => {
-    e.stopPropagation()
-    dispatch(updateMail({ emailIds: [id], dataToUpdate: { isStarred: value } }))
-  }
-
-
-  const handleLabelUpdate = (id, label) => {
-    const arr = Array.isArray(id) ? [...id] : [id]
-    dispatch(updateMailLabel({ emailIds: arr, label }))
-  }
-
-  const handleFolderUpdate = (id, folder) => {
-    const arr = Array.isArray(id) ? [...id] : [id]
-    dispatch(updateMail({ emailIds: arr, dataToUpdate: { folder } }))
-  }
-
-
-  const mailDetailsProps = {
-    hidden,
-    folders,
-    dispatch,
-    direction,
-    foldersObj,
-    updateMail,
-    routeParams,
-    labelColors,
-    paginateMail,
-    handleStarMail,
-    mailDetailsOpen,
-    handleLabelUpdate,
-    handleFolderUpdate,
-    setMailDetailsOpen,
-    mail: store && store.currentMail ? store.currentMail : null
-  }
 
   return (
     <Box sx={{ width: '100%', overflow: 'hidden', position: 'relative', '& .ps__rail-y': { zIndex: 5 } }}>
@@ -260,14 +146,7 @@ const MailLog = props => {
                     <MailItem
                       key={mail.id}
                       sx={{ backgroundColor: true ? 'action.hover' : 'background.paper' }}
-                      onClick={() => {
-                        setMailDetailsOpen(true)
-                        dispatch(getCurrentMail(mail.user[0].email))
 
-                        setTimeout(() => {
-                          dispatch(handleSelectAllMail(false))
-                        }, 600)
-                      }}
                     >
                       <Box sx={{ mr: 4, display: 'flex', overflow: 'hidden', alignItems: 'center' }}>
 
@@ -357,7 +236,7 @@ const MailLog = props => {
                           <Typography noWrap sx={{ width: '100%', color: 'text.secondary' }}>
                           {mail?.subject}
                           </Typography>
-                        {/* <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>{mail.message}</Box> */}
+                        <Box sx={{ display: { xs: 'none', sm: 'flex' } }}> <div dangerouslySetInnerHTML={{ __html: mail.message }} /></Box>
                         <Typography
                           variant='body2'
                           sx={{ minWidth: '50px', textAlign: 'right', whiteSpace: 'nowrap', color: 'text.disabled' }}
@@ -395,8 +274,7 @@ const MailLog = props => {
         </Box>
       </Box>
 
-      {/* @ts-ignore */}
-      <MailDetails {...mailDetailsProps} />
+
     </Box>
   )
 }

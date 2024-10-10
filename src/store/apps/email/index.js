@@ -12,6 +12,13 @@ export const fetchMails = createAsyncThunk('appEmail/fetchMails', async params =
   return response.data
 })
 
+// ** Fetch Mails
+export const fetchUsersMail = createAsyncThunk('appEmail/fetchUsersMail', async params => {
+  const response = await axiosInstance.get('/api/UsersManagment/GetAllUsersWithRole')
+
+  return response.data
+})
+
 // ** Get Current Mail
 export const getCurrentMail = createAsyncThunk('appEmail/selectMail', async id => {
   const response = await axiosInstance.get('/api/MessageSender/UserMessages', {
@@ -74,7 +81,8 @@ export const appEmailSlice = createSlice({
     },
     currentMail: null,
     selectedMails: [],
-    messages:[]
+    messages:[],
+    users:[]
   },
   reducers: {
     handleSelectMail: (state, action) => {
@@ -102,6 +110,9 @@ export const appEmailSlice = createSlice({
   extraReducers: builder => {
     builder.addCase(fetchMails.fulfilled, (state, action) => {
       state.messages = action.payload
+    })
+    builder.addCase(fetchUsersMail.fulfilled, (state, action) => {
+      state.users = action.payload
     })
     builder.addCase(getCurrentMail.fulfilled, (state, action) => {
       state.currentMail = action.payload
