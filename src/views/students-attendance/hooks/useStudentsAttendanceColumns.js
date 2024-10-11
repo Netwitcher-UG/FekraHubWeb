@@ -115,10 +115,7 @@ const useStudentAttendanceColumns = students => {
               ) : row.studentAttendance == null ? (
                 <Chip label={t('present')} color={'info'} />
               ) : (
-                <Chip
-                  label={t(row.studentAttendance)}
-                  color={row.studentAttendance === 'Absent' ? 'error' : 'warning'}
-                />
+                <Chip label={t(row.studentAttendance)} color={row.studentAttendance === 'Absent' ? 'error' : 'info'} />
               )}
             </>
           )

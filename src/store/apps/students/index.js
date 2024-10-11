@@ -16,8 +16,9 @@ export const fetchStudents = createAsyncThunk('appStudents/fetchStudents', async
     totalPages: response?.data?.totalPages
   }
 })
-export const fetchCourses = createAsyncThunk('appStudents/fetchCourses', async () => {
-  const response = await axiosInstance.get('/api/Courses/GetCoursesName')
+export const fetchCourses = createAsyncThunk('appStudents/fetchCourses', async params => {
+  let url = params ? `/api/Courses/GetCoursesName${params}` : `/api/Courses/GetCoursesName`
+  const response = await axiosInstance.get(url)
 
   return response.data
 })

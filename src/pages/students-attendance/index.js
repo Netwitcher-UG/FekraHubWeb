@@ -27,7 +27,7 @@ const StudentsAttendanceList = () => {
         PageNumber: page
       })
     )
-    dispatch(fetchCourses())
+    dispatch(fetchCourses('?IsAttendance=true'))
   }
 
   useEffect(() => {

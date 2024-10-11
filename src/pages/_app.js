@@ -123,7 +123,21 @@ const App = props => {
                       <Toaster
                         position={'top-right'}
                         containerStyle={{ zIndex: 99999 }}
-                        toastOptions={{ className: 'react-hot-toast' }}
+                        toastOptions={{
+                          className: 'custom-toast',
+                          style: {
+                            padding: '16px',
+                            color: '#CE3446',
+                            border: '1px solid #CE3446',
+                            backgroundColor: '#fff'
+                          },
+                          success: {
+                            style: {
+                              color: '#F2F4F8', // Green color for success toasts
+                              border: '1px solid #F2F4F8' // Green border for success toasts
+                            }
+                          }
+                        }}
                       />
                     </ReactHotToast>
                   </ThemeComponent>

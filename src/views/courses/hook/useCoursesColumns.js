@@ -12,6 +12,7 @@ import MenuItem from '@mui/material/MenuItem'
 import { fetchCourseAttendanceReport } from 'src/store/apps/attendance'
 import { downloadBase64File } from 'src/@core/utils/download-base64'
 import { useTranslation } from 'react-i18next'
+import toast from 'react-hot-toast'
 
 const useCoursesColumns = () => {
   const { t } = useTranslation()
@@ -35,7 +36,9 @@ const useCoursesColumns = () => {
     const handleFullReport = async () => {
       handleRowOptionsClose()
       const response = await dispatch(fetchCourseAttendanceReport(`courseId=${row.id}`))
-      downloadBase64File(response.payload, `${row.name}-Full report.pdf`)
+      if (response?.payload?.status == 400 || response?.payload === undefined)
+        toast.error(response?.payload?.data || 'Something went wrong try again!')
+      else downloadBase64File(response.payload, `${row.name}-Full report.pdf`)
     }
 
     const handleMonthReport = () => {

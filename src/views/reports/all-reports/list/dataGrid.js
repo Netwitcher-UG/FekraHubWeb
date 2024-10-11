@@ -71,7 +71,7 @@ const ReportsDataGrid = ({
     if (nullImprovedIds.length == 0) toast.error(<Translations text={'No report needs approval on this page'} />)
     else {
       const response = await dispatch(acceptAllReport(nullImprovedIds))
-      if (response?.payload?.status == 200) toast.success(<Translations text={'Reports approved successfully '} />)
+      if (response?.payload?.status == 200) toast.success(<Translations text={'Reports approved successfully'} />)
       else toast.error(<Translations text={'Something went wrong try again !'} />)
     }
   }
