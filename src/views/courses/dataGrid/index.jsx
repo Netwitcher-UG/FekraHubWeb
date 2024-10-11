@@ -13,23 +13,35 @@ import { useDispatch, useSelector } from 'react-redux'
 import { fetchLocation } from 'src/store/apps/location'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 import CustomDataGrid from 'src/@core/components/custom-datagrid'
+import MonthlyReportForm from '../monthly-report/monthly-report-form'
 
 export default function CoursesDataGrid({ rows, dataRooms, dataTeacher, SetSearch, status }) {
-  const { columns, isDialogOpen, handleCloseDialog, handleDelete, drawerData, open, handleCloseDrawer, DeleteName } =
-    useCoursesColumns()
+  const {
+    columns,
+    isDialogOpen,
+    handleCloseDialog,
+    handleDelete,
+    drawerData,
+    open,
+    handleCloseDrawer,
+    DeleteName,
+    showMonthDialog,
+    setShowMonthDialog,
+    selectedRowId
+  } = useCoursesColumns()
 
-    const customScrollbarStyles = {
-      '& ::-webkit-scrollbar': {
-        height: 8
-      },
-      '& ::-webkit-scrollbar-thumb': {
-        backgroundColor: '#888',
-        borderRadius: 10,
-        '&:hover': {
-          backgroundColor: '#555'
-        }
+  const customScrollbarStyles = {
+    '& ::-webkit-scrollbar': {
+      height: 8
+    },
+    '& ::-webkit-scrollbar-thumb': {
+      backgroundColor: '#888',
+      borderRadius: 10,
+      '&:hover': {
+        backgroundColor: '#555'
       }
     }
+  }
 
   const { data: locationData, error } = useSelector(state => state.location)
   const ability = useContext(AbilityContext)
@@ -42,19 +54,21 @@ export default function CoursesDataGrid({ rows, dataRooms, dataTeacher, SetSearc
 
   return (
     <>
-      <Card >
-        <Stack padding={4} direction={{ xs: 'column', sm: 'row' }} spacing={5} alignItems={'center'} justifyContent={'space-between'}>
+      <Card>
+        <Stack
+          padding={4}
+          direction={{ xs: 'column', sm: 'row' }}
+          spacing={5}
+          alignItems={'center'}
+          justifyContent={'space-between'}
+        >
           <Box>
             <CustomSearch SetSearch={SetSearch} />
           </Box>
-          {ability.can('create', 'Course') && (
-
-              <AddCourses dataRooms={dataRooms} dataTeacher={dataTeacher} />
-
-          )}
+          {ability.can('create', 'Course') && <AddCourses dataRooms={dataRooms} dataTeacher={dataTeacher} />}
         </Stack>
 
-<Box sx={{ height: 'calc(100vh - 255px)' }}>
+        <Box sx={{ height: 'calc(100vh - 255px)' }}>
           {status === 'loading' ? (
             <Box
               sx={{
@@ -68,10 +82,9 @@ export default function CoursesDataGrid({ rows, dataRooms, dataTeacher, SetSearc
               <CircularProgress size={100} />
             </Box>
           ) : (
-            <CustomDataGrid columns={columns} rowHeight={62} rows={rows}
-             />
+            <CustomDataGrid columns={columns} rowHeight={62} rows={rows} />
           )}
-</Box>
+        </Box>
       </Card>
       <CustomDialogDelete
         open={isDialogOpen}
@@ -86,6 +99,10 @@ export default function CoursesDataGrid({ rows, dataRooms, dataTeacher, SetSearc
           dataDef={drawerData}
           locationData={locationData}
         />
+      )}
+
+      {showMonthDialog && (
+        <MonthlyReportForm open={showMonthDialog} setOpen={setShowMonthDialog} courseId={selectedRowId} />
       )}
     </>
   )
