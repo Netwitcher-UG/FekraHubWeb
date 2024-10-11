@@ -354,6 +354,7 @@
     "Full Name": "Vollständiger Name",
     "Today's attendance": "Heutige Anwesenheit",
     "present": "anwesend",
+    "Present": "anwesend",
     "Submit course attendance": "Kursanwesenheit einreichen",
     "Course attendance submitted successfully": "Kursanwesenheit erfolgreich eingereicht",
     "Upload Type": "Upload-Typ",
@@ -490,5 +491,10 @@
     "Generate course monthly report": "Monatlichen Kursbericht erstellen",
     "Month": "Monat",
     "Full Report": "Vollständiger Bericht",
-    "Monthly Report": "Monatsbericht"
+    "Monthly Report": "Monatsbericht",
+    "already has payroll": "hat bereits eine Gehaltsabrechnung",
+    "Drop the files here ...": "PDF hier ablegen",
+    "Drag & drop a PDF here": "PDF hier ablegen",
+    "Reports approved successfully": "Berichte erfolgreich genehmigt",
+    "No report needs approval on this page": "Kein Bericht benötigt auf dieser Seite eine Genehmigung"
 }

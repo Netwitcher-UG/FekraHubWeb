@@ -2,24 +2,22 @@ import { useMemo, useState, useCallback, useContext, useEffect } from 'react'
 import Translations from 'src/layouts/components/Translations'
 import Chip from '@mui/material/Chip'
 // import Icon from 'src/@core/components/icon'
-import { fetchAttendanceStatuses } from 'src/store/apps/attendance'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 import { convertDate } from 'src/@core/utils/convert-date'
 // import IconButton from '@mui/material/IconButton'
-import MenuItem from '@mui/material/MenuItem'
-import CustomTextField from 'src/@core/components/mui/text-field'
 import { useDispatch, useSelector } from 'react-redux'
 import { CircularProgress, IconButton, Stack, Typography } from '@mui/material'
-import { deleteInvoices, getStudentInvoiceFile } from 'src/store/apps/invoices'
 import DropzoneWrapper from 'src/@core/utils/DropZone'
 import { AddPayrollFile, deletePayroll, getPayrollTeacherFile } from 'src/store/apps/payroll'
+import { useTranslation } from 'react-i18next'
 
 const usePayrollColumns = () => {
   const dispatch = useDispatch()
+  const { t } = useTranslation()
   const { attendanceStatuses } = useSelector(state => state.attendance)
   const [DeleteName, setDeleteName] = useState(false)
   const [selectedId, setSelectedId] = useState(null)
-  const [drawerData, setDrawerData] = useState(null)
+  // const [drawerData, setDrawerData] = useState(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [worksheetLoading, setWorsheetLoading] = useState(null)
   const [selectedFile, setSelectedFile] = useState(null)
@@ -82,7 +80,7 @@ const usePayrollColumns = () => {
           if (row.roles === 'Admin') {
             return <DropzoneWrapper row={row} onFileUpload={handleFileUpload} />
           } else if (row.payrolls) {
-            return <Typography sx={{ color: '#7E73F1' }}>already has payroll</Typography>
+            return <Typography sx={{ color: '#7E73F1' }}>{t('already has payroll')}</Typography>
           } else {
             return <DropzoneWrapper row={row} onFileUpload={handleFileUpload} />
           }
