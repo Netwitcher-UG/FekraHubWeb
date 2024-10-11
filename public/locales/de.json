@@ -484,5 +484,11 @@
     "You cannot deactivate your own account": "Sie können Ihr eigenes Konto nicht deaktivieren",
     "Edit User Info": "Benutzerinformationen bearbeiten",
     "User Status": "Benutzerstatus",
-    "Are you sure you want to delete file": "Sind Sie sicher, dass Sie die Datei löschen möchten"
+    "Are you sure you want to delete file": "Sind Sie sicher, dass Sie die Datei löschen möchten",
+    "Generate Report": "Bericht erstellen",
+    "Month is required": "Monat ist erforderlich",
+    "Generate course monthly report": "Monatlichen Kursbericht erstellen",
+    "Month": "Monat",
+    "Full Report": "Vollständiger Bericht",
+    "Monthly Report": "Monatsbericht"
 }

@@ -164,6 +164,29 @@ export const deleteTeacherAttendanceRecord = createAsyncThunk(
   }
 )
 
+export const fetchCourseAttendanceReport = createAsyncThunk(
+  'appAttendance/fetchCourseAttendanceReport',
+  async params => {
+    try {
+      let url = params ? `/api/Attendance/ExportAttendanceReport?${params}` : '/api/Attendance/ExportAttendanceReport'
+      const response = await axiosInstance.get(url)
+      return response.data
+    } catch (error) {
+      return error.response
+    }
+  }
+)
+
+export const fetchAttendanceMonths = createAsyncThunk('appAttendance/fetchAttendanceMonths', async courseId => {
+  try {
+    let url = `/api/Attendance/CourseWorkingDates?courseId=${courseId}`
+    const response = await axiosInstance.get(url)
+    return response.data
+  } catch (error) {
+    return error.response
+  }
+})
+
 export const appSliceAttendance = createSlice({
   name: 'appAttendance',
   initialState: {
@@ -179,7 +202,8 @@ export const appSliceAttendance = createSlice({
     teacherAttendance: [],
     teacherAttendanceLoading: false,
     teacherNames: [],
-    teacherNamesLoading: false
+    teacherNamesLoading: false,
+    courseMonths: []
   },
   reducers: {},
   extraReducers: builder => {
@@ -253,6 +277,9 @@ export const appSliceAttendance = createSlice({
       })
       .addCase(fetchTeacherAttendance.rejected, state => {
         state.teacherAttendanceLoading = false
+      })
+      .addCase(fetchAttendanceMonths.fulfilled, (state, action) => {
+        state.courseMonths = action.payload
       })
   }
 })

@@ -6,8 +6,77 @@ import { AbilityContext } from 'src/layouts/components/acl/Can'
 import { deleteCourse } from 'src/store/apps/courses'
 import Translations from 'src/layouts/components/Translations'
 import moment from 'moment'
+import Icon from 'src/@core/components/icon'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+import { fetchCourseAttendanceReport } from 'src/store/apps/attendance'
+import { downloadBase64File } from 'src/@core/utils/download-base64'
+import { useTranslation } from 'react-i18next'
 
 const useCoursesColumns = () => {
+  const { t } = useTranslation()
+  const [selectedRowId, setSelectedRowId] = useState(null)
+  const RowOptions = ({ row }) => {
+    // ** Hooks
+    const dispatch = useDispatch()
+
+    // ** State
+    const [anchorEl, setAnchorEl] = useState(null)
+    const rowOptionsOpen = Boolean(anchorEl)
+
+    const handleRowOptionsClick = event => {
+      setAnchorEl(event.currentTarget)
+    }
+
+    const handleRowOptionsClose = () => {
+      setAnchorEl(null)
+    }
+
+    const handleFullReport = async () => {
+      handleRowOptionsClose()
+      const response = await dispatch(fetchCourseAttendanceReport(`courseId=${row.id}`))
+      downloadBase64File(response.payload, `${row.name}-Full report.pdf`)
+    }
+
+    const handleMonthReport = () => {
+      setSelectedRowId(row.id)
+      setShowMonthDialog(true)
+      handleRowOptionsClose()
+    }
+
+    return (
+      <>
+        <IconButton size='small' onClick={handleRowOptionsClick}>
+          <Icon icon='carbon:report' />
+        </IconButton>
+        <Menu
+          keepMounted
+          anchorEl={anchorEl}
+          open={rowOptionsOpen}
+          onClose={handleRowOptionsClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right'
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right'
+          }}
+          PaperProps={{ style: { minWidth: '8rem' } }}
+        >
+          <MenuItem onClick={handleFullReport} sx={{ '& svg': { mr: 2 } }}>
+            {/* <Icon icon='tabler:edit' fontSize={20} /> */}
+            {t('Full Report')}
+          </MenuItem>
+          <MenuItem onClick={handleMonthReport} sx={{ '& svg': { mr: 2 } }}>
+            {/* <Icon icon='tabler:trash' fontSize={20} /> */}
+            {t('Monthly Report')}
+          </MenuItem>
+        </Menu>
+      </>
+    )
+  }
+
   const dispatch = useDispatch()
 
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -15,6 +84,8 @@ const useCoursesColumns = () => {
   const [selectedId, setSelectedId] = useState(null)
   const [drawerData, setDrawerData] = useState(null)
   const [open, setOpen] = useState(false)
+  const [showMonthDialog, setShowMonthDialog] = useState(false)
+
   const ability = useContext(AbilityContext)
   const handleOpenDrawer = useCallback(data => {
     setDrawerData(data)
@@ -134,6 +205,7 @@ const useCoursesColumns = () => {
                   </svg>
                 </IconButton>
               )}
+              <RowOptions row={params.row} />
             </Stack>
           )
         }
@@ -151,7 +223,10 @@ const useCoursesColumns = () => {
     open,
     handleOpenDrawer,
     handleCloseDrawer,
-    DeleteName
+    DeleteName,
+    showMonthDialog,
+    setShowMonthDialog,
+    selectedRowId
   }
 }
 
