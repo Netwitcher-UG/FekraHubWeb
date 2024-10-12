@@ -11,6 +11,7 @@ import CardContent from '@mui/material/CardContent'
 import { convertDate } from 'src/@core/utils/convert-date'
 import { IconButton } from '@mui/material'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import EditProfileInfoDialog from './edit-info'
 
 // ** Third Party Imports
@@ -29,6 +30,7 @@ const ProfilePicture = styled('img')(({ theme }) => ({
 }))
 
 const UserProfileHeader = ({ data }) => {
+  const { t } = useTranslation()
   const designationIcon = data?.designationIcon || 'tabler:briefcase'
   const [open, setOpen] = useState(false)
   const handleClickOpen = () => setOpen(true)
@@ -89,7 +91,9 @@ const UserProfileHeader = ({ data }) => {
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 1.5, color: 'text.secondary' } }}>
                   <Icon fontSize='1.25rem' icon='tabler:calendar' />
-                  <Typography sx={{ color: 'text.secondary' }}>Joined {convertDate(data?.registrationDate)}</Typography>
+                  <Typography sx={{ color: 'text.secondary' }}>
+                    {t('Joined')} {convertDate(data?.registrationDate)}
+                  </Typography>
                 </Box>
               </Box>
             </Box>

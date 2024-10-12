@@ -42,14 +42,14 @@ const useLocationColumns = () => {
 
   const columns = useMemo(
     () => [
-      {
-        width: 200,
-        field: 'id',
-        headerName: <Translations text={'Id'} />,
-        renderCell: params => {
-          params.row.id
-        }
-      },
+      // {
+      //   width: 200,
+      //   field: 'id',
+      //   headerName: <Translations text={'Id'} />,
+      //   renderCell: params => {
+      //     params.row.id
+      //   }
+      // },
       {
         width: 200,
         field: 'name',
@@ -61,7 +61,7 @@ const useLocationColumns = () => {
       {
         width: 200,
         field: 'street',
-        headerName: <Translations text={'street'} />,
+        headerName: <Translations text={'Street'} />,
         renderCell: params => {
           return <Typography>{params.row.street}</Typography>
         }
@@ -69,7 +69,7 @@ const useLocationColumns = () => {
       {
         width: 200,
         field: 'streetNr',
-        headerName: <Translations text={'streetNr'} />,
+        headerName: <Translations text={'Street Number'} />,
         renderCell: params => {
           return <Typography>{params.row.streetNr}</Typography>
         }
@@ -77,7 +77,7 @@ const useLocationColumns = () => {
       {
         width: 200,
         field: 'zipCode',
-        headerName: <Translations text={'zipCode'} />,
+        headerName: <Translations text={'Zip Code'} />,
         renderCell: params => {
           return <Typography>{params.row?.zipCode}</Typography>
         }
@@ -85,7 +85,7 @@ const useLocationColumns = () => {
       {
         width: 200,
         field: 'city',
-        headerName: <Translations text={'city'} />,
+        headerName: <Translations text={'City'} />,
         renderCell: params => {
           params.row.city
         }

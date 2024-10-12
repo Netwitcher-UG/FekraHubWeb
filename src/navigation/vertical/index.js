@@ -87,14 +87,14 @@ const navigation = () => {
       subject: 'calendar'
     },
     {
-      title: 'payroll',
+      title: 'Payroll',
       icon: 'tabler:report-money',
       path: '/payroll',
       action: 'manage',
       subject: 'payroll'
     },
     {
-      title: 'messages',
+      title: 'Messages',
       icon: 'tabler:mail',
       path: '/apps/email',
       action: 'manage',

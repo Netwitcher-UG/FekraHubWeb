@@ -61,33 +61,26 @@ const HiddenInput = styled('input')({
 })
 
 const schema = yup.object().shape({
-  courseId: yup
-  .string()
-  .required('select course is required'),
-  UploadTypeId: yup
-  .number()
-  .required('course Id is required'),
+  courseId: yup.string().required('select course is required'),
+  UploadTypeId: yup.number().required('course Id is required'),
 
-  files: yup.array().required('File is required'),
+  files: yup.array().required('File is required')
   // Additional validation for other fields can go here
-});
-
+})
 
 const AddWorksheets = ({ dataUploadType, data }) => {
-
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const handleClickOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
   const [selectedFile, setSelectedFile] = useState(null)
-  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState([])
 
   const dispatch = useDispatch()
-  const { t } = useTranslation()
   const defaultValues = {
     courseId: '',
     UploadTypeId: '',
-    files:[],
-
+    files: []
   }
 
   const {
@@ -102,16 +95,14 @@ const AddWorksheets = ({ dataUploadType, data }) => {
     mode: 'onBlur'
   })
 
-
-
   const onSubmit = async data => {
-    console.log('🚀 ~ handleSaveData ~ data:', data)
-    const formData = new FormData
-    formData.append('courseId',data.courseId)
-    formData.append('UploadTypeId',data.UploadTypeId)
+    // console.log('🚀 ~ handleSaveData ~ data:', data)
+    const formData = new FormData()
+    formData.append('courseId', data.courseId)
+    formData.append('UploadTypeId', data.UploadTypeId)
 
     for (let i = 0; i < selectedFiles.length; i++) {
-      formData.append('files', selectedFiles[i]); // Append each file, 'files[]' indicates an array
+      formData.append('files', selectedFiles[i]) // Append each file, 'files[]' indicates an array
     }
     try {
       await dispatch(addWorksheet(formData))
@@ -131,7 +122,7 @@ const AddWorksheets = ({ dataUploadType, data }) => {
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'courseSchedule'
-  });
+  })
 
   return (
     <div>
@@ -158,7 +149,7 @@ const AddWorksheets = ({ dataUploadType, data }) => {
           <form onSubmit={handleSubmit(onSubmit)}>
             <Grid container rowSpacing={4} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
               <Grid item xs={12} sm={12} lg={12}>
-              <Controller
+                <Controller
                   name='courseId'
                   control={control}
                   rules={{ required: true }}
@@ -167,11 +158,7 @@ const AddWorksheets = ({ dataUploadType, data }) => {
                       options={data.map(course => ({ value: course.id, label: course.name }))}
                       fullWidth
                       id='autocomplete-UserId'
-                      value={
-                        value
-                          ? { value, label: data?.find(course => course.id === value)?.name || '' }
-                          : null
-                      }
+                      value={value ? { value, label: data?.find(course => course.id === value)?.name || '' } : null}
                       onChange={(event, newValue) => {
                         onChange(newValue ? newValue.value : '')
                       }}
@@ -229,44 +216,39 @@ const AddWorksheets = ({ dataUploadType, data }) => {
                 />
               </Grid>
               <Grid item xs={12}>
-
-
-
-
-      <Controller
-  name={`files`}
-  control={control}
-  render={({ field }) => (
-    <FileInputLabel onClick={handleFileInputClick}>
-    <HiddenInput
-      id='file-input'
-      type='file'
-      accept='application/pdf'
-      multiple  // Enable multiple file selections
-      onChange={e => {
-        const files = Array.from(e.target.files);  // Convert FileList to an array
-        field.onChange(files);  // Update field with the array of files
-        setSelectedFiles(files);  // Update local state with selected files
-      }}
-    />
-    <CustomTextField
-      label={t('Upload Files')}
-      value={selectedFiles?.map(file => file.name).join(', ') || ''}  // Show names of all selected files
-      InputProps={{
-        endAdornment: <Icon icon='tabler:upload' fontSize='1.25rem' />
-      }}
-      fullWidth
-      error={Boolean(errors.files)}
-      helperText={errors.files?.message || ''}
-    />
-  </FileInputLabel>
-  )}
-/>
-
+                <Controller
+                  name={`files`}
+                  control={control}
+                  render={({ field }) => (
+                    <FileInputLabel onClick={handleFileInputClick}>
+                      <HiddenInput
+                        id='file-input'
+                        type='file'
+                        accept='application/pdf'
+                        multiple // Enable multiple file selections
+                        onChange={e => {
+                          const files = Array.from(e.target.files) // Convert FileList to an array
+                          field.onChange(files) // Update field with the array of files
+                          setSelectedFiles(files) // Update local state with selected files
+                        }}
+                      />
+                      <CustomTextField
+                        label={t('Upload Files')}
+                        value={selectedFiles?.map(file => file.name).join(', ') || ''} // Show names of all selected files
+                        InputProps={{
+                          endAdornment: <Icon icon='tabler:upload' fontSize='1.25rem' />
+                        }}
+                        fullWidth
+                        error={Boolean(errors.files)}
+                        helperText={errors.files?.message || ''}
+                      />
+                    </FileInputLabel>
+                  )}
+                />
               </Grid>
             </Grid>
             <Stack direction={'row'} alignItems={'center'} justifyContent={'center'} spacing={5} marginTop={'2rem'}>
-              <Button disabled={selectedFiles.length === 0 } type='submit' variant='contained'>
+              <Button disabled={selectedFiles.length === 0} type='submit' variant='contained'>
                 <Translations text={'Add Course Files'} />
               </Button>
               <Button type='button' variant='outlined' onClick={handleClose}>

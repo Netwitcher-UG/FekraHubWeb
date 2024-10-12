@@ -9,6 +9,7 @@ import * as yup from 'yup'
 import { useDispatch, useSelector } from 'react-redux'
 import { editCourses, FetchCourseScheduleDaysOfWeek } from 'src/store/apps/courses'
 import CustomTextField from 'src/@core/components/mui/text-field'
+import { useTranslation } from 'react-i18next'
 
 const Header = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -18,60 +19,55 @@ const Header = styled(Box)(({ theme }) => ({
   margin: '0px'
 }))
 
-const schema = yup.object().shape({
-  course: yup.object().shape({
-    Price: yup
-      .number()
-      .required('Price is required')
-      .positive('Price must be a positive number')
-      .min(1, 'Price must be at least 1'),
-    Lessons: yup
-      .number()
-      .required('Lessons are required')
-      .integer('Lessons must be an integer')
-      .min(1, 'Lessons must be at least 1'),
-    Capacity: yup
-      .number()
-      .required('Capacity is required')
-      .integer('Capacity must be an integer')
-      .min(1, 'Capacity must be at least 1'),
-    Name: yup
-      .string()
-      .required('Course Name is required')
-      .min(2, 'Course Name must be at least 2 characters'),
-    StartDate: yup.date().required('Start Date is required').nullable(),
-    EndDate: yup
-      .date()
-      .required('End Date is required')
-      .nullable()
-  }),
-
-  // Additional validation for other fields can go here
-});
 export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationData }) {
-  console.log("🚀 ~ DrawerEdit ~ dataDef:", dataDef)
+  // console.log('🚀 ~ DrawerEdit ~ dataDef:', dataDef)
+  const { t } = useTranslation()
+
+  const schema = yup.object().shape({
+    course: yup.object().shape({
+      Price: yup
+        .number()
+        .required(t('Price is required'))
+        .positive(t('Price must be a positive number'))
+        .min(1, t('Price must be at least 1')),
+      Lessons: yup
+        .number()
+        .required(t('Lessons are required'))
+        .integer(t('Lessons must be an integer'))
+        .min(1, t('Lessons must be at least 1')),
+      Capacity: yup
+        .number()
+        .required(t('Capacity is required'))
+        .integer(t('Capacity must be an integer'))
+        .min(1, t('Capacity must be at least 1')),
+      Name: yup.string().required(t('Course Name is required')).min(2, t('Course Name must be at least 2 characters')),
+      StartDate: yup.date().required(t('Start Date is required')).nullable(),
+      EndDate: yup.date().required(t('End Date is required')).nullable()
+    })
+
+    // Additional validation for other fields can go here
+  })
+
   const [location, setLocation] = useState('')
 
   const { status, error, dataRooms, dataTeacher } = useSelector(state => state.courses)
-  const {DaysOfWeeks} = useSelector(state => state.courses)
+  const { DaysOfWeeks } = useSelector(state => state.courses)
 
   const dispatch = useDispatch()
 
   const defaultValues = {
-
-  course:{
-    Name: dataDef?.name,
-    Price: dataDef?.price,
-    Lessons: dataDef?.lessons,
-    Capacity: dataDef?.capacity,
-    StartDate: dataDef?.startDate?.slice(0, 10),
-    EndDate: dataDef?.endDate.slice(0, 10),
-    RoomId: dataDef?.room.id || '',
-
-  },
-    TeacherId: dataDef?.teacher.map(teacher => teacher.id)||'',
-    LocationId:dataDef?.location?.id || '',
-    courseSchedule:dataDef?.courseSchedule || '',
+    course: {
+      Name: dataDef?.name,
+      Price: dataDef?.price,
+      Lessons: dataDef?.lessons,
+      Capacity: dataDef?.capacity,
+      StartDate: dataDef?.startDate?.slice(0, 10),
+      EndDate: dataDef?.endDate.slice(0, 10),
+      RoomId: dataDef?.room.id || ''
+    },
+    TeacherId: dataDef?.teacher.map(teacher => teacher.id) || '',
+    LocationId: dataDef?.location?.id || '',
+    courseSchedule: dataDef?.courseSchedule || ''
   }
 
   const {
@@ -84,15 +80,15 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
     // resolver: yupResolver(schema),
     defaultValues,
     mode: 'onBlur',
-    resolver: yupResolver(schema),
+    resolver: yupResolver(schema)
   })
 
   useEffect(() => {
     if (dataDef?.room) {
-      setLocation(prevLocations => [...prevLocations, dataDef?.room]);
+      setLocation(prevLocations => [...prevLocations, dataDef?.room])
     }
     dispatch(FetchCourseScheduleDaysOfWeek(''))
-  }, [dataDef?.room,dispatch])
+  }, [dataDef?.room, dispatch])
 
   const handleSaveData = data => {
     dispatch(editCourses({ ...data, id: dataDef.id }))
@@ -104,7 +100,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'courseSchedule'
-  });
+  })
 
   return (
     <Drawer
@@ -127,7 +123,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
             fontSize: '22px'
           }}
         >
-          Edit Courses
+          {t('Edit Courses')}
         </Typography>
         <Chip label={dataDef?.name} color='primary' />
       </Header>
@@ -145,7 +141,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
                   <CustomTextField
                     {...field}
                     fullWidth
-                    label={`${'Name'}`}
+                    label={`${t('Name')}`}
                     variant='outlined'
                     error={!!errors.Name}
                     helperText={errors.Name ? errors.Name.message : ''}
@@ -162,7 +158,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label='Price'
+                    label={t('Price')}
                     type='number'
                     variant='outlined'
                     fullWidth
@@ -185,7 +181,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
                   <CustomTextField
                     {...field}
                     fullWidth
-                    label={`${'Lessons'}`}
+                    label={`${t('Lessons')}`}
                     variant='outlined'
                     error={!!errors.Lessons}
                     helperText={errors.Lessons ? errors.Lessons.message : ''}
@@ -203,7 +199,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
                   <CustomTextField
                     {...field}
                     fullWidth
-                    label={`${'Capacity'}`}
+                    label={`${t('Capacity')}`}
                     variant='outlined'
                     error={!!errors.Capacity}
                     helperText={errors.Capacity ? errors.Capacity.message : ''}
@@ -221,7 +217,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
                   <CustomTextField
                     {...field}
                     fullWidth
-                    label={`${'StartDate'}`}
+                    label={`${t('Start Date')}`}
                     variant='outlined'
                     type='date'
                     error={!!errors.StartDate}
@@ -240,7 +236,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
                   <CustomTextField
                     {...field}
                     fullWidth
-                    label={`${'EndDate'}`}
+                    label={`${t('End Date')}`}
                     variant='outlined'
                     type='date'
                     error={!!errors.course?.EndDate}
@@ -250,201 +246,172 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
               />
             </Grid>
             <Grid item xs={12} sm={12} lg={12}>
-            <Controller
-  name='TeacherId'
-  control={control}
-  render={({ field: { onChange, value, ref } }) => (
-    <Autocomplete
-      multiple
-      options={dataTeacher}
-      getOptionLabel={option => option.firstName || ''}
-      renderInput={params => (
-        <CustomTextField
-          {...params}
-          label='Teacher'
-          variant='outlined'
-          inputRef={ref}
-          error={!!errors.TeacherId}
-          helperText={errors.TeacherId ? errors.TeacherId.message : ''}
-        />
-      )}
-      onChange={(event, newValue) => {
-
-        onChange(newValue.map(option => option.id));
-      }}
-      value={dataTeacher.filter(t => value?.includes(t.id)) || []}
-    />
-  )}
-/>
-
-
+              <Controller
+                name='TeacherId'
+                control={control}
+                render={({ field: { onChange, value, ref } }) => (
+                  <Autocomplete
+                    multiple
+                    options={dataTeacher}
+                    getOptionLabel={option => option.firstName || ''}
+                    renderInput={params => (
+                      <CustomTextField
+                        {...params}
+                        label={t('Teacher')}
+                        variant='outlined'
+                        inputRef={ref}
+                        error={!!errors.TeacherId}
+                        helperText={errors.TeacherId ? errors.TeacherId.message : ''}
+                      />
+                    )}
+                    onChange={(event, newValue) => {
+                      onChange(newValue.map(option => option.id))
+                    }}
+                    value={dataTeacher.filter(t => value?.includes(t.id)) || []}
+                  />
+                )}
+              />
             </Grid>
             <Grid item xs={12} sm={12} lg={12}>
-            <Controller
-  name='LocationId'
-  control={control}
-  render={({ field }) => (
-    <Autocomplete
-      {...field}
-      fullWidth
-      options={locationData}
-
-      // Handle how to display the selected option
-      getOptionLabel={option => option.name || ''}
-
-      // Customize equality check
-      isOptionEqualToValue={(option, value) => option.id === value}
-
-      // Handle selection changes
-      onChange={(event, value) => {
-        const selectedId = value ? value.room : '';
-        field.onChange(value.id); // Update the form state with the selected option's ID
-        setLocation(selectedId);    // Optionally update local component state
-      }}
-
-      // Set the selected value
-      value={locationData.find(option => option.id === field.value) || null}
-
-      // Render the input field
-      renderInput={params => (
-        <CustomTextField
-          fullWidth
-          {...params}
-          label='Select Location'
-          variant='outlined'
-          error={!!errors.LocationId}
-          helperText={errors.LocationId ? errors.LocationId.message : ''}
-        />
-      )}
-    />
-  )}
-/>
-
-
+              <Controller
+                name='LocationId'
+                control={control}
+                render={({ field }) => (
+                  <Autocomplete
+                    {...field}
+                    fullWidth
+                    options={locationData}
+                    // Handle how to display the selected option
+                    getOptionLabel={option => option.name || ''}
+                    // Customize equality check
+                    isOptionEqualToValue={(option, value) => option.id === value}
+                    // Handle selection changes
+                    onChange={(event, value) => {
+                      const selectedId = value ? value.room : ''
+                      field.onChange(value.id) // Update the form state with the selected option's ID
+                      setLocation(selectedId) // Optionally update local component state
+                    }}
+                    // Set the selected value
+                    value={locationData.find(option => option.id === field.value) || null}
+                    // Render the input field
+                    renderInput={params => (
+                      <CustomTextField
+                        fullWidth
+                        {...params}
+                        label={t('Select Location')}
+                        variant='outlined'
+                        error={!!errors.LocationId}
+                        helperText={errors.LocationId ? errors.LocationId.message : ''}
+                      />
+                    )}
+                  />
+                )}
+              />
             </Grid>
             <Grid item xs={12} sm={12} lg={12}>
-            {location.length !== 0 ? (
-              <Grid item xs={12} sm={12} lg={12}>
-                <Controller
-                  name='course.RoomId'
-                  control={control}
-                  render={({ field: { onChange, value, ref } }) => (
-                    <Autocomplete
-                      options={location}
-                      getOptionLabel={option => option.name || ''}
-                      renderInput={params => (
-                        <CustomTextField
-                          {...params}
-                          label='Select Room'
-                          variant='outlined'
-                          inputRef={ref}
-                          error={!!errors.RoomId}
-                          helperText={errors.RoomId ? errors.RoomId.message : ''}
+              {location.length !== 0 ? (
+                <Grid item xs={12} sm={12} lg={12}>
+                  <Controller
+                    name='course.RoomId'
+                    control={control}
+                    render={({ field: { onChange, value, ref } }) => (
+                      <Autocomplete
+                        options={location}
+                        getOptionLabel={option => option.name || ''}
+                        renderInput={params => (
+                          <CustomTextField
+                            {...params}
+                            label={t('Select Room')}
+                            variant='outlined'
+                            inputRef={ref}
+                            error={!!errors.RoomId}
+                            helperText={errors.RoomId ? errors.RoomId.message : ''}
+                          />
+                        )}
+                        onChange={(event, newValue) => {
+                          onChange(newValue ? newValue.id : '')
+                        }}
+                        value={location.find(room => room.id === value) || null}
+                      />
+                    )}
+                  />
+                </Grid>
+              ) : (
+                ''
+              )}
+            </Grid>
+            <Box sx={{ marginLeft: '12px', width: '100%' }}>
+              {fields.map((field, index) => (
+                <Box key={field.id} sx={{ marginY: '24px' }}>
+                  <Grid item xs={12} sm={12} lg={12}>
+                    <Controller
+                      name={`courseSchedule.${index}.dayOfWeek`}
+                      control={control}
+                      render={({ field: { onChange, value, ref } }) => (
+                        <Autocomplete
+                          options={DaysOfWeeks}
+                          getOptionLabel={option => option || ''}
+                          renderInput={params => (
+                            <CustomTextField
+                              {...params}
+                              label={t('Day of the Week')}
+                              variant='outlined'
+                              inputRef={ref}
+                              sx={{ marginBottom: '12px' }}
+                              error={!!errors.courseSchedule?.[index]?.EmailServer}
+                              helperText={errors.courseSchedule?.[index]?.EmailServer?.message}
+                            />
+                          )}
+                          onChange={(event, newValue) => {
+                            onChange(newValue ? newValue : '')
+                          }}
+                          value={DaysOfWeeks.find(t => t === value) || null}
                         />
                       )}
-                      onChange={(event, newValue) => {
-                        onChange(newValue ? newValue.id : '')
-                      }}
-                      value={location.find(room => room.id === value) || null}
                     />
-                  )}
-                />
-              </Grid>
-            ) : (
-              ''
-            )}
-              </Grid>
-<Box sx={{marginLeft:'12px' ,width:'100%'}}>
+                  </Grid>
+                  <Controller
+                    name={`courseSchedule.${index}.startTime`}
+                    control={control}
+                    render={({ field }) => (
+                      <CustomTextField
+                        {...field}
+                        fullWidth
+                        type='time'
+                        label={`${t('Start Time')} ${index + 1}`}
+                        sx={{ marginBottom: '12px' }}
+                        error={!!errors.courseSchedule?.[index]?.startTime}
+                        helperText={errors.courseSchedule?.[index]?.startTime?.message}
+                      />
+                    )}
+                  />
 
+                  <Controller
+                    name={`courseSchedule.${index}.endTime`}
+                    control={control}
+                    render={({ field }) => (
+                      <CustomTextField
+                        {...field}
+                        fullWidth
+                        type='time'
+                        sx={{ marginBottom: '12px' }}
+                        label={`${t('End Time')} ${index + 1}`}
+                        error={!!errors.courseSchedule?.[index]?.endTime}
+                        helperText={errors.courseSchedule?.[index]?.endTime?.message}
+                      />
+                    )}
+                  />
 
-{fields.map((field, index) => (
-  <Box key={field.id}  sx={{ marginY: '24px' }}>
+                  <Button variant='text' color='error' onClick={() => remove(index)}>
+                    {t('Remove')}
+                  </Button>
+                </Box>
+              ))}
 
-<Grid item xs={12} sm={12} lg={12}>
-        <Controller
-          name={`courseSchedule.${index}.dayOfWeek`}
-          control={control}
-          render={({ field: { onChange, value, ref } }) => (
-            <Autocomplete
-              options={DaysOfWeeks}
-              getOptionLabel={(option) => option || ''}
-              renderInput={(params) => (
-                <CustomTextField
-                  {...params}
-                  label='Day of the Week'
-                  variant='outlined'
-                  inputRef={ref}
-                  sx={{marginBottom:'12px'}}
-                  error={!!errors.courseSchedule?.[index]?.EmailServer}
-                  helperText={errors.courseSchedule?.[index]?.EmailServer?.message}
-                />
-              )}
-              onChange={(event, newValue) => {
-                onChange(newValue ? newValue : '')
-              }}
-              value={DaysOfWeeks.find(t => t === value) || null}
-            />
-          )}
-        />
-
-
-</Grid>
-        <Controller
-          name={`courseSchedule.${index}.startTime`}
-          control={control}
-          render={({ field }) => (
-            <CustomTextField
-              {...field}
-              fullWidth
-              type='time'
-              label={`Start Time ${index + 1}`}
-              sx={{marginBottom:'12px'}}
-              error={!!errors.courseSchedule?.[index]?.startTime}
-              helperText={errors.courseSchedule?.[index]?.startTime?.message}
-            />
-          )}
-        />
-
-
-
-        <Controller
-          name={`courseSchedule.${index}.endTime`}
-          control={control}
-          render={({ field }) => (
-            <CustomTextField
-              {...field}
-              fullWidth
-              type='time'
-              sx={{marginBottom:'12px'}}
-              label={`End Time ${index + 1}`}
-              error={!!errors.courseSchedule?.[index]?.endTime}
-              helperText={errors.courseSchedule?.[index]?.endTime?.message}
-            />
-          )}
-        />
-
-
-      <Button
-
-        variant='text'
-        color='error'
-        onClick={() => remove(index)}
-      >
-        Remove
-      </Button>
-
-  </Box>
-))}
-
-
-
-<Button variant='outlined' sx={{marginY:'14px'}}  onClick={() => append({ EmailServer: '' })}>
-  Add New course Schedule
-</Button>
-
-</Box>
-
-
+              <Button variant='outlined' sx={{ marginY: '14px' }} onClick={() => append({ EmailServer: '' })}>
+                {t('Add New course Schedule')}
+              </Button>
+            </Box>
           </Grid>
           <Stack
             sx={{ p: theme => `${theme.spacing(3)} !important` }}
@@ -454,10 +421,10 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
             spacing={4}
           >
             <Button type='button' variant='contained' onClick={handleSubmit(handleSaveData)}>
-              Update Courses
+              {t('Update Courses')}
             </Button>
             <Button type='button' variant='outlined' onClick={handleCloseDrawer}>
-              cancel
+              {t('Cancel')}
             </Button>
           </Stack>
         </>

@@ -1,9 +1,11 @@
 // toastUtils.js
 import { GridCheckCircleIcon } from '@mui/x-data-grid'
 import toast from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 
 export const ShowSuccessToast = (message, ErrorMessageApi) => {
-  return toast.success(message, {
+  const { t } = useTranslation()
+  return toast.success(t(message), {
     style: {
       padding: '16px',
       color: '#F2F4F8)',
@@ -17,5 +19,4 @@ export const ShowSuccessToast = (message, ErrorMessageApi) => {
       backgroundColor: 'var(--mui-palette-primary-main)'
     }
   })
-
 }

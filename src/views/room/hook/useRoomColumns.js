@@ -40,14 +40,14 @@ const useRoomColumns = () => {
   }
   const columns = useMemo(
     () => [
-      {
-        width: 200,
-        field: 'id',
-        headerName: <Translations text={'Id'} />,
-        renderCell: params => {
-          params.row.id
-        }
-      },
+      // {
+      //   width: 200,
+      //   field: 'id',
+      //   headerName: <Translations text={'Id'} />,
+      //   renderCell: params => {
+      //     params.row.id
+      //   }
+      // },
       {
         width: 200,
         field: 'name',

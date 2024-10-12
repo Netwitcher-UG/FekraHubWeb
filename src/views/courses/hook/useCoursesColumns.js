@@ -37,7 +37,7 @@ const useCoursesColumns = () => {
       handleRowOptionsClose()
       const response = await dispatch(fetchCourseAttendanceReport(`courseId=${row.id}`))
       if (response?.payload?.status == 400 || response?.payload === undefined)
-        toast.error(response?.payload?.data || 'Something went wrong try again!')
+        toast.error(response?.payload?.data || `${t('Something went wrong try again')} !`)
       else downloadBase64File(response.payload, `${row.name}-Full report.pdf`)
     }
 

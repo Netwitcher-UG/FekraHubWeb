@@ -10,6 +10,7 @@ import { useDispatch } from 'react-redux'
 import CustomTextField from 'src/@core/components/mui/text-field'
 import Translations from 'src/layouts/components/Translations'
 import { editLocation } from 'src/store/apps/location'
+import { useTranslation } from 'react-i18next'
 
 const Header = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -18,29 +19,30 @@ const Header = styled(Box)(({ theme }) => ({
   justifyContent: 'space-between',
   margin: '0px'
 }))
-const schema = yup.object().shape({
-  locationMdl: yup.object().shape({
-  name: yup.string().required('name is required'),
-  street: yup.string().required('street is required'),
-  streetNr: yup.string().required('streetNr is required'),
-  zipCode: yup.string().required('zipCode is required'),
-  city: yup.string().required('city is required')
-  })
-})
 
 export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
-  console.log("🚀 ~ DrawerEdit ~ dataDef:", dataDef)
+  const { t } = useTranslation()
+  // console.log("🚀 ~ DrawerEdit ~ dataDef:", dataDef)
   const dispatch = useDispatch()
+  const schema = yup.object().shape({
+    locationMdl: yup.object().shape({
+      name: yup.string().required(t('Name is required')),
+      street: yup.string().required(t('Street is required')),
+      streetNr: yup.string().required(t('Street Number is required')),
+      zipCode: yup.string().required(t('Zip Code is required')),
+      city: yup.string().required(t('City is required'))
+    })
+  })
 
   const defaultValues = {
-    locationMdl:{
+    locationMdl: {
       name: dataDef?.name,
       street: dataDef?.street,
       streetNr: dataDef?.streetNr,
       zipCode: dataDef?.zipCode,
-      city: dataDef?.city,
+      city: dataDef?.city
     },
-    rooms:dataDef?.room
+    rooms: dataDef?.room
   }
 
   const {
@@ -58,11 +60,11 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'rooms'
-  });
+  })
 
   const handleSaveData = data => {
-    setValue('id',dataDef.id)
-    dispatch(editLocation({ formData:data, id: dataDef.id }))
+    setValue('id', dataDef.id)
+    dispatch(editLocation({ formData: data, id: dataDef.id }))
     handleCloseDrawer()
     reset()
   }
@@ -105,14 +107,13 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                   <CustomTextField
                     {...field}
                     fullWidth
-                    label={`${'name'}`}
+                    label={`${t('Name')}`}
                     variant='outlined'
                     error={!!errors.locationMdl?.name}
                     helperText={errors.locationMdl?.name ? errors.locationMdl.name.message : ''}
                   />
                 )}
               />
-
             </Grid>
             <Grid item xs={12} sm={12} lg={12}>
               <Controller
@@ -123,7 +124,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                   <CustomTextField
                     {...field}
                     fullWidth
-                    label={`${'street'}`}
+                    label={`${t('Street')}`}
                     variant='outlined'
                     error={!!errors.locationMdl?.street}
                     helperText={errors.locationMdl?.street ? errors.locationMdl?.street.message : ''}
@@ -140,7 +141,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                   <CustomTextField
                     {...field}
                     fullWidth
-                    label={`${'streetNr'}`}
+                    label={`${t('Street Number')}`}
                     variant='outlined'
                     error={!!errors.locationMdl?.streetNr}
                     helperText={errors.locationMdl?.streetNr ? errors.locationMdl?.streetNr?.message : ''}
@@ -157,7 +158,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                   <CustomTextField
                     {...field}
                     fullWidth
-                    label={`${'zipCode'}`}
+                    label={`${t('Zip Code')}`}
                     variant='outlined'
                     error={!!errors.locationMdl?.zipCode}
                     helperText={errors.locationMdl?.zipCode ? errors.locationMdl?.zipCode?.message : ''}
@@ -174,7 +175,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
                   <CustomTextField
                     {...field}
                     fullWidth
-                    label={`${'city'}`}
+                    label={`${t('City')}`}
                     variant='outlined'
                     error={!!errors.locationMdl?.city}
                     helperText={errors.locationMdl?.city ? errors.locationMdl?.city.message : ''}
@@ -184,34 +185,31 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
             </Grid>
 
             {fields.map((field, index) => (
-  <>
-   <Controller
-    name={`rooms.${index}.id`}
-    control={control}
-    defaultValue={field.id} // Make sure the ID value is provided
-    render={({ field }) => <input type="hidden" {...field} />}
-  />
-    <Grid item xs={8} sm={8} lg={8} key={field.id}>
-      <Controller
-        name={`rooms.${index}.name`}
-        control={control}
-        render={({ field }) => (
-          <CustomTextField
-            {...field}
-            fullWidth
-            type="text"
-            label={`Room ${index + 1}`}
-            error={!!errors.rooms?.[index]}
-            helperText={errors.rooms?.[index]?.message}
-          />
-        )}
-      />
-    </Grid>
-
-
-  </>
-))}
-
+              <>
+                <Controller
+                  name={`rooms.${index}.id`}
+                  control={control}
+                  defaultValue={field.id} // Make sure the ID value is provided
+                  render={({ field }) => <input type='hidden' {...field} />}
+                />
+                <Grid item xs={8} sm={8} lg={8} key={field.id}>
+                  <Controller
+                    name={`rooms.${index}.name`}
+                    control={control}
+                    render={({ field }) => (
+                      <CustomTextField
+                        {...field}
+                        fullWidth
+                        type='text'
+                        label={`${t('Room')} ${index + 1}`}
+                        error={!!errors.rooms?.[index]}
+                        helperText={errors.rooms?.[index]?.message}
+                      />
+                    )}
+                  />
+                </Grid>
+              </>
+            ))}
           </Grid>
           <Stack
             sx={{ p: theme => `${theme.spacing(3)} !important` }}
@@ -224,7 +222,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef }) {
               <Translations text={'Edit Location'} />
             </Button>
             <Button type='button' variant='outlined' onClick={handleCloseDrawer}>
-              <Translations text={'cancel'} />
+              <Translations text={'Cancel'} />
             </Button>
           </Stack>
         </>

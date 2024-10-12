@@ -6,6 +6,7 @@ import Box from '@mui/material/Box'
 import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
+import { useTranslation } from 'react-i18next'
 
 const StyledCompanyName = styled(Link)(({ theme }) => ({
   fontWeight: 500,
@@ -22,54 +23,54 @@ const LinkStyled = styled(Link)(({ theme }) => ({
 }))
 
 const FooterContent = () => {
+  const { t } = useTranslation()
   // ** Var
   const hidden = useMediaQuery(theme => theme.breakpoints.down('md'))
 
   return (
- <Box
+    <Box
       sx={{
         display: 'flex',
         flexWrap: 'wrap',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'space-between'
       }}
     >
       <Typography
         sx={{
           display: 'flex',
           alignItems: 'center', // Ensure elements align vertically center
-          color: 'text.secondary',
+          color: 'text.secondary'
         }}
       >
-        {`© ${new Date().getFullYear()}, Made with `}
-        <Box component="span" sx={{ mx: 1, color: 'error.main' }}>
+        {`© ${new Date().getFullYear()}, ${t('Made with')} `}
+        <Box component='span' sx={{ mx: 1, color: 'error.main' }}>
           ❤️
         </Box>
-        {`by`}
+        {`${t('by')}`}
         <Box
-
           sx={{
             display: 'flex',
-            alignItems: 'start',
+            alignItems: 'start'
           }}
         >
-          <a href="https://netwitcher.com" target="_blank" rel="noopener noreferrer">
+          <a href='https://netwitcher.com' target='_blank' rel='noopener noreferrer'>
             <Box
-              component="img"
-              src="/images/logos/Netwitcher.svg"
-              alt="Netwitcher"
+              component='img'
+              src='/images/logos/Netwitcher.svg'
+              alt='Netwitcher'
               sx={{
                 width: 110,
                 height: 100,
                 display: 'flex',
-                alignItems:'start' // Keeps image inline
-
+                alignItems: 'start' // Keeps image inline
               }}
             />
           </a>
         </Box>
       </Typography>
-    </Box>  )
+    </Box>
+  )
 }
 
 export default FooterContent
