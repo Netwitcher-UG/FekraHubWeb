@@ -148,7 +148,7 @@ const StudentsAttendanceDataGrid = ({
       <Divider sx={{ m: '0 !important' }} />
       {isNotSchoolDay ? (
         <Grid item xs={12} sx={{ mt: 16, mb: 16, mx: 4 }}>
-          <Alert severity='info'> There is no course today !</Alert>
+          <Alert severity='info'> {t('There is no course today')} !</Alert>
         </Grid>
       ) : (
         <Box sx={{ height: 'calc(100vh - 250px)' }}>
@@ -166,21 +166,23 @@ const StudentsAttendanceDataGrid = ({
             </Box>
           ) : (
             <>
-              <DataGrid
-                rowHeight={62}
-                rows={store?.students?.students || []}
-                columns={columns}
-                hideFooter={true}
-                disableRowSelectionOnClick
-                onRowClick={handleRowClick}
-                pagination={true}
-                sx={{
-                  // overflowY: 'scroll',
-                  overflowX: 'scroll',
-                  ...customScrollbarStyles,
-                  fontSize: '1rem'
-                }}
-              />
+              {selectedCourse && store?.students?.students?.length > 0 && (
+                <DataGrid
+                  rowHeight={62}
+                  rows={store?.students?.students || []}
+                  columns={columns}
+                  hideFooter={true}
+                  disableRowSelectionOnClick
+                  onRowClick={handleRowClick}
+                  pagination={true}
+                  sx={{
+                    // overflowY: 'scroll',
+                    overflowX: 'scroll',
+                    ...customScrollbarStyles,
+                    fontSize: '1rem'
+                  }}
+                />
+              )}
             </>
           )}
         </Box>

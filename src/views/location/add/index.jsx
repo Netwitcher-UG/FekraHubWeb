@@ -15,6 +15,7 @@ import { Box, Grid } from '@mui/material'
 import { useForm, Controller, useFieldArray } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import Translations from 'src/layouts/components/Translations'
+import { useTranslation } from 'react-i18next'
 import CustomTextField from 'src/@core/components/mui/text-field'
 import { addLocation } from 'src/store/apps/location'
 
@@ -41,19 +42,20 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary
 }))
 
-const schema = yup.object().shape({
-  name: yup.string().required('name is required'),
-  street: yup.string().required('street is required'),
-  streetNr: yup.string().required('streetNr is required'),
-  zipCode: yup.string().required('zipCode is required'),
-  city: yup.string().required('city is required')
-})
-
 const AddLocation = () => {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const handleClickOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
   const dispatch = useDispatch()
+
+  const schema = yup.object().shape({
+    name: yup.string().required(t('Name is required')),
+    street: yup.string().required(t('Street is required')),
+    streetNr: yup.string().required(t('Street Number is required')),
+    zipCode: yup.string().required(t('Zip Code is required')),
+    city: yup.string().required(t('City is required'))
+  })
 
   const defaultValues = {
     name: '',
@@ -61,7 +63,7 @@ const AddLocation = () => {
     streetNr: '',
     zipCode: '',
     city: '',
-    rooms:[]
+    rooms: []
   }
 
   const {
@@ -71,16 +73,15 @@ const AddLocation = () => {
     formState: { errors, isDirty },
     reset
   } = useForm({
-     resolver: yupResolver(schema),
+    resolver: yupResolver(schema),
     defaultValues,
     mode: 'onChange'
   })
 
-
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'Room'
-  });
+  })
 
   const handleSaveData = data => {
     try {
@@ -123,14 +124,13 @@ const AddLocation = () => {
                     {...field}
                     fullWidth
                     autoFocus
-                    label={`${'name'}`}
+                    label={`${t('Name')}`}
                     variant='outlined'
                     error={!!errors.name}
                     helperText={errors.name ? errors.name.message : ''}
                   />
                 )}
               />
-
             </Grid>
             <Grid item xs={6} sm={6} lg={6}>
               <Controller
@@ -141,7 +141,7 @@ const AddLocation = () => {
                   <CustomTextField
                     {...field}
                     fullWidth
-                    label={`${'street'}`}
+                    label={`${t('Street')}`}
                     variant='outlined'
                     error={!!errors.street}
                     helperText={errors.street ? errors.street.message : ''}
@@ -158,7 +158,7 @@ const AddLocation = () => {
                   <CustomTextField
                     {...field}
                     fullWidth
-                    label={`${'streetNr'}`}
+                    label={`${t('Street Number')}`}
                     variant='outlined'
                     error={!!errors.streetNr}
                     helperText={errors.streetNr ? errors.streetNr.message : ''}
@@ -175,7 +175,7 @@ const AddLocation = () => {
                   <CustomTextField
                     {...field}
                     fullWidth
-                    label={`${'zipCode'}`}
+                    label={`${t('Zip Code')}`}
                     variant='outlined'
                     error={!!errors.zipCode}
                     helperText={errors.zipCode ? errors.zipCode.message : ''}
@@ -192,7 +192,7 @@ const AddLocation = () => {
                   <CustomTextField
                     {...field}
                     fullWidth
-                    label={`${'city'}`}
+                    label={`${t('City')}`}
                     variant='outlined'
                     error={!!errors.city}
                     helperText={errors.city ? errors.city.message : ''}
@@ -201,51 +201,41 @@ const AddLocation = () => {
               />
             </Grid>
 
-<Grid item xs={6} sm={6} lg={6}>
-<Button variant='outlined' sx={{marginY:'20px'}}  onClick={() => append({   })}>
-  Add New Room
-</Button>
-</Grid>
-{fields.map((field, index) => (
-     <>
-     <Grid item xs={6} sm={6} lg={6}>
-
-
-
-
-        <Controller
-          name={`rooms.${index}`}
-          control={control}
-          render={({ field }) => (
-            <CustomTextField
-              {...field}
-              fullWidth
-              type='text'
-              label={`Room  ${index + 1}`}
-              error={!!errors.rooms?.[index]}
-              helperText={errors.rooms?.[index].message}
-            />
-          )}
-        />
-
-</Grid>
-    <Grid item xs={6} sm={6} lg={6} sx={{marginTop:'16px'}}>
-      <Button
-        variant='text'
-        color='error'
-        onClick={() => remove(index)}
-      >
-        Remove
-      </Button>
-</Grid>
-</>
-))}
-
+            <Grid item xs={6} sm={6} lg={6}>
+              <Button variant='outlined' sx={{ marginY: '20px' }} onClick={() => append({})}>
+                {t('Add New Room')}
+              </Button>
+            </Grid>
+            {fields.map((field, index) => (
+              <>
+                <Grid item xs={6} sm={6} lg={6}>
+                  <Controller
+                    name={`rooms.${index}`}
+                    control={control}
+                    render={({ field }) => (
+                      <CustomTextField
+                        {...field}
+                        fullWidth
+                        type='text'
+                        label={`${t('Room')}  ${index + 1}`}
+                        error={!!errors.rooms?.[index]}
+                        helperText={errors.rooms?.[index].message}
+                      />
+                    )}
+                  />
+                </Grid>
+                <Grid item xs={6} sm={6} lg={6} sx={{ marginTop: '16px' }}>
+                  <Button variant='text' color='error' onClick={() => remove(index)}>
+                    {t('Remove')}
+                  </Button>
+                </Grid>
+              </>
+            ))}
           </Grid>
         </DialogContent>
         <DialogActions sx={{ p: theme => `${theme.spacing(3)} !important` }}>
           <Button type='button' variant='outlined' onClick={handleClose}>
-            <Translations text={'cancel'} />
+            <Translations text={'Cancel'} />
           </Button>
           <Button disabled={!isDirty} type='button' variant='contained' onClick={handleSubmit(handleSaveData)}>
             <Translations text={'Add Location'} />

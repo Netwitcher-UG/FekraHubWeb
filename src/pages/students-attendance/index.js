@@ -9,7 +9,7 @@ import { useRouter } from 'next/router'
 // import Divider from '@mui/material/Divider'
 const StudentsAttendanceList = () => {
   const [value, setValue] = useState('')
-  const [selectedCourse, setSelectedCourse] = useState(0)
+  const [selectedCourse, setSelectedCourse] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const pageSize = 10
@@ -19,14 +19,15 @@ const StudentsAttendanceList = () => {
   const coursesData = useSelector(state => state.students.coursesData)
 
   const fetchDataWithPagination = (page, searchValue = '', courseValue) => {
-    dispatch(
-      fetchStudentsWithAttendance({
-        search: searchValue,
-        courseId: courseValue,
-        PageSize: pageSize,
-        PageNumber: page
-      })
-    )
+    courseValue &&
+      dispatch(
+        fetchStudentsWithAttendance({
+          search: searchValue,
+          courseId: courseValue,
+          PageSize: pageSize,
+          PageNumber: page
+        })
+      )
     dispatch(fetchCourses('?IsAttendance=true'))
   }
 

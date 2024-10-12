@@ -14,7 +14,7 @@ import { fetchLocation } from 'src/store/apps/location'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 import CustomDataGrid from 'src/@core/components/custom-datagrid'
 import MonthlyReportForm from '../monthly-report/monthly-report-form'
-
+import { useTranslation } from 'react-i18next'
 export default function CoursesDataGrid({ rows, dataRooms, dataTeacher, SetSearch, status }) {
   const {
     columns,
@@ -42,7 +42,7 @@ export default function CoursesDataGrid({ rows, dataRooms, dataTeacher, SetSearc
       }
     }
   }
-
+  const { t } = useTranslation()
   const { data: locationData, error } = useSelector(state => state.location)
   const ability = useContext(AbilityContext)
 
@@ -89,7 +89,7 @@ export default function CoursesDataGrid({ rows, dataRooms, dataTeacher, SetSearc
       <CustomDialogDelete
         open={isDialogOpen}
         handleClose={handleCloseDialog}
-        decsription={`Are you sure you want to delete the class ${DeleteName} ? `}
+        decsription={`${t('Are you sure you want to delete the class')} ${DeleteName} ? `}
         onDelete={handleDelete}
       />
       {open && (

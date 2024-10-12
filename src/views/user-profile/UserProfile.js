@@ -115,7 +115,7 @@ const UserProfile = ({ tab, data, isLoading }) => {
                     label={
                       <Box sx={{ display: 'flex', alignItems: 'center', ...(!hideText && { '& svg': { mr: 2 } }) }}>
                         <Icon fontSize='1.125rem' icon='tabler:user-check' />
-                        {!hideText && 'Profile'}
+                        {!hideText && t('Profile')}
                       </Box>
                     }
                   />

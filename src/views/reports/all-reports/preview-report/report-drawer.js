@@ -43,19 +43,18 @@ export default function ReportPreviewDrawer({ open, handleCloseDrawer, rowData }
   const handleReportApprove = async () => {
     const response = await dispatch(acceptReport(rowData.id))
 
-    if (response?.payload?.status != 200)
-      toast.error(<Translations text={'Report did not approve try again !'} />, 1000)
+    if (response?.payload?.status != 200) toast.error(<Translations text={'Report did not approve try again'} />, 1000)
     else if (response?.payload?.status == 200) {
       toast.success(<Translations text={'Report approved successfully'} />, 1000)
       handleCloseDrawer()
-    } else toast.error('Something went wrong')
+    } else toast.error(<Translations text={'Something went wrong'} />)
   }
 
   const handleReportDisapprove = async () => {
     const response = await dispatch(unAcceptReport(rowData.id))
 
     if (response?.payload?.status !== 200) {
-      toast.error(t('Report did not disapprove try again !'), 1000)
+      toast.error(t('Report did not disapprove try again'), 1000)
     } else if (response?.payload?.status === 200) {
       toast.success(t('Report disapproved successfully'), 1000)
       handleCloseDrawer()

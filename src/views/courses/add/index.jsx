@@ -18,7 +18,7 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import CustomTextField from 'src/@core/components/mui/text-field'
 import { Box } from '@mui/system'
-
+import { useTranslation } from 'react-i18next'
 const CustomCloseButton = styled(IconButton)(({ theme }) => ({
   top: 0,
   right: 0,
@@ -33,59 +33,61 @@ const CustomCloseButton = styled(IconButton)(({ theme }) => ({
   }
 }))
 
-const schema = yup.object().shape({
-  course: yup.object().shape({
-    price: yup
-      .number()
-      .transform((value, originalValue) => {
-        return originalValue === '' ? undefined : value
-      })
-      .required('Price is required')
-      .positive('Price must be a positive number')
-      .min(1, 'Price must be at least 1'),
-    lessons: yup
-      .number()
-      .transform((value, originalValue) => {
-        return originalValue === '' ? undefined : value
-      })
-      .required('Lessons are required')
-      .integer('Lessons must be an integer')
-      .min(1, 'Lessons must be at least 1'),
-    capacity: yup
-      .number()
-      .transform((value, originalValue) => {
-        return originalValue === '' ? undefined : value
-      })
-      .required('Capacity is required')
-      .integer('Capacity must be an integer')
-      .min(1, 'Capacity must be at least 1'),
-    roomId: yup.string().required('roomId is required'),
-    name: yup.string().required('Course Name is required').min(2, 'Course Name must be at least 2 characters'),
-    startDate: yup
-      .date()
-      .transform((value, originalValue) => {
-        return originalValue === '' ? undefined : value
-      })
-      .required('Start Date is required')
-      .nullable(),
-    endDate: yup
-      .date()
-      .transform((value, originalValue) => {
-        return originalValue === '' ? undefined : value
-      })
-      .required('End Date is required')
-      .nullable()
-      .min(yup.ref('startDate'), 'End Date cannot be before Start Date')
-  })
-
-  // Additional validation for other fields can go here
-})
-
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction='up' ref={ref} {...props} />
 })
 
 const AddCourses = ({ dataRooms, dataTeacher }) => {
+  const { t } = useTranslation()
+
+  const schema = yup.object().shape({
+    course: yup.object().shape({
+      price: yup
+        .number()
+        .transform((value, originalValue) => {
+          return originalValue === '' ? undefined : value
+        })
+        .required(t('Price is required'))
+        .positive(t('Price must be a positive number'))
+        .min(1, t('Price must be at least 1')),
+      lessons: yup
+        .number()
+        .transform((value, originalValue) => {
+          return originalValue === '' ? undefined : value
+        })
+        .required(t('Lessons are required'))
+        .integer(t('Lessons must be an integer'))
+        .min(1, t('Lessons must be at least 1')),
+      capacity: yup
+        .number()
+        .transform((value, originalValue) => {
+          return originalValue === '' ? undefined : value
+        })
+        .required(t('Capacity is required'))
+        .integer(t('Capacity must be an integer'))
+        .min(1, t('Capacity must be at least 1')),
+      roomId: yup.string().required(t('roomId is required')),
+      name: yup.string().required(t('Course Name is required')).min(2, t('Course Name must be at least 2 characters')),
+      startDate: yup
+        .date()
+        .transform((value, originalValue) => {
+          return originalValue === '' ? undefined : value
+        })
+        .required(t('Start Date is required'))
+        .nullable(),
+      endDate: yup
+        .date()
+        .transform((value, originalValue) => {
+          return originalValue === '' ? undefined : value
+        })
+        .required(t('End Date is required'))
+        .nullable()
+        .min(yup.ref('startDate'), t('End Date cannot be before Start Date'))
+    })
+
+    // Additional validation for other fields can go here
+  })
+
   // console.log('🚀 ~ AddCourses ~ dataTeacher:', dataTeacher)
   const [open, setOpen] = useState(false)
   const [step, setStep] = useState(0) // Step control
@@ -153,7 +155,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
     <div>
       <Button onClick={() => setOpen(true)} variant='contained'>
         <Icon icon='tabler:plus' />
-        Add Courses
+        {t('Add Courses')}
       </Button>
 
       <Dialog
@@ -164,7 +166,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
         sx={{ '& .MuiDialog-paper': { overflow: 'visible' } }}
       >
         <DialogTitle>
-          <Typography variant='h4'>Add Courses</Typography>
+          <Typography variant='h4'>{t('Add Courses')}</Typography>
           <CustomCloseButton aria-label='close' onClick={handleClose}>
             <Icon icon='tabler:x' />
           </CustomCloseButton>
@@ -191,7 +193,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                         <CustomTextField
                           fullWidth
                           {...params}
-                          label='Select Location'
+                          label={t('Select Location')}
                           variant='outlined'
                           error={!!errors.LocationId}
                           helperText={errors.LocationId ? errors.LocationId.message : ''}
@@ -216,7 +218,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                       renderInput={params => (
                         <CustomTextField
                           {...params}
-                          label='Select Room'
+                          label={t('Select Room')}
                           variant='outlined'
                           inputRef={ref}
                           error={!!errors.course?.roomId}
@@ -243,7 +245,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                       renderInput={params => (
                         <CustomTextField
                           {...params}
-                          label='Teacher'
+                          label={t('Teacher')}
                           variant='outlined'
                           inputRef={ref}
                           error={!!errors.TeacherId}
@@ -266,7 +268,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                   render={({ field }) => (
                     <CustomTextField
                       {...field}
-                      label='Course Name'
+                      label={t('Course Name')}
                       variant='outlined'
                       fullWidth
                       error={!!errors.course?.name}
@@ -283,7 +285,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                   render={({ field }) => (
                     <CustomTextField
                       {...field}
-                      label='Price'
+                      label={t('Price')}
                       type='number'
                       variant='outlined'
                       fullWidth
@@ -304,7 +306,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                   render={({ field }) => (
                     <CustomTextField
                       {...field}
-                      label='Lessons'
+                      label={t('Lessons')}
                       type='number'
                       variant='outlined'
                       fullWidth
@@ -322,7 +324,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                   render={({ field }) => (
                     <CustomTextField
                       {...field}
-                      label='Capacity'
+                      label={t('Capacity')}
                       variant='outlined'
                       type='number'
                       fullWidth
@@ -339,7 +341,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                   render={({ field }) => (
                     <CustomTextField
                       {...field}
-                      label='Start Date'
+                      label={t('Start Date')}
                       variant='outlined'
                       type='date'
                       fullWidth
@@ -356,7 +358,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                   render={({ field }) => (
                     <CustomTextField
                       {...field}
-                      label='End Date'
+                      label={t('End Date')}
                       variant='outlined'
                       type='date'
                       fullWidth
@@ -384,7 +386,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                             renderInput={params => (
                               <CustomTextField
                                 {...params}
-                                label='Day of the Week'
+                                label={t('Day of the Week')}
                                 variant='outlined'
                                 inputRef={ref}
                                 error={!!errors.courseSchedule?.[index]?.dayOfWeek}
@@ -409,7 +411,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                             {...field}
                             fullWidth
                             type='time'
-                            label={`Start Time ${index + 1}`}
+                            label={`${t('Start Time')} ${index + 1}`}
                             error={!!errors.courseSchedule?.[index]?.startTime}
                             helperText={errors.courseSchedule?.[index]?.startTime.message}
                           />
@@ -426,7 +428,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                             {...field}
                             fullWidth
                             type='time'
-                            label={`End Time ${index + 1}`}
+                            label={`${t('End Time')} ${index + 1}`}
                             error={!!errors.courseSchedule?.[index]?.endTime}
                             helperText={errors.courseSchedule?.[index]?.endTime?.message}
                           />
@@ -435,14 +437,14 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                     </Box>
 
                     <Button sx={{ marginLeft: '16px' }} variant='text' color='error' onClick={() => remove(index)}>
-                      Remove
+                      {t('Remove')}
                     </Button>
                   </Stack>
                 </Box>
               ))}
 
               <Button variant='outlined' sx={{ marginY: '24px' }} onClick={() => append({ EmailServer: '' })}>
-                Add New course Schedule
+                {t('Add New course Schedule')}
               </Button>
             </Box>
           )}
@@ -450,16 +452,16 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
         <DialogActions>
           {step > 0 && (
             <Button onClick={() => setStep(prev => prev - 1)} color='primary'>
-              Back
+              {t('Back')}
             </Button>
           )}
           {step < 2 ? (
             <Button onClick={handleNextStep} disabled={location.length === 0} color='primary'>
-              Next
+              {t('Next')}
             </Button>
           ) : (
             <Button onClick={handleSubmit(handleSaveData)} disabled={isDirty} color='primary'>
-              {isDirty ? 'please have required fields' : 'save'}
+              {isDirty ? t('Please you have required fields') : t('Save')}
             </Button>
           )}
         </DialogActions>
