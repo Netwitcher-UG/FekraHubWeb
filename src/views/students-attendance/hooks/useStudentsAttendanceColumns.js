@@ -92,6 +92,9 @@ const useStudentAttendanceColumns = students => {
         renderCell: ({ row }) => {
           const presentStatusId = attendanceStatuses?.find(status => status.title === 'Present')?.id || ''
 
+          // Find the current attendance status from the state
+          const currentStatusId = attendanceData.find(entry => entry.studentID === row.id)?.statusID || presentStatusId
+
           return (
             <>
               {!row?.course?.courseAttendance && ability.can('create', 'StudentAttendance') ? (
@@ -100,7 +103,7 @@ const useStudentAttendanceColumns = students => {
                   fullWidth
                   id='attendance-status-select'
                   aria-describedby='attendance-status-select'
-                  defaultValue={presentStatusId}
+                  value={currentStatusId} // Use value from the state, not defaultValue
                   SelectProps={{
                     onChange: e => handleStatusChange(row.id, e.target.value),
                     displayEmpty: true

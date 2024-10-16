@@ -1,22 +1,28 @@
 // ** React Imports
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
 
 // ** MUI Imports
 import Tab from '@mui/material/Tab'
-import TabList from '@mui/lab/TabList'
+import Tabs from '@mui/material/Tabs'
 import TabPanel from '@mui/lab/TabPanel'
 import Alert from '@mui/material/Alert'
 import Grid from '@mui/material/Grid'
 import Box from '@mui/material/Box'
 import TabContext from '@mui/lab/TabContext'
 import CircularProgress from '@mui/material/CircularProgress'
+
+// ** Redux Imports
+import { useDispatch, useSelector } from 'react-redux'
+
+// ** Store Actions
 import { fetchReportsByFilter, fetchChildReports } from 'src/store/apps/reports'
 import { fetchChildProfileInfo, fetchStudentProfileInfo } from 'src/store/apps/students'
 import { fetchChildContracts, fetchStudentContracts } from 'src/store/apps/contracts'
 import { fetchChildInvoices, fetchStudentInvoices } from 'src/store/apps/invoices'
 import { fetchChildWorksheets, fetchStudentWorsheets } from 'src/store/apps/worksheets'
 import { fetchStudentAttendance, fetchAttendanceStatuses, fetchChildAttendance } from 'src/store/apps/attendance'
-import { useDispatch, useSelector } from 'react-redux'
+
+// ** Components Imports
 import StudentReportsTab from './reports-list/reports-tab'
 import StudentAttendanceTab from './attendance-list/attendance-tab'
 import ContractsList from './contracts/contracts-list'
@@ -24,23 +30,23 @@ import InvoicesList from './invoices/invoices-list'
 import ProfileTab from './profile'
 import ProfileEditDrawer from './profile/edit-profile/edit-profile-drawer'
 import WorksheetsList from './worksheets/worksheets-list'
+
+// ** Translation and ACL
 import { useTranslation } from 'react-i18next'
-import { useContext } from 'react'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 
 const StudentProfile = ({ student, byParent = false }) => {
   const ability = useContext(AbilityContext)
-  // ** State
   const [value, setValue] = useState('1')
   const dispatch = useDispatch()
   const { t } = useTranslation()
   const store = useSelector(state => state.reports)
   const [editDrawerOpen, setEditDrawerOpen] = useState(false)
 
+  // ** Selectors for profile, contracts, invoices, worksheets, and attendance data
   const { childProfileInfo, childProfileLoading, studentProfileInfo, studentProfileLoading } = useSelector(
     state => state.students
   )
-
   const { childContracts, childContractsLoading, studentContracts, studentContractsLoading } = useSelector(
     state => state.contracts
   )
@@ -52,6 +58,7 @@ const StudentProfile = ({ student, byParent = false }) => {
   )
   const { studentAttendance, childAttendance } = useSelector(state => state.attendance)
 
+  // ** Fetching Data based on whether it's by parent or direct student
   useEffect(() => {
     if (!student) return
     if (byParent) {
@@ -72,10 +79,12 @@ const StudentProfile = ({ student, byParent = false }) => {
     }
   }, [student])
 
+  // ** Handle Tab Change
   const handleChange = (event, newValue) => {
     setValue(newValue)
   }
 
+  // ** Handle Closing of Edit Drawer
   const handleEditDrawerClose = () => {
     setEditDrawerOpen(false)
   }
@@ -83,62 +92,41 @@ const StudentProfile = ({ student, byParent = false }) => {
   return (
     <>
       <TabContext value={value}>
-        <TabList
-          sx={{
-            '& .MuiTab-root': {
-              fontSize: {
-                xs: '0.5rem',
-                sm: '0.6rem',
-                md: '0.75rem',
-                lg: '0.82rem',
-                xl: '1.2rem'
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            variant='scrollable' // Enable horizontal scrolling
+            scrollButtons='auto' // Display scroll buttons when necessary
+            aria-label={t('full width tabs example')}
+            sx={{
+              '& .MuiTabs-flexContainer': {
+                justifyContent: 'space-between' // Ensure even spacing between tabs
+              },
+              '& .MuiTab-root': {
+                fontSize: {
+                  xs: '0.8rem',
+                  sm: '0.75rem',
+                  md: '0.85rem',
+                  lg: '0.95rem',
+                  xl: '1.2rem'
+                },
+                minWidth: '120px' // Ensure tabs are wide enough for scrolling
               }
-            }
-          }}
-          variant='fullWidth'
-          onChange={handleChange}
-          aria-label={t('full width tabs example')}
-        >
-          <Tab value='1' label={t('Profile info')} />
-          {byParent ? (
-            <Tab value='2' label={byParent ? t('Reports') : t('Reports')} />
-          ) : ability.can('read', 'StudentReport') ? (
-            <Tab value='2' label={byParent ? t('Reports') : t('Reports')} />
-          ) : null}
+            }}
+          >
+            <Tab value='1' label={t('Profile info')} />
+            {byParent || ability.can('read', 'StudentReport') ? <Tab value='2' label={t('Reports')} /> : null}
+            {byParent || ability.can('read', 'Contract') ? <Tab value='3' label={t('Contracts')} /> : null}
+            {byParent || ability.can('manage', 'Invoices') ? <Tab value='4' label={t('Invoices')} /> : null}
+            {byParent || ability.can('manage', 'File') ? <Tab value='5' label={t('Course Files')} /> : null}
+            {byParent || ability.can('read', 'StudentAttendance') ? <Tab value='6' label={t('Attendance')} /> : null}
+          </Tabs>
+        </Box>
 
-          {byParent ? (
-            <Tab value='3' label={byParent ? t('Contracts') : t('Contracts')} />
-          ) : ability.can('read', 'Contract') ? (
-            <Tab value='3' label={byParent ? t('Contracts') : t('Contracts')} />
-          ) : null}
-
-          {byParent ? (
-            <Tab value='4' label={byParent ? t('Invoices') : t('Invoices')} />
-          ) : ability.can('manage', 'Invoices') ? (
-            <Tab value='4' label={byParent ? t('Invoices') : t('Invoices')} />
-          ) : null}
-
-          {byParent ? (
-            <Tab value='5' label={byParent ? t('Course Files') : t('Course Files')} />
-          ) : ability.can('manage', 'File') ? (
-            <Tab value='5' label={byParent ? t('Course Files') : t('Course Files')} />
-          ) : null}
-          {byParent ? (
-            <Tab value='6' label={byParent ? t('Attendance') : t('Attendance')} />
-          ) : ability.can('read', 'StudentAttendance') ? (
-            <Tab value='6' label={byParent ? t('Attendance') : t('Attendance')} />
-          ) : null}
-        </TabList>
         <TabPanel value='1'>
           {childProfileLoading || studentProfileLoading ? (
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100vh'
-              }}
-            >
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
               <CircularProgress size={100} />
             </Box>
           ) : childProfileInfo?.id || studentProfileInfo?.id ? (
@@ -152,8 +140,7 @@ const StudentProfile = ({ student, byParent = false }) => {
             <Grid item xs={12}>
               <Alert severity='error'>
                 {t('No')} {byParent ? t('child') : t('student')} {t('with id')}: {student} ,{' '}
-                {t('or Something went wrong.')}.
-                <br />
+                {t('or Something went wrong.')}.<br />
                 <br />
                 <small>
                   {t('Please refresh and check if this')} {byParent ? t('child') : t('student')} {t('exists')}
@@ -162,6 +149,7 @@ const StudentProfile = ({ student, byParent = false }) => {
             </Grid>
           )}
         </TabPanel>
+
         {byParent ? (
           <TabPanel value='2'>
             <StudentReportsTab store={store} byParent={byParent} />
@@ -180,7 +168,7 @@ const StudentProfile = ({ student, byParent = false }) => {
               loading={byParent ? childContractsLoading : studentContractsLoading}
             />
           </TabPanel>
-        ) : ability.can('manage', 'File') ? (
+        ) : ability.can('read', 'Contract') ? (
           <TabPanel value='3'>
             <ContractsList
               byParent={byParent}
@@ -197,7 +185,7 @@ const StudentProfile = ({ student, byParent = false }) => {
               loading={byParent ? childInvoicesLoading : studentInvoicesLoading}
               byParent={byParent}
               student={student}
-            />{' '}
+            />
           </TabPanel>
         ) : ability.can('manage', 'Invoices') ? (
           <TabPanel value='4'>
@@ -206,7 +194,7 @@ const StudentProfile = ({ student, byParent = false }) => {
               loading={byParent ? childInvoicesLoading : studentInvoicesLoading}
               byParent={byParent}
               student={student}
-            />{' '}
+            />
           </TabPanel>
         ) : null}
 
