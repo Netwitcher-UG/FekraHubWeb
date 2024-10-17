@@ -42,7 +42,7 @@ import { fetchEmployees } from 'src/store/apps/users'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchUsersMail, postMail } from 'src/store/apps/email'
 import { fetchCourses } from 'src/store/apps/courses'
-import { fetchAllPermissions } from 'src/store/apps/roles'
+import { fetchAllRole } from 'src/store/apps/roles'
 
 const filter = createFilterOptions()
 
@@ -51,8 +51,8 @@ const ComposePopup = props => {
   const { mdAbove, composeOpen, composePopupWidth, toggleComposeOpen } = props
   const { users } = useSelector(state => state.email)
   const { data, status, error, dataRooms, dataTeacher } = useSelector(state => state.courses)
-  const {allPermissions} = useSelector(state => state.roles)
-  console.log("🚀 ~ ComposePopup ~ rolesData:", users)
+  const {roles} = useSelector(state => state.roles)
+  console.log("🚀 ~ ComposePopup ~ rolesData:", roles)
   const [attachments, setAttachments] = useState([]); // Store multiple files
 
   // Handle multiple file selection
@@ -66,7 +66,7 @@ const ComposePopup = props => {
   useEffect(() => {
     dispatch(fetchUsersMail())
     dispatch(fetchCourses(''))
-    dispatch(fetchAllPermissions())
+    dispatch(fetchAllRole())
 
   }, [dispatch])
   // ** States
@@ -99,31 +99,32 @@ const ComposePopup = props => {
   const handleEmailSend = () => {
     const contentState = messageValue.getCurrentContent();
     const htmlContent = stateToHTML(contentState);
-    if (attachments.length > 0) {
-      console.log("Sending email with attachments:", attachments);
-      // Perform email sending logic here, including the attachments array
-    } else {
-      console.log("No attachments selected");
-    }
     setEmailTo(emailTo)
     setccValue(ccValue)
     setbccValue(bccValue)
     setVisibility(visibility)
     setMessageValue(messageValue)
     setSubjectValue(subjectValue)
+    const formData = new FormData()
+formData.append('subject',subjectValue)
+if(emailTo.length > 0)
+{
+  formData.append('Emails',emailTo)
+}
+if(CoursesValue.length > 0){
+  formData.append('CourseId',CoursesValue)
+}
+if(bccValue.length >0){
+  formData.append('Role',bccValue)
+}
+formData.append('Message',htmlContent)
 
-    const EmailData={
-      subject:subjectValue,
-      Emails:emailTo,
-      CourseId:CoursesValue,
-      Role:bccValue,
-      Message:htmlContent,
+if(attachments.length>0){
+    for (let i = 0; i < attachments.length; i++) {
+      formData.append('files', attachments[i]) // Append each file, 'files[]' indicates an array
+    }}
 
-
-    }
-
-
-    dispatch(postMail(EmailData));
+    dispatch(postMail(formData));
     handlePopupClose()
   }
   const handlePopupClose = () => {
@@ -418,7 +419,7 @@ const ComposePopup = props => {
             clearIcon={false}
             id='email-to-select'
             filterSelectedOptions
-            options={allPermissions.allRoles}
+            options={roles}
             ListboxComponent={List}
             getOptionLabel={option => option}
             renderOption={(props, option) => renderListItemRoles(props, option, bccValue, setbccValue)}
@@ -509,7 +510,27 @@ const ComposePopup = props => {
             <Icon icon='tabler:send' fontSize='1.125rem' />
             Send
           </Button>
+          <Button
+        variant="text"
+        component="label"
+        sx={{ mr: 2 }}
+      >
+        <Icon icon="tabler:paperclip" fontSize="1.125rem" />
+        Attach Files
+        <input
+          type="file"
+          multiple  // Enable multiple file selection
+          hidden
+          onChange={handleFileChange}  // Handle file selection
+        />
+      </Button>
 
+      {/* Display selected file names */}
+      <Box sx={{ ml: 2 }}>
+        {attachments.length > 0 && attachments.map((file, index) => (
+          <p key={index}>{file.name}</p>  // Display each file name
+        ))}
+      </Box>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
 
