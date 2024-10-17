@@ -51,14 +51,13 @@ const StudentsAttendanceDataGrid = ({
   }
   const dispatch = useDispatch()
   const handelAttendanceSubmit = async () => {
-    console.log(attendanceData)
-    // const response = await dispatch(submitCourseAttendance({ courseId: selectedCourse, data: attendanceData }))
-    // if (response?.payload?.status) {
-    //   toast.success(t('Course attendance submitted successfully'))
-    //   dispatch(fetchStudentsWithAttendance({ courseId: selectedCourse }))
-    // } else {
-    //   toast.error(response?.payload?.data)
-    // }
+    const response = await dispatch(submitCourseAttendance({ courseId: selectedCourse, data: attendanceData }))
+    if (response?.payload?.status) {
+      toast.success(t('Course attendance submitted successfully'))
+      dispatch(fetchStudentsWithAttendance({ courseId: selectedCourse }))
+    } else {
+      toast.error(response?.payload?.data)
+    }
   }
 
   const [courseStatus, setCourseStatus] = useState(true)
