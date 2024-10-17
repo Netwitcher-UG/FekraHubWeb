@@ -18,7 +18,7 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import CustomTextField from 'src/@core/components/mui/text-field'
 import { Box } from '@mui/system'
-import { useTranslation } from 'react-i18next'
+
 const CustomCloseButton = styled(IconButton)(({ theme }) => ({
   top: 0,
   right: 0,
@@ -33,72 +33,76 @@ const CustomCloseButton = styled(IconButton)(({ theme }) => ({
   }
 }))
 
+const schema = yup.object().shape({
+  course: yup.object().shape({
+    price: yup
+    .number()
+    .transform((value, originalValue) => {
+
+      return originalValue === "" ? undefined : value;
+    })
+    .required('Price is required')
+    .positive('Price must be a positive number')
+    .min(1, 'Price must be at least 1'),
+    lessons: yup
+    .number()
+    .transform((value, originalValue) => {
+      return originalValue === "" ? undefined : value;
+    })
+    .required('Lessons are required')
+    .integer('Lessons must be an integer')
+    .min(1, 'Lessons must be at least 1'),
+  capacity: yup
+    .number()
+    .transform((value, originalValue) => {
+      return originalValue === "" ? undefined : value;
+    })
+    .required('Capacity is required')
+    .integer('Capacity must be an integer')
+    .min(1, 'Capacity must be at least 1'),
+      roomId: yup
+      .string()
+      .required('roomId is required'),
+    name: yup
+      .string()
+      .required('Course Name is required')
+      .min(2, 'Course Name must be at least 2 characters'),
+    startDate: yup.date()
+    .transform((value, originalValue) => {
+      return originalValue === "" ? undefined : value;
+    })
+    .required('Start Date is required')
+    .nullable(),
+    endDate: yup
+      .date()
+      .transform((value, originalValue) => {
+        return originalValue === "" ? undefined : value;
+      })
+      .required('End Date is required')
+      .nullable()
+      .min(yup.ref('startDate'), 'End Date cannot be before Start Date'),
+  }),
+
+  // Additional validation for other fields can go here
+});
+
 const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction='up' ref={ref} {...props} />
-})
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const AddCourses = ({ dataRooms, dataTeacher }) => {
-  const { t } = useTranslation()
-
-  const schema = yup.object().shape({
-    course: yup.object().shape({
-      price: yup
-        .number()
-        .transform((value, originalValue) => {
-          return originalValue === '' ? undefined : value
-        })
-        .required(t('Price is required'))
-        .positive(t('Price must be a positive number'))
-        .min(1, t('Price must be at least 1')),
-      lessons: yup
-        .number()
-        .transform((value, originalValue) => {
-          return originalValue === '' ? undefined : value
-        })
-        .required(t('Lessons are required'))
-        .integer(t('Lessons must be an integer'))
-        .min(1, t('Lessons must be at least 1')),
-      capacity: yup
-        .number()
-        .transform((value, originalValue) => {
-          return originalValue === '' ? undefined : value
-        })
-        .required(t('Capacity is required'))
-        .integer(t('Capacity must be an integer'))
-        .min(1, t('Capacity must be at least 1')),
-      roomId: yup.string().required(t('roomId is required')),
-      name: yup.string().required(t('Course Name is required')).min(2, t('Course Name must be at least 2 characters')),
-      startDate: yup
-        .date()
-        .transform((value, originalValue) => {
-          return originalValue === '' ? undefined : value
-        })
-        .required(t('Start Date is required'))
-        .nullable(),
-      endDate: yup
-        .date()
-        .transform((value, originalValue) => {
-          return originalValue === '' ? undefined : value
-        })
-        .required(t('End Date is required'))
-        .nullable()
-        .min(yup.ref('startDate'), t('End Date cannot be before Start Date'))
-    })
-
-    // Additional validation for other fields can go here
-  })
-
-  // console.log('🚀 ~ AddCourses ~ dataTeacher:', dataTeacher)
+  console.log('🚀 ~ AddCourses ~ dataTeacher:', dataTeacher)
   const [open, setOpen] = useState(false)
   const [step, setStep] = useState(0) // Step control
   const [location, setLocation] = useState('')
-  // console.log('🚀 ~ AddCourses ~ location:', location)
+  console.log('🚀 ~ AddCourses ~ location:', location)
   const [roomOptions, setRoomOptions] = useState([])
 
   const dispatch = useDispatch()
   const { data: DataLocation } = useSelector(state => state.location)
-  const { DaysOfWeeks } = useSelector(state => state.courses)
-  // console.log('🚀 ~ AddCourses ~ DaysOfWeeks:', DaysOfWeeks)
+  const {DaysOfWeeks} = useSelector(state => state.courses)
+  console.log("🚀 ~ AddCourses ~ DaysOfWeeks:", DaysOfWeeks)
+
 
   useEffect(() => {
     dispatch(fetchLocation(''))
@@ -107,26 +111,29 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
 
   const defaultValues = {
     LocationId: '',
-    courseSchedule: [{ dayOfWeek: '', endTime: '', startTime: '' }],
-    course: {
-      roomId: '',
-      name: '',
-      price: 0,
-      lessons: '',
-      capacity: '',
-      startDate: '',
-      endDate: ''
-    }
+    courseSchedule:[{dayOfWeek:'',endTime:'',startTime:''}],
+    course:{
+    roomId: '',
+    name: '',
+    price:0 ,
+    lessons: '',
+    capacity: '',
+    startDate: '',
+    endDate: '',
+  }
   }
 
   const {
     control,
     handleSubmit,
     reset,
-    formState: { errors, isDirty }
-  } = useForm({ defaultValues, mode: 'onBlur', resolver: yupResolver(schema) })
+    formState: { errors, isDirty,isValid }
+  } = useForm({ defaultValues,
+      mode: 'onBlur',
+      resolver: yupResolver(schema),
+   })
 
-  // console.log('🚀 ~ AddCourses ~ errors:', errors)
+   console.log("🚀 ~ AddCourses ~ errors:", isValid)
   const handleNextStep = () => {
     if (step === 0) {
       const selectedRooms = dataRooms.filter(room => room.LocationId === location)
@@ -137,13 +144,16 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'courseSchedule'
-  })
+  });
 
   const handleSaveData = data => {
+
+
     dispatch(addCourses(data))
     reset()
     handleClose()
   }
+console.log(isDirty)
   const handleClose = () => {
     setOpen(false)
     setStep(0)
@@ -155,25 +165,20 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
     <div>
       <Button onClick={() => setOpen(true)} variant='contained'>
         <Icon icon='tabler:plus' />
-        {t('Add Courses')}
+        Add Courses
       </Button>
 
-      <Dialog
-        open={open}
-        TransitionComponent={Transition}
-        onClose={handleClose}
-        aria-labelledby='customized-dialog-title'
-        sx={{ '& .MuiDialog-paper': { overflow: 'visible' } }}
-      >
+      <Dialog open={open}  TransitionComponent={Transition} onClose={handleClose}     aria-labelledby='customized-dialog-title'
+        sx={{ '& .MuiDialog-paper': { overflow: 'visible' } }} >
         <DialogTitle>
-          <Typography variant='h4'>{t('Add Courses')}</Typography>
+          <Typography variant='h4'>Add Courses</Typography>
           <CustomCloseButton aria-label='close' onClick={handleClose}>
             <Icon icon='tabler:x' />
           </CustomCloseButton>
         </DialogTitle>
         <DialogContent>
           {step === 0 && (
-            <Grid container>
+            <Grid container >
               <Grid item xs={12} sm={12} lg={12} md={12} sx={{ width: '700px' }}>
                 <Controller
                   name='LocationId'
@@ -193,7 +198,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                         <CustomTextField
                           fullWidth
                           {...params}
-                          label={t('Select Location')}
+                          label='Select Location'
                           variant='outlined'
                           error={!!errors.LocationId}
                           helperText={errors.LocationId ? errors.LocationId.message : ''}
@@ -203,10 +208,12 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                   )}
                 />
               </Grid>
+
             </Grid>
           )}
           {step === 1 && (
-            <Grid container spacing={2}>
+
+            <Grid container spacing={2} >
               <Grid item xs={12}>
                 <Controller
                   name='course.roomId'
@@ -218,7 +225,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                       renderInput={params => (
                         <CustomTextField
                           {...params}
-                          label={t('Select Room')}
+                          label='Select Room'
                           variant='outlined'
                           inputRef={ref}
                           error={!!errors.course?.roomId}
@@ -229,36 +236,39 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                         onChange(newValue ? newValue.id : '')
                       }}
                       value={location.room.find(room => room.id === value) || null}
+
                     />
                   )}
                 />
               </Grid>
               <Grid item xs={12}>
-                <Controller
-                  name='TeacherId'
-                  control={control}
-                  render={({ field: { onChange, value, ref } }) => (
-                    <Autocomplete
-                      multiple
-                      options={dataTeacher}
-                      getOptionLabel={option => option.firstName || ''}
-                      renderInput={params => (
-                        <CustomTextField
-                          {...params}
-                          label={t('Teacher')}
-                          variant='outlined'
-                          inputRef={ref}
-                          error={!!errors.TeacherId}
-                          helperText={errors.TeacherId ? errors.TeacherId.message : ''}
-                        />
-                      )}
-                      onChange={(event, newValue) => {
-                        onChange(newValue.map(option => option.id))
-                      }}
-                      value={dataTeacher.filter(t => value?.includes(t.id)) || []}
-                    />
-                  )}
-                />
+              <Controller
+  name='TeacherId'
+  control={control}
+  render={({ field: { onChange, value, ref } }) => (
+    <Autocomplete
+      multiple
+      options={dataTeacher}
+      getOptionLabel={option => option.firstName || ''}
+      renderInput={params => (
+        <CustomTextField
+          {...params}
+          label='Teacher'
+          variant='outlined'
+          inputRef={ref}
+          error={!!errors.TeacherId}
+          helperText={errors.TeacherId ? errors.TeacherId.message : ''}
+        />
+      )}
+      onChange={(event, newValue) => {
+
+        onChange(newValue.map(option => option.id));
+      }}
+      value={dataTeacher.filter(t => value?.includes(t.id)) || []}
+    />
+  )}
+/>
+
               </Grid>
 
               <Grid item xs={12}>
@@ -268,7 +278,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                   render={({ field }) => (
                     <CustomTextField
                       {...field}
-                      label={t('Course Name')}
+                      label='Course Name'
                       variant='outlined'
                       fullWidth
                       error={!!errors.course?.name}
@@ -285,7 +295,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                   render={({ field }) => (
                     <CustomTextField
                       {...field}
-                      label={t('Price')}
+                      label='Price'
                       type='number'
                       variant='outlined'
                       fullWidth
@@ -306,7 +316,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                   render={({ field }) => (
                     <CustomTextField
                       {...field}
-                      label={t('Lessons')}
+                      label='Lessons'
                       type='number'
                       variant='outlined'
                       fullWidth
@@ -324,7 +334,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                   render={({ field }) => (
                     <CustomTextField
                       {...field}
-                      label={t('Capacity')}
+                      label='Capacity'
                       variant='outlined'
                       type='number'
                       fullWidth
@@ -341,7 +351,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                   render={({ field }) => (
                     <CustomTextField
                       {...field}
-                      label={t('Start Date')}
+                      label='Start Date'
                       variant='outlined'
                       type='date'
                       fullWidth
@@ -358,7 +368,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                   render={({ field }) => (
                     <CustomTextField
                       {...field}
-                      label={t('End Date')}
+                      label='End Date'
                       variant='outlined'
                       type='date'
                       fullWidth
@@ -368,100 +378,117 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                   )}
                 />
               </Grid>
+
+
             </Grid>
           )}
-          {step === 2 && (
-            <Box sx={{ width: '400px' }}>
-              {fields.map((field, index) => (
-                <Box key={field.id} width={'100%'} sx={{ marginY: '24px' }}>
-                  <Stack direction='column' spacing={3}>
-                    <Box flex={1}>
-                      <Controller
-                        name={`courseSchedule.${index}.dayOfWeek`}
-                        control={control}
-                        render={({ field: { onChange, value, ref } }) => (
-                          <Autocomplete
-                            options={DaysOfWeeks}
-                            getOptionLabel={option => option || ''}
-                            renderInput={params => (
-                              <CustomTextField
-                                {...params}
-                                label={t('Day of the Week')}
-                                variant='outlined'
-                                inputRef={ref}
-                                error={!!errors.courseSchedule?.[index]?.dayOfWeek}
-                                helperText={errors.courseSchedule?.[index]?.dayOfWeek.message}
-                              />
-                            )}
-                            onChange={(event, newValue) => {
-                              onChange(newValue ? newValue : '')
-                            }}
-                            value={DaysOfWeeks.find(t => t === value) || null}
-                          />
-                        )}
-                      />
-                    </Box>
+             {step === 2 && (
+          <Box sx={{width:'400px'}}>
 
-                    <Box flex={1}>
-                      <Controller
-                        name={`courseSchedule.${index}.startTime`}
-                        control={control}
-                        render={({ field }) => (
-                          <CustomTextField
-                            {...field}
-                            fullWidth
-                            type='time'
-                            label={`${t('Start Time')} ${index + 1}`}
-                            error={!!errors.courseSchedule?.[index]?.startTime}
-                            helperText={errors.courseSchedule?.[index]?.startTime.message}
-                          />
-                        )}
-                      />
-                    </Box>
 
-                    <Box flex={1}>
-                      <Controller
-                        name={`courseSchedule.${index}.endTime`}
-                        control={control}
-                        render={({ field }) => (
-                          <CustomTextField
-                            {...field}
-                            fullWidth
-                            type='time'
-                            label={`${t('End Time')} ${index + 1}`}
-                            error={!!errors.courseSchedule?.[index]?.endTime}
-                            helperText={errors.courseSchedule?.[index]?.endTime?.message}
-                          />
-                        )}
-                      />
-                    </Box>
+{fields.map((field, index) => (
+  <Box key={field.id} width={'100%'} sx={{ marginY: '24px' }}>
+    <Stack
+      direction="column"
+      spacing={3}
 
-                    <Button sx={{ marginLeft: '16px' }} variant='text' color='error' onClick={() => remove(index)}>
-                      {t('Remove')}
-                    </Button>
-                  </Stack>
-                </Box>
-              ))}
+    >
+      <Box flex={1}>
+        <Controller
+          name={`courseSchedule.${index}.dayOfWeek`}
+          control={control}
+          render={({ field: { onChange, value, ref } }) => (
+            <Autocomplete
+              options={DaysOfWeeks}
+              getOptionLabel={(option) => option || ''}
+              renderInput={(params) => (
+                <CustomTextField
+                  {...params}
+                  label='Day of the Week'
+                  variant='outlined'
+                  inputRef={ref}
+                  error={!!errors.courseSchedule?.[index]?.dayOfWeek}
+                  helperText={errors.courseSchedule?.[index]?.dayOfWeek.message}
+                />
+              )}
+              onChange={(event, newValue) => {
+                onChange(newValue ? newValue : '')
+              }}
+              value={DaysOfWeeks.find(t => t === value) || null}
+            />
+          )}
+        />
+      </Box>
 
-              <Button variant='outlined' sx={{ marginY: '24px' }} onClick={() => append({ EmailServer: '' })}>
-                {t('Add New course Schedule')}
-              </Button>
+      <Box flex={1}>
+        <Controller
+          name={`courseSchedule.${index}.startTime`}
+          control={control}
+          render={({ field }) => (
+            <CustomTextField
+              {...field}
+              fullWidth
+              type='time'
+              label={`Start Time ${index + 1}`}
+              error={!!errors.courseSchedule?.[index]?.startTime}
+              helperText={errors.courseSchedule?.[index]?.startTime.message}
+            />
+          )}
+        />
+      </Box>
+
+      <Box flex={1}>
+        <Controller
+          name={`courseSchedule.${index}.endTime`}
+          control={control}
+          render={({ field }) => (
+            <CustomTextField
+              {...field}
+              fullWidth
+              type='time'
+              label={`End Time ${index + 1}`}
+              error={!!errors.courseSchedule?.[index]?.endTime}
+              helperText={errors.courseSchedule?.[index]?.endTime?.message}
+            />
+          )}
+        />
+      </Box>
+
+      <Button
+        sx={{ marginLeft: '16px' }}
+        variant='text'
+        color='error'
+        onClick={() => remove(index)}
+      >
+        Remove
+      </Button>
+    </Stack>
+  </Box>
+))}
+
+
+<Button variant='outlined' sx={{marginY:'24px'}}  onClick={() => append({ EmailServer: '' })}>
+  Add New course Schedule
+</Button>
+
+
+
             </Box>
           )}
         </DialogContent>
         <DialogActions>
           {step > 0 && (
             <Button onClick={() => setStep(prev => prev - 1)} color='primary'>
-              {t('Back')}
+              Back
             </Button>
           )}
           {step < 2 ? (
-            <Button onClick={handleNextStep} disabled={location.length === 0} color='primary'>
-              {t('Next')}
+            <Button onClick={handleNextStep} disabled={location.length === 0 } color='primary'>
+              Next
             </Button>
           ) : (
-            <Button onClick={handleSubmit(handleSaveData)} disabled={isDirty} color='primary'>
-              {isDirty ? t('Please you have required fields') : t('Save')}
+            <Button onClick={handleSubmit(handleSaveData)} disabled={!isValid} color='primary'>
+              {!isValid ? 'please have required fields' : 'save'}
             </Button>
           )}
         </DialogActions>

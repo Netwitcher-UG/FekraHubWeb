@@ -15,6 +15,9 @@ import ShortcutsDropdown from 'src/@core/layouts/components/shared-components/Sh
 
 // ** Hook Import
 import { useAuth } from 'src/hooks/useAuth'
+import { fetchNotifications } from 'src/store/apps/notifications'
+import { useDispatch, useSelector } from 'react-redux'
+import { useEffect } from 'react'
 
 const notifications = [
   {
@@ -115,7 +118,13 @@ const shortcuts = [
 const AppBarContent = props => {
   // ** Props
   const { hidden, settings, saveSettings, toggleNavVisibility } = props
+  const dispatch = useDispatch()
+  const {Notifications  } = useSelector(state => state.notifications)
 
+  useEffect(() => {
+    dispatch(fetchNotifications())
+
+}, [dispatch])
   // ** Hook
   const auth = useAuth()
 
@@ -134,8 +143,7 @@ const AppBarContent = props => {
         <ModeToggler settings={settings} saveSettings={saveSettings} />
         {auth.user && (
           <>
-            {/* <ShortcutsDropdown settings={settings} shortcuts={shortcuts} />
-            <NotificationDropdown settings={settings} notifications={notifications} /> */}
+            <NotificationDropdown settings={settings} notifications={Notifications || []}  />
             <UserDropdown settings={settings} />
           </>
         )}

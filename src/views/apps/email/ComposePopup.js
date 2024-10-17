@@ -53,6 +53,14 @@ const ComposePopup = props => {
   const { data, status, error, dataRooms, dataTeacher } = useSelector(state => state.courses)
   const {allPermissions} = useSelector(state => state.roles)
   console.log("🚀 ~ ComposePopup ~ rolesData:", users)
+  const [attachments, setAttachments] = useState([]); // Store multiple files
+
+  // Handle multiple file selection
+  const handleFileChange = (event) => {
+    const selectedFiles = Array.from(event.target.files); // Convert FileList to an array
+    setAttachments(prevFiles => [...prevFiles, ...selectedFiles]);  // Append new files to existing ones
+    console.log("Selected files:", selectedFiles);
+  };
 
   const dispatch =useDispatch()
   useEffect(() => {
@@ -91,7 +99,12 @@ const ComposePopup = props => {
   const handleEmailSend = () => {
     const contentState = messageValue.getCurrentContent();
     const htmlContent = stateToHTML(contentState);
-
+    if (attachments.length > 0) {
+      console.log("Sending email with attachments:", attachments);
+      // Perform email sending logic here, including the attachments array
+    } else {
+      console.log("No attachments selected");
+    }
     setEmailTo(emailTo)
     setccValue(ccValue)
     setbccValue(bccValue)

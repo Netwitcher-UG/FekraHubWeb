@@ -97,6 +97,7 @@ const ScrollWrapper = ({ children, hidden }) => {
 const NotificationDropdown = props => {
   // ** Props
   const { settings, notifications } = props
+  console.log("🚀 ~ NotificationDropdown ~ notifications:", notifications )
 
   // ** States
   const [anchorEl, setAnchorEl] = useState(null)
@@ -139,10 +140,9 @@ const NotificationDropdown = props => {
       <IconButton color='inherit' aria-haspopup='true' onClick={handleDropdownOpen} aria-controls='customized-menu'>
         <Badge
           color='error'
-          variant='dot'
-          invisible={!notifications.length}
+          badgeContent={notifications?.length}
           sx={{
-            '& .MuiBadge-badge': { top: 4, right: 4, boxShadow: theme => `0 0 0 2px ${theme.palette.background.paper}` }
+            '& .MuiBadge-badge': { top: 4, right: 4 }
           }}
         >
           <Icon fontSize='1.625rem' icon='tabler:bell' />
@@ -164,20 +164,19 @@ const NotificationDropdown = props => {
             <Typography variant='h5' sx={{ cursor: 'text' }}>
               Notifications
             </Typography>
-            <CustomChip skin='light' size='small' color='primary' label={`${notifications.length} New`} />
+            <CustomChip skin='light' size='small' color='primary' label={`${notifications?.length} New`} />
           </Box>
         </MenuItem>
         <ScrollWrapper hidden={hidden}>
           {notifications.map((notification, index) => (
             <MenuItem key={index} disableRipple disableTouchRipple onClick={handleDropdownClose}>
               <Box sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
-                <RenderAvatar notification={notification} />
+                <RenderAvatar notification={notification.id} />
                 <Box sx={{ mr: 4, ml: 2.5, flex: '1 1', display: 'flex', overflow: 'hidden', flexDirection: 'column' }}>
-                  <MenuItemTitle>{notification.title}</MenuItemTitle>
-                  <MenuItemSubtitle variant='body2'>{notification.subtitle}</MenuItemSubtitle>
+                  <MenuItemTitle>{notification.notification}</MenuItemTitle>
                 </Box>
                 <Typography variant='body2' sx={{ color: 'text.disabled' }}>
-                  {notification.meta}
+                  {notification?.meta}
                 </Typography>
               </Box>
             </MenuItem>
