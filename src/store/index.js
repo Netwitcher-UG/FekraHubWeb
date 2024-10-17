@@ -21,10 +21,12 @@ import attendance from 'src/store/apps/attendance'
 import calendar from './apps/calendar'
 import account from './apps/account'
 import payroll from './apps/payroll'
+import notifications from './apps/notifications'
 export const store = configureStore({
   reducer: {
     users,
     students,
+    notifications,
     courses,
     location,
     reports,

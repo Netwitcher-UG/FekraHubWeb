@@ -127,13 +127,13 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
     control,
     handleSubmit,
     reset,
-    formState: { errors, isDirty }
+    formState: { errors, isDirty,isValid }
   } = useForm({ defaultValues,
       mode: 'onBlur',
       resolver: yupResolver(schema),
    })
 
-   console.log("🚀 ~ AddCourses ~ errors:", errors)
+   console.log("🚀 ~ AddCourses ~ errors:", isValid)
   const handleNextStep = () => {
     if (step === 0) {
       const selectedRooms = dataRooms.filter(room => room.LocationId === location)
@@ -487,8 +487,8 @@ console.log(isDirty)
               Next
             </Button>
           ) : (
-            <Button onClick={handleSubmit(handleSaveData)} disabled={isDirty} color='primary'>
-              {isDirty ? 'please have required fields' : 'save'}
+            <Button onClick={handleSubmit(handleSaveData)} disabled={!isValid} color='primary'>
+              {!isValid ? 'please have required fields' : 'save'}
             </Button>
           )}
         </DialogActions>

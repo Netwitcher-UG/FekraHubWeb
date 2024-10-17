@@ -10,6 +10,8 @@ import NotificationDropdown from 'src/@core/layouts/components/shared-components
 
 // ** Hook Import
 import { useAuth } from 'src/hooks/useAuth'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchNotifications } from 'src/store/apps/notifications'
 
 const notifications = [
   {
@@ -61,6 +63,15 @@ const notifications = [
 const AppBarContent = props => {
   // ** Props
   const { hidden, settings, saveSettings } = props
+const dispatch = useDispatch()
+const {Notifications} = useSelector(state => state.user)
+console.log("🚀 ~ AppBarContent ~ Notifications:", Notifications)
+
+  useEffect(() => {
+    dispatch(fetchNotifications())
+
+}, [dispatch])
+
 
   // ** Hook
   const auth = useAuth()
