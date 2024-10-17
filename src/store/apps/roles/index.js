@@ -20,6 +20,14 @@ export const fetchAllPermissions = createAsyncThunk('appRoles/fetchAllPermission
     return error.response
   }
 })
+export const fetchAllRole = createAsyncThunk('appRoles/fetchAllRole', async () => {
+  try {
+    const response = await axiosInstance.get('/api/UsersManagment/AllRoles')
+    return response.data
+  } catch (error) {
+    return error.response
+  }
+})
 
 export const assignPermissionToRole = createAsyncThunk('appUsers/assignPermissionToRole', async (data, thunkAPI) => {
   try {
@@ -42,7 +50,8 @@ export const appRolesSlice = createSlice({
     schoolRolesAndPermissions: [],
     allPermissions: [],
     loading: false,
-    assignLoading: false
+    assignLoading: false,
+    roles:[]
   },
   reducers: {},
   extraReducers: builder => {
@@ -60,7 +69,10 @@ export const appRolesSlice = createSlice({
       .addCase(fetchAllPermissions.fulfilled, (state, action) => {
         state.allPermissions = action.payload
       })
-
+      .addCase(fetchAllRole.fulfilled, (state, action) => {
+        state.loading = false
+        state.roles = action.payload
+      })
       .addCase(assignPermissionToRole.pending, state => {
         state.assignLoading = true
       })
