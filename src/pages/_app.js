@@ -125,16 +125,20 @@ const App = props => {
                         containerStyle={{ zIndex: 99999 }}
                         toastOptions={{
                           className: 'custom-toast',
-                          style: {
-                            padding: '16px',
-                            color: '#CE3446',
-                            border: '1px solid #CE3446',
-                            backgroundColor: '#fff'
+                          error: {
+                            style: {
+                              padding: '16px',
+                              color: '#CE3446',
+                              border: '1px solid #CE3446',
+                              backgroundColor: '#fff'
+                            }
                           },
                           success: {
                             style: {
-                              color: '#F2F4F8', // Green color for success toasts
-                              border: '1px solid #F2F4F8' // Green border for success toasts
+                              padding: '16px',
+                              color: '#42CE80',
+                              border: '1px solid #42CE80',
+                              backgroundColor: '#fff'
                             }
                           }
                         }}
