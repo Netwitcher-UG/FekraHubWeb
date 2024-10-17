@@ -460,13 +460,8 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
               {t('Next')}
             </Button>
           ) : (
-<<<<<<< HEAD
             <Button onClick={handleSubmit(handleSaveData)} disabled={!isValid} color='primary'>
               {!isValid ? t('please have required fields') : t('save')}
-=======
-            <Button onClick={handleSubmit(handleSaveData)} disabled={isDirty} color='primary'>
-              {isDirty ? t('Please you have required fields') : t('Save')}
->>>>>>> 9d7d39b (fixes - translations)
             </Button>
           )}
         </DialogActions>
