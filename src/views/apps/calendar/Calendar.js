@@ -8,7 +8,6 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import bootstrap5Plugin from '@fullcalendar/bootstrap5'
 import interactionPlugin from '@fullcalendar/interaction'
-import multiMonthPlugin from '@fullcalendar/multimonth'
 
 // ** Third Party Style Import
 import 'bootstrap-icons/font/bootstrap-icons.css'
@@ -71,7 +70,7 @@ useEffect(()=>{
   if (store) {
     // ** calendarOptions(Props)
     const calendarOptions = {
-      events: mergedArray?.length ? mergedArray.map(event => ({
+      events: mergedArray.length ? mergedArray.map(event => ({
       id:event.id,
         title: event.eventName ?event.eventName : event.name ,
         start: new Date(event.startDate ? event.startDate : event.startDateTime), // Ensure start and end are Date objects
@@ -84,17 +83,14 @@ useEffect(()=>{
         }
       })) : [],
 
-      plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin,multiMonthPlugin, listPlugin, bootstrap5Plugin],
+      plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin, bootstrap5Plugin],
       initialView: 'dayGridMonth',
       headerToolbar: {
         start: 'sidebarToggle, prev, next, title',
-        end: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth,multiMonthFourMonth'
+        end: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
       },
       views: {
-        multiMonthFourMonth: {
-          type: 'multiMonth',
-          duration: { months: 4 }
-        },
+
         week: {
           titleFormat: { year: 'numeric', month: 'long', day: 'numeric' }
         }
