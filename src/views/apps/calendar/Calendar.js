@@ -64,11 +64,11 @@ const Calendar = props => {
   if (store) {
     // ** calendarOptions(Props)
     const calendarOptions = {
-      events: mergedEvents.length ? mergedEvents.map(event => ({
+      events: store?.events?.events.length ? store?.events?.events.map(event => ({
         id: event.id,
-        title: event.eventName || event.name,
-        start: new Date(event.startDate || event.startDateTime),
-        end: new Date(event.endDate || event.endDateTime),
+        title: event.eventName,
+        start: new Date(event.startDate),
+        end: new Date(event.endDate),
         extendedProps: {
           calendar: event?.eventType?.id,
           description: event?.description,
