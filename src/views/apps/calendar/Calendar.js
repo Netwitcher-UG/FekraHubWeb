@@ -6,7 +6,6 @@ import FullCalendar from '@fullcalendar/react'
 import listPlugin from '@fullcalendar/list'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
-import bootstrap5Plugin from '@fullcalendar/bootstrap5'
 import interactionPlugin from '@fullcalendar/interaction'
 
 // ** Third Party Style Import
@@ -64,20 +63,8 @@ const Calendar = props => {
   if (store) {
     // ** calendarOptions(Props)
     const calendarOptions = {
-      events: mergedEvents.length ? mergedEvents.map(event => ({
-        id: event.id,
-        title: event.eventName ? event.eventName:event.name,
-        start: event.startDate? event.startDate : event.startDateTime,
-        end: event.endDate ? event.endDate : event.endDateTime,
-        extendedProps: {
-          calendar: event?.eventType?.id ? event?.eventType?.id : '' ,
-          description: event?.description ? event?.description : 'is course time',
-          guests: event?.courseSchedule ? event?.courseSchedule : '',
-          backgroundColor: event.eventName ? 'ETC' : 'Holiday'
-        }
-
-      })) : [],
-      plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin, bootstrap5Plugin],
+      events: [],
+      plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin],
       initialView: 'dayGridMonth',
       headerToolbar: {
         start: 'sidebarToggle, prev, next, title',
