@@ -49,7 +49,6 @@ const AppCalendar = () => {
   const { settings } = useSettings()
   const dispatch = useDispatch()
   const store = useSelector(state => state.calendar)
-  console.log("🚀 ~ AppCalendar ~ store:", store)
 
   // ** Vars
   const leftSidebarWidth = 300
@@ -88,7 +87,7 @@ const AppCalendar = () => {
         handleAddEventSidebarToggle={handleAddEventSidebarToggle}
       />
 
-      <Box
+      {/* <Box
         sx={{
           p: 6,
           pb: 0,
@@ -111,7 +110,7 @@ const AppCalendar = () => {
           handleLeftSidebarToggle={handleLeftSidebarToggle}
           handleAddEventSidebarToggle={handleAddEventSidebarToggle}
         />
-      </Box>
+      </Box> */}
       <AddEventSidebar
         store={store}
         dispatch={dispatch}
