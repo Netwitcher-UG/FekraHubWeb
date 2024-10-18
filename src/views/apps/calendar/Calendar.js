@@ -1,17 +1,16 @@
 // ** React Import
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 // ** Full Calendar & it's Plugins
 import FullCalendar from '@fullcalendar/react'
 import listPlugin from '@fullcalendar/list'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
+import bootstrap5Plugin from '@fullcalendar/bootstrap5'
 import interactionPlugin from '@fullcalendar/interaction'
 
 // ** Third Party Style Import
 import 'bootstrap-icons/font/bootstrap-icons.css'
-import { useSelector } from 'react-redux'
-import { fetchEventsTypes } from 'src/store/apps/calendar'
 
 const blankEvent = {
   title: '',
@@ -26,7 +25,126 @@ const blankEvent = {
     description: ''
   }
 }
+const date = new Date()
+const nextDay = new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
+const nextMonth =
+  date.getMonth() === 11 ? new Date(date.getFullYear() + 1, 0, 1) : new Date(date.getFullYear(), date.getMonth() + 1, 1)
 
+const prevMonth =
+  date.getMonth() === 11 ? new Date(date.getFullYear() - 1, 0, 1) : new Date(date.getFullYear(), date.getMonth() - 1, 1)
+
+const eventsStore= [
+  {
+    id: 1,
+    url: '',
+    title: 'Design Review',
+    start: date,
+    end: nextDay,
+    allDay: false,
+    extendedProps: {
+      calendar: 'Business'
+    }
+  },
+  {
+    id: 2,
+    url: '',
+    title: 'Meeting With Client',
+    start: new Date(date.getFullYear(), date.getMonth() + 1, -11),
+    end: new Date(date.getFullYear(), date.getMonth() + 1, -10),
+    allDay: true,
+    extendedProps: {
+      calendar: 'Business'
+    }
+  },
+  {
+    id: 3,
+    url: '',
+    title: 'Family Trip',
+    allDay: true,
+    start: new Date(date.getFullYear(), date.getMonth() + 1, -9),
+    end: new Date(date.getFullYear(), date.getMonth() + 1, -7),
+    extendedProps: {
+      calendar: 'Holiday'
+    }
+  },
+  {
+    id: 4,
+    url: '',
+    title: "Doctor's Appointment",
+    start: new Date(date.getFullYear(), date.getMonth() + 1, -11),
+    end: new Date(date.getFullYear(), date.getMonth() + 1, -10),
+    allDay: true,
+    extendedProps: {
+      calendar: 'Personal'
+    }
+  },
+  {
+    id: 5,
+    url: '',
+    title: 'Dart Game?',
+    start: new Date(date.getFullYear(), date.getMonth() + 1, -13),
+    end: new Date(date.getFullYear(), date.getMonth() + 1, -12),
+    allDay: true,
+    extendedProps: {
+      calendar: 'ETC'
+    }
+  },
+  {
+    id: 6,
+    url: '',
+    title: 'Meditation',
+    start: new Date(date.getFullYear(), date.getMonth() + 1, -13),
+    end: new Date(date.getFullYear(), date.getMonth() + 1, -12),
+    allDay: true,
+    extendedProps: {
+      calendar: 'Personal'
+    }
+  },
+  {
+    id: 7,
+    url: '',
+    title: 'Dinner',
+    start: new Date(date.getFullYear(), date.getMonth() + 1, -13),
+    end: new Date(date.getFullYear(), date.getMonth() + 1, -12),
+    allDay: true,
+    extendedProps: {
+      calendar: 'Family'
+    }
+  },
+  {
+    id: 8,
+    url: '',
+    title: 'Product Review',
+    start: new Date(date.getFullYear(), date.getMonth() + 1, -13),
+    end: new Date(date.getFullYear(), date.getMonth() + 1, -12),
+    allDay: true,
+    extendedProps: {
+      calendar: 'Business'
+    }
+  },
+  {
+    id: 9,
+    url: '',
+    title: 'Monthly Meeting',
+    start: nextMonth,
+    end: nextMonth,
+    allDay: true,
+    extendedProps: {
+      calendar: 'Business'
+    }
+  },
+  {
+    id: 10,
+    url: '',
+    title: 'Monthly Checkup',
+    start: prevMonth,
+    end: prevMonth,
+    allDay: true,
+    extendedProps: {
+      calendar: 'Personal'
+    }
+  }
+]
 
 const Calendar = props => {
   // ** Props
@@ -42,18 +160,9 @@ const Calendar = props => {
     handleLeftSidebarToggle,
     handleAddEventSidebarToggle
   } = props
-    console.log("🚀 ~ Calendar ~ store:", store)
-  // ** State for merged events
-  const mergedEvents = useMemo(() => {
-    return [
-      ...(store?.events?.events || []),  // Ensure events default to an empty array
-      ...(store?.eventcourse || [])      // Ensure eventcourse defaults to an empty array
-    ]
-  }, [store?.events?.events, store?.eventcourse])
 
   // ** Refs
   const calendarRef = useRef()
-
   useEffect(() => {
     if (calendarApi === null) {
       // @ts-ignore
@@ -63,8 +172,8 @@ const Calendar = props => {
   if (store) {
     // ** calendarOptions(Props)
     const calendarOptions = {
-      events: [],
-      plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin],
+      events: eventsStore.length ? eventsStore : [],
+      plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin, bootstrap5Plugin],
       initialView: 'dayGridMonth',
       headerToolbar: {
         start: 'sidebarToggle, prev, next, title',
@@ -107,7 +216,7 @@ const Calendar = props => {
       navLinks: true,
       eventClassNames({ event: calendarEvent }) {
         // @ts-ignore
-        const colorName = calendarsColor[calendarEvent._def.extendedProps.backgroundColor]
+        const colorName = calendarsColor[calendarEvent._def.extendedProps.calendar]
 
         return [
           // Background Color
