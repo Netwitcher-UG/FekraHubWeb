@@ -1,14 +1,19 @@
-import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react'
+// ** React Import
+import { useEffect, useMemo, useRef } from 'react'
+
+// ** Full Calendar & it's Plugins
 import FullCalendar from '@fullcalendar/react'
 import listPlugin from '@fullcalendar/list'
 import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
 import bootstrap5Plugin from '@fullcalendar/bootstrap5'
 import interactionPlugin from '@fullcalendar/interaction'
-import timeGridPlugin from '@fullcalendar/timegrid'
-import { useSelector } from 'react-redux'
-import 'bootstrap-icons/font/bootstrap-icons.css'
 
-// Default blank event structure
+// ** Third Party Style Import
+import 'bootstrap-icons/font/bootstrap-icons.css'
+import { useSelector } from 'react-redux'
+import { fetchEventsTypes } from 'src/store/apps/calendar'
+
 const blankEvent = {
   title: '',
   start: '',
@@ -23,144 +28,160 @@ const blankEvent = {
   }
 }
 
-const Calendar = ({
-  store,
-  dispatch,
-  direction,
-  updateEvent,
-  calendarsColor,
-  setCalendarApi,
-  handleSelectEvent,
-  handleLeftSidebarToggle,
-  handleAddEventSidebarToggle
-}) => {
+
+const Calendar = props => {
+  // ** Props
+  const {
+    store,
+    dispatch,
+    direction,
+    updateEvent,
+    calendarApi,
+    calendarsColor,
+    setCalendarApi,
+    handleSelectEvent,
+    handleLeftSidebarToggle,
+    handleAddEventSidebarToggle
+  } = props
+    console.log("🚀 ~ Calendar ~ store:", store)
   // ** State for merged events
-  const [mergedArray, setMergedArray] = useState([])
-
-  // ** Ref for FullCalendar instance
-  const calendarRef = useRef(null)
-
-  // ** Memoize merged events calculation to avoid unnecessary recalculations
   const mergedEvents = useMemo(() => {
     return [
       ...(store?.events?.events || []),  // Ensure events default to an empty array
       ...(store?.eventcourse || [])      // Ensure eventcourse defaults to an empty array
     ]
-  }, [store?.events?.events, store?.eventcourse]) // Only recalculate when store data changes
+  }, [store?.events?.events, store?.eventcourse])
 
-  // ** Update state with merged events when store changes
+  // ** Refs
+  const calendarRef = useRef()
+
   useEffect(() => {
-    setMergedArray(mergedEvents)
-  }, [mergedEvents])
-
-  // ** Initialize calendarApi and ensure cleanup on unmount
-  useEffect(() => {
-    const calendarApi = calendarRef.current?.getApi()
-    if (calendarApi) {
-      setCalendarApi(calendarApi)
+    if (calendarApi === null) {
+      // @ts-ignore
+      setCalendarApi(calendarRef.current?.getApi())
     }
+  }, [calendarApi, setCalendarApi])
+  if (store) {
+    // ** calendarOptions(Props)
+    const calendarOptions = {
+      events: mergedEvents.length ? mergedEvents.map(event => ({
+        id: event.id,
+        title: event.eventName || event.name,
+        start: new Date(event.startDate || event.startDateTime),
+        end: new Date(event.endDate || event.endDateTime),
+        extendedProps: {
+          calendar: event?.eventType?.id,
+          description: event?.description,
+          guests: event?.courseSchedule,
+          backgroundColor: event.eventName ? 'ETC' : 'Holiday'
+        }
 
-    return () => {
-      if (calendarApi) {
-        calendarApi.destroy() // Clean up on unmount
-      }
-    }
-  }, [setCalendarApi])
+      })) : [],
+      plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin, bootstrap5Plugin],
+      initialView: 'dayGridMonth',
+      headerToolbar: {
+        start: 'sidebarToggle, prev, next, title',
+        end: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+      },
+      views: {
+        week: {
+          titleFormat: { year: 'numeric', month: 'long', day: 'numeric' }
+        }
+      },
 
-  // ** Memoize event mapping for better performance
-  const formattedEvents = useMemo(() => {
-    return mergedArray.length
-      ? mergedArray.map(event => ({
-          id: event.id,
-          title: event.eventName || event.name,
-          start: new Date(event.startDate || event.startDateTime),
-          end: new Date(event.endDate || event.endDateTime),
-          extendedProps: {
-            calendar: event?.eventType?.id,
-            description: event?.description,
-            guests: event?.courseSchedule,
-            backgroundColor: event.eventName ? 'ETC' : 'Holiday'
+      /*
+            Enable dragging and resizing event
+            ? Docs: https://fullcalendar.io/docs/editable
+          */
+      editable: true,
+
+      /*
+            Enable resizing event from start
+            ? Docs: https://fullcalendar.io/docs/eventResizableFromStart
+          */
+      eventResizableFromStart: true,
+
+      /*
+              Automatically scroll the scroll-containers during event drag-and-drop and date selecting
+              ? Docs: https://fullcalendar.io/docs/dragScroll
+            */
+      dragScroll: true,
+
+      /*
+              Max number of events within a given day
+              ? Docs: https://fullcalendar.io/docs/dayMaxEvents
+            */
+      dayMaxEvents: 2,
+
+      /*
+              Determines if day names and week names are clickable
+              ? Docs: https://fullcalendar.io/docs/navLinks
+            */
+      navLinks: true,
+      eventClassNames({ event: calendarEvent }) {
+        // @ts-ignore
+        const colorName = calendarsColor[calendarEvent._def.extendedProps.backgroundColor]
+
+        return [
+          // Background Color
+          `bg-${colorName}`
+        ]
+      },
+      eventClick({ event: clickedEvent }) {
+        dispatch(handleSelectEvent(clickedEvent))
+        handleAddEventSidebarToggle()
+
+        // * Only grab required field otherwise it goes in infinity loop
+        // ! Always grab all fields rendered by form (even if it get `undefined`) otherwise due to Vue3/Composition API you might get: "object is not extensible"
+        // event.value = grabEventDataFromEventApi(clickedEvent)
+        // isAddNewEventSidebarActive.value = true
+      },
+      customButtons: {
+        sidebarToggle: {
+          icon: 'bi bi-list',
+          click() {
+            handleLeftSidebarToggle()
           }
-        }))
-      : []
-  }, [mergedArray])
+        }
+      },
+      dateClick(info) {
+        const ev = { ...blankEvent }
+        ev.start = info.date
+        ev.end = info.date
+        ev.allDay = true
 
-  // ** Memoized eventClick handler
-  const handleEventClick = useCallback(
-    ({ event: clickedEvent }) => {
-      dispatch(handleSelectEvent(clickedEvent))
-      handleAddEventSidebarToggle()
-    },
-    [dispatch, handleSelectEvent, handleAddEventSidebarToggle]
-  )
+        // @ts-ignore
+        dispatch(handleSelectEvent(ev))
+        handleAddEventSidebarToggle()
+      },
 
-  // ** Memoized dateClick handler
-  const handleDateClick = useCallback(
-    info => {
-      const newEvent = { ...blankEvent, start: info.date, end: info.date, allDay: true }
-      dispatch(handleSelectEvent(newEvent))
-      handleAddEventSidebarToggle()
-    },
-    [dispatch, handleSelectEvent, handleAddEventSidebarToggle]
-  )
+      /*
+              Handle event drop (Also include dragged event)
+              ? Docs: https://fullcalendar.io/docs/eventDrop
+              ? We can use `eventDragStop` but it doesn't return updated event so we have to use `eventDrop` which returns updated event
+            */
+      eventDrop({ event: droppedEvent }) {
+        dispatch(updateEvent(droppedEvent))
+      },
 
-  // ** Memoized eventDrop and eventResize handlers
-  const handleEventDrop = useCallback(
-    ({ event: droppedEvent }) => dispatch(updateEvent(droppedEvent)),
-    [dispatch, updateEvent]
-  )
+      /*
+              Handle event resize
+              ? Docs: https://fullcalendar.io/docs/eventResize
+            */
+      eventResize({ event: resizedEvent }) {
+        dispatch(updateEvent(resizedEvent))
+      },
+      ref: calendarRef,
 
-  const handleEventResize = useCallback(
-    ({ event: resizedEvent }) => dispatch(updateEvent(resizedEvent)),
-    [dispatch, updateEvent]
-  )
+      // Get direction from app state (store)
+      direction
+    }
 
-  // ** Memoize calendar options to avoid unnecessary recalculations
-  const calendarOptions = useMemo(() => ({
-    events: formattedEvents,
-    plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin, bootstrap5Plugin],
-    initialView: 'dayGridMonth',
-    headerToolbar: {
-      start: 'sidebarToggle, prev, next, title',
-      end: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
-    },
-    views: {
-      week: { titleFormat: { year: 'numeric', month: 'long', day: 'numeric' } }
-    },
-    editable: true,
-    eventResizableFromStart: true,
-    dragScroll: true,
-    dayMaxEvents: 4,
-    navLinks: true,
-    eventClassNames({ event: calendarEvent }) {
-      const colorName = calendarsColor[calendarEvent._def.extendedProps.backgroundColor]
-      return [`bg-${colorName}`]
-    },
-    eventClick: handleEventClick,
-    dateClick: handleDateClick,
-    eventDrop: handleEventDrop,
-    eventResize: handleEventResize,
-    customButtons: {
-      sidebarToggle: {
-        icon: 'bi bi-list',
-        click: handleLeftSidebarToggle
-      }
-    },
-    ref: calendarRef,
-    direction
-  }), [
-    formattedEvents,
-    calendarsColor,
-    handleEventClick,
-    handleDateClick,
-    handleEventDrop,
-    handleEventResize,
-    handleLeftSidebarToggle,
-    direction
-  ])
-
-  // Render FullCalendar if store data is available
-  return store ? <FullCalendar {...calendarOptions} /> : null
+    // @ts-ignore
+    return <FullCalendar {...calendarOptions} />
+  } else {
+    return null
+  }
 }
 
 export default Calendar

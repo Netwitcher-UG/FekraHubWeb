@@ -87,7 +87,7 @@ const AppCalendar = () => {
         handleAddEventSidebarToggle={handleAddEventSidebarToggle}
       />
 
-      {/* <Box
+      <Box
         sx={{
           p: 6,
           pb: 0,
@@ -110,7 +110,7 @@ const AppCalendar = () => {
           handleLeftSidebarToggle={handleLeftSidebarToggle}
           handleAddEventSidebarToggle={handleAddEventSidebarToggle}
         />
-      </Box> */}
+      </Box>
       <AddEventSidebar
         store={store}
         dispatch={dispatch}
