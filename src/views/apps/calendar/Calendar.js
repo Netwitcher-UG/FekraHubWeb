@@ -1,5 +1,5 @@
 // ** React Import
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 // ** Full Calendar & it's Plugins
 import FullCalendar from '@fullcalendar/react'
@@ -44,26 +44,18 @@ const Calendar = props => {
     handleLeftSidebarToggle,
     handleAddEventSidebarToggle
   } = props
-    console.log("🚀 ~ Calendar ~ store:", store)
+
+const [mergedArray,setMergedArray]=useState([])
 
 
-  // Function to combine the course start date with each schedule
-  function combineStartDateTime(schedule) {
-    return schedule.map(course => ({
-        ...course,
-        startDateTime: new Date(course.startDate.split("T")[0] + "T" + course.startTime).toISOString(),
-        endDateTime: new Date(course.endDate.split("T")[0] + "T" + course.endTime).toISOString(),
-    }));
-}
-
-// Use the function to update the course schedule
-let updatedCourseSchedule = combineStartDateTime(store.eventcourse ||  []);
-const mergedArray = [
-  ...(store.events?.events || []),  // If store.events?.events is undefined or null, default to an empty array
-  ...(updatedCourseSchedule || [])  // If updatedCourseSchedule is undefined, default to an empty array
-];
-console.log("🚀 ~ Calendar ~ mergedArray:", mergedArray)
-
+useEffect(()=>{
+  const merged = [
+    ...(store?.events?.events || []),  // Default to an empty array if undefined or null
+    ...(store?.eventcourse || [])      // Default to an empty array if undefined or null
+  ];
+  setMergedArray(merged);
+},[store])
+    console.log("🚀 ~ useEffect ~ store?.eventcourse:", store?.eventcourse)
 
 
 
@@ -79,7 +71,7 @@ console.log("🚀 ~ Calendar ~ mergedArray:", mergedArray)
   if (store) {
     // ** calendarOptions(Props)
     const calendarOptions = {
-      events: mergedArray.length ? mergedArray.map(event => ({
+      events: mergedArray?.length ? mergedArray.map(event => ({
       id:event.id,
         title: event.eventName ?event.eventName : event.name ,
         start: new Date(event.startDate ? event.startDate : event.startDateTime), // Ensure start and end are Date objects

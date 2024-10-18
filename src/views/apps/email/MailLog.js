@@ -44,10 +44,7 @@ const MailItem = styled(ListItem)(({ theme }) => ({
   '&:hover': {
     zIndex: 2,
     boxShadow: theme.shadows[3],
-    transform: 'translateY(-2px)',
-    '& .mail-actions': { display: 'flex' },
-    '& .mail-info-right': { display: 'none' },
-    '& + .MuiListItem-root': { borderColor: 'transparent' }
+
   },
   [theme.breakpoints.up('xs')]: {
     paddingLeft: theme.spacing(2.5),

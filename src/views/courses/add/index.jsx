@@ -19,6 +19,9 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import CustomTextField from 'src/@core/components/mui/text-field'
 import { Box } from '@mui/system'
 import { useTranslation } from 'react-i18next'
+import DatePicker from 'react-datepicker'
+import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
+
 const CustomCloseButton = styled(IconButton)(({ theme }) => ({
   top: 0,
   right: 0,
@@ -104,6 +107,9 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
     dispatch(fetchLocation(''))
     dispatch(FetchCourseScheduleDaysOfWeek(''))
   }, [dispatch])
+  const [date, setDate] = useState(new Date())
+  const [end_date, setEndDate] = useState(new Date())
+
 
   const defaultValues = {
     LocationId: '',
@@ -300,6 +306,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
               </Grid>
 
               <Grid item xs={12}>
+
                 <Controller
                   name='course.lessons'
                   control={control}
@@ -335,38 +342,41 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                 />
               </Grid>
               <Grid item xs={12}>
-                <Controller
-                  name='course.startDate'
-                  control={control}
-                  render={({ field }) => (
-                    <CustomTextField
-                      {...field}
-                      label={t('Start Date')}
-                      variant='outlined'
-                      type='date'
-                      fullWidth
-                      error={!!errors.course?.startDate}
-                      helperText={errors.course?.startDate ? errors.course.startDate.message : ''}
-                    />
-                  )}
-                />
+                <DatePickerWrapper>
+              <Controller
+  name="course.startDate"
+  control={control}
+  render={({ field }) => (
+    <DatePicker
+    selected={date}
+    dateFormat="dd-MM-yyyy"
+    id='date-picker-months'
+    onChange={date => {setDate(date); field.onChange(date);}}
+    placeholderText='Click to select a date'
+    customInput={<CustomTextField label='Basic' fullWidth />}
+  />
+  )}
+/>
+</DatePickerWrapper>
+
               </Grid>
               <Grid item xs={12}>
-                <Controller
-                  name='course.endDate'
-                  control={control}
-                  render={({ field }) => (
-                    <CustomTextField
-                      {...field}
-                      label={t('End Date')}
-                      variant='outlined'
-                      type='date'
-                      fullWidth
-                      error={!!errors.course?.endDate}
-                      helperText={errors.course?.endDate ? errors.course.endDate.message : ''}
-                    />
-                  )}
-                />
+              <DatePickerWrapper>
+              <Controller
+  name="course.endDate"
+  control={control}
+  render={({ field }) => (
+    <DatePicker
+    selected={end_date}
+    dateFormat="dd-MM-yyyy"
+    id='date-picker-months'
+    onChange={date => {setEndDate(date); field.onChange(date);}}
+    placeholderText='Click to select a end date'
+    customInput={<CustomTextField label='Basic' fullWidth />}
+  />
+  )}
+/>
+</DatePickerWrapper>
               </Grid>
             </Grid>
           )}

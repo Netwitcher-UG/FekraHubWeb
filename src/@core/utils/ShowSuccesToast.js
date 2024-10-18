@@ -4,8 +4,8 @@ import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 
 export const ShowSuccessToast = (message, ErrorMessageApi) => {
-  const { t } = useTranslation()
-  return toast.success(t(message), {
+
+  return toast.success(message, {
     style: {
       padding: '16px',
       color: '#F2F4F8)',

@@ -15,6 +15,7 @@ import { AbilityContext } from 'src/layouts/components/acl/Can'
 import CustomDataGrid from 'src/@core/components/custom-datagrid'
 import MonthlyReportForm from '../monthly-report/monthly-report-form'
 import { useTranslation } from 'react-i18next'
+import { ShowErrorToast } from 'src/@core/utils/showErrorToast'
 export default function CoursesDataGrid({ rows, dataRooms, dataTeacher, SetSearch, status }) {
   const {
     columns,
@@ -47,7 +48,6 @@ export default function CoursesDataGrid({ rows, dataRooms, dataTeacher, SetSearc
   const ability = useContext(AbilityContext)
 
   const dispatch = useDispatch()
-
   useEffect(() => {
     dispatch(fetchLocation(''))
   }, [dispatch])

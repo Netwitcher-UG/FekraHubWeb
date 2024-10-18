@@ -1,10 +1,8 @@
 // toastUtils.js
 import toast, { ErrorIcon } from 'react-hot-toast'
-import { useTranslation } from 'react-i18next'
 
 export const ShowErrorToast = (message, ErrorMessageApi) => {
-  const { t } = useTranslation()
-  return toast.error(t(message), {
+  return toast.error(message, {
     position: 'top-right',
     style: {
       padding: '16px',

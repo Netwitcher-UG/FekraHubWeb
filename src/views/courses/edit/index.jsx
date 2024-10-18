@@ -10,6 +10,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { editCourses, FetchCourseScheduleDaysOfWeek } from 'src/store/apps/courses'
 import CustomTextField from 'src/@core/components/mui/text-field'
 import { useTranslation } from 'react-i18next'
+import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
+import DatePicker from 'react-datepicker'
 
 const Header = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -69,6 +71,9 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
     LocationId: dataDef?.location?.id || '',
     courseSchedule: dataDef?.courseSchedule || ''
   }
+  const [date, setDate] = useState(new Date (dataDef?.startDate))
+  const [end_date, setEndDate] = useState(new Date(dataDef?.endDate))
+
 
   const {
     control,
@@ -208,42 +213,41 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
               />
             </Grid>
             <Grid item xs={12} sm={12} lg={12}>
+            <DatePickerWrapper>
               <Controller
-                name='course.StartDate'
-                rules={{ required: true }}
-                defaultValue=''
-                control={control}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    fullWidth
-                    label={`${t('Start Date')}`}
-                    variant='outlined'
-                    type='date'
-                    error={!!errors.StartDate}
-                    helperText={errors.StartDate ? errors.StartDate.message : ''}
-                  />
-                )}
-              />
+  name="course.startDate"
+  control={control}
+  render={({ field }) => (
+    <DatePicker
+    selected={date}
+    dateFormat="dd-MM-yyyy"
+    id='date-picker-months'
+    onChange={date => {setDate(date); field.onChange(date);}}
+    placeholderText='Click to select a date'
+    customInput={<CustomTextField label='Basic' fullWidth />}
+  />
+  )}
+/>
+</DatePickerWrapper>
+
             </Grid>
             <Grid item xs={12} sm={12} lg={12}>
+            <DatePickerWrapper>
               <Controller
-                name='course.EndDate'
-                defaultValue=''
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <CustomTextField
-                    {...field}
-                    fullWidth
-                    label={`${t('End Date')}`}
-                    variant='outlined'
-                    type='date'
-                    error={!!errors.course?.EndDate}
-                    helperText={errors.course?.EndDate ? errors.course.EndDate.message : ''}
-                  />
-                )}
-              />
+  name="course.endDate"
+  control={control}
+  render={({ field }) => (
+    <DatePicker
+    selected={end_date}
+    dateFormat="dd-MM-yyyy"
+    id='date-picker-months'
+    onChange={date => {setEndDate(date); field.onChange(date);}}
+    placeholderText='Click to select a end date'
+    customInput={<CustomTextField label='Basic' fullWidth />}
+  />
+  )}
+/>
+</DatePickerWrapper>
             </Grid>
             <Grid item xs={12} sm={12} lg={12}>
               <Controller

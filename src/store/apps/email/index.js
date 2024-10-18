@@ -41,12 +41,12 @@ export const postMail = createAsyncThunk('appEmail/postMail', async (data, { dis
     await dispatch(fetchMails())
 
   ShowSuccessToast('Success')
-    return response.data
+
   }catch(error){
 
     ShowErrorToast(error.response.data.title)
   }
-
+  return response.data
 })
 
 // ** Update Mail Label
