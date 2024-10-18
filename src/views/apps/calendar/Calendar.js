@@ -64,7 +64,7 @@ const Calendar = props => {
   if (store) {
     // ** calendarOptions(Props)
     const calendarOptions = {
-      events: store?.events?.events.length ? store?.events?.events.map(event => ({
+      events: store?.events?.events?.length ? store?.events?.events.map(event => ({
         id: event.id,
         title: event.eventName,
         start: new Date(event.startDate),
