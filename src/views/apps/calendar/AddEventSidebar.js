@@ -85,7 +85,6 @@ const AddEventSidebar = props => {
 
   useEffect(() => {
     dispatch(fetchEventsTypes());
-    dispatch(fetchCourses());
   }, [dispatch]);
 
   const onSubmit = data => {

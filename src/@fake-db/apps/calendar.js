@@ -4,11 +4,11 @@ import mock from 'src/@fake-db/mock'
 const date = new Date()
 const nextDay = new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
 
-const nextMonth =
-  date.getMonth() === 11 ? new Date(date.getFullYear() + 1, 0, 1) : new Date(date.getFullYear(), date.getMonth() + 1, 1)
+  const nextMonth =
+    date.getMonth() === 11 ? new Date(date.getFullYear() + 1, 0, 1) : new Date(date.getFullYear(), date.getMonth() + 1, 1)
 
-const prevMonth =
-  date.getMonth() === 11 ? new Date(date.getFullYear() - 1, 0, 1) : new Date(date.getFullYear(), date.getMonth() - 1, 1)
+  const prevMonth =
+    date.getMonth() === 11 ? new Date(date.getFullYear() - 1, 0, 1) : new Date(date.getFullYear(), date.getMonth() - 1, 1)
 
 const data = {
   events: [
