@@ -37,7 +37,6 @@ const Calendar = ({
   handleLeftSidebarToggle,
   handleAddEventSidebarToggle
 }) => {
-  console.log("🚀 ~ store:", store)
   // ** State for merged events
   const [mergedArray, setMergedArray] = useState([])
 
