@@ -25,15 +25,13 @@ import {
   updateEvent,
   handleSelectEvent,
   handleAllCalendars,
-  handleCalendarsUpdate,
-  fetchCourseForCalender
+  handleCalendarsUpdate
 } from 'src/store/apps/calendar'
-import FallbackSpinner from 'src/@core/components/spinner'
 
 // ** CalendarColors
 const calendarsColor = {
   Personal: 'error',
-  PARTY: 'error',
+  Business: 'primary',
   Family: 'warning',
   Holiday: 'success',
   ETC: 'info'
@@ -55,12 +53,9 @@ const AppCalendar = () => {
   const addEventSidebarWidth = 400
   const { skin, direction } = settings
   const mdAbove = useMediaQuery(theme => theme.breakpoints.up('md'))
-
   useEffect(() => {
     dispatch(fetchEvents(store.selectedCalendars))
-    dispatch(fetchCourseForCalender(store.selectedCalendars))
-
-  }, [dispatch,store.selectedCalendars])
+  }, [dispatch, store.selectedCalendars])
   const handleLeftSidebarToggle = () => setLeftSidebarOpen(!leftSidebarOpen)
   const handleAddEventSidebarToggle = () => setAddEventSidebarOpen(!addEventSidebarOpen)
 
@@ -72,7 +67,7 @@ const AppCalendar = () => {
         ...(skin === 'bordered' && { border: theme => `1px solid ${theme.palette.divider}` })
       }}
     >
-      {/* <SidebarLeft
+      <SidebarLeft
         store={store}
         mdAbove={mdAbove}
         dispatch={dispatch}
@@ -85,8 +80,7 @@ const AppCalendar = () => {
         handleCalendarsUpdate={handleCalendarsUpdate}
         handleLeftSidebarToggle={handleLeftSidebarToggle}
         handleAddEventSidebarToggle={handleAddEventSidebarToggle}
-      /> */}
-
+      />
       <Box
         sx={{
           p: 6,
