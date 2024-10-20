@@ -481,7 +481,7 @@ if(attachments.length>0){
         onEditorStateChange={(newEditorState) => setMessageValue(newEditorState)}
         placeholder="Write your message..."
         toolbar={{
-          options: ['inline', 'list', 'link', 'image'],
+          options: ['inline', 'list', 'link'],
           inline: { inDropdown: false, options: ['bold', 'italic', 'underline'] },
           list: { inDropdown: false, options: ['unordered', 'ordered'] },
           link: { inDropdown: false, options: ['link'] },

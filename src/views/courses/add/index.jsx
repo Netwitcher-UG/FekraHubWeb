@@ -147,7 +147,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
 
   const handleSaveData = data => {
     dispatch(addCourses(data))
-    reset()
+
     handleClose()
   }
   const handleClose = () => {
@@ -155,6 +155,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
     setStep(0)
     setLocation('')
     setRoomOptions([])
+    reset()
   }
 
   return (
