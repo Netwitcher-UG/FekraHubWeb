@@ -41,10 +41,8 @@ const Calendar = ({
   const [mergedArray, setMergedArray] = useState([])
   const [dataFetched, setDataFetched] = useState(false);
 
-  // ** Ref for FullCalendar instance
   const calendarRef = useRef(null)
 
-  // ** Memoize merged events calculation to avoid unnecessary recalculations
   const mergedEvents = useMemo(() => {
     return [
       ...(store?.events?.events || []),  // Ensure events default to an empty array
