@@ -110,7 +110,6 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
   const [date, setDate] = useState(new Date())
   const [end_date, setEndDate] = useState(new Date())
 
-
   const defaultValues = {
     LocationId: '',
     courseSchedule: [{ dayOfWeek: '', endTime: '', startTime: '' }],
@@ -307,7 +306,6 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
               </Grid>
 
               <Grid item xs={12}>
-
                 <Controller
                   name='course.lessons'
                   control={control}
@@ -344,40 +342,45 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
               </Grid>
               <Grid item xs={12}>
                 <DatePickerWrapper>
-              <Controller
-  name="course.startDate"
-  control={control}
-  render={({ field }) => (
-    <DatePicker
-    selected={date}
-    dateFormat="dd-MM-yyyy"
-    id='date-picker-months'
-    onChange={date => {setDate(date); field.onChange(date);}}
-    placeholderText='Click to select a date'
-    customInput={<CustomTextField label='Basic' fullWidth />}
-  />
-  )}
-/>
-</DatePickerWrapper>
-
+                  <Controller
+                    name='course.startDate'
+                    control={control}
+                    render={({ field }) => (
+                      <DatePicker
+                        selected={date}
+                        dateFormat='dd-MM-yyyy'
+                        id='date-picker-months'
+                        onChange={date => {
+                          setDate(date)
+                          field.onChange(date)
+                        }}
+                        placeholderText={t('Click to select a date')}
+                        customInput={<CustomTextField label={t('Start Date')} fullWidth />}
+                      />
+                    )}
+                  />
+                </DatePickerWrapper>
               </Grid>
               <Grid item xs={12}>
-              <DatePickerWrapper>
-              <Controller
-  name="course.endDate"
-  control={control}
-  render={({ field }) => (
-    <DatePicker
-    selected={end_date}
-    dateFormat="dd-MM-yyyy"
-    id='date-picker-months'
-    onChange={date => {setEndDate(date); field.onChange(date);}}
-    placeholderText='Click to select a end date'
-    customInput={<CustomTextField label='Basic' fullWidth />}
-  />
-  )}
-/>
-</DatePickerWrapper>
+                <DatePickerWrapper>
+                  <Controller
+                    name='course.endDate'
+                    control={control}
+                    render={({ field }) => (
+                      <DatePicker
+                        selected={end_date}
+                        dateFormat='dd-MM-yyyy'
+                        id='date-picker-months'
+                        onChange={date => {
+                          setEndDate(date)
+                          field.onChange(date)
+                        }}
+                        placeholderText={t('Click to select a end date')}
+                        customInput={<CustomTextField label={t('End Date')} fullWidth />}
+                      />
+                    )}
+                  />
+                </DatePickerWrapper>
               </Grid>
             </Grid>
           )}
