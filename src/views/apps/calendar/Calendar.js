@@ -39,6 +39,7 @@ const Calendar = ({
 }) => {
   // ** State for merged events
   const [mergedArray, setMergedArray] = useState([])
+  const [dataFetched, setDataFetched] = useState(false);
 
   // ** Ref for FullCalendar instance
   const calendarRef = useRef(null)
@@ -53,8 +54,11 @@ const Calendar = ({
 
   // ** Update state with merged events when store changes
   useEffect(() => {
-    setMergedArray(mergedEvents)
-  }, [mergedEvents])
+    if (store?.events?.events && store?.eventcourse) {
+      setMergedArray(mergedEvents);
+      setDataFetched(true); // Set dataFetched to true after data is fetched
+    }
+  }, [mergedEvents, store?.events?.events, store?.eventcourse])
 
   // ** Initialize calendarApi and ensure cleanup on unmount
   useEffect(() => {
@@ -75,12 +79,12 @@ const Calendar = ({
     return mergedArray.length
       ? mergedArray.map(event => ({
           id: event.id,
-          title: event.eventName || event.name,
-          start: new Date(event.startDate || event.startDateTime),
-          end: new Date(event.endDate || event.endDateTime),
+          title: event.eventName ? event.eventName: event.name,
+          start: new Date(event.startDate ? event.startDate : event.startDateTime),
+          end: new Date(event.endDate ? event.endDate: event.endDateTime),
           extendedProps: {
-            calendar: event?.eventType?.id,
-            description: event?.description,
+            calendar: event?.eventType ? event?.eventType?.id : ' ',
+            description: event?.description ? event?.description : ' course view' ,
             guests: event?.courseSchedule,
             backgroundColor: event.eventName ? 'ETC' : 'Holiday'
           }
@@ -163,7 +167,7 @@ const Calendar = ({
   ])
 
   // Render FullCalendar if store data is available
-  return store ? <FullCalendar {...calendarOptions} /> : null
+  return dataFetched ? <FullCalendar {...calendarOptions} /> : null
 }
 
 export default Calendar
