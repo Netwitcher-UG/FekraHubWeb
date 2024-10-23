@@ -23,19 +23,33 @@ export const fetchEvents = createAsyncThunk('appCalendar/fetchEvents', async (se
 })
 
 // ** Fetch Events
-export const fetchCourseForCalender = createAsyncThunk('appCalendar/fetchCourseForCalender', async (selectedCalendars, { getState }) => {
+export const fetchCourseForCalender = createAsyncThunk('appCalendar/fetchCourseForCalender', async (props, { getState }) => {
   try {
-    const queryString = selectedCalendars?.map(id => `courseId=${id}`).join('&');
+    // Check if selectedCalendars is defined and not empty
+    const queryString = props.selectedCalendars && props.selectedCalendars.length > 0
+      ? props.selectedCalendars.map(id => `courseId=${id}`).join('&')
+      : '';
 
-    // Use the query string directly in the URL
-    const response = await axiosInstance.get(`/api/Courses/CourseForCalender?${queryString}&date=2024-10`);
+    // Ensure that from and to are defined before adding to the query string
+    const fromDate = props.from ? `from=${props.from}` : '';
+    const toDate = props.to ? `to=${props.to}` : '';
 
-    return response.data
+    // Construct the full query string, filtering out any empty parts
+    const query = [queryString, fromDate, toDate].filter(part => part).join('&');
+
+    // If no valid query parameters, throw an error or handle it gracefully
+    if (!query) {
+      throw new Error("Invalid parameters: selectedCalendars, from, or to are undefined");
+    }
+
+    const response = await axiosInstance.get(`/api/Courses/CourseEventForCalender?${query}`);
+    return response.data;
   } catch (error) {
-    ShowErrorToast(error.response.data)
-    throw error
+    ShowErrorToast(error.response?.data || 'An error occurred');
+    throw error;
   }
-})
+});
+
 
 export const fetchEventsTypes = createAsyncThunk('appCalendar/fetchEventsTypes', async _ => {
   const response = await axiosInstance.get('/api/EventType', {

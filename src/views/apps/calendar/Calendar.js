@@ -11,6 +11,8 @@ import interactionPlugin from '@fullcalendar/interaction'
 
 // ** Third Party Style Import
 import 'bootstrap-icons/font/bootstrap-icons.css'
+import { Box, Typography } from '@mui/material'
+import { fetchCourseForCalender } from 'src/store/apps/calendar'
 
 const blankEvent = {
   title: '',
@@ -37,26 +39,11 @@ const Calendar = ({
   handleLeftSidebarToggle,
   handleAddEventSidebarToggle
 }) => {
-  // ** State for merged events
-  const [mergedArray, setMergedArray] = useState([])
-  const [dataFetched, setDataFetched] = useState(false);
 
   const calendarRef = useRef(null)
 
-  const mergedEvents = useMemo(() => {
-    return [
-      ...(store?.events?.events || []),  // Ensure events default to an empty array
-      ...(store?.eventcourse || [])      // Ensure eventcourse defaults to an empty array
-    ]
-  }, [store?.events?.events, store?.eventcourse]) // Only recalculate when store data changes
 
-  // ** Update state with merged events when store changes
-  useEffect(() => {
-    if (store?.events?.events && store?.eventcourse) {
-      setMergedArray(mergedEvents);
-      setDataFetched(true); // Set dataFetched to true after data is fetched
-    }
-  }, [mergedEvents, store?.events?.events, store?.eventcourse])
+console.log(store?.eventcourse.length);
 
   // ** Initialize calendarApi and ensure cleanup on unmount
   useEffect(() => {
@@ -73,22 +60,20 @@ const Calendar = ({
   }, [setCalendarApi])
 
   // ** Memoize event mapping for better performance
-  const formattedEvents = useMemo(() => {
-    return mergedArray.length
-      ? mergedArray.map(event => ({
-          id: event.id,
-          title: event.eventName ? event.eventName: event.name,
-          start: new Date(event.startDate ? event.startDate : event.startDateTime),
-          end: new Date(event.endDate ? event.endDate: event.endDateTime),
-          extendedProps: {
-            calendar: event?.eventType ? event?.eventType?.id : ' ',
-            description: event?.description ? event?.description : ' course view' ,
-            guests: event?.courseSchedule,
-            backgroundColor: event.eventName ? 'ETC' : 'Holiday'
-          }
-        }))
-      : []
-  }, [mergedArray])
+  const formattedEvents = store?.eventcourse.length
+  ? store?.eventcourse.map(event => ({
+      id: event.id,
+      title: event.eventName,
+      start: new Date(event.startDate),
+      end: new Date(event.endDate),
+      extendedProps: {
+        calendar: event?.eventType ? event?.eventType?.id : ' ',
+        description: event?.description ? event?.description : 'course view',
+        guests: event?.courseSchedule,
+        backgroundColor: event?.isEvent  ?   'ETC' :'Holiday'
+      }
+    }))
+  : [];
 
   // ** Memoized eventClick handler
   const handleEventClick = useCallback(
@@ -99,6 +84,17 @@ const Calendar = ({
     [dispatch, handleSelectEvent, handleAddEventSidebarToggle]
   )
 
+  const handleDatesSet = (arg) => {
+      const fromYearMonth = `${new Date (arg.startStr).getFullYear()}-${String(new Date (arg.startStr).getMonth() + 1).padStart(2, '0')}`;
+      const toYearMonth = `${new Date (arg.endStr).getFullYear()}-${String(new Date (arg.endStr).getMonth() + 1).padStart(2, '0')}`;
+
+
+    dispatch(fetchCourseForCalender({
+      selectedCalendars: '',
+      from: fromYearMonth,
+      to: toYearMonth
+  }));
+  };
   // ** Memoized dateClick handler
   const handleDateClick = useCallback(
     info => {
@@ -137,6 +133,7 @@ const Calendar = ({
     dragScroll: true,
     dayMaxEvents: 4,
     navLinks: true,
+
     eventClassNames({ event: calendarEvent }) {
       const colorName = calendarsColor[calendarEvent._def.extendedProps.backgroundColor]
       return [`bg-${colorName}`]
@@ -144,6 +141,7 @@ const Calendar = ({
     eventClick: handleEventClick,
     dateClick: handleDateClick,
     eventDrop: handleEventDrop,
+    datesSet: handleDatesSet,
     eventResize: handleEventResize,
     customButtons: {
       sidebarToggle: {
@@ -155,6 +153,7 @@ const Calendar = ({
     direction
   }), [
     formattedEvents,
+
     calendarsColor,
     handleEventClick,
     handleDateClick,
@@ -165,7 +164,28 @@ const Calendar = ({
   ])
 
   // Render FullCalendar if store data is available
-  return dataFetched ? <FullCalendar {...calendarOptions} /> : null
+  return <>
+    <Box sx={{  mb: 2 }}>
+        <Typography variant="h4" sx={{ display: 'flex', alignItems: 'center' }}>
+
+          <Box sx={{ ml: 2, display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ backgroundColor: '#28C76F', width: '15px', height: '15px', borderRadius: '50%' }} />
+            <Typography variant="body1" sx={{ ml: 1 }}>Course</Typography>
+          </Box>
+          <Box sx={{ ml: 2, display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ backgroundColor: '#03bef7', width: '15px', height: '15px', borderRadius: '50%' }} />
+            <Typography variant="body1" sx={{ ml: 1 }}>Events</Typography>
+          </Box>
+          <Box sx={{ ml: 2, display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ backgroundColor: '#FF9F43', width: '15px', height: '15px', borderRadius: '50%' }} />
+            <Typography variant="body1" sx={{ ml: 1 }}>info</Typography>
+          </Box>
+        </Typography>
+      </Box>
+
+   <FullCalendar {...calendarOptions} />
+   </>
+
 }
 
 export default Calendar
