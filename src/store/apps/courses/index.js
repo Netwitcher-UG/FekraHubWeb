@@ -130,8 +130,9 @@ export const addCourses = createAsyncThunk('courses/addCourses', async (data, { 
     await dispatch(fetchCourses(''))
 
   } catch (errors) {
+    console.log("🚀 ~ addCourses ~ errors:", errors)
     //ShowErrorToast(errors.response?.data || errors.message)
-    ShowErrorToast(errors.response.data)
+    ShowErrorToast(errors.response.data.title || errors.response.data  )
   }
 
 })

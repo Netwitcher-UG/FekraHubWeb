@@ -47,49 +47,62 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
     course: yup.object().shape({
       price: yup
         .number()
-        .transform((value, originalValue) => {
-          return originalValue === '' ? undefined : value
-        })
+        .transform((value, originalValue) => (originalValue === '' ? undefined : value))
         .required(t('Price is required'))
         .positive(t('Price must be a positive number'))
         .min(1, t('Price must be at least 1')),
       lessons: yup
         .number()
-        .transform((value, originalValue) => {
-          return originalValue === '' ? undefined : value
-        })
+        .transform((value, originalValue) => (originalValue === '' ? undefined : value))
         .required(t('Lessons are required'))
         .integer(t('Lessons must be an integer'))
         .min(1, t('Lessons must be at least 1')),
       capacity: yup
         .number()
-        .transform((value, originalValue) => {
-          return originalValue === '' ? undefined : value
-        })
+        .transform((value, originalValue) => (originalValue === '' ? undefined : value))
         .required(t('Capacity is required'))
         .integer(t('Capacity must be an integer'))
         .min(1, t('Capacity must be at least 1')),
-      roomId: yup.string().required(t('roomId is required')),
+      roomId: yup.string().required(t('Room ID is required')),
       name: yup.string().required(t('Course Name is required')).min(2, t('Course Name must be at least 2 characters')),
       startDate: yup
         .date()
-        .transform((value, originalValue) => {
-          return originalValue === '' ? undefined : value
-        })
+        .transform((value, originalValue) => (originalValue === '' ? undefined : value))
         .required(t('Start Date is required'))
         .nullable(),
       endDate: yup
         .date()
-        .transform((value, originalValue) => {
-          return originalValue === '' ? undefined : value
-        })
+        .transform((value, originalValue) => (originalValue === '' ? undefined : value))
         .required(t('End Date is required'))
         .nullable()
         .min(yup.ref('startDate'), t('End Date cannot be before Start Date'))
-    })
+    }),
 
-    // Additional validation for other fields can go here
-  })
+    courseSchedule: yup.array().of(
+      yup.object().shape({
+        dayOfWeek: yup.string().test(
+          'day-of-week-required',
+          t('Day of the Week is required if start or end time is provided'),
+          function (value) {
+            const { startTime, endTime } = this.parent;
+            return !(startTime || endTime) || Boolean(value);
+          }
+        ),
+        startTime: yup
+          .string()
+          .nullable(),
+        endTime: yup
+          .string()
+          .nullable()
+          .test('end-after-start', t('End Time cannot be before Start Time'), function (value) {
+            const { startTime } = this.parent;
+            return !startTime || !value || value >= startTime;
+          })
+      })
+    )
+  });
+
+
 
   // console.log('🚀 ~ AddCourses ~ dataTeacher:', dataTeacher)
   const [open, setOpen] = useState(false)

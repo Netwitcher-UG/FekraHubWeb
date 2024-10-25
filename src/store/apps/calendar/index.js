@@ -13,11 +13,11 @@ export const fetchEvents = createAsyncThunk('appCalendar/fetchEvents', async (se
     const queryString = selectedCalendars?.map(id => `courseId=${id}`).join('&');
 
     // Use the query string directly in the URL
-    const response = await axiosInstance.get(`/api/Courses/CourseEventForCalender?from=2024-09&to=2024-11${queryString}`);
+    const response = await axiosInstance.get(`/api/Courses/CourseEventForCalender?from=2024-09&to=2024-11`);
 
     return response.data
   } catch (error) {
-    ShowErrorToast(error.response.data)
+    ShowErrorToast(error.response.data.title ||error.response.data)
     throw error
   }
 })
@@ -74,7 +74,8 @@ export const addEvent = createAsyncThunk('appCalendar/addEvent', async (event, {
 ShowSuccessToast('Added Event Successfully')
   }catch(error){
   console.log("🚀 ~ addEvent ~ error:", error)
-ShowErrorToast(error.response.data)
+  ShowErrorToast(error.response.data.title ||error.response.data)
+
   }
 
   return response.data.event
@@ -95,7 +96,8 @@ export const updateEvent = createAsyncThunk('appCalendar/updateEvent', async (ev
 
   }catch(error)
   {
-    ShowErrorToast(error.response.data)
+    ShowErrorToast(error.response.data.title ||error.response.data)
+
   }
 
   return response.data.event

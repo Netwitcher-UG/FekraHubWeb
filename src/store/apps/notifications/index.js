@@ -19,7 +19,15 @@ export const fetchNotifications = createAsyncThunk('appNotifications/fetchData',
 
   return response.data
 })
+// ** Read Notification
+export const ReadNotification = createAsyncThunk('appNotifications/ReadNotification', async (data, {  dispatch }) => {
+  const response = await axiosInstance.patch('/api/Notifications/NotificationsRead', {
+    data
+  })
+  dispatch(fetchNotifications())
 
+  return response.data
+})
 // ** Add User
 export const addUser = createAsyncThunk('appNotifications/addUser', async (data, { getState, dispatch }) => {
   const response = await axios.post('/apps/notifications/add-user', {

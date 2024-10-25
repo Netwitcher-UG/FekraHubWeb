@@ -41,8 +41,6 @@ const Calendar = ({
 }) => {
 
   const calendarRef = useRef(null)
-const [event,setEvents]=useState()
-console.log("🚀 ~ event:", event)
 
 
 
@@ -72,7 +70,6 @@ console.log("🚀 ~ event:", event)
       from: fromYearMonth,
       to: toYearMonth
   }));
-  setEvents(store.eventcourse)
   };
 
 
@@ -82,13 +79,15 @@ console.log("🚀 ~ event:", event)
     events:store?.eventcourse? store.eventcourse?.map((event,index) => ({
         id: index,
         title: event.eventName,
-        start: new Date(event.startDateTime),
-        end: new Date(event.endDateTime),
+        start: new Date(event.startDateTime ? event.startDateTime : event.startDate ),
+        end: new Date(event.endDateTime ? event.endDateTime : event.endDate ),
         extendedProps: {
           calendar:  event?.eventType?.id ,
           description:  event?.description ,
+          id:event?.id,
+          eventType:event?.eventType?.typeTitle ,
           guests: event?.courseSchedule,
-          backgroundColor: event?.isEvent  ?   'ETC' :'Holiday'
+          backgroundColor: event?.isEvent  ? (event?.eventType?.typeTitle === 'Feiertag' ? 'Family' :'Etc') :'Holiday'
         }
       })):[]
     ,
@@ -136,7 +135,7 @@ console.log("🚀 ~ event:", event)
     navLinks: true,
     eventClassNames({ event: calendarEvent }) {
       // @ts-ignore
-      const colorName = calendarsColor[calendarEvent._def.extendedProps.calendar]
+      const colorName = calendarsColor[calendarEvent._def.extendedProps.backgroundColor]
 
       return [
         // Background Color
@@ -170,7 +169,14 @@ console.log("🚀 ~ event:", event)
       dispatch(handleSelectEvent(ev))
       handleAddEventSidebarToggle()
     },
-
+    eventContent: function(arg) {
+      return (
+        <>
+          <b >{arg.event.title}</b>
+          <div>{arg.event.extendedProps?.eventType ? ' / '+ arg.event.extendedProps?.eventType : null}</div>
+        </>
+      );
+    },
     /*
             Handle event drop (Also include dragged event)
             ? Docs: https://fullcalendar.io/docs/eventDrop
@@ -202,7 +208,7 @@ console.log("🚀 ~ event:", event)
           </Box>
           <Box sx={{ ml: 2, display: 'flex', alignItems: 'center' }}>
             <Box sx={{ backgroundColor: '#FF9F43', width: '15px', height: '15px', borderRadius: '50%' }} />
-            <Typography variant="body1" sx={{ ml: 1 }}>info</Typography>
+            <Typography variant="body1" sx={{ ml: 1 }}>feiertag</Typography>
           </Box>
         </Typography>
       </Box>

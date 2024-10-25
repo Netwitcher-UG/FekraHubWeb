@@ -31,8 +31,6 @@ import { FormateDateTime } from 'src/@core/utils/DateTimeFormat'
 import { FormateDate } from 'src/@core/utils/DateFormate'
 import { Autocomplete } from '@mui/material'
 
-
-
 const defaultState = {
   url: '',
   title: '',
@@ -41,7 +39,7 @@ const defaultState = {
   description: '',
   endDate: new Date(),
   calendar: 1,
-  course:1,
+  course: 1,
   startDate: new Date()
 }
 
@@ -78,25 +76,22 @@ const AddEventSidebar = props => {
     handleAddEventSidebarToggle()
   }
 
-  const { types } = useSelector((state) => state.calendar);
-  const { data:CourseSchedule } = useSelector((state) => state.courses);
-  console.log("🚀 ~ AddEventSidebar ~ CourseSchedule:", CourseSchedule)
-
+  const { types } = useSelector(state => state.calendar)
+  const { data: CourseSchedule } = useSelector(state => state.courses)
 
   useEffect(() => {
-    dispatch(fetchEventsTypes());
-  }, [dispatch]);
+    dispatch(fetchEventsTypes())
+  }, [dispatch])
 
   const onSubmit = data => {
-    let startDate,endDate
+    let startDate, endDate
 
-    if(values.allDay ){
-      startDate= FormateDate(values.startDate)
-      endDate= FormateDate(values.endDate)
-    }
-    else {
-      startDate= FormateDateTime(values.startDate)
-      endDate= FormateDateTime(values.endDate)
+    if (values.allDay) {
+      startDate = FormateDate(values.startDate)
+      endDate = FormateDate(values.endDate)
+    } else {
+      startDate = FormateDateTime(values.startDate)
+      endDate = FormateDateTime(values.endDate)
     }
 
     const modifiedEvent = {
@@ -105,14 +100,13 @@ const AddEventSidebar = props => {
       scheduleId: values.guests && values.guests.length ? values.guests : undefined,
       startDate: startDate,
       typeID: values.calendar,
-      description: data.description,
-
+      description: data.description
     }
 
     if (store.selectedEvent === null || (store.selectedEvent !== null && !store.selectedEvent.title.length)) {
       dispatch(addEvent(modifiedEvent))
     } else {
-      dispatch(updateEvent({ id: store.selectedEvent.id, ...modifiedEvent }))
+      dispatch(updateEvent({ id: store.selectedEvent.extendedProps.id, ...modifiedEvent }))
     }
     calendarApi.refetchEvents()
     handleSidebarClose()
@@ -133,12 +127,8 @@ const AddEventSidebar = props => {
     }
   }
   const handleEndDate = date => {
-    console.log("🚀 ~ handleEndDate ~ date:", date)
-
-      setValues({ ...values, endDate: new Date(date) })
-
+    setValues({ ...values, endDate: new Date(date) })
   }
-  console.log("🚀 ~ handleStartDate ~ values:", values)
 
   const resetToStoredValues = useCallback(() => {
     if (store.selectedEvent !== null) {
@@ -281,46 +271,47 @@ const AddEventSidebar = props => {
                 onChange: e => setValues({ ...values, calendar: e.target.value })
               }}
             >
-              {types.map((type,index)=>(
-              <MenuItem key={index} value={type.id}>{type.typeTitle}</MenuItem>
-
-              ))
-
-              }
+              {types.map((type, index) => (
+                <MenuItem
+                  sx={{
+                    color: type.typeTitle === 'Feiertag' ? 'FF9F43' : '#03bef7', // Text color
+                    backgroundColor: type.typeTitle === 'Feiertag' ? '#FF9F43' : '#E3F7FF' // Background color
+                  }}
+                  key={index}
+                  value={type.id}
+                >
+                  {type.typeTitle}
+                </MenuItem>
+              ))}
             </CustomTextField>
 
-
             <Autocomplete
-  multiple // Enables multiple selection
-  options={CourseSchedule} // List of course schedules
-  getOptionLabel={(option) => option.name || ''} // Label shown for each option
-  isOptionEqualToValue={(option, value) => option.id === value.id} // Proper comparison for selected value
-  value={CourseSchedule?.filter(course => values.guests.includes(course.id)) || []} // Finds selected values
-
-  onChange={(event, newValue) => {
-    const selectedIds = newValue.map((option) => option.id); // Extracts selected course IDs
-    setValues({ ...values,  guests:  selectedIds }); // Updates state with selected course IDs
-  }}
-  renderInput={(params) => (
-    <CustomTextField
-      {...params}
-      fullWidth
-      sx={{ mb: 4 }}
-      label="Select Course" // Label for the Autocomplete input field
-      variant="outlined"
-
-    />
-  )}
-/>
-
-
+              multiple // Enables multiple selection
+              options={CourseSchedule} // List of course schedules
+              getOptionLabel={option => option.name || ''} // Label shown for each option
+              isOptionEqualToValue={(option, value) => option.id === value.id} // Proper comparison for selected value
+              value={CourseSchedule?.filter(course => values.guests.includes(course.id)) || []} // Finds selected values
+              onChange={(event, newValue) => {
+                const selectedIds = newValue.map(option => option.id) // Extracts selected course IDs
+                setValues({ ...values, guests: selectedIds }) // Updates state with selected course IDs
+              }}
+              renderInput={params => (
+                <CustomTextField
+                  {...params}
+                  fullWidth
+                  sx={{ mb: 4 }}
+                  label='Select Course' // Label for the Autocomplete input field
+                  variant='outlined'
+                />
+              )}
+            />
 
             <Box sx={{ mb: 4 }}>
               <DatePicker
                 selectsStart
                 id='event-start-date'
                 endDate={values.endDate}
-                timeFormat="HH:mm"
+                timeFormat='HH:mm'
                 selected={values.startDate}
                 startDate={values.startDate}
                 showTimeSelect={!values.allDay}
@@ -339,7 +330,7 @@ const AddEventSidebar = props => {
                 minDate={values.startDate}
                 startDate={values.startDate}
                 showTimeSelect={!values.allDay}
-                timeFormat="HH:mm"
+                timeFormat='HH:mm'
                 dateFormat={!values.allDay ? 'yyyy-MM-dd HH:mm' : 'yyyy-MM-dd HH:mm'}
                 customInput={<PickersComponent label='End Date' registername='endDate' />}
                 onChange={date => setValues({ ...values, endDate: new Date(date) })}
@@ -348,26 +339,23 @@ const AddEventSidebar = props => {
             </Box>
 
             <Controller
-  name="description"
-  control={control}
-
-  rules={{ required: true }} // Required rule
-  render={({ field: { value, onChange } }) => (
-    <CustomTextField
-      rows={4}
-      multiline
-      fullWidth
-      sx={{ mb: 6.5 }}
-      label="Description"
-      value={value   }
-      onChange={onChange}
-      error={Boolean(errors.description)} // Show error state
-      helperText={errors.description ? 'This field is required' : ''} // Show helper text
-    />
-  )}
-/>
-
-
+              name='description'
+              control={control}
+              rules={{ required: true }} // Required rule
+              render={({ field: { value, onChange } }) => (
+                <CustomTextField
+                  rows={4}
+                  multiline
+                  fullWidth
+                  sx={{ mb: 6.5 }}
+                  label='Description'
+                  value={value}
+                  onChange={onChange}
+                  error={Boolean(errors.description)} // Show error state
+                  helperText={errors.description ? 'This field is required' : ''} // Show helper text
+                />
+              )}
+            />
 
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <RenderSidebarFooter />

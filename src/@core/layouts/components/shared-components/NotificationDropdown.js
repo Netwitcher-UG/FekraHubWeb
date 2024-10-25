@@ -24,6 +24,8 @@ import CustomAvatar from 'src/@core/components/mui/avatar'
 
 // ** Util Import
 import { getInitials } from 'src/@core/utils/get-initials'
+import { ReadNotification } from 'src/store/apps/notifications'
+import { useDispatch } from 'react-redux'
 
 // ** Styled Menu component
 const Menu = styled(MuiMenu)(({ theme }) => ({
@@ -107,9 +109,10 @@ const NotificationDropdown = props => {
 
   // ** Vars
   const { direction } = settings
-
+const dispatch= useDispatch()
   const handleDropdownOpen = event => {
     setAnchorEl(event.currentTarget)
+    dispatch(ReadNotification())
   }
 
   const handleDropdownClose = () => {

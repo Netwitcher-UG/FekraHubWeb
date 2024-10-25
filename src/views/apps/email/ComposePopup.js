@@ -128,17 +128,18 @@ if(attachments.length>0){
     handlePopupClose()
   }
   const handlePopupClose = () => {
-    toggleComposeOpen()
-    setEmailTo([])
-    setccValue([])
-    setbccValue([])
-    setCoursesValue([])
-    setSubjectValue('')
-    setMessageValue(EditorState.createEmpty())
-    setVisibility({
-      cc: false,
-      bcc: false
-    })
+    // toggleComposeOpen()
+    // setEmailTo([])
+    // setccValue([])
+    // setbccValue([])
+    // setCoursesValue([])
+    // setSubjectValue('')
+    // setMessageValue(EditorState.createEmpty())
+    // setVisibility({
+    //   cc: false,
+    //   bcc: false
+    // })
+    setAttachments([])
   }
 
   const handleMinimize = () => {
