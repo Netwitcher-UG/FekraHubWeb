@@ -13,7 +13,7 @@ export const fetchEvents = createAsyncThunk('appCalendar/fetchEvents', async (se
     const queryString = selectedCalendars?.map(id => `courseId=${id}`).join('&');
 
     // Use the query string directly in the URL
-    const response = await axiosInstance.get(`/api/events?${queryString}`);
+    const response = await axiosInstance.get(`/api/Courses/CourseEventForCalender?from=2024-09&to=2024-11${queryString}`);
 
     return response.data
   } catch (error) {

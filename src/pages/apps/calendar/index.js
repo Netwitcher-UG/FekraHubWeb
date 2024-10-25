@@ -57,7 +57,6 @@ const AppCalendar = () => {
   // useEffect(() => {
   //   dispatch(fetchEvents(store.selectedCalendars))
 
-  //   dispatch(fetchCourseForCalender(store.selectedCalendars))
   // }, [dispatch, store.selectedCalendars])
   const handleLeftSidebarToggle = () => setLeftSidebarOpen(!leftSidebarOpen)
   const handleAddEventSidebarToggle = () => setAddEventSidebarOpen(!addEventSidebarOpen)
