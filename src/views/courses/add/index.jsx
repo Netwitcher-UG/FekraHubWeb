@@ -8,7 +8,13 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import IconButton from '@mui/material/IconButton'
 import Grid from '@mui/material/Grid'
-import { Autocomplete, InputAdornment, Slide, Stack, TextField } from '@mui/material'
+import {
+  Autocomplete,
+  InputAdornment,
+  Slide,
+  Stack
+  //  TextField
+} from '@mui/material'
 import { useForm, Controller, useFieldArray } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { addCourses, FetchCourseScheduleDaysOfWeek } from 'src/store/apps/courses'
@@ -80,29 +86,27 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
 
     courseSchedule: yup.array().of(
       yup.object().shape({
-        dayOfWeek: yup.string().test(
-          'day-of-week-required',
-          t('Day of the Week is required if start or end time is provided'),
-          function (value) {
-            const { startTime, endTime } = this.parent;
-            return !(startTime || endTime) || Boolean(value);
-          }
-        ),
-        startTime: yup
+        dayOfWeek: yup
           .string()
-          .nullable(),
+          .test(
+            'day-of-week-required',
+            t('Day of the Week is required if start or end time is provided'),
+            function (value) {
+              const { startTime, endTime } = this.parent
+              return !(startTime || endTime) || Boolean(value)
+            }
+          ),
+        startTime: yup.string().nullable(),
         endTime: yup
           .string()
           .nullable()
           .test('end-after-start', t('End Time cannot be before Start Time'), function (value) {
-            const { startTime } = this.parent;
-            return !startTime || !value || value >= startTime;
+            const { startTime } = this.parent
+            return !startTime || !value || value >= startTime
           })
       })
     )
-  });
-
-
+  })
 
   // console.log('🚀 ~ AddCourses ~ dataTeacher:', dataTeacher)
   const [open, setOpen] = useState(false)
@@ -144,7 +148,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
     formState: { errors, isDirty, isValid }
   } = useForm({ defaultValues, mode: 'onBlur', resolver: yupResolver(schema) })
 
-  console.log('🚀 ~ AddCourses ~ errors:', isValid)
+  // console.log('🚀 ~ AddCourses ~ errors:', isValid)
   const handleNextStep = () => {
     if (step === 0) {
       const selectedRooms = dataRooms.filter(room => room.LocationId === location)
