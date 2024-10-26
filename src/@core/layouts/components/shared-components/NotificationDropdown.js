@@ -11,7 +11,8 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import MuiMenu from '@mui/material/Menu'
 import MuiMenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
-
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
@@ -143,7 +144,7 @@ const dispatch= useDispatch()
       <IconButton color='inherit' aria-haspopup='true' onClick={handleDropdownOpen} aria-controls='customized-menu'>
         <Badge
           color='error'
-          badgeContent={notifications?.length}
+          badgeContent={notifications.unReadCount}
           sx={{
             '& .MuiBadge-badge': { top: 4, right: 4 }
           }}
@@ -167,23 +168,34 @@ const dispatch= useDispatch()
             <Typography variant='h5' sx={{ cursor: 'text' }}>
               Notifications
             </Typography>
-            <CustomChip skin='light' size='small' color='primary' label={`${notifications?.length} New`} />
+            <CustomChip skin='light' size='small' color='primary' label={`${notifications?.unReadCount} New`} />
           </Box>
         </MenuItem>
         <ScrollWrapper hidden={hidden}>
-          {notifications.map((notification, index) => (
-            <MenuItem key={index} disableRipple disableTouchRipple onClick={handleDropdownClose}>
-              <Box sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
-                <RenderAvatar notification={notification.id} />
-                <Box sx={{ mr: 4, ml: 2.5, flex: '1 1', display: 'flex', overflow: 'hidden', flexDirection: 'column' }}>
-                  <MenuItemTitle>{notification.notification}</MenuItemTitle>
-                </Box>
-                <Typography variant='body2' sx={{ color: 'text.disabled' }}>
-                  {notification?.meta}
-                </Typography>
-              </Box>
-            </MenuItem>
-          ))}
+        { notifications?.userNotifications?.map((notification, index) => (
+  <MenuItem
+    key={index}
+    disableRipple
+    disableTouchRipple
+    onClick={handleDropdownClose}
+    sx={{
+      backgroundColor: notification.read ? 'transparent' : 'rgba(255, 255, 255, 0.3)', // Change background if unread
+      '&:hover': {
+        backgroundColor: 'rgba(255, 255, 255, 0.2)'
+      }
+    }}
+  >
+    <Box sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
+      <RenderAvatar notification={notification?.id} />
+      <Box sx={{ mr: 4, ml: 2.5, flex: '1 1', display: 'flex', overflow: 'hidden', flexDirection: 'column' }}>
+        <MenuItemTitle>{notification?.notification}</MenuItemTitle>
+      </Box>
+      <Typography variant='body2' sx={{ color: 'text.disabled' }}>
+        {notification?.date}
+      </Typography>
+    </Box>
+  </MenuItem>
+))}
         </ScrollWrapper>
         <MenuItem
           disableRipple
