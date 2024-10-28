@@ -121,7 +121,7 @@ const NotificationDropdown = props => {
 
   // Function to handle notification click
   const handleNotificationClick = notification => {
-    // dispatch(ReadNotification(`id=${notification.id}&AllRead=false`))
+     dispatch(ReadNotification(`id=${notification.id}&AllRead=false`))
     router.push('/app'+notification.url)
     handleDropdownClose()
   }
