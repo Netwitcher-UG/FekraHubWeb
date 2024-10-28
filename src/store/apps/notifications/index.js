@@ -21,9 +21,7 @@ export const fetchNotifications = createAsyncThunk('appNotifications/fetchData',
 })
 // ** Read Notification
 export const ReadNotification = createAsyncThunk('appNotifications/ReadNotification', async (data, {  dispatch }) => {
-  const response = await axiosInstance.patch('/api/Notifications/NotificationsRead', {
-    data
-  })
+  const response = await axiosInstance.patch(`/api/Notifications/NotificationsRead?${data}`)
   dispatch(fetchNotifications())
 
   return response.data

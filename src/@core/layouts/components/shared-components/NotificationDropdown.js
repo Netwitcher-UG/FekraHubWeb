@@ -1,4 +1,5 @@
-// ** React Imports
+
+
 import { useState, Fragment } from 'react'
 
 // ** MUI Imports
@@ -11,8 +12,9 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import MuiMenu from '@mui/material/Menu'
 import MuiMenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
@@ -27,6 +29,8 @@ import CustomAvatar from 'src/@core/components/mui/avatar'
 import { getInitials } from 'src/@core/utils/get-initials'
 import { ReadNotification } from 'src/store/apps/notifications'
 import { useDispatch } from 'react-redux'
+import moment from 'moment'
+import { useRouter } from 'next/router'
 
 // ** Styled Menu component
 const Menu = styled(MuiMenu)(({ theme }) => ({
@@ -100,20 +104,32 @@ const ScrollWrapper = ({ children, hidden }) => {
 const NotificationDropdown = props => {
   // ** Props
   const { settings, notifications } = props
-  console.log("🚀 ~ NotificationDropdown ~ notifications:", notifications )
+  console.log('🚀 ~ NotificationDropdown ~ notifications:', notifications?.notifications)
 
   // ** States
   const [anchorEl, setAnchorEl] = useState(null)
-
+  const router = useRouter()
   // ** Hook
   const hidden = useMediaQuery(theme => theme.breakpoints.down('lg'))
 
   // ** Vars
   const { direction } = settings
-const dispatch= useDispatch()
+  const dispatch = useDispatch()
   const handleDropdownOpen = event => {
     setAnchorEl(event.currentTarget)
-    dispatch(ReadNotification())
+  }
+
+  // Function to handle notification click
+  const handleNotificationClick = notification => {
+    // dispatch(ReadNotification(`id=${notification.id}&AllRead=false`))
+    router.push('/app'+notification.url)
+    handleDropdownClose()
+  }
+
+  // Function to handle All Notifications readd
+  const handleAllNotificationRead = () => {
+    dispatch(ReadNotification('AllRead=true'))
+    handleDropdownClose()
   }
 
   const handleDropdownClose = () => {
@@ -121,36 +137,42 @@ const dispatch= useDispatch()
   }
 
   const RenderAvatar = ({ notification }) => {
-    const { avatarAlt, avatarImg, avatarIcon, avatarText, avatarColor } = notification
+    console.log("🚀 ~ RenderAvatar ~ notification:", notification)
+    const { avatarAlt, avatarImg, avatarIcon, avatarText, avatarColor, notificationType } = notification;
+
     if (avatarImg) {
-      return <Avatar alt={avatarAlt} src={avatarImg} />
+      return <CalendarMonthIcon/>;
     } else if (avatarIcon) {
       return (
-        <Avatar skin='light' color={avatarColor}>
-          {avatarIcon}
-        </Avatar>
-      )
+        <CalendarMonthIcon/>
+      );
     } else {
+      // Determine icon based on notificationType
+      let icon = null;
+      switch (notificationType) {
+        case 'event':
+          icon = <CalendarTodayIcon />; // Replace with your desired Calendar Icon
+          break;
+        case 'file':
+          icon = <FileCopyIcon />; // Replace with your desired File Icon
+          break;
+        // Add more cases for other notification types...
+        default:
+          icon = getInitials(avatarText);
+      }
+
       return (
-        <Avatar skin='light' color={avatarColor}>
-          {getInitials(avatarText)}
+        <Avatar skin="light" color={avatarColor}>
+          <CalendarMonthIcon/>
         </Avatar>
-      )
+      );
     }
-  }
+  };
 
   return (
     <Fragment>
       <IconButton color='inherit' aria-haspopup='true' onClick={handleDropdownOpen} aria-controls='customized-menu'>
-        <Badge
-          color='error'
-          badgeContent={notifications.unReadCount}
-          sx={{
-            '& .MuiBadge-badge': { top: 4, right: 4 }
-          }}
-        >
-          <Icon fontSize='1.625rem' icon='tabler:bell' />
-        </Badge>
+        {footer()}
       </IconButton>
       <Menu
         anchorEl={anchorEl}
@@ -172,30 +194,33 @@ const dispatch= useDispatch()
           </Box>
         </MenuItem>
         <ScrollWrapper hidden={hidden}>
-        { notifications?.userNotifications?.map((notification, index) => (
-  <MenuItem
-    key={index}
-    disableRipple
-    disableTouchRipple
-    onClick={handleDropdownClose}
-    sx={{
-      backgroundColor: notification.read ? 'transparent' : 'rgba(255, 255, 255, 0.3)', // Change background if unread
-      '&:hover': {
-        backgroundColor: 'rgba(255, 255, 255, 0.2)'
-      }
-    }}
-  >
-    <Box sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
-      <RenderAvatar notification={notification?.id} />
-      <Box sx={{ mr: 4, ml: 2.5, flex: '1 1', display: 'flex', overflow: 'hidden', flexDirection: 'column' }}>
-        <MenuItemTitle>{notification?.notification}</MenuItemTitle>
-      </Box>
-      <Typography variant='body2' sx={{ color: 'text.disabled' }}>
-        {notification?.date}
-      </Typography>
-    </Box>
-  </MenuItem>
-))}
+          {notifications?.notifications?.map((notification, index) => (
+            <MenuItem
+              key={index}
+              disableRipple
+              disableTouchRipple
+              onClick={() => handleNotificationClick(notification)}
+              sx={{
+                backgroundColor: notification.read ? 'transparent' : 'rgba(255, 255, 255, 0.5)', // Change background if unread
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)'
+                }
+              }}
+            >
+              <Box sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
+                <RenderAvatar notification={notification} />
+                <Box sx={{ mr: 4, ml: 2.5, flex: '1 1', display: 'flex', overflow: 'hidden', flexDirection: 'column' }}>
+                  <MenuItemTitle>{notification.notification}</MenuItemTitle>
+                  <MenuItemSubtitle variant='body2'>
+                    {moment(notification.date).format('DD-MM-YYYY HH:mm')}
+                  </MenuItemSubtitle>
+                </Box>
+                <Typography variant='body2' sx={{ color: notification.read ? '#EA5455' : '#28C76F' }}>
+                  {notification.read ? '' : 'read'}
+                </Typography>
+              </Box>
+            </MenuItem>
+          ))}
         </ScrollWrapper>
         <MenuItem
           disableRipple
@@ -208,13 +233,25 @@ const dispatch= useDispatch()
             borderTop: theme => `1px solid ${theme.palette.divider}`
           }}
         >
-          <Button fullWidth variant='contained' onClick={handleDropdownClose}>
+          <Button fullWidth variant='contained' onClick={handleAllNotificationRead}>
             Read All Notifications
           </Button>
         </MenuItem>
       </Menu>
     </Fragment>
   )
+
+  function footer() {
+    return <Badge
+      color='error'
+      badgeContent={notifications.unReadCount}
+      sx={{
+        '& .MuiBadge-badge': { top: 4, right: 4 }
+      }}
+    >
+      <Icon fontSize='1.625rem' icon='tabler:bell' />
+    </Badge>
+  }
 }
 
 export default NotificationDropdown
