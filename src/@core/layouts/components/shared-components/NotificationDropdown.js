@@ -153,9 +153,6 @@ const NotificationDropdown = props => {
         case 'event':
           icon = <CalendarTodayIcon />; // Replace with your desired Calendar Icon
           break;
-        case 'file':
-          icon = <CalendarMonthIcon/>; // Replace with your desired File Icon
-          break;
         // Add more cases for other notification types...
         default:
           icon = getInitials(avatarText);
