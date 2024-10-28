@@ -154,7 +154,7 @@ const NotificationDropdown = props => {
           icon = <CalendarTodayIcon />; // Replace with your desired Calendar Icon
           break;
         case 'file':
-          icon = <FileCopyIcon />; // Replace with your desired File Icon
+          icon = <CalendarMonthIcon/>; // Replace with your desired File Icon
           break;
         // Add more cases for other notification types...
         default:
