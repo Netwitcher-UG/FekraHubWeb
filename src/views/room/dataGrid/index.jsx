@@ -18,14 +18,19 @@ export default function RoomDataGrid({ rows, SetSearch, status }) {
   return (
     <>
       <Card>
-        <Stack padding={4} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
+      <Stack
+          padding={4}
+          direction={{ xs: 'column', sm: 'row' }}
+          spacing={5}
+          alignItems={'center'}
+          justifyContent={'space-between'}
+        >
           <Box>
             <CustomSearch SetSearch={SetSearch} />
           </Box>
-          <Box>
-            <AddRoom />
-          </Box>
+          <AddRoom />
         </Stack>
+
         <Box sx={{ height: 'calc(100vh - 255px)' }}>
           {status === 'loading' ? (
             <Box

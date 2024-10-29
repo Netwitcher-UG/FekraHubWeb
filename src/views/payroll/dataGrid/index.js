@@ -13,6 +13,7 @@ import CustomDialogDelete from 'src/@core/components/custom-delete'
 import ViewWorksheet from 'src/views/worksheets/view'
 import usePayrollColumns from '../hook/usePayrollColumns'
 import { useTranslation } from 'react-i18next'
+import CustomDataGrid from 'src/@core/components/custom-datagrid'
 
 const customScrollbarStyles = {
   '& ::-webkit-scrollbar': {
@@ -71,20 +72,11 @@ const PayrollDataGrid = ({
 
       <Box sx={{ height: 'calc(100vh - 250px)', width: '100%' }}>
         <>
-          <DataGrid
+          <CustomDataGrid
             rowHeight={62}
             rows={rows || []}
             columns={columns}
-            hideFooter={true}
-            disableRowSelectionOnClick
-            onRowClick={handleRowClick}
-            pagination={true}
-            sx={{
-              // overflowY: 'scroll',
-              overflowX: 'scroll',
-              ...customScrollbarStyles,
-              fontSize: '1rem'
-            }}
+
           />
         </>
       </Box>

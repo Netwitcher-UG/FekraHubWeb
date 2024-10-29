@@ -402,11 +402,12 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
             </Grid>
           )}
           {step === 2 && (
-            <Box sx={{ width: '400px' }}>
+            <>
               {fields.map((field, index) => (
-                <Box key={field.id} width={'100%'} sx={{ marginY: '24px' }}>
-                  <Stack direction='column' spacing={3}>
-                    <Box flex={1}>
+                 <Grid container spacing={2} >
+
+
+                <Grid item xs={12}>
                       <Controller
                         name={`courseSchedule.${index}.dayOfWeek`}
                         control={control}
@@ -431,9 +432,9 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                           />
                         )}
                       />
-                    </Box>
+                   </Grid>
 
-                    <Box flex={1}>
+                   <Grid item xs={12}>
                       <Controller
                         name={`courseSchedule.${index}.startTime`}
                         control={control}
@@ -448,9 +449,9 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                           />
                         )}
                       />
-                    </Box>
+                    </Grid>
 
-                    <Box flex={1}>
+                    <Grid item xs={12}>
                       <Controller
                         name={`courseSchedule.${index}.endTime`}
                         control={control}
@@ -465,19 +466,21 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                           />
                         )}
                       />
-                    </Box>
-
+                   </Grid>
+                   <Grid item xs={12}>
                     <Button sx={{ marginLeft: '16px' }} variant='text' color='error' onClick={() => remove(index)}>
                       {t('Remove')}
                     </Button>
-                  </Stack>
-                </Box>
+                    </Grid>
+
+
+                </Grid>
               ))}
 
               <Button variant='outlined' sx={{ marginY: '24px' }} onClick={() => append({ EmailServer: '' })}>
                 {t('Add New course Schedule')}
               </Button>
-            </Box>
+            </>
           )}
         </DialogContent>
         <DialogActions>

@@ -6,7 +6,7 @@ import { AbilityContext } from 'src/layouts/components/acl/Can'
 import { convertDate } from 'src/@core/utils/convert-date'
 // import IconButton from '@mui/material/IconButton'
 import { useDispatch, useSelector } from 'react-redux'
-import { CircularProgress, IconButton, Stack, Typography } from '@mui/material'
+import { CircularProgress, IconButton, Stack, Typography, useTheme } from '@mui/material'
 import DropzoneWrapper from 'src/@core/utils/DropZone'
 import { AddPayrollFile, deletePayroll, getPayrollTeacherFile } from 'src/store/apps/payroll'
 import { useTranslation } from 'react-i18next'
@@ -16,6 +16,8 @@ const usePayrollColumns = () => {
   const { t } = useTranslation()
   const { attendanceStatuses } = useSelector(state => state.attendance)
   const [DeleteName, setDeleteName] = useState(false)
+  const theme = useTheme();
+  console.log("🚀 ~ usePayrollColumns ~ theme:", (theme.breakpoints.down('md') ? true : false))
   const [selectedId, setSelectedId] = useState(null)
   // const [drawerData, setDrawerData] = useState(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -60,7 +62,7 @@ const usePayrollColumns = () => {
       {
         headerName: <Translations text={'Full Name'} />,
         field: 'FullName',
-        flex: 3,
+        width: theme.breakpoints.down('sm') ? 400 : 150,
         renderCell: ({ row }) => (
           <div>
             {row.firstName} {row.lastName}
@@ -68,14 +70,14 @@ const usePayrollColumns = () => {
         )
       },
       {
-        flex: 3,
+        width: theme.breakpoints.down('sm') ? 300 : 300,
         headerName: <Translations text={'Date'} />,
         renderCell: ({ row }) => <div>{row.payrolls ? convertDate(row.payrolls?.[0].timestamp) : '------'}</div>
       },
       {
         headerName: <Translations text={'Upload PDF'} />,
         field: 'uploadPdf',
-        flex: 2,
+        width: theme.breakpoints.down('sm') ? 400 : 400,
         renderCell: ({ row }) => {
           if (row.roles === 'Admin') {
             return <DropzoneWrapper row={row} onFileUpload={handleFileUpload} />
@@ -87,7 +89,7 @@ const usePayrollColumns = () => {
         }
       },
       {
-        width: 200,
+        width: theme.breakpoints.up('sm') ? 200 : 200,
         field: 'action',
         headerName: <Translations text={'Action'} />,
         renderCell: params => {
