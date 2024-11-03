@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, useEffect, forwardRef, useCallback, Fragment } from 'react'
+import { useState, useEffect, forwardRef, useCallback, Fragment, useContext } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -30,6 +30,7 @@ import { fetchCourses, fetchCourseSchedule } from 'src/store/apps/courses'
 import { FormateDateTime } from 'src/@core/utils/DateTimeFormat'
 import { FormateDate } from 'src/@core/utils/DateFormate'
 import { Autocomplete } from '@mui/material'
+import { AbilityContext } from 'src/layouts/components/acl/Can'
 
 const defaultState = {
   url: '',
@@ -60,7 +61,7 @@ const AddEventSidebar = props => {
 
   // ** States
   const [values, setValues] = useState(defaultState)
-
+const ability = useContext(AbilityContext)
   const {
     control,
     setValue,
@@ -80,7 +81,9 @@ const AddEventSidebar = props => {
   const { data: CourseSchedule } = useSelector(state => state.courses)
 
   useEffect(() => {
+    
     dispatch(fetchEventsTypes())
+    dispatch(fetchCourses(''))
   }, [dispatch])
 
   const onSubmit = data => {
@@ -114,7 +117,7 @@ const AddEventSidebar = props => {
 
   const handleDeleteEvent = () => {
     if (store.selectedEvent) {
-      dispatch(deleteEvent(store.selectedEvent.id))
+      dispatch(deleteEvent(store.selectedEvent.extendedProps.id))
     }
 
     // calendarApi.getEventById(store.selectedEvent.id).remove()
@@ -138,7 +141,7 @@ const AddEventSidebar = props => {
       setValues({
         title: event.title || '',
         description: event.extendedProps.description || '',
-        guests: event.extendedProps.guests ? event.extendedProps.guests.map(guest => guest.id) : [],
+        guests: event.extendedProps.guests ? event.extendedProps.guests.map(guest => guest.courseID) : [],
         calendar: event.extendedProps.calendar || 'Business',
         endDate: event.end !== null ? event.end : event.start,
         startDate: event.start !== null ? event.start : new Date()

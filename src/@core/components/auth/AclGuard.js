@@ -108,7 +108,7 @@ const AclGuard = props => {
     '/location': { action: 'manage', subject: 'Location' },
     '/reports': { action: 'read', subject: 'StudentReport' },
     '/room': { action: 'manage', subject: 'Room' },
-    '/apps/calendar': { action: 'manage', subject: 'calendar' },
+    '/apps/calendar': { action: 'read', subject: 'Event' },
     '/payroll': { action: 'manage', subject: 'payroll' },
     '/messages': { action: 'manage', subject: 'messages' },
     '/users/employees': { action: 'read', subject: 'Employee' },

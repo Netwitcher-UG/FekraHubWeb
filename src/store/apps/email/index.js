@@ -4,7 +4,6 @@ import { ShowErrorToast } from 'src/@core/utils/showErrorToast'
 import { ShowSuccessToast } from 'src/@core/utils/ShowSuccesToast'
 import axiosInstance from 'src/lib/axiosInstance'
 
-
 // ** Fetch Mails
 export const fetchMails = createAsyncThunk('appEmail/fetchMails', async params => {
   const response = await axiosInstance.get('/api/MessageSender')
@@ -33,17 +32,15 @@ export const getCurrentMail = createAsyncThunk('appEmail/selectMail', async id =
 // ** Update Mail
 export const postMail = createAsyncThunk('appEmail/postMail', async (data, { dispatch, getState }) => {
   try {
-    const response = await axiosInstance.post('/api/MessageSender/UserMessages', data,{
-      headers:{
-        'Content-Type':'multipart/form-data'
+    const response = await axiosInstance.post('/api/MessageSender/UserMessages', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
       }
     })
     await dispatch(fetchMails())
 
-  ShowSuccessToast('Success')
-
-  }catch(error){
-
+    ShowSuccessToast('Success')
+  } catch (error) {
     ShowErrorToast(error.response.data)
   }
   return response.data
@@ -81,8 +78,8 @@ export const appEmailSlice = createSlice({
     },
     currentMail: null,
     selectedMails: [],
-    messages:[],
-    users:[]
+    messages: [],
+    users: []
   },
   reducers: {
     handleSelectMail: (state, action) => {

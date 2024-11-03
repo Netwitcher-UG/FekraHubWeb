@@ -24,7 +24,6 @@ import Icon from 'src/@core/components/icon'
 // ** Third Party Components
 import { EditorState, convertToRaw } from 'draft-js'
 
-
 // ** Custom Components Imports
 import OptionsMenu from 'src/@core/components/option-menu'
 import CustomAvatar from 'src/@core/components/mui/avatar'
@@ -35,7 +34,7 @@ import { EditorWrapper } from 'src/@core/styles/libs/react-draft-wysiwyg'
 
 // ** Utils Import
 import { getInitials } from 'src/@core/utils/get-initials'
-import { stateToHTML } from 'draft-js-export-html';
+import { stateToHTML } from 'draft-js-export-html'
 // ** Styles
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 import { fetchEmployees } from 'src/store/apps/users'
@@ -51,30 +50,29 @@ const ComposePopup = props => {
   const { mdAbove, composeOpen, composePopupWidth, toggleComposeOpen } = props
   const { users } = useSelector(state => state.email)
   const { data, status, error, dataRooms, dataTeacher } = useSelector(state => state.courses)
-  const {roles} = useSelector(state => state.roles)
-  console.log("🚀 ~ ComposePopup ~ rolesData:", roles)
-  const [attachments, setAttachments] = useState([]); // Store multiple files
+  const { roles } = useSelector(state => state.roles)
+  console.log('🚀 ~ ComposePopup ~ rolesData:', roles)
+  const [attachments, setAttachments] = useState([]) // Store multiple files
 
   // Handle multiple file selection
-  const handleFileChange = (event) => {
-    const selectedFiles = Array.from(event.target.files); // Convert FileList to an array
-    setAttachments(prevFiles => [...prevFiles, ...selectedFiles]);  // Append new files to existing ones
-    console.log("Selected files:", selectedFiles);
-  };
+  const handleFileChange = event => {
+    const selectedFiles = Array.from(event.target.files) // Convert FileList to an array
+    setAttachments(prevFiles => [...prevFiles, ...selectedFiles]) // Append new files to existing ones
+    console.log('Selected files:', selectedFiles)
+  }
 
-  const dispatch =useDispatch()
+  const dispatch = useDispatch()
   useEffect(() => {
     dispatch(fetchUsersMail())
     dispatch(fetchCourses(''))
     dispatch(fetchAllRole())
-
   }, [dispatch])
   // ** States
   const [emailTo, setEmailTo] = useState([])
   const [ccValue, setccValue] = useState([])
   const [subjectValue, setSubjectValue] = useState('')
   const [bccValue, setbccValue] = useState([])
-  const [CoursesValue , setCoursesValue] = useState([])
+  const [CoursesValue, setCoursesValue] = useState([])
   const [messageValue, setMessageValue] = useState(EditorState.createEmpty())
   const [messageSend, setMessageSend] = useState()
 
@@ -84,10 +82,10 @@ const ComposePopup = props => {
   })
 
   const getRawContentState = () => {
-    const contentState = messageValue.getCurrentContent();
+    const contentState = messageValue.getCurrentContent()
 
-    return JSON.stringify(convertToRaw(contentState));
-  };
+    return JSON.stringify(convertToRaw(contentState))
+  }
   const toggleVisibility = value => setVisibility({ ...visibility, [value]: !visibility[value] })
 
   const handleMailDelete = (value, state, setState) => {
@@ -97,8 +95,8 @@ const ComposePopup = props => {
     setState([...arr])
   }
   const handleEmailSend = () => {
-    const contentState = messageValue.getCurrentContent();
-    const htmlContent = stateToHTML(contentState);
+    const contentState = messageValue.getCurrentContent()
+    const htmlContent = stateToHTML(contentState)
     setEmailTo(emailTo)
     setccValue(ccValue)
     setbccValue(bccValue)
@@ -106,39 +104,39 @@ const ComposePopup = props => {
     setMessageValue(messageValue)
     setSubjectValue(subjectValue)
     const formData = new FormData()
-formData.append('subject',subjectValue)
-if(emailTo.length > 0)
-{
-  formData.append('Emails',emailTo)
-}
-if(CoursesValue.length > 0){
-  formData.append('CourseId',CoursesValue)
-}
-if(bccValue.length >0){
-  formData.append('Role',bccValue)
-}
-formData.append('Message',htmlContent)
+    formData.append('subject', subjectValue)
+    if (emailTo.length > 0) {
+      formData.append('Emails', emailTo)
+    }
+    if (CoursesValue.length > 0) {
+      formData.append('CourseId', CoursesValue)
+    }
+    if (bccValue.length > 0) {
+      formData.append('Role', bccValue)
+    }
+    formData.append('Message', htmlContent)
 
-if(attachments.length>0){
-    for (let i = 0; i < attachments.length; i++) {
-      formData.append('files', attachments[i]) // Append each file, 'files[]' indicates an array
-    }}
+    if (attachments.length > 0) {
+      for (let i = 0; i < attachments.length; i++) {
+        formData.append('files', attachments[i]) // Append each file, 'files[]' indicates an array
+      }
+    }
 
-    dispatch(postMail(formData));
+    dispatch(postMail(formData))
     handlePopupClose()
   }
   const handlePopupClose = () => {
-    // toggleComposeOpen()
-    // setEmailTo([])
-    // setccValue([])
-    // setbccValue([])
-    // setCoursesValue([])
-    // setSubjectValue('')
-    // setMessageValue(EditorState.createEmpty())
-    // setVisibility({
-    //   cc: false,
-    //   bcc: false
-    // })
+    toggleComposeOpen()
+    setEmailTo([])
+    setccValue([])
+    setbccValue([])
+    setCoursesValue([])
+    setSubjectValue('')
+    setMessageValue(EditorState.createEmpty())
+    setVisibility({
+      cc: false,
+      bcc: false
+    })
     setAttachments([])
   }
 
@@ -165,10 +163,14 @@ if(attachments.length>0){
     ))
   }
 
-
   const renderListItem = (props, option, array, setState) => {
     return (
-      <ListItem {...props} key={option.value} sx={{ cursor: 'pointer' }} onClick={() => setState([...array, option.email])}>
+      <ListItem
+        {...props}
+        key={option.value}
+        sx={{ cursor: 'pointer' }}
+        onClick={() => setState([...array, option.email])}
+      >
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {option.length ? (
             <CustomAvatar src={option.email} alt={option.email} sx={{ mr: 3, width: 22, height: 22 }} />
@@ -177,14 +179,24 @@ if(attachments.length>0){
               {getInitials(option.email)}
             </CustomAvatar>
           )}
-          <Typography sx={{ fontSize: theme => theme.typography.body2.fontSize }}>{option.role+' : ' + option.email}</Typography>
+          <Typography sx={{ fontSize: theme => theme.typography.body2.fontSize }}>
+            {option.role + ' : ' + option.email}
+          </Typography>
         </Box>
       </ListItem>
     )
   }
-  const renderListItemCourses = (props, option, array,CoursesValue, setState,setCourse) => {
+  const renderListItemCourses = (props, option, array, CoursesValue, setState, setCourse) => {
     return (
-      <ListItem {...props} key={option.value} sx={{ cursor: 'pointer' }} onClick={() => {setState([...array, option.name]); setCourse([...CoursesValue, option.id]) } }>
+      <ListItem
+        {...props}
+        key={option.value}
+        sx={{ cursor: 'pointer' }}
+        onClick={() => {
+          setState([...array, option.name])
+          setCourse([...CoursesValue, option.id])
+        }}
+      >
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {option.length ? (
             <CustomAvatar src={option.name} alt={option.name} sx={{ mr: 3, width: 22, height: 22 }} />
@@ -215,18 +227,18 @@ if(attachments.length>0){
     )
   }
   // Local image upload callback
-  const uploadImageCallback = (file) => {
+  const uploadImageCallback = file => {
     return new Promise((resolve, reject) => {
       try {
         // Create a local URL for the uploaded image
-        const imageUrl = URL.createObjectURL(file);
+        const imageUrl = URL.createObjectURL(file)
 
         // Resolve with the local image URL (this will insert the image into the editor)
-        resolve({ data: { link: imageUrl } });
+        resolve({ data: { link: imageUrl } })
       } catch (error) {
-        reject(error.toString());
+        reject(error.toString())
       }
-    });
+    })
   }
   const addNewOption = (options, params) => {
     const filtered = filter(options, params)
@@ -235,8 +247,7 @@ if(attachments.length>0){
     if (inputValue !== '' && !isExisting) {
       filtered.push({
         email: inputValue,
-        value: inputValue,
-
+        value: inputValue
       })
     }
 
@@ -376,7 +387,9 @@ if(attachments.length>0){
             options={data}
             ListboxComponent={List}
             getOptionLabel={option => option.name}
-            renderOption={(props, option) => renderListItemCourses(props, option, ccValue,CoursesValue, setccValue,setCoursesValue)}
+            renderOption={(props, option) =>
+              renderListItemCourses(props, option, ccValue, CoursesValue, setccValue, setCoursesValue)
+            }
             renderTags={(array, getTagProps) => renderCustomChips(array, getTagProps, ccValue, setccValue)}
             sx={{
               width: '100%',
@@ -477,24 +490,23 @@ if(attachments.length>0){
           '& .rdw-editor-wrapper, & .rdw-option-wrapper': { border: 0 }
         }}
       >
-  <ReactDraftWysiwyg
-        editorState={messageValue}
-        onEditorStateChange={(newEditorState) => setMessageValue(newEditorState)}
-        placeholder="Write your message..."
-        toolbar={{
-          options: ['inline', 'list', 'link'],
-          inline: { inDropdown: false, options: ['bold', 'italic', 'underline'] },
-          list: { inDropdown: false, options: ['unordered', 'ordered'] },
-          link: { inDropdown: false, options: ['link'] },
-          image: {
-            uploadCallback: uploadImageCallback, // Add the file upload function here
-            alt: { present: true, mandatory: false },
-            previewImage: true,
-            inputAccept: 'image/*',
-
-          },
-        }}
-      />
+        <ReactDraftWysiwyg
+          editorState={messageValue}
+          onEditorStateChange={newEditorState => setMessageValue(newEditorState)}
+          placeholder='Write your message...'
+          toolbar={{
+            options: ['inline', 'list', 'link'],
+            inline: { inDropdown: false, options: ['bold', 'italic', 'underline'] },
+            list: { inDropdown: false, options: ['unordered', 'ordered'] },
+            link: { inDropdown: false, options: ['link'] },
+            image: {
+              uploadCallback: uploadImageCallback, // Add the file upload function here
+              alt: { present: true, mandatory: false },
+              previewImage: true,
+              inputAccept: 'image/*'
+            }
+          }}
+        />
       </EditorWrapper>
       <Box
         sx={{
@@ -511,30 +523,26 @@ if(attachments.length>0){
             <Icon icon='tabler:send' fontSize='1.125rem' />
             Send
           </Button>
-          <Button
-        variant="text"
-        component="label"
-        sx={{ mr: 2 }}
-      >
-        <Icon icon="tabler:paperclip" fontSize="1.125rem" />
-        Attach Files
-        <input
-          type="file"
-          multiple  // Enable multiple file selection
-          hidden
-          onChange={handleFileChange}  // Handle file selection
-        />
-      </Button>
+          <Button variant='text' component='label' sx={{ mr: 2 }}>
+            <Icon icon='tabler:paperclip' fontSize='1.125rem' />
+            Attach Files
+            <input
+              type='file'
+              multiple // Enable multiple file selection
+              hidden
+              onChange={handleFileChange} // Handle file selection
+            />
+          </Button>
 
-      {/* Display selected file names */}
-      <Box sx={{ ml: 2 }}>
-        {attachments.length > 0 && attachments.map((file, index) => (
-          <p key={index}>{file.name}</p>  // Display each file name
-        ))}
-      </Box>
+          {/* Display selected file names */}
+          <Box sx={{ ml: 2 }}>
+            {attachments.length > 0 &&
+              attachments.map((file, index) => (
+                <p key={index}>{file.name}</p> // Display each file name
+              ))}
+          </Box>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-
           <IconButton size='small' onClick={handlePopupClose}>
             <Icon icon='tabler:trash' fontSize='1.25rem' />
           </IconButton>

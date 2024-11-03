@@ -83,8 +83,8 @@ const navigation = () => {
       title: 'Calendar',
       icon: 'tabler:calendar',
       path: '/apps/calendar',
-      action: 'manage',
-      subject: 'calendar'
+      action: 'read',
+      subject: 'Event'
     },
     {
       title: 'Payroll',

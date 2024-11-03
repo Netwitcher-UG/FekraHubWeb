@@ -3,79 +3,78 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 // ** Axios Imports
 import axios from 'axios'
+import { useContext } from 'react'
 import { ShowErrorToast } from 'src/@core/utils/showErrorToast'
 import { ShowSuccessToast } from 'src/@core/utils/ShowSuccesToast'
+import { AbilityContext } from 'src/layouts/components/acl/Can'
 import axiosInstance from 'src/lib/axiosInstance'
 
 // ** Fetch Events
 export const fetchEvents = createAsyncThunk('appCalendar/fetchEvents', async (selectedCalendars, { getState }) => {
   try {
-    const queryString = selectedCalendars?.map(id => `courseId=${id}`).join('&');
+    const queryString = selectedCalendars?.map(id => `courseId=${id}`).join('&')
 
     // Use the query string directly in the URL
-    const response = await axiosInstance.get(`/api/Courses/CourseEventForCalender?from=2024-09&to=2024-11`);
+    const response = await axiosInstance.get(`/api/Courses/CourseEventForCalender?from=2024-09&to=2024-11`)
 
     return response.data
   } catch (error) {
-    ShowErrorToast(error.response.data.title ||error.response.data)
+    ShowErrorToast(error.response.data.title || error.response.data)
     throw error
   }
 })
 
 // ** Fetch Events
-export const fetchCourseForCalender = createAsyncThunk('appCalendar/fetchCourseForCalender', async (props, { getState }) => {
-  try {
-    // Check if selectedCalendars is defined and not empty
-    const queryString = props.selectedCalendars && props.selectedCalendars.length > 0
-      ? props.selectedCalendars.map(id => `courseId=${id}`).join('&')
-      : '';
+export const fetchCourseForCalender = createAsyncThunk(
+  'appCalendar/fetchCourseForCalender',
+  async (props, { getState }) => {
+    try {
+      // Check if selectedCalendars is defined and not empty
+      const queryString =
+        props.selectedCalendars && props.selectedCalendars.length > 0
+          ? props.selectedCalendars.map(id => `courseId=${id}`).join('&')
+          : ''
 
-    // Ensure that from and to are defined before adding to the query string
-    const fromDate = props.from ? `from=${props.from}` : '';
-    const toDate = props.to ? `to=${props.to}` : '';
+      // Ensure that from and to are defined before adding to the query string
+      const fromDate = props.from ? `from=${props.from}` : ''
+      const toDate = props.to ? `to=${props.to}` : ''
 
-    // Construct the full query string, filtering out any empty parts
-    const query = [queryString, fromDate, toDate].filter(part => part).join('&');
+      // Construct the full query string, filtering out any empty parts
+      const query = [queryString, fromDate, toDate].filter(part => part).join('&')
 
-    // If no valid query parameters, throw an error or handle it gracefully
-    if (!query) {
-      throw new Error("Invalid parameters: selectedCalendars, from, or to are undefined");
+      // If no valid query parameters, throw an error or handle it gracefully
+      if (!query) {
+        throw new Error('Invalid parameters: selectedCalendars, from, or to are undefined')
+      }
+
+      const response = await axiosInstance.get(`${props.url}?${query}`)
+      return response.data
+    } catch (error) {
+      ShowErrorToast(error.response?.data || 'An error occurred')
+      throw error
     }
-
-    const response = await axiosInstance.get(`/api/Courses/CourseEventForCalender?${query}`);
-    return response.data;
-  } catch (error) {
-    ShowErrorToast(error.response?.data || 'An error occurred');
-    throw error;
   }
-});
-
+)
 
 export const fetchEventsTypes = createAsyncThunk('appCalendar/fetchEventsTypes', async _ => {
-  const response = await axiosInstance.get('/api/EventType', {
-
-  })
+  const response = await axiosInstance.get('/api/EventType', {})
 
   return response.data
 })
 // ** Add Event
 export const addEvent = createAsyncThunk('appCalendar/addEvent', async (event, { dispatch }) => {
   try {
- const response = await axiosInstance.post('/api/events',
-    event, {
+    const response = await axiosInstance.post('/api/events', event, {
       headers: {
         accept: 'application/json',
         'Content-Type': 'multipart/form-data'
       }
-    }
-
-  )
-  await dispatch(fetchEvents())
-ShowSuccessToast('Added Event Successfully')
-  }catch(error){
-  console.log("🚀 ~ addEvent ~ error:", error)
-  ShowErrorToast(error.response.data.title ||error.response.data)
-
+    })
+    await dispatch(fetchEvents())
+    ShowSuccessToast('Added Event Successfully')
+  } catch (error) {
+    console.log('🚀 ~ addEvent ~ error:', error)
+    ShowErrorToast(error.response.data.title || error.response.data)
   }
 
   return response.data.event
@@ -83,21 +82,17 @@ ShowSuccessToast('Added Event Successfully')
 
 // ** Update Event
 export const updateEvent = createAsyncThunk('appCalendar/updateEvent', async (event, { dispatch }) => {
-  try{
-    const response = await axiosInstance.put(`/api/events/${event.id}`,    event, {
+  try {
+    const response = await axiosInstance.put(`/api/events/${event.id}`, event, {
       headers: {
         accept: 'application/json',
         'Content-Type': 'multipart/form-data'
       }
     })
     await dispatch(fetchEvents())
-  ShowSuccessToast('Updated Event Successfully')
-
-
-  }catch(error)
-  {
-    ShowErrorToast(error.response.data.title ||error.response.data)
-
+    ShowSuccessToast('Updated Event Successfully')
+  } catch (error) {
+    ShowErrorToast(error.response.data.title || error.response.data)
   }
 
   return response.data.event
@@ -105,27 +100,39 @@ export const updateEvent = createAsyncThunk('appCalendar/updateEvent', async (ev
 
 // ** Delete Event
 export const deleteEvent = createAsyncThunk('appCalendar/deleteEvent', async (id, { dispatch }) => {
-  try{
-    const response = await axiosInstance.delete(`/api/events/${id}`, {
-    })
+  try {
+    const response = await axiosInstance.delete(`/api/events/${id}`, {})
     await dispatch(fetchEvents())
-  ShowSuccessToast('Delete Event Successfully')
-  }catch(error)
-  {
-ShowErrorToast(error.response.data)
+    ShowSuccessToast('Delete Event Successfully')
+  } catch (error) {
+    ShowErrorToast(error.response.data)
   }
 
   return response.data
 })
 
+export const fetchCoursesCalendar = createAsyncThunk(
+  'appCalendar/fetchCoursesCalendar',
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(`/api/Courses/GetCoursesNameForCalendar?search=${data}`, {})
+      return response.data
+    } catch (error) {
+      ShowErrorToast(error.response?.data || error.message)
+      return rejectWithValue(error.response?.data || error.message)
+    }
+  }
+)
+
 export const appCalendarSlice = createSlice({
   name: 'appCalendar',
   initialState: {
     events: [],
-    types:[],
+    types: [],
     selectedEvent: null,
-    eventcourse:[],
-    selectedCalendars: []
+    eventcourse: [],
+    selectedCalendars: [],
+    data: []
   },
   reducers: {
     handleSelectEvent: (state, action) => {
@@ -156,11 +163,15 @@ export const appCalendarSlice = createSlice({
     builder.addCase(fetchEvents.fulfilled, (state, action) => {
       state.events = action.payload
     })
-     builder.addCase(fetchCourseForCalender.fulfilled, (state, action) => {
+    builder.addCase(fetchCourseForCalender.fulfilled, (state, action) => {
       state.eventcourse = action.payload
     })
+
     builder.addCase(fetchEventsTypes.fulfilled, (state, action) => {
       state.types = action.payload
+    })
+    builder.addCase(fetchCoursesCalendar.fulfilled, (state, action) => {
+      state.data = action.payload
     })
   }
 })

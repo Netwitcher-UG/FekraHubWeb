@@ -11,7 +11,6 @@ export const fetchCourses = createAsyncThunk('courses/fetchCourses', async (data
 
     return response.data
   } catch (error) {
-    ShowErrorToast(error.response?.data || error.message)
     return rejectWithValue(error.response?.data || error.message)
   }
 })
@@ -128,13 +127,11 @@ export const addCourses = createAsyncThunk('courses/addCourses', async (data, { 
     })
     ShowSuccessToast('Success')
     await dispatch(fetchCourses(''))
-
   } catch (errors) {
-    console.log("🚀 ~ addCourses ~ errors:", errors)
+    console.log('🚀 ~ addCourses ~ errors:', errors)
     //ShowErrorToast(errors.response?.data || errors.message)
-    ShowErrorToast(errors.response.data.title || errors.response.data  )
+    ShowErrorToast(errors.response.data.title || errors.response.data)
   }
-
 })
 
 // ** Edit Courses
@@ -146,14 +143,13 @@ export const editCourses = createAsyncThunk('courses/editCourses', async (data, 
         'Content-Type': 'application/json'
       }
     })
-     await dispatch(fetchCourses(''))
-     ShowSuccessToast('Success')
+    await dispatch(fetchCourses(''))
+    ShowSuccessToast('Success')
   } catch (errors) {
     ShowErrorToast(errors.response?.data.title || errors.message)
     return rejectWithValue(errors.response?.data || errors.message)
   }
   return response.data
-
 })
 
 // delete Courses
@@ -187,7 +183,7 @@ const CoursesSlice = createSlice({
     TeacherStatus: 'idle',
     error: null,
     deleteStatus: 'idle',
-    loading:false,
+    loading: false,
     CourseSchedule: [],
     deleteError: null
   },

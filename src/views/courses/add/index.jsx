@@ -404,76 +404,72 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
           {step === 2 && (
             <>
               {fields.map((field, index) => (
-                 <Grid container spacing={2} >
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <Controller
+                      name={`courseSchedule.${index}.dayOfWeek`}
+                      control={control}
+                      render={({ field: { onChange, value, ref } }) => (
+                        <Autocomplete
+                          options={DaysOfWeeks}
+                          getOptionLabel={option => option || ''}
+                          renderInput={params => (
+                            <CustomTextField
+                              {...params}
+                              label={t('Day of the Week')}
+                              variant='outlined'
+                              inputRef={ref}
+                              error={!!errors.courseSchedule?.[index]?.dayOfWeek}
+                              helperText={errors.courseSchedule?.[index]?.dayOfWeek.message}
+                            />
+                          )}
+                          onChange={(event, newValue) => {
+                            onChange(newValue ? newValue : '')
+                          }}
+                          value={DaysOfWeeks.find(t => t === value) || null}
+                        />
+                      )}
+                    />
+                  </Grid>
 
+                  <Grid item xs={12}>
+                    <Controller
+                      name={`courseSchedule.${index}.startTime`}
+                      control={control}
+                      render={({ field }) => (
+                        <CustomTextField
+                          {...field}
+                          fullWidth
+                          type='time'
+                          label={`${t('Start Time')} ${index + 1}`}
+                          error={!!errors.courseSchedule?.[index]?.startTime}
+                          helperText={errors.courseSchedule?.[index]?.startTime.message}
+                        />
+                      )}
+                    />
+                  </Grid>
 
-                <Grid item xs={12}>
-                      <Controller
-                        name={`courseSchedule.${index}.dayOfWeek`}
-                        control={control}
-                        render={({ field: { onChange, value, ref } }) => (
-                          <Autocomplete
-                            options={DaysOfWeeks}
-                            getOptionLabel={option => option || ''}
-                            renderInput={params => (
-                              <CustomTextField
-                                {...params}
-                                label={t('Day of the Week')}
-                                variant='outlined'
-                                inputRef={ref}
-                                error={!!errors.courseSchedule?.[index]?.dayOfWeek}
-                                helperText={errors.courseSchedule?.[index]?.dayOfWeek.message}
-                              />
-                            )}
-                            onChange={(event, newValue) => {
-                              onChange(newValue ? newValue : '')
-                            }}
-                            value={DaysOfWeeks.find(t => t === value) || null}
-                          />
-                        )}
-                      />
-                   </Grid>
-
-                   <Grid item xs={12}>
-                      <Controller
-                        name={`courseSchedule.${index}.startTime`}
-                        control={control}
-                        render={({ field }) => (
-                          <CustomTextField
-                            {...field}
-                            fullWidth
-                            type='time'
-                            label={`${t('Start Time')} ${index + 1}`}
-                            error={!!errors.courseSchedule?.[index]?.startTime}
-                            helperText={errors.courseSchedule?.[index]?.startTime.message}
-                          />
-                        )}
-                      />
-                    </Grid>
-
-                    <Grid item xs={12}>
-                      <Controller
-                        name={`courseSchedule.${index}.endTime`}
-                        control={control}
-                        render={({ field }) => (
-                          <CustomTextField
-                            {...field}
-                            fullWidth
-                            type='time'
-                            label={`${t('End Time')} ${index + 1}`}
-                            error={!!errors.courseSchedule?.[index]?.endTime}
-                            helperText={errors.courseSchedule?.[index]?.endTime?.message}
-                          />
-                        )}
-                      />
-                   </Grid>
-                   <Grid item xs={12}>
+                  <Grid item xs={12}>
+                    <Controller
+                      name={`courseSchedule.${index}.endTime`}
+                      control={control}
+                      render={({ field }) => (
+                        <CustomTextField
+                          {...field}
+                          fullWidth
+                          type='time'
+                          label={`${t('End Time')} ${index + 1}`}
+                          error={!!errors.courseSchedule?.[index]?.endTime}
+                          helperText={errors.courseSchedule?.[index]?.endTime?.message}
+                        />
+                      )}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
                     <Button sx={{ marginLeft: '16px' }} variant='text' color='error' onClick={() => remove(index)}>
                       {t('Remove')}
                     </Button>
-                    </Grid>
-
-
+                  </Grid>
                 </Grid>
               ))}
 
