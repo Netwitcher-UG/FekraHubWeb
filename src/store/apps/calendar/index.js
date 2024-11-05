@@ -70,7 +70,7 @@ export const addEvent = createAsyncThunk('appCalendar/addEvent', async (event, {
         'Content-Type': 'multipart/form-data'
       }
     })
-    await dispatch(fetchEvents())
+    await dispatch(fetchCoursesCalendar())
     ShowSuccessToast('Added Event Successfully')
   } catch (error) {
     console.log('🚀 ~ addEvent ~ error:', error)
@@ -89,7 +89,7 @@ export const updateEvent = createAsyncThunk('appCalendar/updateEvent', async (ev
         'Content-Type': 'multipart/form-data'
       }
     })
-    await dispatch(fetchEvents())
+    await dispatch(fetchCoursesCalendar())
     ShowSuccessToast('Updated Event Successfully')
   } catch (error) {
     ShowErrorToast(error.response.data.title || error.response.data)
@@ -102,7 +102,7 @@ export const updateEvent = createAsyncThunk('appCalendar/updateEvent', async (ev
 export const deleteEvent = createAsyncThunk('appCalendar/deleteEvent', async (id, { dispatch }) => {
   try {
     const response = await axiosInstance.delete(`/api/events/${id}`, {})
-    await dispatch(fetchEvents())
+    await dispatch(fetchCoursesCalendar())
     ShowSuccessToast('Delete Event Successfully')
   } catch (error) {
     ShowErrorToast(error.response.data)

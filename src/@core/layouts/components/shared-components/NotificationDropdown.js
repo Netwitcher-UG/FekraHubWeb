@@ -1,5 +1,3 @@
-
-
 import { useState, Fragment } from 'react'
 
 // ** MUI Imports
@@ -14,7 +12,7 @@ import MuiMenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
@@ -121,8 +119,8 @@ const NotificationDropdown = props => {
 
   // Function to handle notification click
   const handleNotificationClick = notification => {
-     dispatch(ReadNotification(`id=${notification.id}&AllRead=false`))
-    router.push('/app'+notification.url)
+    dispatch(ReadNotification(`id=${notification.id}&AllRead=false`))
+    router.push(notification.url)
     handleDropdownClose()
   }
 
@@ -137,34 +135,32 @@ const NotificationDropdown = props => {
   }
 
   const RenderAvatar = ({ notification }) => {
-    console.log("🚀 ~ RenderAvatar ~ notification:", notification)
-    const { avatarAlt, avatarImg, avatarIcon, avatarText, avatarColor, notificationType } = notification;
+    console.log('🚀 ~ RenderAvatar ~ notification:', notification)
+    const { avatarAlt, avatarImg, avatarIcon, avatarText, avatarColor, notificationType } = notification
 
     if (avatarImg) {
-      return <CalendarMonthIcon/>;
+      return <CalendarMonthIcon />
     } else if (avatarIcon) {
-      return (
-        <CalendarMonthIcon/>
-      );
+      return <CalendarMonthIcon />
     } else {
       // Determine icon based on notificationType
-      let icon = null;
+      let icon = null
       switch (notificationType) {
         case 'event':
-          icon = <CalendarTodayIcon />; // Replace with your desired Calendar Icon
-          break;
+          icon = <CalendarTodayIcon /> // Replace with your desired Calendar Icon
+          break
         // Add more cases for other notification types...
         default:
-          icon = getInitials(avatarText);
+          icon = getInitials(avatarText)
       }
 
       return (
-        <Avatar skin="light" color={avatarColor}>
-          <CalendarMonthIcon/>
+        <Avatar skin='light' color={avatarColor}>
+          <CalendarMonthIcon />
         </Avatar>
-      );
+      )
     }
-  };
+  }
 
   return (
     <Fragment>
@@ -239,15 +235,17 @@ const NotificationDropdown = props => {
   )
 
   function footer() {
-    return <Badge
-      color='error'
-      badgeContent={notifications.unReadCount}
-      sx={{
-        '& .MuiBadge-badge': { top: 4, right: 4 }
-      }}
-    >
-      <Icon fontSize='1.625rem' icon='tabler:bell' />
-    </Badge>
+    return (
+      <Badge
+        color='error'
+        badgeContent={notifications.unReadCount}
+        sx={{
+          '& .MuiBadge-badge': { top: 4, right: 4 }
+        }}
+      >
+        <Icon fontSize='1.625rem' icon='tabler:bell' />
+      </Badge>
+    )
   }
 }
 
