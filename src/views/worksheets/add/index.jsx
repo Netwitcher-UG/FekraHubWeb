@@ -105,7 +105,7 @@ const AddWorksheets = ({ dataUploadType, data }) => {
       formData.append('files', selectedFiles[i]) // Append each file, 'files[]' indicates an array
     }
     try {
-      await dispatch(addWorksheet(formData))
+      dispatch(addWorksheet(formData))
       handleClose()
       reset()
       setSelectedFiles(null)
@@ -248,7 +248,7 @@ const AddWorksheets = ({ dataUploadType, data }) => {
               </Grid>
             </Grid>
             <Stack direction={'row'} alignItems={'center'} justifyContent={'center'} spacing={5} marginTop={'2rem'}>
-              <Button disabled={selectedFiles.length === 0} type='submit' variant='contained'>
+              <Button disabled={selectedFiles?.length === 0} type='submit' variant='contained'>
                 <Translations text={'Add Course Files'} />
               </Button>
               <Button type='button' variant='outlined' onClick={handleClose}>

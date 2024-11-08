@@ -26,7 +26,7 @@ export const addWorksheet = createAsyncThunk('worksheet/addWorksheet', async (da
     return response.data
   } catch (errors) {
     ShowErrorToast('Error')
-    return rejectWithValue(errors.response?.data || errors.message)
+    return rejectWithValue(errors.message || errors.response?.data || 'error')
   }
 })
 

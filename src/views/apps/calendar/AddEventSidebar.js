@@ -31,6 +31,7 @@ import { FormateDateTime } from 'src/@core/utils/DateTimeFormat'
 import { FormateDate } from 'src/@core/utils/DateFormate'
 import { Autocomplete } from '@mui/material'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
+import Translations from 'src/layouts/components/Translations'
 
 const defaultState = {
   url: '',
@@ -61,7 +62,7 @@ const AddEventSidebar = props => {
 
   // ** States
   const [values, setValues] = useState(defaultState)
-const ability = useContext(AbilityContext)
+  const ability = useContext(AbilityContext)
   const {
     control,
     setValue,
@@ -81,7 +82,6 @@ const ability = useContext(AbilityContext)
   const { data: CourseSchedule } = useSelector(state => state.courses)
 
   useEffect(() => {
-    
     dispatch(fetchEventsTypes())
     dispatch(fetchCourses(''))
   }, [dispatch])
@@ -177,10 +177,10 @@ const ability = useContext(AbilityContext)
       return (
         <Fragment>
           <Button type='submit' variant='contained' sx={{ mr: 4 }}>
-            Add
+            <Translations text={'Add'} />
           </Button>
           <Button variant='tonal' color='secondary' onClick={resetToEmptyValues}>
-            Reset
+            <Translations text={'Cancel'} />
           </Button>
         </Fragment>
       )
@@ -188,10 +188,10 @@ const ability = useContext(AbilityContext)
       return (
         <Fragment>
           <Button type='submit' variant='contained' sx={{ mr: 4 }}>
-            Update
+            <Translations text={'update'} />
           </Button>
           <Button variant='tonal' color='secondary' onClick={resetToStoredValues}>
-            Reset
+            <Translations text={'cancel'} />
           </Button>
         </Fragment>
       )
@@ -215,7 +215,11 @@ const ability = useContext(AbilityContext)
         }}
       >
         <Typography variant='h5'>
-          {store.selectedEvent !== null && store.selectedEvent.title.length ? 'Update Event' : 'Add Event'}
+          {store.selectedEvent !== null && store.selectedEvent.title.length ? (
+            <Translations text={'Edit'} />
+          ) : (
+            <Translations text={'AddEvent'} />
+          )}
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {store.selectedEvent !== null && store.selectedEvent.title.length ? (

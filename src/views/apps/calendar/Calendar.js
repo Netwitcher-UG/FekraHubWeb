@@ -46,6 +46,15 @@ const Calendar = ({
   console.log('🚀 ~ ability:', ability)
   // ** Initialize calendarApi and ensure cleanup on unmount
   useEffect(() => {
+    // Assuming you have the start and end dates available
+    const arg = {
+      startStr: new Date(), // Replace with your actual start date
+      endStr: new Date(new Date().setMonth(new Date().getMonth() + 1)) // Example: 1 month ahead
+    }
+    handleDatesSet(arg)
+  }, [store.selectedCalendars])
+
+  useEffect(() => {
     const calendarApi = calendarRef.current?.getApi()
     if (calendarApi) {
       setCalendarApi(calendarApi)
@@ -72,7 +81,7 @@ const Calendar = ({
         url: ability.can('manage', 'Event')
           ? '/api/Courses/CourseEventForCalender'
           : '/api/Courses/CourseEventForCalender',
-        selectedCalendars: '',
+        selectedCalendars: store.selectedCalendars,
         from: fromYearMonth,
         to: toYearMonth
       })

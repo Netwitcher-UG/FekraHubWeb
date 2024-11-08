@@ -15,6 +15,7 @@ import { CircularProgress, TextField } from '@mui/material'
 import CustomTextField from 'src/@core/components/mui/text-field'
 import { fetchCoursesCalendar } from 'src/store/apps/calendar'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
+import Translations from 'src/layouts/components/Translations'
 
 const SidebarLeft = props => {
   const {
@@ -114,7 +115,7 @@ const SidebarLeft = props => {
         {ability.can('create', 'Event') ? (
           <Button fullWidth variant='contained' sx={{ '& svg': { mr: 2 } }} onClick={handleSidebarToggleSidebar}>
             <Icon icon='tabler:plus' fontSize='1.125rem' />
-            Add Event
+            <Translations text={'AddEvent'} />
           </Button>
         ) : null}
       </Box>
