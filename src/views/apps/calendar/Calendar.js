@@ -194,8 +194,27 @@ const Calendar = ({
     eventContent: function (arg) {
       return (
         <>
-          <b>{arg.event.title}</b>
-          <div>{arg.event.extendedProps?.eventType ? ' / ' + arg.event.extendedProps?.eventType : null}</div>
+          <b
+            style={{
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: 'inline-block',
+              maxWidth: '150px' // Adjust width as needed
+            }}
+          >
+            {arg.event.title}
+          </b>
+          <div
+            style={{
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              maxWidth: '150px' // Adjust width as needed
+            }}
+          >
+            {arg.event.extendedProps?.eventType ? ' / ' + arg.event.extendedProps.eventType : null}
+          </div>
         </>
       )
     },

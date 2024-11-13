@@ -6,10 +6,10 @@ import CircularProgress from '@mui/material/CircularProgress'
 import CustomDialogDelete from 'src/@core/components/custom-delete'
 import useWorksheetsColumns from '../hook/useWorksheetsColumns'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchCourses } from 'src/store/apps/courses'
 import ViewWorksheet from '../view'
 import { useTranslation } from 'react-i18next'
 import AddWorksheets from '../add'
+import { fetchCourses } from 'src/store/apps/students'
 
 export default function WorksheetsDataGrid({ rows, SetSearch, status, dataUploadType }) {
   const {
@@ -25,7 +25,7 @@ export default function WorksheetsDataGrid({ rows, SetSearch, status, dataUpload
     setSelectedFile
   } = useWorksheetsColumns()
   const { t } = useTranslation()
-  const { data, error } = useSelector(state => state.courses)
+  const { coursesData, error } = useSelector(state => state.students)
 
   const dispatch = useDispatch()
 
@@ -49,7 +49,7 @@ export default function WorksheetsDataGrid({ rows, SetSearch, status, dataUpload
               justifyContent: 'flex-end'
             }}
           >
-            <AddWorksheets dataUploadType={dataUploadType} data={data} />
+            <AddWorksheets dataUploadType={dataUploadType} data={coursesData} />
           </Box>
         </Stack>
         <Box sx={{ height: 'calc(100vh - 255px)' }}>
