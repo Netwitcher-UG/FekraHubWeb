@@ -7,8 +7,9 @@ const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
 
-  backgroundColor: theme.palette.mode === 'dark' ? '#333333' : '#F1F1F1',
+  // backgroundColor: theme.palette.mode === 'dark' ? '#333333' : '#F1F1F1',
   maxWidth: '432px',
+  border: '1px solid #A8AAAE',
 
   marginRight: theme.spacing(2),
   marginLeft: 0,
