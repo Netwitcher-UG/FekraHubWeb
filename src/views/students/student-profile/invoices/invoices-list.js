@@ -36,7 +36,7 @@ const InvoicesList = ({ invoicesData, student, loading, byParent }) => {
           {' '}
           <Translations text={'No invoices yet'} />{' '}
         </Alert>
-        <Add student={student} />
+        {byParent ? null : <Add student={student} />}
       </Grid>
     )
 
