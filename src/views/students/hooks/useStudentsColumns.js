@@ -5,6 +5,7 @@ import Icon from 'src/@core/components/icon'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 import { convertDate } from 'src/@core/utils/convert-date'
 import IconButton from '@mui/material/IconButton'
+import Typography from '@mui/material/Typography'
 const useStudentsColumns = () => {
   const handleAddReportClick = (e, row) => {
     e.stopPropagation()
@@ -66,7 +67,14 @@ const useStudentsColumns = () => {
         width: 200,
         headerName: <Translations text={'Course'} />,
         field: 'course.name',
-        renderCell: ({ row }) => <Chip label={row.course.name} color={'primary'} sx={{ textTransform: 'capitalize' }} />
+        renderCell: ({ row }) =>
+          row.course?.name ? (
+            <Chip label={row.course?.name} color={'primary'} sx={{ textTransform: 'capitalize' }} />
+          ) : (
+            <Typography variant='body2' color={'error'} sx={{ textTransform: 'capitalize' }}>
+              No Course
+            </Typography>
+          )
       },
       {
         width: 200,
