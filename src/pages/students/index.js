@@ -54,6 +54,7 @@ const StudentsList = () => {
             selectedCourse={selectedCourse}
             setSelectedCourse={setSelectedCourse}
             handleRowClick={handleRowClick}
+            pageSize={pageSize}
           />
           <Divider sx={{ m: '0 !important' }} />
           <StudentsPaginate
