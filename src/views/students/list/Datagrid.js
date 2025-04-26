@@ -38,14 +38,21 @@ const StudentsDataGrid = ({
   selectedCourse,
   setSelectedCourse,
   handleRowClick,
-  setCurrentPage
+  currentPage,
+  setCurrentPage,
+  pageSize
 }) => {
   const handleCourseChange = (event, newValue) => {
     setCurrentPage(1)
     setSelectedCourse(newValue ? newValue.value : '')
   }
   const { t } = useTranslation()
-  const { columns, open, drawerData, handleCloseDrawer } = useStudentsColumns()
+  const { columns, open, drawerData, handleCloseDrawer } = useStudentsColumns({
+    courses: store?.coursesData,
+    selectedCourse,
+    currentPage,
+    pageSize
+  })
 
   useEffect(() => {
     const timer = setTimeout(() => {

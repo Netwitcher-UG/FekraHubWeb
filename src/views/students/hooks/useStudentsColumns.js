@@ -6,7 +6,14 @@ import { AbilityContext } from 'src/layouts/components/acl/Can'
 import { convertDate } from 'src/@core/utils/convert-date'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
-const useStudentsColumns = () => {
+import { useDispatch } from 'react-redux'
+import { updateStudentCourse } from 'src/store/apps/students'
+import Box from '@mui/material/Box'
+import Autocomplete from '@mui/material/Autocomplete'
+import TextField from '@mui/material/TextField'
+
+const useStudentsColumns = ({ courses, selectedCourse, currentPage, pageSize }) => {
+  console.log(courses)
   const handleAddReportClick = (e, row) => {
     e.stopPropagation()
     handleOpenDrawer(row)
@@ -14,7 +21,10 @@ const useStudentsColumns = () => {
 
   const [open, setOpen] = useState(false)
   const [drawerData, setDrawerData] = useState(null)
+  const [editingCourse, setEditingCourse] = useState(null)
+  const [selectedNewCourse, setSelectedNewCourse] = useState(null)
   const ability = useContext(AbilityContext)
+  const dispatch = useDispatch()
 
   const handleOpenDrawer = useCallback(data => {
     setDrawerData(data)
@@ -24,6 +34,48 @@ const useStudentsColumns = () => {
   const handleCloseDrawer = useCallback(() => {
     setOpen(false)
     setDrawerData(null)
+  }, [])
+
+  const handleEditCourse = useCallback((e, rowId, currentCourse) => {
+    e.stopPropagation()
+    setEditingCourse(rowId)
+    if (currentCourse) {
+      setSelectedNewCourse({
+        value: currentCourse.id,
+        label: currentCourse.name
+      })
+    }
+  }, [])
+
+  const handleCourseChange = useCallback((e, newValue) => {
+    setSelectedNewCourse(newValue)
+  }, [])
+
+  const handleSaveCourse = useCallback(
+    (e, studentId) => {
+      e.stopPropagation()
+      if (selectedNewCourse) {
+        dispatch(
+          updateStudentCourse({
+            studentId,
+            courseId: selectedNewCourse.value,
+            currentPage,
+            pageSize,
+            search: '',
+            course: selectedCourse
+          })
+        )
+      }
+      setEditingCourse(null)
+      setSelectedNewCourse(null)
+    },
+    [dispatch, selectedNewCourse, currentPage, pageSize, selectedCourse]
+  )
+
+  const handleCancelCourseEdit = useCallback(e => {
+    e.stopPropagation()
+    setEditingCourse(null)
+    setSelectedNewCourse(null)
   }, [])
 
   const columns = useMemo(
@@ -64,17 +116,49 @@ const useStudentsColumns = () => {
         field: 'nationality'
       },
       {
-        width: 200,
+        width: 300,
         headerName: <Translations text={'Course'} />,
         field: 'course.name',
-        renderCell: ({ row }) =>
-          row.course?.name ? (
-            <Chip label={row.course?.name} color={'primary'} sx={{ textTransform: 'capitalize' }} />
-          ) : (
-            <Typography variant='body2' color={'error'} sx={{ textTransform: 'capitalize' }}>
-              No Course
-            </Typography>
+        renderCell: ({ row }) => {
+          if (editingCourse === row.id) {
+            return (
+              <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                <Autocomplete
+                  size='small'
+                  options={courses?.map(course => ({ value: course.id, label: course.name }))}
+                  getOptionLabel={option => option.label}
+                  value={selectedNewCourse}
+                  onChange={handleCourseChange}
+                  sx={{ width: '70%', mr: 1 }}
+                  renderInput={params => <TextField {...params} size='small' onClick={e => e.stopPropagation()} />}
+                />
+                <IconButton color='success' onClick={e => handleSaveCourse(e, row.id)} sx={{ ml: 1 }}>
+                  <Icon icon='mdi:check' fontSize={20} />
+                </IconButton>
+                <IconButton color='error' onClick={handleCancelCourseEdit}>
+                  <Icon icon='mdi:close' fontSize={20} />
+                </IconButton>
+              </Box>
+            )
+          }
+
+          return (
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              {row.course?.name ? (
+                <Chip label={row.course?.name} color={'primary'} sx={{ textTransform: 'capitalize' }} />
+              ) : (
+                <Typography variant='body2' color={'error'} sx={{ textTransform: 'capitalize' }}>
+                  No Course
+                </Typography>
+              )}
+              {ability.can('update', 'StudentCourse') && (
+                <IconButton color='secondary' onClick={e => handleEditCourse(e, row.id, row.course)} sx={{ ml: 2 }}>
+                  <Icon icon='mdi:pencil' fontSize={20} />
+                </IconButton>
+              )}
+            </Box>
           )
+        }
       },
       {
         width: 200,
@@ -107,10 +191,19 @@ const useStudentsColumns = () => {
         field: 'note'
       }
     ],
-    []
+    [
+      ability,
+      courses,
+      editingCourse,
+      selectedNewCourse,
+      handleEditCourse,
+      handleSaveCourse,
+      handleCancelCourseEdit,
+      handleAddReportClick
+    ]
   )
 
-  return { columns, open, drawerData, handleCloseDrawer, handleCloseDrawer }
+  return { columns, open, drawerData, handleCloseDrawer }
 }
 
 export default useStudentsColumns

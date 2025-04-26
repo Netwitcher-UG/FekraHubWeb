@@ -94,6 +94,34 @@ export const updateChildInfo = createAsyncThunk('appStudents/updateChildInfo', a
     return error.response
   }
 })
+
+export const updateStudentCourse = createAsyncThunk('appStudents/updateStudentCourse', async (data, thunkAPI) => {
+  try {
+    const response = await axiosInstance.patch(
+      '/api/Student/UpdateCourseStudent',
+      {
+        CourseId: data?.courseId,
+        StudentId: data?.studentId
+      },
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+    )
+    thunkAPI.dispatch(
+      fetchStudents({
+        search: data?.search || '',
+        course: data?.course,
+        PageNumber: data?.currentPage || 1,
+        PageSize: data?.pageSize || 10
+      })
+    )
+    return response
+  } catch (error) {
+    return error.response
+  }
+})
 export const appStudentsSlice = createSlice({
   name: 'appStudents',
   initialState: {
