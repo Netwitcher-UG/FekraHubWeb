@@ -11,9 +11,10 @@ import { updateStudentCourse } from 'src/store/apps/students'
 import Box from '@mui/material/Box'
 import Autocomplete from '@mui/material/Autocomplete'
 import TextField from '@mui/material/TextField'
+import { useTranslation } from 'react-i18next'
 
 const useStudentsColumns = ({ courses, selectedCourse, currentPage, pageSize }) => {
-  console.log(courses)
+  // console.log(courses)
   const handleAddReportClick = (e, row) => {
     e.stopPropagation()
     handleOpenDrawer(row)
@@ -25,6 +26,7 @@ const useStudentsColumns = ({ courses, selectedCourse, currentPage, pageSize }) 
   const [selectedNewCourse, setSelectedNewCourse] = useState(null)
   const ability = useContext(AbilityContext)
   const dispatch = useDispatch()
+  const { t } = useTranslation()
 
   const handleOpenDrawer = useCallback(data => {
     setDrawerData(data)
@@ -148,7 +150,7 @@ const useStudentsColumns = ({ courses, selectedCourse, currentPage, pageSize }) 
                 <Chip label={row.course?.name} color={'primary'} sx={{ textTransform: 'capitalize' }} />
               ) : (
                 <Typography variant='body2' color={'error'} sx={{ textTransform: 'capitalize' }}>
-                  No Course
+                  {t('No Course')}
                 </Typography>
               )}
               {ability.can('update', 'StudentCourse') && (
