@@ -27,6 +27,7 @@ import { Box } from '@mui/system'
 import { useTranslation } from 'react-i18next'
 import DatePicker from 'react-datepicker'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
+import { setHours, setMinutes } from 'date-fns'
 
 const CustomCloseButton = styled(IconButton)(({ theme }) => ({
   top: 0,
@@ -124,8 +125,6 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
     dispatch(fetchLocation(''))
     dispatch(FetchCourseScheduleDaysOfWeek(''))
   }, [dispatch])
-  const [date, setDate] = useState(new Date())
-  const [end_date, setEndDate] = useState(new Date())
 
   const defaultValues = {
     LocationId: '',
@@ -162,6 +161,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
   })
 
   const handleSaveData = data => {
+    console.log('🚀 ~ handleSaveData ~ data:', data)
     dispatch(addCourses(data))
 
     handleClose()
@@ -364,15 +364,22 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                     control={control}
                     render={({ field }) => (
                       <DatePicker
-                        selected={date}
+                        selected={field.value ? new Date(field.value) : null}
                         dateFormat='dd-MM-yyyy'
                         id='date-picker-months'
                         onChange={date => {
-                          setDate(date)
                           field.onChange(date)
                         }}
+                        isClearable
                         placeholderText={t('Click to select a date')}
-                        customInput={<CustomTextField label={t('Start Date')} fullWidth />}
+                        customInput={
+                          <CustomTextField 
+                            label={t('Start Date')} 
+                            fullWidth 
+                            error={!!errors.course?.startDate}
+                            helperText={errors.course?.startDate?.message}
+                          />
+                        }
                       />
                     )}
                   />
@@ -385,15 +392,22 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                     control={control}
                     render={({ field }) => (
                       <DatePicker
-                        selected={end_date}
+                        selected={field.value ? new Date(field.value) : null}
                         dateFormat='dd-MM-yyyy'
                         id='date-picker-months'
                         onChange={date => {
-                          setEndDate(date)
                           field.onChange(date)
                         }}
+                        isClearable
                         placeholderText={t('Click to select a end date')}
-                        customInput={<CustomTextField label={t('End Date')} fullWidth />}
+                        customInput={
+                          <CustomTextField 
+                            label={t('End Date')} 
+                            fullWidth 
+                            error={!!errors.course?.endDate}
+                            helperText={errors.course?.endDate?.message}
+                          />
+                        }
                       />
                     )}
                   />
@@ -404,7 +418,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
           {step === 2 && (
             <>
               {fields.map((field, index) => (
-                <Grid container spacing={2}>
+                <Grid container spacing={2} key={field.id}>
                   <Grid item xs={12}>
                     <Controller
                       name={`courseSchedule.${index}.dayOfWeek`}
@@ -420,7 +434,7 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                               variant='outlined'
                               inputRef={ref}
                               error={!!errors.courseSchedule?.[index]?.dayOfWeek}
-                              helperText={errors.courseSchedule?.[index]?.dayOfWeek.message}
+                              helperText={errors.courseSchedule?.[index]?.dayOfWeek?.message}
                             />
                           )}
                           onChange={(event, newValue) => {
@@ -433,38 +447,87 @@ const AddCourses = ({ dataRooms, dataTeacher }) => {
                   </Grid>
 
                   <Grid item xs={12}>
-                    <Controller
-                      name={`courseSchedule.${index}.startTime`}
-                      control={control}
-                      render={({ field }) => (
-                        <CustomTextField
-                          {...field}
-                          fullWidth
-                          type='time'
-                          label={`${t('Start Time')} ${index + 1}`}
-                          error={!!errors.courseSchedule?.[index]?.startTime}
-                          helperText={errors.courseSchedule?.[index]?.startTime.message}
-                        />
-                      )}
-                    />
+                    <DatePickerWrapper>
+                      <Controller
+                        name={`courseSchedule.${index}.startTime`}
+                        control={control}
+                        render={({ field }) => (
+                          <DatePicker
+                            selected={field.value ? new Date(`1970-01-01T${field.value}`) : null}
+                            onChange={date => {
+                              if (date) {
+                                const timeString = date.toLocaleTimeString('en-US', { 
+                                  hour12: false,
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })
+                                field.onChange(timeString)
+                              } else {
+                                field.onChange('')
+                              }
+                            }}
+                            showTimeSelect
+                            showTimeSelectOnly
+                            timeIntervals={15}
+                            timeCaption="Time"
+                            dateFormat="HH:mm"
+                            isClearable
+                            placeholderText="Select time"
+                            customInput={
+                              <CustomTextField
+                                fullWidth
+                                label={`${t('Start Time')} ${index + 1}`}
+                                error={!!errors.courseSchedule?.[index]?.startTime}
+                                helperText={errors.courseSchedule?.[index]?.startTime?.message}
+                              />
+                            }
+                          />
+                        )}
+                      />
+                    </DatePickerWrapper>
                   </Grid>
 
                   <Grid item xs={12}>
-                    <Controller
-                      name={`courseSchedule.${index}.endTime`}
-                      control={control}
-                      render={({ field }) => (
-                        <CustomTextField
-                          {...field}
-                          fullWidth
-                          type='time'
-                          label={`${t('End Time')} ${index + 1}`}
-                          error={!!errors.courseSchedule?.[index]?.endTime}
-                          helperText={errors.courseSchedule?.[index]?.endTime?.message}
-                        />
-                      )}
-                    />
+                    <DatePickerWrapper>
+                      <Controller
+                        name={`courseSchedule.${index}.endTime`}
+                        control={control}
+                        render={({ field }) => (
+                          <DatePicker
+                            selected={field.value ? new Date(`1970-01-01T${field.value}`) : null}
+                            onChange={date => {
+                              if (date) {
+                                const timeString = date.toLocaleTimeString('en-US', { 
+                                  hour12: false,
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })
+                                field.onChange(timeString)
+                              } else {
+                                field.onChange('')
+                              }
+                            }}
+                            showTimeSelect
+                            showTimeSelectOnly
+                            timeIntervals={15}
+                            timeCaption="Time"
+                            dateFormat="HH:mm"
+                            isClearable
+                            placeholderText="Select time"
+                            customInput={
+                              <CustomTextField
+                                fullWidth
+                                label={`${t('End Time')} ${index + 1}`}
+                                error={!!errors.courseSchedule?.[index]?.endTime}
+                                helperText={errors.courseSchedule?.[index]?.endTime?.message}
+                              />
+                            }
+                          />
+                        )}
+                      />
+                    </DatePickerWrapper>
                   </Grid>
+
                   <Grid item xs={12}>
                     <Button sx={{ marginLeft: '16px' }} variant='text' color='error' onClick={() => remove(index)}>
                       {t('Remove')}
