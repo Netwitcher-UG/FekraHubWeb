@@ -102,7 +102,6 @@ const ScrollWrapper = ({ children, hidden }) => {
 const NotificationDropdown = props => {
   // ** Props
   const { settings, notifications } = props
-  console.log('🚀 ~ NotificationDropdown ~ notifications:', notifications?.notifications)
 
   // ** States
   const [anchorEl, setAnchorEl] = useState(null)
@@ -135,7 +134,6 @@ const NotificationDropdown = props => {
   }
 
   const RenderAvatar = ({ notification }) => {
-    console.log('🚀 ~ RenderAvatar ~ notification:', notification)
     const { avatarAlt, avatarImg, avatarIcon, avatarText, avatarColor, notificationType } = notification
 
     if (avatarImg) {

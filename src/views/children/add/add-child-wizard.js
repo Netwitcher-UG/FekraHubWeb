@@ -6,13 +6,18 @@ import { useRouter } from 'next/router'
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
-import Step from '@mui/material/Step'
+import Alert from '@mui/material/Alert'
 import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
-import Divider from '@mui/material/Divider'
-import Stepper from '@mui/material/Stepper'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContentText from '@mui/material/DialogContentText'
+// import Divider from '@mui/material/Divider'
+// import Stepper from '@mui/material/Stepper'
 import MenuItem from '@mui/material/MenuItem'
-import StepLabel from '@mui/material/StepLabel'
+// import StepLabel from '@mui/material/StepLabel'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import DatePicker from 'react-datepicker'
@@ -20,13 +25,13 @@ import CustomAvatar from 'src/@core/components/mui/avatar'
 import countryList from 'react-select-country-list'
 import { Autocomplete } from '@mui/material'
 
-import Checkbox from '@mui/material/Checkbox'
-import FormControlLabel from '@mui/material/FormControlLabel'
+// import Checkbox from '@mui/material/Checkbox'
+// import FormControlLabel from '@mui/material/FormControlLabel'
 
 import { useTranslation } from 'react-i18next'
 import Translations from 'src/layouts/components/Translations'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
-import CircularProgress from '@mui/material/CircularProgress'
+// import CircularProgress from '@mui/material/CircularProgress'
 
 // ** Third Party Imports
 import * as yup from 'yup'
@@ -40,11 +45,11 @@ import CourseCard from './course-card'
 import Icon from 'src/@core/components/icon'
 
 // ** Custom Components Imports
-import StepperCustomDot from './StepperCustomDot'
+// import StepperCustomDot from './StepperCustomDot'
 import CustomTextField from 'src/@core/components/mui/text-field'
 
 // ** Styled Components
-import StepperWrapper from 'src/@core/styles/mui/stepper'
+// import StepperWrapper from 'src/@core/styles/mui/stepper'
 
 const defaultAccountValues = {
   CourseID: ''
@@ -87,15 +92,15 @@ const AddChildWizard = ({ courses }) => {
     {
       title: t('Child Info'),
       subtitle: t('Setup Information')
-    },
-    {
-      title: t('Course Selection'),
-      subtitle: t('Select Course')
-    },
-    {
-      title: t('Contract Approval'),
-      subtitle: t('Approve the Contract')
     }
+    // {
+    //   title: t('Course Selection'),
+    //   subtitle: t('Select Course')
+    // },
+    // {
+    //   title: t('Contract Approval'),
+    //   subtitle: t('Approve the Contract')
+    // }
   ]
 
   // ** States
@@ -105,13 +110,15 @@ const AddChildWizard = ({ courses }) => {
   const [combinedData, setCombinedData] = useState(null)
   const [base64File, setBase64File] = useState(null)
   const [selectedCourse, setSelectedCourse] = useState(null)
+  const [openDialog, setOpenDialog] = useState(false)
+  const [pendingData, setPendingData] = useState(null)
   const dispatch = useDispatch()
   const router = useRouter()
   const { acceptContractLoading } = useSelector(state => state.students)
   const countryOptions = useMemo(() => countryList().getData(), [])
 
-  const [isChecked1, setIsChecked1] = useState(false)
-  const [isChecked2, setIsChecked2] = useState(false)
+  // const [isChecked1, setIsChecked1] = useState(false)
+  // const [isChecked2, setIsChecked2] = useState(false)
 
   const renderData = courses.map((course, index) => (
     <Grid item xs={12} sm={6} md={4} xl={3} key={index}>
@@ -119,13 +126,13 @@ const AddChildWizard = ({ courses }) => {
     </Grid>
   ))
 
-  const handleAcceptContract = async () => {
-    const response = await dispatch(acceptContract(combinedData))
-    if (response?.payload?.status == 200) {
-      setActiveStep(activeStep + 1)
-    } else if (response?.payload?.status == 400) toast.error(<Translations text={response?.payload?.data} />)
-    else toast.error(<Translations text={t('Something went wrong try again !')} />)
-  }
+  // const handleAcceptContract = async () => {
+  //   const response = await dispatch(acceptContract(combinedData))
+  //   if (response?.payload?.status == 200) {
+  //     setActiveStep(activeStep + 1)
+  //   } else if (response?.payload?.status == 400) toast.error(<Translations text={response?.payload?.data} />)
+  //   else toast.error(<Translations text={t('Something went wrong try again !')} />)
+  // }
 
   // ** Hooks
   const {
@@ -148,34 +155,53 @@ const AddChildWizard = ({ courses }) => {
     resolver: yupResolver(personalSchema)
   })
 
-  const onSubmitPersonal = data => {
+  const onSubmitPersonal = async data => {
     setPersonalData(data)
-    setActiveStep(activeStep + 1)
+    setPendingData(data)
+    setOpenDialog(true)
   }
 
-  const onSubmitAccount = async () => {
-    if (!selectedCourse) toast.error(<Translations text={t('Please select a course ')} />)
-    else {
-      setAccountData({ CourseID: selectedCourse })
-      // const allData = { ...personalData, ...data }
-      const allData = { ...personalData, CourseID: selectedCourse }
-
-      console.log(allData)
-      setCombinedData(allData)
-
-      const response = await dispatch(addStudent(allData))
-      if (response?.payload?.status == 200) {
-        setBase64File(response?.payload?.data)
-        setActiveStep(activeStep + 1)
-      } else if (response?.payload?.status == 400) toast.error(<Translations text={response?.payload?.data} />)
-      else toast.error(<Translations text={t('Something went wrong try again !')} />)
+  const handleConfirmSubmit = async () => {
+    setOpenDialog(false)
+    // Direct submission with personal data only
+    const response = await dispatch(addStudent(pendingData))
+    if (response?.payload?.status == 200) {
+      toast.success(<Translations text={t('Child registered successfully!')} />)
+      router.push('/pending-approvals')
+    } else if (response?.payload?.status == 400) {
+      toast.error(<Translations text={response?.payload?.data} />)
+    } else {
+      toast.error(<Translations text={t('Something went wrong try again !')} />)
     }
   }
 
-  // Handle Stepper
-  const handleBack = () => {
-    setActiveStep(prevActiveStep => prevActiveStep - 1)
+  const handleCloseDialog = () => {
+    setOpenDialog(false)
   }
+
+  // const onSubmitAccount = async () => {
+  //   if (!selectedCourse) toast.error(<Translations text={t('Please select a course ')} />)
+  //   else {
+  //     setAccountData({ CourseID: selectedCourse })
+  //     // const allData = { ...personalData, ...data }
+  //     const allData = { ...personalData, CourseID: selectedCourse }
+
+  //     console.log(allData)
+  //     setCombinedData(allData)
+
+  //     const response = await dispatch(addStudent(allData))
+  //     if (response?.payload?.status == 200) {
+  //       setBase64File(response?.payload?.data)
+  //       setActiveStep(activeStep + 1)
+  //     } else if (response?.payload?.status == 400) toast.error(<Translations text={response?.payload?.data} />)
+  //     else toast.error(<Translations text={t('Something went wrong try again !')} />)
+  //   }
+  // }
+
+  // Handle Stepper
+  // const handleBack = () => {
+  //   setActiveStep(prevActiveStep => prevActiveStep - 1)
+  // }
 
   // const handleReset = () => {
   //   setActiveStep(0)
@@ -197,6 +223,11 @@ const AddChildWizard = ({ courses }) => {
         return (
           <form key={0} onSubmit={handlePersonalSubmit(onSubmitPersonal)}>
             <Grid container spacing={5}>
+              <Grid item xs={12}>
+                <Alert severity='info' sx={{ mb: 4 }}>
+                  {t('Newly added child will be moved to pending approvals for the management to approve the child')}
+                </Alert>
+              </Grid>
               <Grid item xs={12}>
                 <Typography variant='body2' sx={{ fontWeight: 600, color: 'text.primary' }}>
                   {t(steps[0].title)}
@@ -438,128 +469,130 @@ const AddChildWizard = ({ courses }) => {
                   {t('Back')}
                 </Button>
                 <Button type='submit' variant='contained'>
-                  {t('Next')}
+                  {t('Confirm')}
                 </Button>
               </Grid>
             </Grid>
           </form>
         )
-      case 1:
-        return (
-          <form key={1} onSubmit={handleAccountSubmit(onSubmitAccount)}>
-            <Grid container spacing={5}>
-              <Grid item xs={12}>
-                <Typography variant='body2' sx={{ fontWeight: 600, color: 'text.primary' }}>
-                  {t(steps[1].title)}
-                </Typography>
-                <Typography variant='caption' component='p'>
-                  {t(steps[1].subtitle)}
-                </Typography>
-              </Grid>
-              {/* <Grid item xs={12} sm={6}>
-                <Controller
-                  name='CourseID'
-                  control={accountControl}
-                  render={({ field }) => {
-                    const selectedCourse = courses.find(course => course.id === field.value)
+      // case 1:
+      //   return (
+      //     // <form key={1} onSubmit={handleAccountSubmit(onSubmitAccount)}>
+      //     <div>
+      //       <Grid container spacing={5}>
+      //         <Grid item xs={12}>
+      //           <Typography variant='body2' sx={{ fontWeight: 600, color: 'text.primary' }}>
+      //             {t(steps[1].title)}
+      //           </Typography>
+      //           <Typography variant='caption' component='p'>
+      //             {t(steps[1].subtitle)}
+      //           </Typography>
+      //         </Grid>
+      //         {/* <Grid item xs={12} sm={6}>
+      //           <Controller
+      //             name='CourseID'
+      //             control={accountControl}
+      //             render={({ field }) => {
+      //               const selectedCourse = courses.find(course => course.id === field.value)
 
-                    return (
-                      <Autocomplete
-                        options={courses.map(course => ({ value: course.id, label: course.name }))}
-                        getOptionLabel={option => option.label || ''}
-                        value={selectedCourse ? { value: selectedCourse.id, label: selectedCourse.name } : null}
-                        onChange={(event, newValue) => {
-                          field.onChange(newValue ? newValue.value : '')
-                        }}
-                        renderInput={params => (
-                          <CustomTextField
-                            {...params}
-                            fullWidth
-                            label='Select Course'
-                            variant='outlined'
-                            error={Boolean(accountErrors.CourseID)}
-                            {...(accountErrors.CourseID && { helperText: t('This field is required') })}
-                          />
-                        )}
-                      />
-                    )
-                  }}
-                />
-              </Grid> */}
-              <Grid container spacing={2} sx={{ mt: 4 }}>
-                {renderData}
-              </Grid>
+      //               return (
+      //                 <Autocomplete
+      //                   options={courses.map(course => ({ value: course.id, label: course.name }))}
+      //                   getOptionLabel={option => option.label || ''}
+      //                   value={selectedCourse ? { value: selectedCourse.id, label: selectedCourse.name } : null}
+      //                   onChange={(event, newValue) => {
+      //                     field.onChange(newValue ? newValue.value : '')
+      //                   }}
+      //                   renderInput={params => (
+      //                     <CustomTextField
+      //                       {...params}
+      //                       fullWidth
+      //                       label='Select Course'
+      //                       variant='outlined'
+      //                       error={Boolean(accountErrors.CourseID)}
+      //                       {...(accountErrors.CourseID && { helperText: t('This field is required') })}
+      //                     />
+      //                   )}
+      //                 />
+      //               )
+      //             }}
+      //           />
+      //         </Grid> */}
+      //         <Grid container spacing={2} sx={{ mt: 4 }}>
+      //           {renderData}
+      //         </Grid>
 
-              <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Button variant='tonal' color='secondary' onClick={handleBack}>
-                  {t('Back')}
-                </Button>
-                <Button type='submit' disabled={isSubmitting} variant='contained'>
-                  {isSubmitting ? <CircularProgress size={25} /> : t('Confirm')}
-                </Button>
-              </Grid>
-            </Grid>
-          </form>
-        )
+      //         <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+      //           <Button variant='tonal' color='secondary' onClick={handleBack}>
+      //             {t('Back')}
+      //           </Button>
+      //           {/* <Button type='submit' disabled={isSubmitting} variant='contained'>
+      //             {isSubmitting ? <CircularProgress size={25} /> : t('Confirm')}
+      //           </Button> */}
+      //         </Grid>
+      //       </Grid>
+      //       {/* </form> */}
+      //     </div>
+      //   )
 
-      case 2:
-        return (
-          <Box>
-            {' '}
-            <iframe src={`data:application/pdf;base64,${base64File}`} width='100%' height='800vh' title={'test'} />
-            <Divider sx={{ mt: 2 }} />
-            {/* New Checkboxes */}
-            <Grid item xs={12} sx={{ mt: 8, display: 'flex', alignItems: 'flex-start', flexWrap: 'wrap' }}>
-              <FormControlLabel
-                control={
-                  <Checkbox color={'success'} checked={isChecked1} onChange={() => setIsChecked1(!isChecked1)} />
-                }
-                sx={{ width: '49%' }}
-                color='success'
-                label={
-                  <Translations
-                    text={
-                      'Ich bestätige, den Vertrag gelesen und verstanden zu haben und erkläre mich damit einverstanden, diesen kostenpflichtig abzuschließen.'
-                    }
-                  />
-                }
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox color={'success'} checked={isChecked2} onChange={() => setIsChecked2(!isChecked2)} />
-                }
-                sx={{ width: '49%' }}
-                label={
-                  <Translations
-                    text={
-                      'Ich habe die /Allgemeinen Geschäftsbedingungen (AGB)/ gelesen, verstanden und akzeptiere diese.'
-                    }
-                  />
-                }
-              />
-            </Grid>
-            <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', mt: 8 }}>
-              <Button
-                color='success'
-                onClick={() => handleAcceptContract()}
-                variant='contained'
-                disabled={acceptContractLoading || !isChecked1 || !isChecked2}
-              >
-                {acceptContractLoading ? (
-                  <CircularProgress size={25} />
-                ) : (
-                  <>
-                    {' '}
-                    <Box sx={{ mr: 2 }}>
-                      <Icon fontSize='1.125rem' icon='oui:pages-select' />
-                    </Box>
-                    <Translations text={'Accept'} />
-                  </>
-                )}
-              </Button>
-            </Grid>
-          </Box>
-        )
+      // case 2:
+      //   return (
+      //     <Box>
+      //       {' '}
+      //       <iframe src={`data:application/pdf;base64,${base64File}`} width='100%' height='800vh' title={'test'} />
+      //       <Divider sx={{ mt: 2 }} />
+      //       {/* New Checkboxes */}
+      //       <Grid item xs={12} sx={{ mt: 8, display: 'flex', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+      //         <FormControlLabel
+      //           control={
+      //             <Checkbox color={'success'} checked={isChecked1} onChange={() => setIsChecked1(!isChecked1)} />
+      //           }
+      //           sx={{ width: '49%' }}
+      //           color='success'
+      //           label={
+      //             <Translations
+      //               text={
+      //                 'Ich bestätige, den Vertrag gelesen und verstanden zu haben und erkläre mich damit einverstanden, diesen kostenpflichtig abzuschließen.'
+      //               }
+      //             />
+      //           }
+      //         />
+      //         <FormControlLabel
+      //           control={
+      //             <Checkbox color={'success'} checked={isChecked2} onChange={() => setIsChecked2(!isChecked2)} />
+      //           }
+      //           sx={{ width: '49%' }}
+      //           label={
+      //             <Translations
+      //               text={
+      //                 'Ich habe die /Allgemeinen Geschäftsbedingungen (AGB)/ gelesen, verstanden und akzeptiere diese.'
+      //               }
+      //             />
+      //           }
+      //         />
+      //       </Grid>
+      //       {/* <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', mt: 8 }}>
+      //         <Button
+      //           color='success'
+      //           onClick={() => handleAcceptContract()}
+      //           variant='contained'
+      //           disabled={acceptContractLoading || !isChecked1 || !isChecked2}
+      //         >
+      //           {acceptContractLoading ? (
+      //             <CircularProgress size={25} />
+      //           ) : (
+      //             <>
+      //               {' '}
+      //               <Box sx={{ mr: 2 }}>
+      //                 <Icon fontSize='1.125rem' icon='oui:pages-select' />
+      //               </Box>
+      //               <Translations text={'Accept'} />
+      //             </>
+      //           )}
+      //         </Button>
+      //       </Grid> */}
+      //     </Box>
+      //   )
       default:
         return null
     }
@@ -592,52 +625,74 @@ const AddChildWizard = ({ courses }) => {
   }
 
   return (
-    <Card>
-      <CardContent>
-        <StepperWrapper>
-          <Stepper activeStep={activeStep}>
-            {steps.map((step, index) => {
-              const labelProps = {}
-              if (index === activeStep) {
-                labelProps.error = false
-                if (accountErrors.CourseID && activeStep === 0) {
-                  labelProps.error = true
-                } else if (
-                  (personalErrors.gender ||
-                    personalErrors.birthday ||
-                    personalErrors.LastName ||
-                    personalErrors.FirstName ||
-                    personalErrors.nationality) &&
-                  activeStep === 1
-                ) {
-                  labelProps.error = true
-                } else {
+    <>
+      <Card>
+        {/* <CardContent>
+          <StepperWrapper>
+            <Stepper activeStep={activeStep}>
+              {steps.map((step, index) => {
+                const labelProps = {}
+                if (index === activeStep) {
                   labelProps.error = false
+                  if (accountErrors.CourseID && activeStep === 0) {
+                    labelProps.error = true
+                  } else if (
+                    (personalErrors.gender ||
+                      personalErrors.birthday ||
+                      personalErrors.LastName ||
+                      personalErrors.FirstName ||
+                      personalErrors.nationality) &&
+                    activeStep === 1
+                  ) {
+                    labelProps.error = true
+                  } else {
+                    labelProps.error = false
+                  }
                 }
-              }
 
-              return (
-                <Step key={index}>
-                  <StepLabel {...labelProps} StepIconComponent={StepperCustomDot}>
-                    <div className='step-label'>
-                      <Typography className='step-number'>{`0${index + 1}`}</Typography>
-                      <div>
-                        <Typography className='step-title'>{step.title}</Typography>
-                        <Typography className='step-subtitle'>{step.subtitle}</Typography>
+                return (
+                  <Step key={index}>
+                    <StepLabel {...labelProps} StepIconComponent={StepperCustomDot}>
+                      <div className='step-label'>
+                        <Typography className='step-number'>{`0${index + 1}`}</Typography>
+                        <div>
+                          <Typography className='step-title'>{step.title}</Typography>
+                          <Typography className='step-subtitle'>{step.subtitle}</Typography>
+                        </div>
                       </div>
-                    </div>
-                  </StepLabel>
-                </Step>
-              )
-            })}
-          </Stepper>
-        </StepperWrapper>
-      </CardContent>
+                    </StepLabel>
+                  </Step>
+                )
+              })}
+            </Stepper>
+          </StepperWrapper>
+        </CardContent>
 
-      <Divider sx={{ m: '0 !important' }} />
+        <Divider sx={{ m: '0 !important' }} />
+        */}
 
-      <CardContent>{renderContent()}</CardContent>
-    </Card>
+        <CardContent>{renderContent()}</CardContent>
+      </Card>
+
+      <Dialog open={openDialog} onClose={handleCloseDialog} aria-labelledby='confirmation-dialog-title'>
+        <DialogTitle id='confirmation-dialog-title'>{t('Confirm Submission')}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {t(
+              'Are you sure you want to submit this child registration? The child will be moved to pending approvals for management review.'
+            )}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} variant='outlined' color='secondary'>
+            {t('Cancel')}
+          </Button>
+          <Button onClick={handleConfirmSubmit} variant='contained' color='primary'>
+            {t('Confirm')}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   )
 }
 

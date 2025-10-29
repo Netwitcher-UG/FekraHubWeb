@@ -122,6 +122,77 @@ export const updateStudentCourse = createAsyncThunk('appStudents/updateStudentCo
     return error.response
   }
 })
+
+export const fetchPendingApprovals = createAsyncThunk('appStudents/fetchPendingApprovals', async () => {
+  const response = await axiosInstance.get(`/api/Student/ByParent-Pending`)
+
+  return response.data
+})
+
+export const fetchStudentsApprovals = createAsyncThunk('appStudents/fetchStudentsApprovals', async () => {
+  const response = await axiosInstance.get(`/api/Student/pending-student`)
+
+  return response.data
+})
+
+export const rejectStudent = createAsyncThunk('appStudents/rejectStudent', async data => {
+  try {
+    const response = await axiosInstance.post('/api/Student/reject-student', data, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    return response
+  } catch (error) {
+    return error.response
+  }
+})
+
+export const approveStudent = createAsyncThunk('appStudents/approveStudent', async data => {
+  try {
+    const response = await axiosInstance.post('/api/Student/accept-student', data, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    return response
+  } catch (error) {
+    return error.response
+  }
+})
+
+// Import students from Excel
+export const importStudentsFromExcel = createAsyncThunk(
+  'appStudents/importStudentsFromExcel',
+  async (file, { rejectWithValue }) => {
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const response = await axiosInstance.post('/api/ExcelMigration/UploadData', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      return response
+    } catch (error) {
+      return rejectWithValue(error.response || error)
+    }
+  }
+)
+
+// Download Excel template
+export const downloadStudentsExcelTemplate = createAsyncThunk('appStudents/downloadStudentsExcelTemplate', async () => {
+  try {
+    const response = await axiosInstance.get('/api/ExcelMigration/download-excelFile', {
+      responseType: 'blob'
+    })
+    return response
+  } catch (error) {
+    return error.response
+  }
+})
+
 export const appStudentsSlice = createSlice({
   name: 'appStudents',
   initialState: {
@@ -138,7 +209,13 @@ export const appStudentsSlice = createSlice({
     childProfileInfo: [],
     childProfileLoading: false,
     studentProfileInfo: [],
-    studentProfileLoading: false
+    studentProfileLoading: false,
+    pendingApprovals: [],
+    pendingApprovalsLoading: false,
+    studentsApprovals: [],
+    studentsApprovalsLoading: false,
+    importFromExcelLoading: false,
+    downloadTemplateLoading: false
   },
   reducers: {},
   extraReducers: builder => {
@@ -200,6 +277,44 @@ export const appStudentsSlice = createSlice({
       })
       .addCase(fetchStudentProfileInfo.rejected, state => {
         state.studentProfileLoading = false
+      })
+      .addCase(fetchPendingApprovals.pending, state => {
+        state.pendingApprovalsLoading = true
+      })
+      .addCase(fetchPendingApprovals.fulfilled, (state, action) => {
+        state.pendingApprovalsLoading = false
+        state.pendingApprovals = action.payload
+      })
+      .addCase(fetchPendingApprovals.rejected, state => {
+        state.pendingApprovalsLoading = false
+      })
+      .addCase(fetchStudentsApprovals.pending, state => {
+        state.studentsApprovalsLoading = true
+      })
+      .addCase(fetchStudentsApprovals.fulfilled, (state, action) => {
+        state.studentsApprovalsLoading = false
+        state.studentsApprovals = action.payload
+      })
+      .addCase(fetchStudentsApprovals.rejected, state => {
+        state.studentsApprovalsLoading = false
+      })
+      .addCase(importStudentsFromExcel.pending, state => {
+        state.importFromExcelLoading = true
+      })
+      .addCase(importStudentsFromExcel.fulfilled, state => {
+        state.importFromExcelLoading = false
+      })
+      .addCase(importStudentsFromExcel.rejected, state => {
+        state.importFromExcelLoading = false
+      })
+      .addCase(downloadStudentsExcelTemplate.pending, state => {
+        state.downloadTemplateLoading = true
+      })
+      .addCase(downloadStudentsExcelTemplate.fulfilled, state => {
+        state.downloadTemplateLoading = false
+      })
+      .addCase(downloadStudentsExcelTemplate.rejected, state => {
+        state.downloadTemplateLoading = false
       })
   }
 })

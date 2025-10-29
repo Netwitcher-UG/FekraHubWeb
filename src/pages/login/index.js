@@ -104,7 +104,7 @@ const LoginPage = () => {
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
 
   // ** Vars
-  const { skin } = settings
+  const { skin, mode } = settings
 
   const {
     control,
@@ -132,7 +132,12 @@ const LoginPage = () => {
 
   return (
     <Box className='content-right' sx={{ backgroundColor: 'background.paper' }}>
-      {!hidden ? <LoginIllustration alt={t('login-illustration')} src={`/images/logos/loginpage.png`} /> : null}
+      {!hidden ? (
+        <LoginIllustration
+          alt={t('login-illustration')}
+          src={`/images/logos/${mode === 'dark' ? 'LoginDark.png' : 'LoginLight.png'}`}
+        />
+      ) : null}
       <RightWrapper>
         <Box
           sx={{

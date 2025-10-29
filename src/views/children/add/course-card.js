@@ -11,7 +11,6 @@ import { useRouter } from 'next/router'
 // ** Custom Component Imports
 import Icon from 'src/@core/components/icon'
 import CustomAvatar from 'src/@core/components/mui/avatar'
-// import PricingTable from 'src/views/pages/pricing/PricingTable'
 import { useTranslation } from 'react-i18next'
 
 const CourseCard = props => {
@@ -45,7 +44,7 @@ const CourseCard = props => {
     <Card
       sx={{
         ...sx,
-        backgroundColor: selectedCourse === id ? theme.palette.primary.light : theme.palette.background.paper,
+        border: selectedCourse === id ? `2px solid ${theme.palette.primary.main}` : '1px solid transparent',
         cursor: 'pointer'
       }}
       onClick={handleSelect}
@@ -61,14 +60,10 @@ const CourseCard = props => {
             flexDirection: 'column'
           }}
         >
-          <CustomAvatar
-            skin='light'
-            color={selectedCourse === id ? 'secondary' : avatarColor}
-            sx={{ width: avatarSize, height: avatarSize }}
-          >
+          <CustomAvatar skin='light' color={avatarColor} sx={{ width: avatarSize, height: avatarSize }}>
             <Icon icon={avatarIcon} fontSize={avatarIconSize} />
           </CustomAvatar>
-          <Typography variant='h5' color={selectedCourse === id ? 'success' : 'primary'} sx={{ m: 2 }}>
+          <Typography variant='h5' color='primary' sx={{ m: 2 }}>
             {name}
           </Typography>
         </Grid>

@@ -2,12 +2,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 
 // ** Reducers
-// import chat from 'src/store/apps/chat'
-// import user from 'src/store/apps/user'
- import email from 'src/store/apps/email'
-// import invoice from 'src/store/apps/invoice'
-// import calendar from 'src/store/apps/calendar'
-// import permissions from 'src/store/apps/permissions'
+import email from 'src/store/apps/email'
 import users from 'src/store/apps/users'
 import students from 'src/store/apps/students'
 import courses from 'src/store/apps/courses'

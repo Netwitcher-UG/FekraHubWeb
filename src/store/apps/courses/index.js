@@ -7,7 +7,13 @@ import axiosInstance from 'src/lib/axiosInstance'
 
 export const fetchCourses = createAsyncThunk('courses/fetchCourses', async (data, { rejectWithValue }) => {
   try {
-    const response = await axiosInstance.get(`/api/Courses?search=${data}`, {})
+    // Build URL with optional search parameter
+    let url = '/api/Courses'
+    if (data && data.trim()) {
+      url += `?search=${data}`
+    }
+
+    const response = await axiosInstance.get(url, {})
 
     return response.data
   } catch (error) {

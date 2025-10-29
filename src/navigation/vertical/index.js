@@ -48,6 +48,12 @@ const navigation = () => {
           path: '/students',
           subject: 'StudentCourse',
           action: 'read'
+        },
+        {
+          title: 'Pending Approvals',
+          path: '/approvals',
+          subject: 'StudentCourse',
+          action: 'read'
         }
       ]
     },
@@ -107,6 +113,12 @@ const navigation = () => {
         {
           title: 'Registered Children',
           path: '/children',
+          action: 'manage',
+          subject: 'Children'
+        },
+        {
+          title: 'Pending Approvals',
+          path: '/pending-approvals',
           action: 'manage',
           subject: 'Children'
         },

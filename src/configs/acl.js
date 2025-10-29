@@ -193,6 +193,9 @@ function defineAbilitiesFor(role, rolesPermissions) {
         can('read', 'ParentInfo')
       case 'ManageInvoice':
         can('manage', 'Invoices')
+
+      case 'ManageExcelMigration':
+        can('manage', 'ExcelMigration')
         break
       default:
         break

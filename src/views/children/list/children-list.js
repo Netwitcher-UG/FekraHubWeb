@@ -10,7 +10,7 @@ import Icon from 'src/@core/components/icon'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 
-const ChildrenList = ({ childrenData, loading }) => {
+const ChildrenList = ({ childrenData, loading, isPendingChild = false }) => {
   const router = useRouter()
   const { t } = useTranslation()
 
@@ -18,12 +18,16 @@ const ChildrenList = ({ childrenData, loading }) => {
     childrenData?.length > 0 && !loading ? (
       childrenData.map((child, index) => (
         <Grid item xs={12} sm={6} md={3} key={index}>
-          <ChildCard child={child} />
+          <ChildCard child={child} isPendingChild={isPendingChild} />
         </Grid>
       ))
     ) : (
       <Grid item xs={12}>
-        <Alert severity='info'> {t('No registered children yet')}</Alert>
+        {isPendingChild ? (
+          <Alert severity='info'> {t('No pending approvals')}</Alert>
+        ) : (
+          <Alert severity='info'> {t('No registered children yet')}</Alert>
+        )}
       </Grid>
     )
 
@@ -40,15 +44,17 @@ const ChildrenList = ({ childrenData, loading }) => {
     </Box>
   ) : (
     <Grid container spacing={6}>
-      <Grid item xs={12}>
-        <Button color='success' onClick={() => router.push('/children/add-child')} variant='contained' sx={{ mb: 2 }}>
-          <Box sx={{ mr: 2 }}>
-            <Icon fontSize='1.125rem' icon='mingcute:user-add-line' />
-          </Box>
-          {t('Add New Child')}
-        </Button>
-        <Divider sx={{ my: 2 }} />
-      </Grid>
+      {!isPendingChild && (
+        <Grid item xs={12}>
+          <Button color='success' onClick={() => router.push('/children/add-child')} variant='contained' sx={{ mb: 2 }}>
+            <Box sx={{ mr: 2 }}>
+              <Icon fontSize='1.125rem' icon='mingcute:user-add-line' />
+            </Box>
+            {t('Add New Child')}
+          </Button>
+          <Divider sx={{ my: 2 }} />
+        </Grid>
+      )}
       {renderData}
     </Grid>
   )
