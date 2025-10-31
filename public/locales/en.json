@@ -131,5 +131,12 @@
   "Menu Level 3.2": "Menu Level 3.2",
   "Disabled Menu": "Disabled Menu",
   "Raise Support": "Raise Support",
-  "Documentation": "Documentation"
+  "Documentation": "Documentation",
+  "No Course": "No Course",
+  "Message Details": "Message Details",
+  "Message Information": "Message Information",
+  "Subject": "Subject",
+  "Message": "Message",
+  "Internal Recipients": "Internal Recipients",
+  "External Recipients": "External Recipients"
 }

@@ -566,6 +566,9 @@
     "Reject Student": "Student ablehnen",
     "Student Approvals": "Studenten Genehmigungen",
     "Student Approval": "Studenten Genehmigung",
+    "Student Details": "Studentendetails",
+    "Student Information": "Schülerinformationen",
+    "Parent Information": "Elterninformationen",
     "Registration Fee": "Registrierungsgebühr",
     "Annual Course Fee": "Jährliche Kursgebühr",
     "No courses available": "Keine Kurse verfügbar",
@@ -581,5 +584,11 @@
     "Import file": "Datei importieren",
     "File imported successfully": "Datei erfolgreich importiert",
     "Import failed!": "Import fehlgeschlagen!",
-    "An error occurred while importing the file": "Ein Fehler ist beim Importieren der Datei aufgetreten"
+    "An error occurred while importing the file": "Ein Fehler ist beim Importieren der Datei aufgetreten",
+    "Message Details": "Nachrichtendetails",
+    "Message Information": "Nachrichteninformationen",
+    "Subject": "Betreff",
+    "Message": "Nachricht",
+    "Internal Recipients": "Interne Empfänger",
+    "External Recipients": "Externe Empfänger"
 }

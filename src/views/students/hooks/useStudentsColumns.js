@@ -38,16 +38,24 @@ const useStudentsColumns = ({ courses, selectedCourse, currentPage, pageSize }) 
     setDrawerData(null)
   }, [])
 
-  const handleEditCourse = useCallback((e, rowId, currentCourse) => {
-    e.stopPropagation()
-    setEditingCourse(rowId)
-    if (currentCourse) {
-      setSelectedNewCourse({
-        value: currentCourse.id,
-        label: currentCourse.name
-      })
-    }
-  }, [])
+  const handleEditCourse = useCallback(
+    (e, rowId, currentCourse) => {
+      e.stopPropagation()
+      setEditingCourse(rowId)
+      if (currentCourse) {
+        setSelectedNewCourse({
+          value: currentCourse.id,
+          label: currentCourse.name
+        })
+      } else {
+        setSelectedNewCourse({
+          value: null,
+          label: t('No Course')
+        })
+      }
+    },
+    [t]
+  )
 
   const handleCourseChange = useCallback((e, newValue) => {
     setSelectedNewCourse(newValue)
@@ -60,7 +68,7 @@ const useStudentsColumns = ({ courses, selectedCourse, currentPage, pageSize }) 
         dispatch(
           updateStudentCourse({
             studentId,
-            courseId: selectedNewCourse.value,
+            courseId: selectedNewCourse.value === null ? null : selectedNewCourse.value,
             currentPage,
             pageSize,
             search: '',
@@ -127,7 +135,10 @@ const useStudentsColumns = ({ courses, selectedCourse, currentPage, pageSize }) 
               <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                 <Autocomplete
                   size='small'
-                  options={courses?.map(course => ({ value: course.id, label: course.name }))}
+                  options={[
+                    { value: null, label: t('No Course') },
+                    ...(courses?.map(course => ({ value: course.id, label: course.name })) || [])
+                  ]}
                   getOptionLabel={option => option.label}
                   value={selectedNewCourse}
                   onChange={handleCourseChange}
@@ -201,7 +212,9 @@ const useStudentsColumns = ({ courses, selectedCourse, currentPage, pageSize }) 
       handleEditCourse,
       handleSaveCourse,
       handleCancelCourseEdit,
-      handleAddReportClick
+      handleAddReportClick,
+      handleCourseChange,
+      t
     ]
   )
 

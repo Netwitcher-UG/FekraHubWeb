@@ -2,9 +2,10 @@ import { useState } from 'react'
 import CircularProgress from '@mui/material/CircularProgress'
 import Box from '@mui/material/Box'
 import { DataGrid } from '@mui/x-data-grid'
-import useStudentsApprovalsColumns from './useStudentsColumns'
+import useStudentsApprovalsColumns from './useStudentsApprovalsColumns'
 import ApproveDialog from './ApproveDialog'
 import RejectDialog from './RejectDialog'
+import StudentDetailsDialog from './StudentDetailsDialog'
 
 const customScrollbarStyles = {
   '& ::-webkit-scrollbar': {
@@ -26,6 +27,7 @@ const StudentsApprovalsDataGrid = ({
 }) => {
   const [openApproveDialog, setOpenApproveDialog] = useState(false)
   const [openRejectDialog, setOpenRejectDialog] = useState(false)
+  const [openDetailsDialog, setOpenDetailsDialog] = useState(false)
   const [selectedStudent, setSelectedStudent] = useState(null)
 
   const handleApproveClick = student => {
@@ -45,6 +47,16 @@ const StudentsApprovalsDataGrid = ({
 
   const handleCloseRejectDialog = () => {
     setOpenRejectDialog(false)
+    setSelectedStudent(null)
+  }
+
+  const handleRowClick = params => {
+    setSelectedStudent(params.row)
+    setOpenDetailsDialog(true)
+  }
+
+  const handleCloseDetailsDialog = () => {
+    setOpenDetailsDialog(false)
     setSelectedStudent(null)
   }
 
@@ -73,12 +85,17 @@ const StudentsApprovalsDataGrid = ({
               columns={columns}
               hideFooter={true}
               disableRowSelectionOnClick
+              onRowClick={handleRowClick}
               pagination={true}
               sx={{
                 // overflowY: 'scroll',
                 overflowX: 'scroll',
                 ...customScrollbarStyles,
-                fontSize: '1rem'
+                fontSize: '1rem',
+                cursor: 'pointer',
+                '& .MuiDataGrid-row:hover': {
+                  backgroundColor: 'action.hover'
+                }
               }}
             />
           </>
@@ -91,6 +108,7 @@ const StudentsApprovalsDataGrid = ({
         student={selectedStudent}
       />
       <RejectDialog open={openRejectDialog} handleClose={handleCloseRejectDialog} student={selectedStudent} />
+      <StudentDetailsDialog open={openDetailsDialog} handleClose={handleCloseDetailsDialog} student={selectedStudent} />
     </>
   )
 }

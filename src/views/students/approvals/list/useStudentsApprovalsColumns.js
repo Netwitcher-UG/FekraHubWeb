@@ -20,12 +20,27 @@ const useStudentsApprovalsColumns = (handleApproveClick, handleRejectClick) => {
         renderCell: ({ row }) => (
           <>
             <Tooltip title={<Translations text={'Approve Student'} />}>
-              <IconButton color='success' onClick={() => handleApproveClick(row)} size='medium' sx={{ mr: 1 }}>
+              <IconButton
+                color='success'
+                onClick={e => {
+                  e.stopPropagation()
+                  handleApproveClick(row)
+                }}
+                size='medium'
+                sx={{ mr: 1 }}
+              >
                 <HowToRegIcon fontSize='medium' />
               </IconButton>
             </Tooltip>
             <Tooltip title={<Translations text={'Reject Student'} />}>
-              <IconButton color='error' onClick={() => handleRejectClick(row)} size='medium'>
+              <IconButton
+                color='error'
+                onClick={e => {
+                  e.stopPropagation()
+                  handleRejectClick(row)
+                }}
+                size='medium'
+              >
                 <PersonOffIcon fontSize='medium' />
               </IconButton>
             </Tooltip>
