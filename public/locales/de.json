@@ -590,5 +590,8 @@
     "Subject": "Betreff",
     "Message": "Nachricht",
     "Internal Recipients": "Interne Empfänger",
-    "External Recipients": "Externe Empfänger"
+    "External Recipients": "Externe Empfänger",
+    "Contract confirmed successfully!": "Vertrag erfolgreich bestätigt!",
+    "Go Home": "Zur Startseite",
+    "The link is expired or invalid": "Der Link ist abgelaufen oder ungültig"
 }

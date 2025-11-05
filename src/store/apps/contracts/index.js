@@ -40,6 +40,19 @@ export const getStudentContract = createAsyncThunk('appContracts/getStudentContr
   }
 })
 
+export const acceptContract = createAsyncThunk('appContracts/acceptContract', async data => {
+  try {
+    const response = await axiosInstance.post('/api/Student/accept-contract', data, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    return response
+  } catch (error) {
+    return error.response
+  }
+})
+
 export const appContractsSlice = createSlice({
   name: 'appContracts',
   initialState: {
@@ -47,7 +60,8 @@ export const appContractsSlice = createSlice({
     childContractsLoading: false,
     contractFile: null,
     studentContracts: [],
-    studentContractsLoading: false
+    studentContractsLoading: false,
+    acceptContractLoading: false
   },
   reducers: {},
   extraReducers: builder => {
@@ -76,6 +90,16 @@ export const appContractsSlice = createSlice({
       })
       .addCase(fetchStudentContracts.rejected, state => {
         state.studentContractsLoading = false
+      })
+
+      .addCase(acceptContract.pending, state => {
+        state.acceptContractLoading = true
+      })
+      .addCase(acceptContract.fulfilled, (state, action) => {
+        state.acceptContractLoading = false
+      })
+      .addCase(acceptContract.rejected, state => {
+        state.acceptContractLoading = false
       })
   }
 })

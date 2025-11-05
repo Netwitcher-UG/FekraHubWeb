@@ -138,5 +138,8 @@
   "Subject": "Subject",
   "Message": "Message",
   "Internal Recipients": "Internal Recipients",
-  "External Recipients": "External Recipients"
+  "External Recipients": "External Recipients",
+  "Contract confirmed successfully!": "Contract confirmed successfully!",
+  "Go Home": "Go Home",
+  "The link is expired or invalid": "The link is expired or invalid"
 }
