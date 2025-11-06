@@ -52,8 +52,8 @@ const navigation = () => {
         {
           title: 'Pending Approvals',
           path: '/approvals',
-          subject: 'StudentCourse',
-          action: 'read'
+          subject: 'StudentAdmissions',
+          action: 'manage'
         }
       ]
     },

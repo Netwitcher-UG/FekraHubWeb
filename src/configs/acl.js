@@ -197,6 +197,9 @@ function defineAbilitiesFor(role, rolesPermissions) {
       case 'ManageExcelMigration':
         can('manage', 'ExcelMigration')
         break
+      case 'StudentAdmissions':
+        can('manage', 'StudentAdmissions')
+        break
       default:
         break
     }
