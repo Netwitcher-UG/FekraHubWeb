@@ -50,7 +50,14 @@ const ConfirmContractPage = () => {
   const [status, setStatus] = useState('loading') // 'loading', 'success', 'error'
 
   useEffect(() => {
-    if (!token || !studentId || !parentId) return
+    // Wait for router to be ready before checking query params
+    if (!router.isReady) return
+
+    // Check if required params are missing
+    if (!token || !studentId || !parentId) {
+      setStatus('error')
+      return
+    }
 
     const confirmContract = async () => {
       try {
@@ -75,7 +82,7 @@ const ConfirmContractPage = () => {
     }
 
     confirmContract()
-  }, [token, studentId, parentId, dispatch])
+  }, [router.isReady, token, studentId, parentId, dispatch])
 
   const handleGoHome = () => {
     router.push('/')
@@ -131,6 +138,5 @@ const ConfirmContractPage = () => {
 }
 
 ConfirmContractPage.getLayout = page => <BlankLayout>{page}</BlankLayout>
-ConfirmContractPage.guestGuard = true
 
 export default ConfirmContractPage
