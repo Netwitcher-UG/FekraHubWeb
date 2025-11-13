@@ -16,8 +16,8 @@ const usePayrollColumns = () => {
   const { t } = useTranslation()
   const { attendanceStatuses } = useSelector(state => state.attendance)
   const [DeleteName, setDeleteName] = useState(false)
-  const theme = useTheme();
-  console.log("🚀 ~ usePayrollColumns ~ theme:", (theme.breakpoints.down('md') ? true : false))
+  const theme = useTheme()
+  console.log('🚀 ~ usePayrollColumns ~ theme:', theme.breakpoints.down('md') ? true : false)
   const [selectedId, setSelectedId] = useState(null)
   // const [drawerData, setDrawerData] = useState(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -81,8 +81,8 @@ const usePayrollColumns = () => {
         renderCell: ({ row }) => {
           if (row.roles === 'Admin') {
             return <DropzoneWrapper row={row} onFileUpload={handleFileUpload} />
-          } else if (row.payrolls) {
-            return <Typography sx={{ color: '#7E73F1' }}>{t('already has payroll')}</Typography>
+            // } else if (row.payrolls) {
+            //   return <Typography sx={{ color: '#7E73F1' }}>{t('already has payroll')}</Typography>
           } else {
             return <DropzoneWrapper row={row} onFileUpload={handleFileUpload} />
           }
