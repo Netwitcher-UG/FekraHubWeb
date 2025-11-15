@@ -115,6 +115,16 @@ export const fetchTeacherPayroll = createAsyncThunk('appUsers/fetchTeacherPayrol
   }
 })
 
+export const fetchEmployeePayroll = createAsyncThunk('appUsers/fetchEmployeePayroll', async id => {
+  try {
+    const response = await axiosInstance.get(`/api/PayRolls/payroll-all?id=${id}`)
+
+    return response.data
+  } catch (error) {
+    return error.response
+  }
+})
+
 export const deleteteacherPayroll = createAsyncThunk(
   'appUsers/deleteteacherPayroll',
   async ({ id, teacherId }, thunkAPI) => {
@@ -148,7 +158,9 @@ export const appUsersSlice = createSlice({
     teacherProfileLoading: false,
     teacherPayrollData: [],
     teacherPayrollLoading: false,
-    payrollFileLoading: false
+    payrollFileLoading: false,
+    employeePayrollData: [],
+    employeePayrollLoading: false
   },
   reducers: {},
   extraReducers: builder => {
@@ -213,6 +225,16 @@ export const appUsersSlice = createSlice({
       })
       .addCase(downloadTeacherPayrollslip.rejected, state => {
         state.payrollFileLoading = false
+      })
+      .addCase(fetchEmployeePayroll.pending, state => {
+        state.employeePayrollLoading = true
+      })
+      .addCase(fetchEmployeePayroll.fulfilled, (state, action) => {
+        state.employeePayrollLoading = false
+        state.employeePayrollData = action.payload
+      })
+      .addCase(fetchEmployeePayroll.rejected, state => {
+        state.employeePayrollLoading = false
       })
   }
 })

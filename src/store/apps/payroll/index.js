@@ -6,7 +6,6 @@ import { ShowSuccessToast } from 'src/@core/utils/ShowSuccesToast'
 import axiosInstance from 'src/lib/axiosInstance'
 import { fetchEmployees } from '../users'
 
-
 export const getPayrollTeacherFile = createAsyncThunk('appPayroll/getPayrollTeacher', async id => {
   try {
     const response = await axiosInstance.get(`/api/PayRolls/DownloadPayrolls?Id=${id}`)
@@ -16,8 +15,6 @@ export const getPayrollTeacherFile = createAsyncThunk('appPayroll/getPayrollTeac
   }
 })
 
-
-
 export const deletePayroll = createAsyncThunk(
   'courses/deletePayroll',
   async (data, { getState, rejectWithValue, dispatch }) => {
@@ -25,7 +22,7 @@ export const deletePayroll = createAsyncThunk(
       await axiosInstance.delete(`/api/PayRolls/${data.selectedId}`, {})
 
       ShowSuccessToast('success')
-       dispatch(fetchEmployees('RoleName=Teacher&RoleName=Secretariat'))
+      dispatch(fetchEmployees('RoleName=Teacher&RoleName=Secretariat'))
     } catch (error) {
       ShowErrorToast('Error')
 
@@ -33,22 +30,26 @@ export const deletePayroll = createAsyncThunk(
     }
   }
 )
-export const AddPayrollFile = createAsyncThunk('appPayroll/addPayrolls', async (data, { getState, dispatch }) => {
-  try {
-    const response = await axiosInstance.post(`/api/PayRolls`,data, {
-      headers: {
-        accept: 'application/json',
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-    ShowSuccessToast('Success')
-dispatch(fetchEmployees('RoleName=Teacher&RoleName=Secretariat'))
-    return response.data
-  } catch (error) {
-    ShowErrorToast(error)
-    return error.response
+export const AddPayrollFile = createAsyncThunk(
+  'appPayroll/addPayrolls',
+  async (data, { getState, dispatch, rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post(`/api/PayRolls`, data, {
+        headers: {
+          accept: 'application/json',
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      ShowSuccessToast('Success')
+      // Refetch employees data after successful upload
+      dispatch(fetchEmployees('RoleName=Teacher&RoleName=Secretariat'))
+      return response.data
+    } catch (error) {
+      ShowErrorToast(error)
+      return rejectWithValue(error.response?.data || error.message)
+    }
   }
-})
+)
 
 export const appPayrollSlice = createSlice({
   name: 'appPayroll',
@@ -58,11 +59,9 @@ export const appPayrollSlice = createSlice({
     invoiceFile: null,
     TeacherPayroll: [],
     studentPayrollLoading: false,
-    studentInvoicesLoading:false
+    studentInvoicesLoading: false
   },
-  reducers: {
-
-  },
+  reducers: {},
   extraReducers: builder => {
     builder
 
@@ -77,7 +76,6 @@ export const appPayrollSlice = createSlice({
         state.studentInvoicesLoading = false
       })
   }
-
 })
 
 export default appPayrollSlice.reducer

@@ -1,69 +1,37 @@
-import { useState, useEffect } from 'react'
-import CircularProgress from '@mui/material/CircularProgress'
 import Box from '@mui/material/Box'
 import CardContent from '@mui/material/CardContent'
-import Grid from '@mui/material/Grid'
 import Divider from '@mui/material/Divider'
-// import Typography from '@mui/material/Typography'
-import { DataGrid } from '@mui/x-data-grid'
-import Alert from '@mui/material/Alert'
-// import TableHeader from './TableHeader'
-import { useDispatch } from 'react-redux'
-import CustomDialogDelete from 'src/@core/components/custom-delete'
-import ViewWorksheet from 'src/views/worksheets/view'
+import Skeleton from '@mui/material/Skeleton'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import Paper from '@mui/material/Paper'
 import usePayrollColumns from '../hook/usePayrollColumns'
-import { useTranslation } from 'react-i18next'
 import CustomDataGrid from 'src/@core/components/custom-datagrid'
+import ViewUploadedFilesDialog from '../ViewUploadedFilesDialog'
 
-const customScrollbarStyles = {
-  '& ::-webkit-scrollbar': {
-    height: 8
-  },
-  '& ::-webkit-scrollbar-thumb': {
-    backgroundColor: '#888',
-    borderRadius: 10,
-    '&:hover': {
-      backgroundColor: '#555'
-    }
-  }
-}
+const PayrollDataGrid = ({ rows, loading }) => {
+  const { columns, isViewFilesDialogOpen, handleCloseViewFilesDialog, selectedTeacher } = usePayrollColumns()
 
-const PayrollDataGrid = ({
-  store,
-  setValue,
-  rows,
-  value,
-  handleFilter,
-  selectedCourse,
-  setSelectedCourse,
-  handleRowClick,
-  setCurrentPage,
-  coursesData
-}) => {
-  console.log('🚀 ~ rows:', rows)
-  const { t } = useTranslation()
-  const handleCourseChange = (event, newValue) => {
-    setCurrentPage(1)
-    setAttendanceData([])
-    setSelectedCourse(newValue ? newValue.value : '')
-  }
-  const dispatch = useDispatch()
-
-  const {
-    columns,
-    attendanceData,
-    setAttendanceData,
-    selectedFile,
-    setSelectedFile,
-    isDialogOpen,
-    handleDelete,
-    handleCloseDialog,
-    handleDeleteClick,
-    drawerData,
-    open,
-    handleCloseDrawer,
-    DeleteName
-  } = usePayrollColumns()
+  const SkeletonRow = () => (
+    <TableRow>
+      <TableCell>
+        <Skeleton variant='text' width={150} height={40} />
+      </TableCell>
+      <TableCell>
+        <Skeleton variant='text' width={120} height={40} />
+      </TableCell>
+      <TableCell>
+        <Skeleton variant='rectangular' width={400} height={60} sx={{ borderRadius: 1 }} />
+      </TableCell>
+      <TableCell>
+        <Skeleton variant='circular' width={40} height={40} />
+      </TableCell>
+    </TableRow>
+  )
 
   return (
     <>
@@ -71,23 +39,43 @@ const PayrollDataGrid = ({
       <Divider sx={{ m: '0 !important' }} />
 
       <Box sx={{ height: 'calc(100vh - 250px)', width: '100%' }}>
-        <>
-          <CustomDataGrid
-            rowHeight={62}
-            rows={rows || []}
-            columns={columns}
-
-          />
-        </>
+        {loading ? (
+          <TableContainer component={Paper} sx={{ boxShadow: 'none', height: '100%' }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>
+                    <Skeleton variant='text' width={150} height={10} />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton variant='text' width={120} height={10} />
+                  </TableCell>
+                  <TableCell align='center'>
+                    <Skeleton variant='text' width={100} height={10} sx={{ mx: 'auto' }} />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton variant='text' width={80} height={10} />
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {[...Array(5)].map((_, index) => (
+                  <SkeletonRow key={index} />
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        ) : (
+          <CustomDataGrid rowHeight={62} rows={rows || []} columns={columns} />
+        )}
       </Box>
 
-      <CustomDialogDelete
-        open={isDialogOpen}
-        handleClose={handleCloseDialog}
-        decsription={`${t('Are you sure you want to delete file')} ${DeleteName} ? `}
-        onDelete={handleDelete}
+      <ViewUploadedFilesDialog
+        open={isViewFilesDialogOpen}
+        onClose={handleCloseViewFilesDialog}
+        teacherId={selectedTeacher?.id}
+        teacherName={selectedTeacher?.name}
       />
-      <ViewWorksheet selectedFile={selectedFile} setSelectedFile={setSelectedFile} />
     </>
   )
 }

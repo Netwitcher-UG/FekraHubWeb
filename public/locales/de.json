@@ -593,5 +593,14 @@
     "External Recipients": "Externe Empfänger",
     "Contract confirmed successfully!": "Vertrag erfolgreich bestätigt!",
     "Go Home": "Zur Startseite",
-    "The link is expired or invalid": "Der Link ist abgelaufen oder ungültig"
+    "The link is expired or invalid": "Der Link ist abgelaufen oder ungültig",
+    "Uploaded Files": "Hochgeladene Dateien",
+    "Payroll File": "Gehaltsabrechnungsdatei",
+    "No uploaded files found": "Keine hochgeladenen Dateien gefunden",
+    "Error loading file": "Fehler beim Laden der Datei",
+    "File deleted successfully": "Datei erfolgreich gelöscht",
+    "Error deleting file": "Fehler beim Löschen der Datei",
+    "Are you sure you want to delete the file from": "Sind Sie sicher, dass Sie die Datei vom",
+    "Latest Payroll Date": "Letztes Gehaltsabrechnungsdatum",
+    "View uploaded files": "Hochgeladene Dateien anzeigen"
 }

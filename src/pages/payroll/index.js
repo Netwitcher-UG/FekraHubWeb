@@ -6,9 +6,8 @@ import CoursesDataGrid from 'src/views/courses/dataGrid'
 import PayrollDataGrid from 'src/views/payroll/dataGrid'
 
 export default function Index() {
-
-  const { employeesData, status, error } = useSelector(state => state.users)
-  console.log("🚀 ~ Index ~ data:", employeesData)
+  const { employeesData, loading } = useSelector(state => state.users)
+  console.log('🚀 ~ Index ~ data:', employeesData)
 
   const dispatch = useDispatch()
 
@@ -16,11 +15,5 @@ export default function Index() {
     dispatch(fetchEmployees('RoleName=Teacher&RoleName=Secretariat'))
   }, [dispatch])
 
-
-  return (
-    <PayrollDataGrid
-      rows={employeesData}
-      status={status}
-    />
-  )
+  return <PayrollDataGrid rows={employeesData} loading={loading} />
 }
