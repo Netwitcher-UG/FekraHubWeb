@@ -51,7 +51,6 @@ const ComposePopup = props => {
   const { users } = useSelector(state => state.email)
   const { data, status, error, dataRooms, dataTeacher } = useSelector(state => state.courses)
   const { roles } = useSelector(state => state.roles)
-  console.log('🚀 ~ ComposePopup ~ rolesData:', roles)
   const [attachments, setAttachments] = useState([]) // Store multiple files
 
   // Handle multiple file selection

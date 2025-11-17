@@ -40,7 +40,6 @@ const MessagesDataGrid = ({
   setCurrentPage,
   coursesData
 }) => {
-  console.log("🚀 ~ rows:", rows)
   const handleCourseChange = (event, newValue) => {
     setCurrentPage(1)
     setAttendanceData([])
@@ -48,48 +47,52 @@ const MessagesDataGrid = ({
   }
   const dispatch = useDispatch()
 
-
-
-
-  const { columns, attendanceData, setAttendanceData ,   selectedFile,setSelectedFile, isDialogOpen,handleDelete, handleCloseDialog,handleDeleteClick, drawerData, open, handleCloseDrawer, DeleteName } = useMessagesColumns()
-
-
-
+  const {
+    columns,
+    attendanceData,
+    setAttendanceData,
+    selectedFile,
+    setSelectedFile,
+    isDialogOpen,
+    handleDelete,
+    handleCloseDialog,
+    handleDeleteClick,
+    drawerData,
+    open,
+    handleCloseDrawer,
+    DeleteName
+  } = useMessagesColumns()
 
   return (
     <>
-
       <CardContent>
-<Box sx={{width:'100%',display:'flex', justifyContent:'end'}}>
-<AddMessage/>
-
-</Box>
+        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'end' }}>
+          <AddMessage />
+        </Box>
       </CardContent>
       <Divider sx={{ m: '0 !important' }} />
 
-        <Box sx={{ height: 'calc(100vh - 250px)', width:'100%' }}>
+      <Box sx={{ height: 'calc(100vh - 250px)', width: '100%' }}>
+        <>
+          <DataGrid
+            rowHeight={62}
+            rows={rows || []}
+            columns={columns}
+            hideFooter={true}
+            disableRowSelectionOnClick
+            onRowClick={handleRowClick}
+            pagination={true}
+            sx={{
+              // overflowY: 'scroll',
+              overflowX: 'scroll',
+              ...customScrollbarStyles,
+              fontSize: '1rem'
+            }}
+          />
+        </>
+      </Box>
 
-            <>
-              <DataGrid
-                rowHeight={62}
-                rows={rows || []}
-                columns={columns}
-                hideFooter={true}
-                disableRowSelectionOnClick
-                onRowClick={handleRowClick}
-                pagination={true}
-                sx={{
-                  // overflowY: 'scroll',
-                  overflowX: 'scroll',
-                  ...customScrollbarStyles,
-                  fontSize: '1rem'
-                }}
-              />
-            </>
-
-        </Box>
-
-        <CustomDialogDelete
+      <CustomDialogDelete
         open={isDialogOpen}
         handleClose={handleCloseDialog}
         decsription={`Are you sure you want to delete the class ${DeleteName} ? `}

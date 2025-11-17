@@ -58,20 +58,15 @@ const notifications = [
   }
 ]
 
-
-
 const AppBarContent = props => {
   // ** Props
   const { hidden, settings, saveSettings } = props
-const dispatch = useDispatch()
-const {Notifications} = useSelector(state => state.user)
-console.log("🚀 ~ AppBarContent ~ Notifications:", Notifications)
+  const dispatch = useDispatch()
+  const { Notifications } = useSelector(state => state.user)
 
   useEffect(() => {
     dispatch(fetchNotifications())
-
-}, [dispatch])
-
+  }, [dispatch])
 
   // ** Hook
   const auth = useAuth()

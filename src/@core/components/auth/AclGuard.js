@@ -119,7 +119,8 @@ const AclGuard = props => {
     '/roles': { action: 'manage', subject: 'Permission' },
     '/worksheets': { action: 'manage', subject: 'File' },
     '/students-attendance': { action: 'read', subject: 'StudentAttendance' },
-    '/teachers-attendance': { action: 'read', subject: 'TeacherAttendance' }
+    '/teachers-attendance': { action: 'read', subject: 'TeacherAttendance' },
+    '/settings': { action: 'manage', subject: 'SchoolInfo' }
   }
 
   if (ability && auth.user) {
