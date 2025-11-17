@@ -7,7 +7,6 @@ import PayrollDataGrid from 'src/views/payroll/dataGrid'
 
 export default function Index() {
   const { employeesData, loading } = useSelector(state => state.users)
-  console.log('🚀 ~ Index ~ data:', employeesData)
 
   const dispatch = useDispatch()
 

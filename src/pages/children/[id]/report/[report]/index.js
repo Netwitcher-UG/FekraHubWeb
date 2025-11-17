@@ -32,7 +32,7 @@ const ReportPreview = () => {
         const response = await dispatch(fetchSingleChildReport(id))
         if (response?.payload?.status == 404) setError(true)
         else setData(response?.payload)
-        console.log(response?.payload)
+        // console.log(response?.payload)
       }
     }
 
