@@ -1,14 +1,14 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Modal from '@mui/material/Modal';
-import Button from '@mui/material/Button';
-import { Dialog, DialogActions, DialogContent, DialogTitle, Icon, IconButton, Typography } from '@mui/material';
-import Translations from 'src/layouts/components/Translations';
-import DropzoneWrapper from 'src/@core/utils/DropZone';
-import styled from '@emotion/styled';
-import { useDispatch } from 'react-redux';
-import { AddStudentInvoiceFile } from 'src/store/apps/invoices';
-
+import * as React from 'react'
+import Box from '@mui/material/Box'
+import Modal from '@mui/material/Modal'
+import Button from '@mui/material/Button'
+import { Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Typography } from '@mui/material'
+import Translations from 'src/layouts/components/Translations'
+import DropzoneWrapper from 'src/@core/utils/DropZone'
+import styled from '@emotion/styled'
+import { useDispatch } from 'react-redux'
+import { AddStudentInvoiceFile } from 'src/store/apps/invoices'
+import Icon from 'src/@core/components/icon'
 
 const CustomCloseButton = styled(IconButton)(({ theme }) => ({
   top: 0,
@@ -25,47 +25,43 @@ const CustomCloseButton = styled(IconButton)(({ theme }) => ({
   }
 }))
 
-export default function Add({student}) {
-  console.log("🚀 ~ Add ~ student:", student)
-  const [open, setOpen] = React.useState(false);
-  const [selectedFile, setSelectedFile]= React.useState()
+export default function Add({ student }) {
+  console.log('🚀 ~ Add ~ student:', student)
+  const [open, setOpen] = React.useState(false)
+  const [selectedFile, setSelectedFile] = React.useState()
   const dispatch = useDispatch()
 
-  const handleFileUpload = React.useCallback((acceptedFiles) => {
+  const handleFileUpload = React.useCallback(acceptedFiles => {
     setSelectedFile(acceptedFiles[0])
-    console.log('File uploaded:', acceptedFiles);
-  }, []);
+    console.log('File uploaded:', acceptedFiles)
+  }, [])
 
   const handleOpen = () => {
-    setOpen(true);
-  };
+    setOpen(true)
+  }
   const handleClose = () => {
-    setOpen(false);
-    setSelectedFile(null);
-  };
+    setOpen(false)
+    setSelectedFile(null)
+  }
 
   const handleSaveData = () => {
     try {
       const formData = new FormData()
-      formData.append('invoiceFile',selectedFile)
-      formData.append('studentId',student)
-dispatch(AddStudentInvoiceFile({formData:formData,id:student}))
-      handleClose();
+      formData.append('invoiceFile', selectedFile)
+      formData.append('studentId', student)
+      dispatch(AddStudentInvoiceFile({ formData: formData, id: student }))
+      handleClose()
     } catch (error) {
       console.error(error)
     }
   }
   return (
     <div>
-
-      <Box sx={{ marginY:'24px', display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
-
-<Button  onClick={handleOpen} variant='contained' >
-
-  <Translations text={'Add New Invoice'} />
-</Button>
-</Box>
-
+      <Box sx={{ marginY: '24px', display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
+        <Button onClick={handleOpen} variant='contained'>
+          <Translations text={'Add New Invoice'} />
+        </Button>
+      </Box>
 
       <Dialog
         open={open}
@@ -81,18 +77,18 @@ dispatch(AddStudentInvoiceFile({formData:formData,id:student}))
             <Icon icon='tabler:x' fontSize='1.25rem' />
           </CustomCloseButton>
         </DialogTitle>
-        <DialogContent dividers sx={{ p: theme => `${theme.spacing(4)} !important`, border: 'none' ,width:'400px' }}>
-        <DropzoneWrapper onFileUpload={handleFileUpload}  />
+        <DialogContent dividers sx={{ p: theme => `${theme.spacing(4)} !important`, border: 'none', width: '400px' }}>
+          <DropzoneWrapper onFileUpload={handleFileUpload} />
         </DialogContent>
         <DialogActions sx={{ p: theme => `${theme.spacing(3)} !important` }}>
           <Button type='button' variant='outlined' onClick={handleClose}>
-            <Translations text={'cancel'} />
+            <Translations text={'Cancel'} />
           </Button>
-          <Button disabled={!selectedFile}  type='button' variant='contained' onClick={handleSaveData}>
+          <Button disabled={!selectedFile} type='button' variant='contained' onClick={handleSaveData}>
             <Translations text={'Add'} />
           </Button>
         </DialogActions>
       </Dialog>
     </div>
-  );
+  )
 }

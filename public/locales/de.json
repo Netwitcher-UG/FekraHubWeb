@@ -602,5 +602,8 @@
     "Error deleting file": "Fehler beim Löschen der Datei",
     "Are you sure you want to delete the file from": "Sind Sie sicher, dass Sie die Datei vom",
     "Latest Payroll Date": "Letztes Gehaltsabrechnungsdatum",
-    "View uploaded files": "Hochgeladene Dateien anzeigen"
+    "View uploaded files": "Hochgeladene Dateien anzeigen",
+    "No name": "Kein Name",
+    "Deleting...": "Löschen...",
+    "Uploading...": "Hochladen..."
 }

@@ -7,6 +7,7 @@ import Button from '@mui/material/Button'
 import ListItem from '@mui/material/ListItem'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
+import CircularProgress from '@mui/material/CircularProgress'
 import Translations from 'src/layouts/components/Translations'
 
 // ** Icon Imports
@@ -24,7 +25,8 @@ const FileUploaderRestrictions = ({
   removeFile,
   setRemoveFile,
   handleUpload,
-  inputDisabled = false
+  inputDisabled = false,
+  loading = false
 }) => {
   // ** State
   const [file, setFile] = useState(null)
@@ -42,6 +44,7 @@ const FileUploaderRestrictions = ({
     maxFiles: 1,
     maxSize: 10000000, // 10 MB
     accept: '*', // Adjust according to allowed file types
+    disabled: loading || inputDisabled,
     onDrop: acceptedFiles => {
       setShowError(false)
       const newFile = acceptedFiles[0]
@@ -96,11 +99,18 @@ const FileUploaderRestrictions = ({
   return (
     <Fragment>
       <div
-        style={{ width: '100%', minHeight: 'auto', height: '10rem' }}
-        {...(inputDisabled ? {} : getRootProps())}
+        style={{
+          width: '100%',
+          minHeight: 'auto',
+          height: '10rem',
+          opacity: loading ? 0.6 : 1,
+          pointerEvents: loading ? 'none' : 'auto',
+          cursor: loading ? 'not-allowed' : 'pointer'
+        }}
+        {...(inputDisabled || loading ? {} : getRootProps())}
         className='dropzone'
       >
-        <input {...getInputProps()} disabled={inputDisabled} />
+        <input {...getInputProps()} disabled={inputDisabled || loading} />
         <Box sx={{ display: 'flex', textAlign: 'center', alignItems: 'center', flexDirection: 'column' }}>
           <Box
             sx={{
@@ -139,17 +149,24 @@ const FileUploaderRestrictions = ({
                   </Typography>
                 </div>
               </div>
-              <IconButton onClick={handleRemoveFile}>
+              <IconButton onClick={handleRemoveFile} disabled={loading}>
                 <Icon icon='tabler:x' fontSize={20} />
               </IconButton>
             </ListItem>
           </List>
           <div className='buttons'>
-            <Button color='error' variant='outlined' onClick={handleRemoveFile}>
+            <Button color='error' variant='outlined' onClick={handleRemoveFile} disabled={loading}>
               <Translations text={'Remove'} />
             </Button>
-            <Button type='submit' sx={{ mr: 2 }} variant='contained' onClick={handleUpload}>
-              <Translations text={'Upload'} />
+            <Button type='submit' sx={{ mr: 2 }} variant='contained' onClick={handleUpload} disabled={loading}>
+              {loading ? (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <CircularProgress size={16} sx={{ color: 'inherit' }} />
+                  <Translations text={'Uploading...'} />
+                </Box>
+              ) : (
+                <Translations text={'Upload'} />
+              )}
             </Button>
           </div>
         </Fragment>

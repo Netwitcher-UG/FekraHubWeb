@@ -38,25 +38,33 @@ const TeacherPayrollDatagrid = ({ loading, teacherPayrollData, teacher }) => {
   const [fileBase64, setFileBase64] = useState(null)
   const [fileName, setFileName] = useState(null)
   const [removeFile, setRemoveFile] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
   const handleUploadSlip = async () => {
-    const formData = new FormData()
-    formData.append('file', new Blob([fileBase64]))
-    formData.append('UserID', teacher)
+    setIsUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', new Blob([fileBase64]))
+      formData.append('UserID', teacher)
 
-    const response = await dispatch(uploadPaysilp({ data: formData, teacherId: teacher }))
-    // Check the structure of response and handle messages accordingly
-    const errorMessage = response?.payload?.data || 'Something went wrong, please try again!'
-    const successMessage = response?.payload?.data || 'File uploaded successfully'
+      const response = await dispatch(uploadPaysilp({ data: formData, teacherId: teacher }))
+      // Check the structure of response and handle messages accordingly
+      const errorMessage = response?.payload?.data || 'Something went wrong, please try again!'
+      const successMessage = response?.payload?.data || 'File uploaded successfully'
 
-    if (response?.payload?.status == 400) {
-      toast.error(errorMessage)
-    } else if (response?.payload?.status == 200) {
-      toast.success(<Translations text={successMessage} />, { duration: 1000 })
-      setFileBase64(null)
-      setFileName(null)
-      setRemoveFile(true)
-    } else {
-      toast.error(errorMessage)
+      if (response?.payload?.status == 400) {
+        toast.error(errorMessage)
+      } else if (response?.payload?.status == 200) {
+        toast.success(<Translations text={successMessage} />, { duration: 1000 })
+        setFileBase64(null)
+        setFileName(null)
+        setRemoveFile(true)
+      } else {
+        toast.error(errorMessage)
+      }
+    } catch (error) {
+      toast.error('Error uploading file')
+    } finally {
+      setIsUploading(false)
     }
   }
   // const handleClickOpen = () => setOpen(true)
@@ -68,7 +76,10 @@ const TeacherPayrollDatagrid = ({ loading, teacherPayrollData, teacher }) => {
     handleCloseDialog,
     handleDelete,
     selectedFile,
-    setSelectedFile
+    setSelectedFile,
+    handleCloseViewDialog,
+    isPdfLoading,
+    isDeleting
   } = useTeacherPayrollColumns({ teacher })
 
   return (
@@ -80,6 +91,7 @@ const TeacherPayrollDatagrid = ({ loading, teacherPayrollData, teacher }) => {
           handleUpload={handleUploadSlip}
           removeFile={removeFile}
           setRemoveFile={setRemoveFile}
+          loading={isUploading}
         />
       </DropzoneWrapper>
       {/* <TableHeader toggle={handleClickOpen} /> */}
@@ -118,8 +130,16 @@ const TeacherPayrollDatagrid = ({ loading, teacherPayrollData, teacher }) => {
         handleClose={handleCloseDialog}
         decsription={`${t('Are you sure you want to delete payrollSlip For')} ${DeleteName} ? `}
         onDelete={handleDelete}
+        loading={isDeleting}
       />
-      {selectedFile && <ViewPayrollSlip selectedFile={selectedFile} setSelectedFile={setSelectedFile} />}
+      {selectedFile && (
+        <ViewPayrollSlip
+          selectedFile={selectedFile}
+          setSelectedFile={setSelectedFile}
+          isPdfLoading={isPdfLoading}
+          onClose={handleCloseViewDialog}
+        />
+      )}
       {/* <AddRecord open={open} setOpen={setOpen} attendanceStatuses={attendanceStatuses} teacherId={teacher} /> */}
     </>
   )

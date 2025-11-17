@@ -9,19 +9,24 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import { Box } from '@mui/system'
-import { Typography } from '@mui/material'
+import { Typography, CircularProgress } from '@mui/material'
 import Translations from 'src/layouts/components/Translations'
 import Icon from 'src/@core/components/icon'
 import { useTranslation } from 'react-i18next'
 
-const CustomDialogDelete = ({ open, handleClose, decsription, onDelete }) => {
+const CustomDialogDelete = ({ open, handleClose, decsription, onDelete, loading = false }) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
 
   return (
     <Fragment>
-      <Dialog fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby='responsive-dialog-title'>
+      <Dialog
+        fullScreen={fullScreen}
+        open={open}
+        onClose={loading ? undefined : handleClose}
+        aria-labelledby='responsive-dialog-title'
+      >
         <DialogTitle id='responsive-dialog-title' sx={{}}>
           <Typography
             variant='h4'
@@ -54,8 +59,9 @@ const CustomDialogDelete = ({ open, handleClose, decsription, onDelete }) => {
           <Box sx={{ textAlign: 'center', width: '100%', display: 'flex', justifyContent: 'center', gap: '24px' }}>
             <Button
               onClick={onDelete}
+              disabled={loading}
               sx={{
-                width: '103px',
+                width: '150px',
                 height: '46px',
                 borderRadius: '8px',
                 padding: '8px 32px 8px 32px',
@@ -66,14 +72,26 @@ const CustomDialogDelete = ({ open, handleClose, decsription, onDelete }) => {
                 lineHeight: '30px',
                 '&:hover': {
                   backgroundColor: '#ce3446'
+                },
+                '&:disabled': {
+                  backgroundColor: '#ce3446',
+                  opacity: 0.7
                 }
               }}
             >
-              {t('Delete')}
+              {loading ? (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <CircularProgress size={16} sx={{ color: '#F2F4F8' }} />
+                  <span>{t('Deleting...')}</span>
+                </Box>
+              ) : (
+                t('Delete')
+              )}
             </Button>
 
             <Button
               onClick={handleClose}
+              disabled={loading}
               sx={{
                 width: '99px',
                 height: '46px',
@@ -86,6 +104,10 @@ const CustomDialogDelete = ({ open, handleClose, decsription, onDelete }) => {
                 lineHeight: '30px',
                 '&:hover': {
                   backgroundColor: '#e0e0e0'
+                },
+                '&:disabled': {
+                  backgroundColor: '#e0e0e0',
+                  opacity: 0.7
                 }
               }}
               variant='none'
