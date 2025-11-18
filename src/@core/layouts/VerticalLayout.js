@@ -29,13 +29,15 @@ const MainContentWrapper = styled(Box)({
   minWidth: 0,
   display: 'flex',
   minHeight: '100vh',
-  flexDirection: 'column'
+  flexDirection: 'column',
+  paddingBottom: '0px !important'
 })
 
 const ContentWrapper = styled('main')(({ theme }) => ({
   flexGrow: 1,
   width: '100%',
   padding: theme.spacing(6),
+  paddingBottom: '0px !important',
   transition: 'padding .25s ease-in-out',
   [theme.breakpoints.down('sm')]: {
     paddingLeft: theme.spacing(4),
@@ -117,7 +119,6 @@ const VerticalLayout = props => {
           <Footer footerStyles={footerProps?.sx} footerContent={footerProps?.content} {...props} />
         </MainContentWrapper>
       </VerticalLayoutWrapper>
-
 
       {scrollToTop ? (
         scrollToTop(props)

@@ -6,7 +6,7 @@ const StudentsPaginate = ({ totalPages, currentPage, setCurrentPage }) => {
     setCurrentPage(value)
   }
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+    <Box sx={{ display: 'flex', justifyContent: 'center', py: 2, flexShrink: 0 }}>
       <Pagination count={totalPages || 1} page={currentPage} onChange={handlePageChange} color='primary' />
     </Box>
   )

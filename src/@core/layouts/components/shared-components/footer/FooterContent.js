@@ -33,14 +33,16 @@ const FooterContent = () => {
         display: 'flex',
         flexWrap: 'wrap',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        py: 1
       }}
     >
       <Typography
         sx={{
           display: 'flex',
-          alignItems: 'center', // Ensure elements align vertically center
-          color: 'text.secondary'
+          alignItems: 'center',
+          color: 'text.secondary',
+          fontSize: '0.875rem'
         }}
       >
         {`© ${new Date().getFullYear()}, ${t('Made with')} `}
@@ -51,7 +53,8 @@ const FooterContent = () => {
         <Box
           sx={{
             display: 'flex',
-            alignItems: 'start'
+            alignItems: 'center',
+            ml: 1
           }}
         >
           <a href='https://netwitcher.com' target='_blank' rel='noopener noreferrer'>
@@ -60,10 +63,10 @@ const FooterContent = () => {
               src='/images/logos/Netwitcher.svg'
               alt='Netwitcher'
               sx={{
-                width: 110,
-                height: 100,
-                display: 'flex',
-                alignItems: 'start' // Keeps image inline
+                width: 100,
+                height: 35,
+                display: 'block',
+                objectFit: 'contain'
               }}
             />
           </a>

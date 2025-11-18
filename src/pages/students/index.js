@@ -12,7 +12,7 @@ const StudentsList = () => {
   const [selectedCourse, setSelectedCourse] = useState(0)
   const [searchTerm, setSearchTerm] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
-  const pageSize = 10
+  const pageSize = 20
   const dispatch = useDispatch()
   const router = useRouter()
   const store = useSelector(state => state.students)
@@ -41,9 +41,9 @@ const StudentsList = () => {
   }, [dispatch, currentPage, searchTerm, selectedCourse])
 
   return (
-    <Grid container spacing={6.5}>
-      <Grid item xs={12}>
-        <Card>
+    <Grid container spacing={6.5} sx={{ height: 'calc(100vh - 145px)', overflow: 'hidden' }}>
+      <Grid item xs={12} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           <StudentsDataGrid
             store={store}
             setValue={setValue}

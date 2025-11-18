@@ -64,9 +64,8 @@ const StudentsDataGrid = ({
   }, [value, handleFilter])
 
   return (
-    <>
-      <CardHeader title={t('Search Filters')} />
-      <CardContent>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', flex: 1, overflow: 'hidden' }}>
+      <CardContent sx={{ flexShrink: 0, pb: 0 }}>
         <Grid container spacing={6}>
           <Grid item sm={4} xs={12}>
             <Autocomplete
@@ -98,43 +97,46 @@ const StudentsDataGrid = ({
           </Grid>
         </Grid>
       </CardContent>
-      <Divider sx={{ m: '0 !important' }} />
-      <TableHeader value={value} setValue={setValue} handleFilter={handleFilter} />
-      <Box sx={{ height: 'calc(100vh - 250px)' }}>
+      <Divider sx={{ m: '0 !important', flexShrink: 0 }} />
+      <Box sx={{ flexShrink: 0 }}>
+        <TableHeader value={value} setValue={setValue} handleFilter={handleFilter} />
+      </Box>
+      <Box sx={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
         {store.loading ? (
           <Box
             sx={{
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: '90%',
+              height: '100%',
               zIndex: 10
             }}
           >
             <CircularProgress size={100} />
           </Box>
         ) : (
-          <>
-            <DataGrid
-              rowHeight={62}
-              rows={store?.data.students || []}
-              columns={columns}
-              hideFooter={true}
-              disableRowSelectionOnClick
-              onRowClick={handleRowClick}
-              pagination={true}
-              sx={{
-                // overflowY: 'scroll',
-                overflowX: 'scroll',
-                ...customScrollbarStyles,
-                fontSize: '1rem'
-              }}
-            />
-          </>
+          <DataGrid
+            rowHeight={62}
+            rows={store?.data.students || []}
+            columns={columns}
+            hideFooter={true}
+            disableRowSelectionOnClick
+            onRowClick={handleRowClick}
+            pagination={true}
+            sx={{
+              height: '100%',
+              overflowX: 'auto',
+              ...customScrollbarStyles,
+              fontSize: '1rem',
+              '& .MuiDataGrid-virtualScroller': {
+                overflowY: 'auto'
+              }
+            }}
+          />
         )}
       </Box>
       {open && <AddReportDrawer open={open} handleCloseDrawer={handleCloseDrawer} rowData={drawerData} />}
-    </>
+    </Box>
   )
 }
 
