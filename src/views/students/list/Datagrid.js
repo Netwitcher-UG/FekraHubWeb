@@ -130,6 +130,9 @@ const StudentsDataGrid = ({
               fontSize: '1rem',
               '& .MuiDataGrid-virtualScroller': {
                 overflowY: 'auto'
+              },
+              '& .MuiDataGrid-row:hover': {
+                cursor: 'pointer'
               }
             }}
           />

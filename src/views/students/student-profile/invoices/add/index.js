@@ -1,94 +1,57 @@
-import * as React from 'react'
-import Box from '@mui/material/Box'
-import Modal from '@mui/material/Modal'
-import Button from '@mui/material/Button'
-import { Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Typography } from '@mui/material'
-import Translations from 'src/layouts/components/Translations'
-import DropzoneWrapper from 'src/@core/utils/DropZone'
-import styled from '@emotion/styled'
-import { useDispatch } from 'react-redux'
+import { useState } from 'react'
+import DropzoneWrapper from 'src/@core/styles/libs/react-dropzone'
 import { AddStudentInvoiceFile } from 'src/store/apps/invoices'
-import Icon from 'src/@core/components/icon'
-
-const CustomCloseButton = styled(IconButton)(({ theme }) => ({
-  top: 0,
-  right: 0,
-  color: 'grey.500',
-  position: 'absolute',
-  boxShadow: theme.shadows[2],
-  transform: 'translate(10px, -10px)',
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: `${theme.palette.background.paper} !important`,
-  transition: 'transform 0.25s ease-in-out, box-shadow 0.25s ease-in-out',
-  '&:hover': {
-    transform: 'translate(7px, -5px)'
-  }
-}))
+import FileUploaderRestrictions from 'src/@core/components/inputs/FileUploaderRestrictions'
+import toast from 'react-hot-toast'
+import { useDispatch } from 'react-redux'
+import Translations from 'src/layouts/components/Translations'
 
 export default function Add({ student }) {
-  console.log('🚀 ~ Add ~ student:', student)
-  const [open, setOpen] = React.useState(false)
-  const [selectedFile, setSelectedFile] = React.useState()
   const dispatch = useDispatch()
+  const [fileBase64, setFileBase64] = useState(null)
+  const [fileName, setFileName] = useState(null)
+  const [removeFile, setRemoveFile] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
 
-  const handleFileUpload = React.useCallback(acceptedFiles => {
-    setSelectedFile(acceptedFiles[0])
-    console.log('File uploaded:', acceptedFiles)
-  }, [])
-
-  const handleOpen = () => {
-    setOpen(true)
-  }
-  const handleClose = () => {
-    setOpen(false)
-    setSelectedFile(null)
-  }
-
-  const handleSaveData = () => {
+  const handleUploadInvoice = async () => {
+    setIsUploading(true)
     try {
       const formData = new FormData()
-      formData.append('invoiceFile', selectedFile)
+      formData.append('invoiceFile', new Blob([fileBase64]))
       formData.append('studentId', student)
-      dispatch(AddStudentInvoiceFile({ formData: formData, id: student }))
-      handleClose()
+
+      const response = await dispatch(AddStudentInvoiceFile({ formData: formData, id: student }))
+      // Check the structure of response and handle messages accordingly
+      const errorMessage = response?.payload?.data || 'Something went wrong, please try again!'
+      const successMessage = response?.payload?.data || 'File uploaded successfully'
+
+      if (response?.payload?.status == 400 || response?.error) {
+        toast.error(errorMessage)
+      } else if (response?.payload?.status == 200 || response?.type?.includes('fulfilled')) {
+        toast.success(<Translations text={successMessage} />, { duration: 1000 })
+        setFileBase64(null)
+        setFileName(null)
+        setRemoveFile(true)
+      } else {
+        toast.error(errorMessage)
+      }
     } catch (error) {
-      console.error(error)
+      toast.error('Error uploading file')
+    } finally {
+      setIsUploading(false)
     }
   }
-  return (
-    <div>
-      <Box sx={{ marginY: '24px', display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
-        <Button onClick={handleOpen} variant='contained'>
-          <Translations text={'Add New Invoice'} />
-        </Button>
-      </Box>
 
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby='customized-dialog-title'
-        sx={{ '& .MuiDialog-paper': { overflow: 'visible' } }}
-      >
-        <DialogTitle id='customized-dialog-title' sx={{ p: 4 }}>
-          <Typography variant='h4' sx={{ fontWeight: '900' }}>
-            <Translations text={'Add Invoice'} />
-          </Typography>
-          <CustomCloseButton aria-label='close' onClick={handleClose}>
-            <Icon icon='tabler:x' fontSize='1.25rem' />
-          </CustomCloseButton>
-        </DialogTitle>
-        <DialogContent dividers sx={{ p: theme => `${theme.spacing(4)} !important`, border: 'none', width: '400px' }}>
-          <DropzoneWrapper onFileUpload={handleFileUpload} />
-        </DialogContent>
-        <DialogActions sx={{ p: theme => `${theme.spacing(3)} !important` }}>
-          <Button type='button' variant='outlined' onClick={handleClose}>
-            <Translations text={'Cancel'} />
-          </Button>
-          <Button disabled={!selectedFile} type='button' variant='contained' onClick={handleSaveData}>
-            <Translations text={'Add'} />
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+  return (
+    <DropzoneWrapper sx={{ mt: 4, width: '100%' }}>
+      <FileUploaderRestrictions
+        setFileBase64={setFileBase64}
+        setFileName={setFileName}
+        handleUpload={handleUploadInvoice}
+        removeFile={removeFile}
+        setRemoveFile={setRemoveFile}
+        loading={isUploading}
+      />
+    </DropzoneWrapper>
   )
 }

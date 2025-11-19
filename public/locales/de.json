@@ -297,6 +297,7 @@
     "Recent Worksheet file": "Aktuelle Arbeitsblatt-Datei",
     "invoices": "Rechnungen",
     "Invoices": "Rechnungen",
+    "Contracts": "Verträge",
     "View all invoices": "Alle Rechnungen anzeigen",
     "Recent invoice": "Aktuelle Rechnung",
     "None": "Keine",
@@ -544,6 +545,7 @@
     "Are you sure you want to delete the class?": "Sind Sie sicher, dass Sie die Klasse löschen möchten",
     "Add Files": "Dateien hinzufügen",
     "Add Course Files": "Kursdateien hinzufügen",
+    "Course Files": "Kursdateien",
     "Upload Files": "Dateien hochladen",
     "Page Not Found": "Seite nicht gefunden",
     "The requested URL was not found on this server": "Die angeforderte URL wurde auf diesem Server nicht gefunden",
@@ -605,5 +607,13 @@
     "View uploaded files": "Hochgeladene Dateien anzeigen",
     "No name": "Kein Name",
     "Deleting...": "Löschen...",
-    "Uploading...": "Hochladen..."
+    "Uploading...": "Hochladen...",
+    "File Name": "Dateiname",
+    "Upload": "Hochladen",
+    "No files yet": "Keine Dateien",
+    "Drop file here or click to upload.": "Datei hier ablegen oder zum Hochladen klicken.",
+    "Max 1 file and max size of 2 MB": "Max. 1 Datei und max. Größe von 2 MB",
+    "You can only upload 1 file & maximum size of 10 MB": "Sie können nur 1 Datei hochladen & maximale Größe von 10 MB",
+    "Teacher Payroll Slips": "Lehrer Gehaltsabrechnungen",
+    "Teacher Attendance": "Lehrer Anwesenheit"
 }

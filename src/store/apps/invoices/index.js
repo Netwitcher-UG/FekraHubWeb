@@ -57,23 +57,25 @@ export const deleteInvoices = createAsyncThunk(
     }
   }
 )
-export const AddStudentInvoiceFile = createAsyncThunk('appInvoices/addStudentInvoiceFile', async (data, { getState, dispatch }) => {
-  try {
-    const response = await axiosInstance.post(`/api/Invoice`,data.formData, {
-      headers: {
-        accept: 'application/json',
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-    ShowSuccessToast('Success')
-dispatch(fetchStudentInvoices(data.id))
+export const AddStudentInvoiceFile = createAsyncThunk(
+  'appInvoices/addStudentInvoiceFile',
+  async (data, { getState, dispatch }) => {
+    try {
+      const response = await axiosInstance.post(`/api/Invoice`, data.formData, {
+        headers: {
+          accept: 'application/json',
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      dispatch(fetchStudentInvoices(data.id))
 
-    return response.data
-  } catch (error) {
-    ShowErrorToast(error)
-    return error.response
+      return response.data
+    } catch (error) {
+      ShowErrorToast(error)
+      return error.response
+    }
   }
-})
+)
 
 export const appInvoicesSlice = createSlice({
   name: 'appInvoices',

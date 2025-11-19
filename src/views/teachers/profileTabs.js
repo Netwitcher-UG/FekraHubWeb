@@ -39,10 +39,6 @@ const TeacherProfile = ({ teacher }) => {
     setValue(newValue)
   }
 
-  //   const handleEditDrawerClose = () => {
-  //     setEditDrawerOpen(false)
-  //   }
-
   return (
     <>
       <TabContext value={value}>

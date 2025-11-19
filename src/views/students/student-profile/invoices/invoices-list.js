@@ -31,13 +31,15 @@ const InvoicesList = ({ invoicesData, student, loading, byParent }) => {
         )}
       </>
     ) : (
-      <Grid item xs={12}>
-        <Alert severity='info'>
-          {' '}
-          <Translations text={'No invoices yet'} />{' '}
-        </Alert>
+      <>
         {byParent ? null : <Add student={student} />}
-      </Grid>
+        <Grid item xs={12}>
+          <Alert severity='info'>
+            {' '}
+            <Translations text={'No invoices yet'} />{' '}
+          </Alert>
+        </Grid>
+      </>
     )
 
   return loading ? (

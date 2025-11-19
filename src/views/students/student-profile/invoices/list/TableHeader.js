@@ -33,7 +33,6 @@ const TableHeader = props => {
       }}
     >
       <Box sx={{ rowGap: 2, display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
-
         <Button onClick={toggle} variant='contained' sx={{ '& svg': { mr: 2 } }}>
           <Icon fontSize='1.125rem' icon='tabler:plus' />
           <Translations text={'Add New Invoice'} />
