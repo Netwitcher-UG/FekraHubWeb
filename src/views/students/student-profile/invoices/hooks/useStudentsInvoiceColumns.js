@@ -81,13 +81,13 @@ const useStudentInvoiceColumns = () => {
       },
       {
         flex: 3,
-        headerName: <Translations text={'Date'} />,
-        renderCell: ({ row }) => <div>{convertDate(row.date)}</div>
+        headerName: <Translations text={'File Name'} />,
+        field: 'fileName'
       },
       {
         flex: 3,
-        headerName: <Translations text={'File Name'} />,
-        field: 'fileName'
+        headerName: <Translations text={'Date'} />,
+        renderCell: ({ row }) => <div>{convertDate(row.date)}</div>
       },
       {
         width: 200,

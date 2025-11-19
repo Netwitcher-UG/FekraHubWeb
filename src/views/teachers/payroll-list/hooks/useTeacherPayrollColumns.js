@@ -77,16 +77,16 @@ const useTeacherPayrollColumns = ({ teacher }) => {
         {
           flex: 0.15,
           minWidth: 120,
-          headerName: <Translations text={'Date'} />,
-          field: 'timestamp',
-          renderCell: ({ row }) => checkCell(convertDate(row.timestamp))
+          headerName: <Translations text={'Name'} />,
+          field: 'name',
+          renderCell: ({ row }) => <>{row.name || t('No name')}</>
         },
         {
           flex: 0.15,
           minWidth: 120,
-          headerName: <Translations text={'Name'} />,
-          field: 'name',
-          renderCell: ({ row }) => <>{row.name || t('No name')}</>
+          headerName: <Translations text={'Date'} />,
+          field: 'timestamp',
+          renderCell: ({ row }) => checkCell(convertDate(row.timestamp))
         }
       ]
 
