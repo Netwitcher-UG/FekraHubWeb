@@ -43,7 +43,9 @@ const TeacherPayrollDatagrid = ({ loading, teacherPayrollData, teacher }) => {
     setIsUploading(true)
     try {
       const formData = new FormData()
-      formData.append('file', new Blob([fileBase64]))
+      // Create a File object from the Blob to include the filename
+      const file = new File([fileBase64], fileName || 'payroll.pdf', { type: 'application/pdf' })
+      formData.append('file', file)
       formData.append('UserID', teacher)
 
       const response = await dispatch(uploadPaysilp({ data: formData, teacherId: teacher }))
