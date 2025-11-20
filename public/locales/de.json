@@ -653,5 +653,11 @@
     "Max 1 file and max size of 2 MB": "Max. 1 Datei und max. Größe von 2 MB",
     "You can only upload 1 file & maximum size of 10 MB": "Sie können nur 1 Datei hochladen & maximale Größe von 10 MB",
     "Teacher Payroll Slips": "Lehrer Gehaltsabrechnungen",
-    "Teacher Attendance": "Lehrer Anwesenheit"
+    "Teacher Attendance": "Lehrer Anwesenheit",
+    "Student updated successfully": "Schüler erfolgreich aktualisiert",
+    "Something went wrong, please try again!": "Etwas ist schiefgelaufen, bitte versuchen Sie es erneut!",
+    "Failed to update student": "Fehler beim Aktualisieren des Schülers",
+    "Error updating student": "Fehler beim Aktualisieren des Schülers",
+    "Edit Student": "Schüler bearbeiten",
+    "Student deleted successfully": "Schüler erfolgreich gelöscht"
 }

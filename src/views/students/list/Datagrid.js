@@ -16,6 +16,8 @@ import useStudentsColumns from 'src/views/students/hooks/useStudentsColumns'
 import AddReportDrawer from '../add-student-report/addReportDrawer'
 import { useTranslation } from 'react-i18next'
 import { Autocomplete } from '@mui/material'
+import CustomDialogDelete from 'src/@core/components/custom-delete'
+import EditStudentDialog from '../edit-student-dialog'
 
 const customScrollbarStyles = {
   '& ::-webkit-scrollbar': {
@@ -47,11 +49,25 @@ const StudentsDataGrid = ({
     setSelectedCourse(newValue ? newValue.value : '')
   }
   const { t } = useTranslation()
-  const { columns, open, drawerData, handleCloseDrawer } = useStudentsColumns({
+  const {
+    columns,
+    open,
+    drawerData,
+    handleCloseDrawer,
+    isDialogOpen,
+    handleCloseDialog,
+    handleDelete,
+    DeleteName,
+    isDeleting,
+    isEditDialogOpen,
+    handleCloseEditDialog,
+    editStudentData
+  } = useStudentsColumns({
     courses: store?.coursesData,
     selectedCourse,
     currentPage,
-    pageSize
+    pageSize,
+    search: value
   })
 
   useEffect(() => {
@@ -139,6 +155,22 @@ const StudentsDataGrid = ({
         )}
       </Box>
       {open && <AddReportDrawer open={open} handleCloseDrawer={handleCloseDrawer} rowData={drawerData} />}
+      <CustomDialogDelete
+        open={isDialogOpen}
+        handleClose={handleCloseDialog}
+        decsription={`${t('Are you sure you want to delete the student')} ${DeleteName} ? `}
+        onDelete={handleDelete}
+        loading={isDeleting}
+      />
+      <EditStudentDialog
+        open={isEditDialogOpen}
+        handleClose={handleCloseEditDialog}
+        studentData={editStudentData}
+        search={value}
+        selectedCourse={selectedCourse}
+        currentPage={currentPage}
+        pageSize={pageSize}
+      />
     </Box>
   )
 }

@@ -81,6 +81,28 @@ export const fetchStudentProfileInfo = createAsyncThunk('appStudents/fetchStuden
   }
 })
 
+export const updateStudentInfo = createAsyncThunk('appStudents/updateStudentInfo', async ({ id, data }, thunkAPI) => {
+  try {
+    const response = await axiosInstance.put(`/api/Student/student-info/${id}`, data, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    return response
+  } catch (error) {
+    return error.response
+  }
+})
+
+export const deleteStudent = createAsyncThunk('appStudents/deleteStudent', async (id, thunkAPI) => {
+  try {
+    const response = await axiosInstance.delete(`/api/Student/student-info/${id}`)
+    return response
+  } catch (error) {
+    return error.response
+  }
+})
+
 export const updateChildInfo = createAsyncThunk('appStudents/updateChildInfo', async (data, thunkAPI) => {
   try {
     const response = await axiosInstance.post('/api/Student/UpdateSonDataFromProfile', data, {

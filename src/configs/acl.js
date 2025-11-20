@@ -200,6 +200,9 @@ function defineAbilitiesFor(role, rolesPermissions) {
       case 'StudentAdmissions':
         can('manage', 'StudentAdmissions')
         break
+      case 'ManageStudents':
+        can('manage', 'Student')
+        break
       default:
         break
     }

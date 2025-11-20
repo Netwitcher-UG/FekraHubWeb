@@ -7,13 +7,14 @@ import { convertDate } from 'src/@core/utils/convert-date'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import { useDispatch } from 'react-redux'
-import { updateStudentCourse } from 'src/store/apps/students'
+import { updateStudentCourse, deleteStudent, fetchStudents, updateStudentInfo } from 'src/store/apps/students'
 import Box from '@mui/material/Box'
 import Autocomplete from '@mui/material/Autocomplete'
 import TextField from '@mui/material/TextField'
 import { useTranslation } from 'react-i18next'
+import toast from 'react-hot-toast'
 
-const useStudentsColumns = ({ courses, selectedCourse, currentPage, pageSize }) => {
+const useStudentsColumns = ({ courses, selectedCourse, currentPage, pageSize, search = '' }) => {
   // console.log(courses)
   const handleAddReportClick = (e, row) => {
     e.stopPropagation()
@@ -24,6 +25,12 @@ const useStudentsColumns = ({ courses, selectedCourse, currentPage, pageSize }) 
   const [drawerData, setDrawerData] = useState(null)
   const [editingCourse, setEditingCourse] = useState(null)
   const [selectedNewCourse, setSelectedNewCourse] = useState(null)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [DeleteName, setDeleteName] = useState('')
+  const [selectedId, setSelectedId] = useState(null)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [editStudentData, setEditStudentData] = useState(null)
   const ability = useContext(AbilityContext)
   const dispatch = useDispatch()
   const { t } = useTranslation()
@@ -88,20 +95,90 @@ const useStudentsColumns = ({ courses, selectedCourse, currentPage, pageSize }) 
     setSelectedNewCourse(null)
   }, [])
 
+  const handleDeleteClick = useCallback((e, row) => {
+    e.stopPropagation()
+    setIsDialogOpen(true)
+    setSelectedId(row.id)
+    setDeleteName(`${row.firstName} ${row.lastName}`)
+  }, [])
+
+  const handleEditClick = useCallback((e, row) => {
+    e.stopPropagation()
+    setEditStudentData(row)
+    setIsEditDialogOpen(true)
+  }, [])
+
+  const handleCloseEditDialog = useCallback(() => {
+    setIsEditDialogOpen(false)
+    setEditStudentData(null)
+  }, [])
+
+  const handleDelete = useCallback(async () => {
+    setIsDeleting(true)
+    try {
+      const response = await dispatch(deleteStudent(selectedId))
+      if (response?.payload?.status === 200 || response?.type?.includes('fulfilled')) {
+        toast.success(<Translations text={'Student deleted successfully'} />)
+        // Refetch students with current filters
+        dispatch(
+          fetchStudents({
+            search: search,
+            course: selectedCourse || '',
+            PageSize: pageSize || 20,
+            PageNumber: currentPage || 1
+          })
+        )
+        setIsDialogOpen(false)
+        setSelectedId(null)
+        setDeleteName('')
+      } else {
+        const errorMessage = response?.payload?.data || 'Something went wrong, please try again!'
+        toast.error(
+          typeof errorMessage === 'string'
+            ? errorMessage
+            : errorMessage?.message || errorMessage?.title || 'Failed to delete student'
+        )
+      }
+    } catch (error) {
+      toast.error('Error deleting student')
+    } finally {
+      setIsDeleting(false)
+    }
+  }, [dispatch, selectedId, search, selectedCourse, currentPage, pageSize])
+
+  const handleCloseDialog = useCallback(() => {
+    if (!isDeleting) {
+      setIsDialogOpen(false)
+      setSelectedId(null)
+      setDeleteName('')
+    }
+  }, [isDeleting])
+
   const columns = useMemo(
     () => [
       {
         field: 'addReport',
-        width: 100,
+        width: 180,
         headerName: '',
         renderCell: ({ row }) => (
-          <>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             {ability.can('create', 'StudentReport') && (
-              <IconButton color='success' onClick={e => handleAddReportClick(e, row)} sx={{ width: '80%' }}>
+              <IconButton color='success' onClick={e => handleAddReportClick(e, row)}>
                 <Icon icon='tabler:file-plus' fontSize={30} />
               </IconButton>
             )}
-          </>
+
+            {ability.can('manage', 'Student') && (
+              <IconButton onClick={e => handleEditClick(e, row)}>
+                <Icon icon='mdi:pencil' fontSize={20} />
+              </IconButton>
+            )}
+            {ability.can('manage', 'Student') && (
+              <IconButton color='error' onClick={e => handleDeleteClick(e, row)}>
+                <Icon icon='mdi:delete-outline' fontSize={20} />
+              </IconButton>
+            )}
+          </Box>
         ),
         sortable: false
       },
@@ -156,7 +233,7 @@ const useStudentsColumns = ({ courses, selectedCourse, currentPage, pageSize }) 
           }
 
           return (
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
               {row.course?.name ? (
                 <Chip label={row.course?.name} color={'primary'} sx={{ textTransform: 'capitalize' }} />
               ) : (
@@ -165,7 +242,7 @@ const useStudentsColumns = ({ courses, selectedCourse, currentPage, pageSize }) 
                 </Typography>
               )}
               {ability.can('update', 'StudentCourse') && (
-                <IconButton color='secondary' onClick={e => handleEditCourse(e, row.id, row.course)} sx={{ ml: 2 }}>
+                <IconButton color='secondary' onClick={e => handleEditCourse(e, row.id, row.course)}>
                   <Icon icon='mdi:pencil' fontSize={20} />
                 </IconButton>
               )}
@@ -214,11 +291,26 @@ const useStudentsColumns = ({ courses, selectedCourse, currentPage, pageSize }) 
       handleCancelCourseEdit,
       handleAddReportClick,
       handleCourseChange,
+      handleDeleteClick,
+      handleEditClick,
       t
     ]
   )
 
-  return { columns, open, drawerData, handleCloseDrawer }
+  return {
+    columns,
+    open,
+    drawerData,
+    handleCloseDrawer,
+    isDialogOpen,
+    handleCloseDialog,
+    handleDelete,
+    DeleteName,
+    isDeleting,
+    isEditDialogOpen,
+    handleCloseEditDialog,
+    editStudentData
+  }
 }
 
 export default useStudentsColumns
