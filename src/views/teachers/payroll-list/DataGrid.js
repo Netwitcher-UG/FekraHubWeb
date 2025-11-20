@@ -46,7 +46,7 @@ const TeacherPayrollDatagrid = ({ loading, teacherPayrollData, teacher }) => {
       // Create a File object from the Blob to include the filename
       const file = new File([fileBase64], fileName || 'payroll.pdf', { type: 'application/pdf' })
       formData.append('file', file)
-
+      formData.append('UserID', teacher)
       const response = await dispatch(uploadPaysilp({ data: formData, teacherId: teacher }))
       // Check the structure of response and handle messages accordingly
       const errorMessage = response?.payload?.data || 'Something went wrong, please try again!'

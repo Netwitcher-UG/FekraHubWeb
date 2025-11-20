@@ -19,7 +19,8 @@ export default function Add({ student }) {
       const formData = new FormData()
       // Create a File object from the Blob to include the filename
       const file = new File([fileBase64], fileName || 'invoice.pdf', { type: 'application/pdf' })
-      formData.append('file', file)
+      formData.append('InvoiceFile', file)
+      formData.append('studentId', student)
 
       const response = await dispatch(AddStudentInvoiceFile({ formData: formData, id: student }))
       // Check the structure of response and handle messages accordingly
