@@ -6,13 +6,14 @@ import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import { convertDate } from 'src/@core/utils/convert-date'
 import Translations from 'src/layouts/components/Translations'
+import { useTranslation } from 'react-i18next'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
 const CoursesOverview = props => {
   const { about, count } = props
-
+  const { t } = useTranslation()
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
@@ -32,7 +33,7 @@ const CoursesOverview = props => {
                 variant='body2'
                 sx={{ mb: 6, color: 'primary.main', textTransform: 'uppercase', width: '100%' }}
               >
-                <Translations text={`Course ${count}`} />
+                {t(`Course`)} {count}
               </Typography>
               <Box
                 sx={{

@@ -355,8 +355,8 @@
     "Update report": "Bericht aktualisieren",
     "Full Name": "Vollständiger Name",
     "Today's attendance": "Heutige Anwesenheit",
-    "present": "anwesend",
-    "Present": "anwesend",
+    "present": "Anwesend",
+    "Present": "Anwesend",
     "Submit course attendance": "Kursanwesenheit einreichen",
     "Course attendance submitted successfully": "Kursanwesenheit erfolgreich eingereicht",
     "Upload Type": "Upload-Typ",
@@ -659,5 +659,8 @@
     "Failed to update student": "Fehler beim Aktualisieren des Schülers",
     "Error updating student": "Fehler beim Aktualisieren des Schülers",
     "Edit Student": "Schüler bearbeiten",
-    "Student deleted successfully": "Schüler erfolgreich gelöscht"
+    "Student deleted successfully": "Schüler erfolgreich gelöscht",
+    "Teacher Info": "Lehrerdaten",
+    "Room and Location": "Raum und Standort",
+    "Other teachers in course": "Andere Lehrer im Kurs"
 }
