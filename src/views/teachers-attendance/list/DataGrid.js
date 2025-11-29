@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import CircularProgress from '@mui/material/CircularProgress'
 import Box from '@mui/material/Box'
 import CardContent from '@mui/material/CardContent'
 import Grid from '@mui/material/Grid'
@@ -7,27 +6,12 @@ import AddRecord from './add-record'
 import Divider from '@mui/material/Divider'
 import CustomDialogDelete from 'src/@core/components/custom-delete'
 import TableHeader from './TableHeader'
-// import Typography from '@mui/material/Typography'
 import CustomTextField from 'src/@core/components/mui/text-field'
-import { DataGrid } from '@mui/x-data-grid'
+import CustomDataGrid from 'src/@core/components/custom-grid'
 import Translations from 'src/layouts/components/Translations'
-import CardHeader from '@mui/material/CardHeader'
-// import TableHeader from './TableHeader'
 import useTeachersAttendanceColumns from '../hooks/useTeachersAttendanceColumns'
 import { Autocomplete } from '@mui/material'
 import { useTranslation } from 'react-i18next'
-const customScrollbarStyles = {
-  '& ::-webkit-scrollbar': {
-    height: 8
-  },
-  '& ::-webkit-scrollbar-thumb': {
-    backgroundColor: '#888',
-    borderRadius: 10,
-    '&:hover': {
-      backgroundColor: '#555'
-    }
-  }
-}
 
 const TeachersAttendanceDataGrid = ({
   store,
@@ -68,10 +52,9 @@ const TeachersAttendanceDataGrid = ({
 
   return (
     <>
-      <CardHeader title={t('Search Filters')} />
-      <CardContent>
+      <CardContent sx={{ flexShrink: 0, pb: 0 }}>
         <Grid container spacing={6} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Grid item sm={4} xs={12}>
+          <Grid item sm={3} xs={12}>
             <Autocomplete
               options={teacherNames?.map(teacher => ({
                 value: teacher.id,
@@ -108,35 +91,17 @@ const TeachersAttendanceDataGrid = ({
           </Grid>
         </Grid>
       </CardContent>
-      <Divider sx={{ m: '0 !important' }} />
+      <Divider sx={{ m: '0 !important', flexShrink: 0 }} />
       <TableHeader toggle={handleClickOpen} />
-      <Box sx={{ height: 500 }}>
-        {!selectedTeacher ? null : store.teacherAttendanceLoading ? (
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '90%',
-              zIndex: 10
-            }}
-          >
-            <CircularProgress size={100} />
-          </Box>
-        ) : (
-          <DataGrid
-            rowHeight={62}
+      <Box sx={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
+        {selectedTeacher && (
+          <CustomDataGrid
             rows={store?.teacherAttendance || []}
             columns={columns}
-            hideFooter={true}
-            disableRowSelectionOnClick
-            pagination={true}
-            onRowClick={handleRowClick}
+            loading={store.teacherAttendanceLoading}
+            handleRowClick={handleRowClick}
             sx={{
-              overflowY: 'scroll',
-              overflowX: 'scroll',
-              ...customScrollbarStyles,
-              fontSize: '1rem'
+              height: '100%'
             }}
           />
         )}

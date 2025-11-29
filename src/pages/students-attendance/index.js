@@ -5,8 +5,6 @@ import { useSelector, useDispatch } from 'react-redux'
 import StudentsAttendanceDataGrid from 'src/views/students-attendance/list/Datagrid'
 import { fetchCourses } from 'src/store/apps/students'
 import { fetchStudentsWithAttendance } from 'src/store/apps/attendance'
-import { useRouter } from 'next/router'
-// import Divider from '@mui/material/Divider'
 const StudentsAttendanceList = () => {
   const [value, setValue] = useState('')
   const [selectedCourse, setSelectedCourse] = useState(null)
@@ -14,7 +12,6 @@ const StudentsAttendanceList = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const pageSize = 10
   const dispatch = useDispatch()
-  const router = useRouter()
   const store = useSelector(state => state.attendance)
   const coursesData = useSelector(state => state.students.coursesData)
 
@@ -40,9 +37,9 @@ const StudentsAttendanceList = () => {
   }, [dispatch, currentPage, searchTerm, selectedCourse])
 
   return (
-    <Grid container spacing={6.5}>
-      <Grid item xs={12}>
-        <Card>
+    <Grid container spacing={6.5} sx={{ height: 'calc(100vh - 145px)', overflow: 'hidden' }}>
+      <Grid item xs={12} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           <StudentsAttendanceDataGrid
             store={store}
             setValue={setValue}

@@ -1,9 +1,8 @@
 import { Card } from '@mui/material'
 import { Box, Stack } from '@mui/system'
 import React from 'react'
-import CustomDataGrid from 'src/@core/components/custom-datagrid'
+import CustomDataGrid from 'src/@core/components/custom-grid'
 import useRoomColumns from '../hook/useRoomColumns'
-import CircularProgress from '@mui/material/CircularProgress'
 import CustomDialogDelete from 'src/@core/components/custom-delete'
 import DrawerEdit from '../edit'
 import CustomSearch from 'src/@core/components/custom-search'
@@ -32,21 +31,14 @@ export default function RoomDataGrid({ rows, SetSearch, status }) {
         </Stack>
 
         <Box sx={{ height: 'calc(100vh - 255px)' }}>
-          {status === 'loading' ? (
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '90%',
-                zIndex: 10
-              }}
-            >
-              <CircularProgress size={100} />
-            </Box>
-          ) : (
-            <CustomDataGrid columns={columns} rowHeight={62} rows={rows} />
-          )}
+          <CustomDataGrid
+            columns={columns}
+            rows={rows}
+            loading={status === 'loading'}
+            sx={{
+              height: '100%'
+            }}
+          />
         </Box>
       </Card>
       <CustomDialogDelete

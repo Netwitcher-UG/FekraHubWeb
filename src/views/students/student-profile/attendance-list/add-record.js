@@ -16,7 +16,6 @@ import { useForm, Controller } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import Chip from '@mui/material/Chip'
-import Translations from 'src/layouts/components/Translations'
 import CustomTextField from 'src/@core/components/mui/text-field'
 import { addNewAttendanceRecord } from 'src/store/apps/attendance'
 import DatePicker from 'react-datepicker'
@@ -165,7 +164,7 @@ const AddRecord = ({ open, setOpen, attendanceStatuses, studentId }) => {
                     >
                       {attendanceStatuses?.map(status => (
                         <MenuItem key={status.id} value={status.id}>
-                          <Chip label={t(status.title)} color={status.title === 'Absent' ? 'error' : 'info'} />
+                          <Chip label={t(status.title)} color={status.title === 'Absent' ? 'error' : 'success'} />
                         </MenuItem>
                       ))}
                     </CustomTextField>

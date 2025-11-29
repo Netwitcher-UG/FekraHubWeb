@@ -1,15 +1,15 @@
-import { useMemo, useEffect, useState, useContext } from 'react'
+import { useMemo, useState, useContext, useCallback } from 'react'
 import Translations from 'src/layouts/components/Translations'
 import { convertDate } from 'src/@core/utils/convert-date'
 import { checkCell } from 'src/@core/utils/check-cell'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
-import CircularProgress from '@mui/material/CircularProgress'
 import toast from 'react-hot-toast'
 import { Stack } from '@mui/system'
 import { deleteteacherPayroll, downloadTeacherPayrollslip } from 'src/store/apps/users'
-import { IconButton, Typography } from '@mui/material'
-import { useDispatch, useSelector } from 'react-redux'
+import { IconButton, Tooltip } from '@mui/material'
+import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
+import Icon from 'src/@core/components/icon'
 
 const useTeacherPayrollColumns = ({ teacher }) => {
   const dispatch = useDispatch()
@@ -23,11 +23,14 @@ const useTeacherPayrollColumns = ({ teacher }) => {
   const [isPdfLoading, setIsPdfLoading] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
 
-  const handleDeleteClick = params => {
-    setIsDialogOpen(true)
-    setSelectedId({ id: params.id, selectedId: teacher })
-    setDeleteName(convertDate(params.timestamp))
-  }
+  const handleDeleteClick = useCallback(
+    params => {
+      setIsDialogOpen(true)
+      setSelectedId({ id: params.id, selectedId: teacher })
+      setDeleteName(convertDate(params.timestamp))
+    },
+    [teacher]
+  )
 
   const handleCloseDialog = () => {
     if (!isDeleting) {
@@ -35,22 +38,25 @@ const useTeacherPayrollColumns = ({ teacher }) => {
     }
   }
 
-  const handleViewPayrollSlip = async file => {
-    // Open dialog immediately
-    setIsPdfLoading(true)
-    setSelectedFile({ file: null, name: file.timestamp })
+  const handleViewPayrollSlip = useCallback(
+    async file => {
+      // Open dialog immediately
+      setIsPdfLoading(true)
+      setSelectedFile({ file: null, name: file.timestamp })
 
-    // Load PDF in background
-    try {
-      const response = await dispatch(downloadTeacherPayrollslip(file?.id))
-      setSelectedFile({ file: response?.payload, name: file.timestamp })
-    } catch (error) {
-      toast.error(t('Error loading file'))
-      setSelectedFile(null)
-    } finally {
-      setIsPdfLoading(false)
-    }
-  }
+      // Load PDF in background
+      try {
+        const response = await dispatch(downloadTeacherPayrollslip(file?.id))
+        setSelectedFile({ file: response?.payload, name: file.timestamp })
+      } catch (error) {
+        toast.error(t('Error loading file'))
+        setSelectedFile(null)
+      } finally {
+        setIsPdfLoading(false)
+      }
+    },
+    [dispatch, t]
+  )
 
   const handleCloseViewDialog = () => {
     setSelectedFile(null)
@@ -71,66 +77,59 @@ const useTeacherPayrollColumns = ({ teacher }) => {
     }
   }
 
-  const columns = useMemo(
-    () => {
-      const cols = [
-        {
-          flex: 0.15,
-          minWidth: 120,
-          headerName: <Translations text={'Name'} />,
-          field: 'name',
-          renderCell: ({ row }) => <>{row.name || t('No name')}</>
-        },
-        {
-          flex: 0.15,
-          minWidth: 120,
-          headerName: <Translations text={'Date'} />,
-          field: 'timestamp',
-          renderCell: ({ row }) => checkCell(convertDate(row.timestamp))
-        }
-      ]
+  const columns = useMemo(() => {
+    const cols = []
 
-      // Conditionally add the actions column based on user's ability
-      if (ability.can('manage', 'Payroll')) {
-        cols.push({
-          width: 200,
-          field: 'action',
-          headerName: <Translations text={'Action'} />,
-          renderCell: params => {
-            return (
-              <Stack direction={'row'} alignItems={'center'}>
-                <IconButton onClick={() => handleDeleteClick(params.row)}>
-                  <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24'>
-                    <path
-                      fill='currentColor'
-                      d='M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6zM8 9h8v10H8zm7.5-5l-1-1h-5l-1 1H5v2h14V4z'
-                    ></path>
-                  </svg>
+    // Conditionally add the actions column first based on user's ability
+    if (ability.can('manage', 'Payroll')) {
+      cols.push({
+        width: 200,
+        field: 'action',
+        headerName: <Translations text={'Actions'} />,
+        renderCell: params => {
+          return (
+            <Stack direction={'row'} alignItems={'center'}>
+              <Tooltip title={<Translations text={'Delete Payroll Slip'} />}>
+                <IconButton color='error' onClick={() => handleDeleteClick(params.row)}>
+                  <Icon icon='mdi:delete-outline' fontSize={25} />
                 </IconButton>
+              </Tooltip>
+              <Tooltip title={<Translations text={'View Payroll Slip'} />}>
                 <IconButton onClick={() => handleViewPayrollSlip(params?.row)}>
                   <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24'>
-                    <g
-                      fill='none'
-                      stroke='currentColor'
-                      stroke-linecap='round'
-                      stroke-linejoin='round'
-                      stroke-width='2'
-                    >
+                    <g fill='none' stroke='currentColor' strokeLinecap='round' strokeLinejoin='round' strokeWidth='2'>
                       <path d='M10 12a2 2 0 1 0 4 0a2 2 0 0 0-4 0' />
                       <path d='M21 12q-3.6 6-9 6t-9-6q3.6-6 9-6t9 6' />
                     </g>
                   </svg>
                 </IconButton>
-              </Stack>
-            )
-          }
-        })
-      }
+              </Tooltip>
+            </Stack>
+          )
+        }
+      })
+    }
 
-      return cols
-    },
-    [ability, i18n.language] // Add 'ability' to the dependency array
-  )
+    // Add other columns
+    cols.push(
+      {
+        flex: 0.15,
+        minWidth: 120,
+        headerName: <Translations text={'Name'} />,
+        field: 'name',
+        renderCell: ({ row }) => <>{row.name || t('No name')}</>
+      },
+      {
+        flex: 0.15,
+        minWidth: 120,
+        headerName: <Translations text={'Date'} />,
+        field: 'timestamp',
+        renderCell: ({ row }) => checkCell(convertDate(row.timestamp))
+      }
+    )
+
+    return cols
+  }, [ability, i18n.language, handleDeleteClick, handleViewPayrollSlip, t])
 
   return {
     columns,

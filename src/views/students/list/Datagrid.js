@@ -1,36 +1,17 @@
-import { useState, useEffect } from 'react'
-import CircularProgress from '@mui/material/CircularProgress'
+import { useEffect } from 'react'
 import Box from '@mui/material/Box'
 import CardContent from '@mui/material/CardContent'
 import Grid from '@mui/material/Grid'
 import Divider from '@mui/material/Divider'
-import Typography from '@mui/material/Typography'
 import CustomTextField from 'src/@core/components/mui/text-field'
-import MenuItem from '@mui/material/MenuItem'
-import { DataGrid } from '@mui/x-data-grid'
-import Translations from 'src/layouts/components/Translations'
-import CardHeader from '@mui/material/CardHeader'
 import TableHeader from './TableHeader'
-import Pagination from '@mui/material/Pagination'
 import useStudentsColumns from 'src/views/students/hooks/useStudentsColumns'
 import AddReportDrawer from '../add-student-report/addReportDrawer'
 import { useTranslation } from 'react-i18next'
 import { Autocomplete } from '@mui/material'
 import CustomDialogDelete from 'src/@core/components/custom-delete'
 import EditStudentDialog from '../edit-student-dialog'
-
-const customScrollbarStyles = {
-  '& ::-webkit-scrollbar': {
-    height: 8
-  },
-  '& ::-webkit-scrollbar-thumb': {
-    backgroundColor: '#888',
-    borderRadius: 10,
-    '&:hover': {
-      backgroundColor: '#555'
-    }
-  }
-}
+import CustomDataGrid from 'src/@core/components/custom-grid'
 
 const StudentsDataGrid = ({
   store,
@@ -83,7 +64,7 @@ const StudentsDataGrid = ({
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', flex: 1, overflow: 'hidden' }}>
       <CardContent sx={{ flexShrink: 0, pb: 0 }}>
         <Grid container spacing={6}>
-          <Grid item sm={4} xs={12}>
+          <Grid item sm={3} xs={12}>
             <Autocomplete
               options={store?.coursesData?.map(course => ({ value: course.id, label: course.name }))}
               fullWidth
@@ -118,41 +99,19 @@ const StudentsDataGrid = ({
         <TableHeader value={value} setValue={setValue} handleFilter={handleFilter} />
       </Box>
       <Box sx={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
-        {store.loading ? (
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100%',
-              zIndex: 10
-            }}
-          >
-            <CircularProgress size={100} />
-          </Box>
-        ) : (
-          <DataGrid
-            rowHeight={62}
-            rows={store?.data.students || []}
-            columns={columns}
-            hideFooter={true}
-            disableRowSelectionOnClick
-            onRowClick={handleRowClick}
-            pagination={true}
-            sx={{
-              height: '100%',
-              overflowX: 'auto',
-              ...customScrollbarStyles,
-              fontSize: '1rem',
-              '& .MuiDataGrid-virtualScroller': {
-                overflowY: 'auto'
-              },
-              '& .MuiDataGrid-row:hover': {
-                cursor: 'pointer'
-              }
-            }}
-          />
-        )}
+        <CustomDataGrid
+          rows={store?.data.students || []}
+          columns={columns}
+          loading={store.loading}
+          handleRowClick={handleRowClick}
+          pagination={true}
+          totalPages={store?.data?.totalPages}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          sx={{
+            height: '100%'
+          }}
+        />
       </Box>
       {open && <AddReportDrawer open={open} handleCloseDrawer={handleCloseDrawer} rowData={drawerData} />}
       <CustomDialogDelete

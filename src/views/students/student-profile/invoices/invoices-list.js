@@ -54,7 +54,7 @@ const InvoicesList = ({ invoicesData, student, loading, byParent }) => {
       <CircularProgress size={100} />
     </Box>
   ) : (
-    <Grid container spacing={6}>
+    <Grid container spacing={4}>
       {renderData}
     </Grid>
   )

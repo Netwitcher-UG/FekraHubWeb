@@ -1,9 +1,10 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { Stack, IconButton } from '@mui/material'
+import { Stack, IconButton, Tooltip } from '@mui/material'
 
 import Translations from 'src/layouts/components/Translations'
 import { useDispatch } from 'react-redux'
 import { deleteRoom } from 'src/store/apps/courses'
+import Icon from 'src/@core/components/icon'
 
 const useRoomColumns = () => {
   const dispatch = useDispatch()
@@ -40,20 +41,38 @@ const useRoomColumns = () => {
   }
   const columns = useMemo(
     () => [
-      // {
-      //   width: 200,
-      //   field: 'id',
-      //   headerName: <Translations text={'Id'} />,
-      //   renderCell: params => {
-      //     params.row.id
-      //   }
-      // },
+      {
+        width: 200,
+        field: 'action',
+        headerName: <Translations text={'Actions'} />,
+        renderCell: params => {
+          return (
+            <Stack direction={'row'} alignItems={'center'}>
+              <Tooltip title={<Translations text={'Edit Room'} />}>
+                <IconButton onClick={() => handleOpenDrawer(params.row)}>
+                  <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24'>
+                    <path
+                      fill='currentColor'
+                      d='M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83l3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z'
+                    ></path>
+                  </svg>
+                </IconButton>
+              </Tooltip>
+              <Tooltip title={<Translations text={'Delete Room'} />}>
+                <IconButton color='error' onClick={() => handleDeleteClick(params.row)}>
+                  <Icon icon='mdi:delete-outline' fontSize={25} />
+                </IconButton>
+              </Tooltip>
+            </Stack>
+          )
+        }
+      },
       {
         width: 200,
         field: 'name',
         headerName: <Translations text={'Name'} />,
         renderCell: params => {
-          params.row.name
+          return params.row.name
         }
       },
       {
@@ -61,7 +80,7 @@ const useRoomColumns = () => {
         field: 'locationCity',
         headerName: <Translations text={'location City'} />,
         renderCell: params => {
-          params.row.locationCity
+          return params.row.locationCity
         }
       },
       {
@@ -69,7 +88,7 @@ const useRoomColumns = () => {
         field: 'locationName',
         headerName: <Translations text={'location Name'} />,
         renderCell: params => {
-          params.row.locationName
+          return params.row.locationName
         }
       },
       {
@@ -77,7 +96,7 @@ const useRoomColumns = () => {
         field: 'locationStreet',
         headerName: <Translations text={'location Street'} />,
         renderCell: params => {
-          params.row.locationStreet
+          return params.row.locationStreet
         }
       },
       {
@@ -85,7 +104,7 @@ const useRoomColumns = () => {
         field: 'locationStreetNr',
         headerName: <Translations text={'location StreetNr'} />,
         renderCell: params => {
-          params.row.locationStreetNr
+          return params.row.locationStreetNr
         }
       },
       {
@@ -93,38 +112,11 @@ const useRoomColumns = () => {
         field: 'locationZipCode',
         headerName: <Translations text={'location ZipCode'} />,
         renderCell: params => {
-          params.row.locationZipCode
-        }
-      },
-      {
-        width: 200,
-        field: 'action',
-        headerName: <Translations text={'Action'} />,
-        renderCell: params => {
-          return (
-            <Stack direction={'row'} alignItems={'center'}>
-              <IconButton onClick={() => handleOpenDrawer(params.row)}>
-                <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24'>
-                  <path
-                    fill='currentColor'
-                    d='M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83l3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z'
-                  ></path>
-                </svg>
-              </IconButton>
-              <IconButton onClick={() => handleDeleteClick(params.row)}>
-                <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24'>
-                  <path
-                    fill='currentColor'
-                    d='M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6zM8 9h8v10H8zm7.5-5l-1-1h-5l-1 1H5v2h14V4z'
-                  ></path>
-                </svg>
-              </IconButton>
-            </Stack>
-          )
+          return params.row.locationZipCode
         }
       }
     ],
-    []
+    [handleOpenDrawer, handleDeleteClick]
   )
 
   return {

@@ -5,8 +5,6 @@ import { useSelector, useDispatch } from 'react-redux'
 import StudentsDataGrid from 'src/views/students/list/Datagrid'
 import { fetchStudents, fetchCourses } from 'src/store/apps/students'
 import { useRouter } from 'next/router'
-import Divider from '@mui/material/Divider'
-import StudentsPaginate from 'src/views/students/list/paginate'
 const StudentsList = () => {
   const [value, setValue] = useState('')
   const [selectedCourse, setSelectedCourse] = useState(0)
@@ -55,12 +53,6 @@ const StudentsList = () => {
             setSelectedCourse={setSelectedCourse}
             handleRowClick={handleRowClick}
             pageSize={pageSize}
-          />
-          <Divider sx={{ m: '0 !important' }} />
-          <StudentsPaginate
-            totalPages={store?.data?.totalPages}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
           />
         </Card>
       </Grid>

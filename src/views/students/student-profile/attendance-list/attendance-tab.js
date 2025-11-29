@@ -11,9 +11,9 @@ const StudentAttendanceTab = ({ store, byParent, studentId }) => {
   const { columns, handleCloseDialog, handleDelete, isDialogOpen, DeleteName } = useAttendanceColumns()
 
   return (
-    <Grid container spacing={6.5}>
-      <Grid item xs={12}>
-        <Card>
+    <Grid container spacing={4} sx={{ height: 'calc(100vh - 245px)', overflow: 'hidden' }}>
+      <Grid item xs={12} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           <StudentAttendanceDataGrid
             columns={columns}
             store={store}

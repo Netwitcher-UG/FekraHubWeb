@@ -18,9 +18,9 @@ const StudentsList = () => {
   }, [dispatch])
 
   return (
-    <Grid container spacing={6.5}>
-      <Grid item xs={12}>
-        <Card>
+    <Grid container spacing={6.5} sx={{ height: 'calc(100vh - 145px)', overflow: 'hidden' }}>
+      <Grid item xs={12} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           <StudentsApprovalsDataGrid store={store} courses={courses} />
         </Card>
       </Grid>

@@ -113,11 +113,13 @@ const TableHeader = props => {
         display: 'flex',
         flexWrap: 'wrap',
         alignItems: 'center',
-        justifyContent: 'flex-end'
+        justifyContent: 'space-between'
       }}
     >
-      <Box sx={{ rowGap: 2, display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <CustomSearch value={value} handleSearch={handleChange} inTable={true} />
+      </Box>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
         <input ref={fileInputRef} type='file' accept='.xlsx,.xls' hidden onChange={onFileSelected} />
         {ability.can('manage', 'ExcelMigration') && (
           <Button

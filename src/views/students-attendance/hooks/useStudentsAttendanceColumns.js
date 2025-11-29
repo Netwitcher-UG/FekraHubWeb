@@ -74,6 +74,7 @@ const useStudentAttendanceColumns = students => {
       },
       {
         width: 200,
+        field: 'birthday',
         headerName: <Translations text={'BirthDate'} />,
         renderCell: ({ row }) => <div>{convertDate(row.birthday)}</div>
       },
@@ -111,21 +112,24 @@ const useStudentAttendanceColumns = students => {
                 >
                   {attendanceStatuses?.map(status => (
                     <MenuItem key={status.id} value={status.id}>
-                      <Chip label={t(status.title)} color={status.title === 'Absent' ? 'error' : 'info'} />
+                      <Chip label={t(status.title)} color={status.title === 'Absent' ? 'error' : 'success'} />
                     </MenuItem>
                   ))}
                 </CustomTextField>
               ) : row.studentAttendance == null ? (
-                <Chip label={t('present')} color={'info'} />
+                <Chip label={t('present')} color={'success'} />
               ) : (
-                <Chip label={t(row.studentAttendance)} color={row.studentAttendance === 'Absent' ? 'error' : 'info'} />
+                <Chip
+                  label={t(row.studentAttendance)}
+                  color={row.studentAttendance === 'Absent' ? 'error' : 'success'}
+                />
               )}
             </>
           )
         }
       }
     ],
-    [attendanceStatuses, ability, t, handleStatusChange]
+    [attendanceStatuses, ability, t, handleStatusChange, attendanceData]
   )
 
   return { columns, attendanceData, setAttendanceData }

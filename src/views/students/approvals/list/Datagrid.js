@@ -1,24 +1,10 @@
 import { useState } from 'react'
-import CircularProgress from '@mui/material/CircularProgress'
 import Box from '@mui/material/Box'
-import { DataGrid } from '@mui/x-data-grid'
 import useStudentsApprovalsColumns from './useStudentsApprovalsColumns'
 import ApproveDialog from './ApproveDialog'
 import RejectDialog from './RejectDialog'
 import StudentDetailsDialog from './StudentDetailsDialog'
-
-const customScrollbarStyles = {
-  '& ::-webkit-scrollbar': {
-    height: 8
-  },
-  '& ::-webkit-scrollbar-thumb': {
-    backgroundColor: '#888',
-    borderRadius: 10,
-    '&:hover': {
-      backgroundColor: '#555'
-    }
-  }
-}
+import CustomDataGrid from 'src/@core/components/custom-grid'
 
 const StudentsApprovalsDataGrid = ({
   store,
@@ -61,45 +47,21 @@ const StudentsApprovalsDataGrid = ({
   }
 
   const { columns } = useStudentsApprovalsColumns(handleApproveClick, handleRejectClick)
-  console.log(courses)
   return (
     <>
-      <Box sx={{ height: 'calc(100vh - 250px)' }}>
-        {store.studentsApprovalsLoading ? (
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '90%',
-              zIndex: 10
-            }}
-          >
-            <CircularProgress size={100} />
-          </Box>
-        ) : (
-          <>
-            <DataGrid
-              rowHeight={62}
-              rows={store?.studentsApprovals || []}
-              columns={columns}
-              hideFooter={true}
-              disableRowSelectionOnClick
-              onRowClick={handleRowClick}
-              pagination={true}
-              sx={{
-                // overflowY: 'scroll',
-                overflowX: 'scroll',
-                ...customScrollbarStyles,
-                fontSize: '1rem',
-                cursor: 'pointer',
-                '& .MuiDataGrid-row:hover': {
-                  backgroundColor: 'action.hover'
-                }
-              }}
-            />
-          </>
-        )}
+      <Box>
+        <CustomDataGrid
+          rows={store?.studentsApprovals || []}
+          columns={columns}
+          loading={store.studentsApprovalsLoading}
+          handleRowClick={handleRowClick}
+          sx={{
+            height: '100%',
+            '& .MuiDataGrid-row:hover': {
+              backgroundColor: 'action.hover'
+            }
+          }}
+        />
       </Box>
       <ApproveDialog
         open={openApproveDialog}

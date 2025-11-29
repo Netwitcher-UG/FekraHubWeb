@@ -1,8 +1,6 @@
-import { Card } from '@mui/material'
 import { Box, Stack } from '@mui/system'
 import React, { useEffect } from 'react'
-import CustomDataGrid from 'src/@core/components/custom-datagrid'
-import CircularProgress from '@mui/material/CircularProgress'
+import CustomDataGrid from 'src/@core/components/custom-grid'
 import CustomDialogDelete from 'src/@core/components/custom-delete'
 import useWorksheetsColumns from '../hook/useWorksheetsColumns'
 import { useDispatch, useSelector } from 'react-redux'
@@ -35,7 +33,7 @@ export default function WorksheetsDataGrid({ rows, SetSearch, status, dataUpload
 
   return (
     <>
-      <Card>
+ 
         <Stack>
           <Box
             sx={{
@@ -52,24 +50,17 @@ export default function WorksheetsDataGrid({ rows, SetSearch, status, dataUpload
             <AddWorksheets dataUploadType={dataUploadType} data={coursesData} />
           </Box>
         </Stack>
-        <Box sx={{ height: 'calc(100vh - 255px)' }}>
-          {status === 'loading' ? (
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '90%',
-                zIndex: 10
-              }}
-            >
-              <CircularProgress size={100} />
-            </Box>
-          ) : (
-            <CustomDataGrid columns={columns} rowHeight={62} rows={rows} />
-          )}
-        </Box>
-      </Card>
+        
+          <CustomDataGrid
+            columns={columns}
+            rows={rows}
+            loading={status === 'loading'}
+            sx={{
+              height: '100%'
+            }}
+          />
+      
+    
       <CustomDialogDelete
         open={isDialogOpen}
         handleClose={handleCloseDialog}

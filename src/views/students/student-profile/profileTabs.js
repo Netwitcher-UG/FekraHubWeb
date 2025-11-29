@@ -124,7 +124,7 @@ const StudentProfile = ({ student, byParent = false }) => {
           </Tabs>
         </Box>
 
-        <TabPanel value='1'>
+        <TabPanel value='1' sx={{ px: 0 }}>
           {childProfileLoading || studentProfileLoading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
               <CircularProgress size={100} />
@@ -151,17 +151,17 @@ const StudentProfile = ({ student, byParent = false }) => {
         </TabPanel>
 
         {byParent ? (
-          <TabPanel value='2'>
+          <TabPanel value='2' sx={{ px: 0 }}>
             <StudentReportsTab store={store} byParent={byParent} />
           </TabPanel>
         ) : ability.can('read', 'StudentReport') ? (
-          <TabPanel value='2'>
+          <TabPanel value='2' sx={{ px: 0 }}>
             <StudentReportsTab store={store} byParent={byParent} />
           </TabPanel>
         ) : null}
 
         {byParent ? (
-          <TabPanel value='3'>
+          <TabPanel value='3' sx={{ px: 0 }}>
             <ContractsList
               byParent={byParent}
               contractsData={byParent ? childContracts : studentContracts}
@@ -169,7 +169,7 @@ const StudentProfile = ({ student, byParent = false }) => {
             />
           </TabPanel>
         ) : ability.can('read', 'Contract') ? (
-          <TabPanel value='3'>
+          <TabPanel value='3' sx={{ px: 0 }}>
             <ContractsList
               byParent={byParent}
               contractsData={byParent ? childContracts : studentContracts}
@@ -179,7 +179,7 @@ const StudentProfile = ({ student, byParent = false }) => {
         ) : null}
 
         {byParent ? (
-          <TabPanel value='4'>
+          <TabPanel value='4' sx={{ px: 0 }}>
             <InvoicesList
               invoicesData={byParent ? childInvoices : studentInvoices}
               loading={byParent ? childInvoicesLoading : studentInvoicesLoading}
@@ -188,7 +188,7 @@ const StudentProfile = ({ student, byParent = false }) => {
             />
           </TabPanel>
         ) : ability.can('manage', 'Invoices') ? (
-          <TabPanel value='4'>
+          <TabPanel value='4' sx={{ px: 0 }}>
             <InvoicesList
               invoicesData={byParent ? childInvoices : studentInvoices}
               loading={byParent ? childInvoicesLoading : studentInvoicesLoading}
@@ -199,7 +199,7 @@ const StudentProfile = ({ student, byParent = false }) => {
         ) : null}
 
         {byParent ? (
-          <TabPanel value='5'>
+          <TabPanel value='5' sx={{ px: 0 }}>
             <WorksheetsList
               worksheetData={byParent ? childWorksheets : studentWorksheets}
               loading={byParent ? childWorksheetLoading : studentWorksheetsLoading}
@@ -207,7 +207,7 @@ const StudentProfile = ({ student, byParent = false }) => {
             />
           </TabPanel>
         ) : ability.can('manage', 'File') ? (
-          <TabPanel value='5'>
+          <TabPanel value='5' sx={{ px: 0 }}>
             <WorksheetsList
               worksheetData={byParent ? childWorksheets : studentWorksheets}
               loading={byParent ? childWorksheetLoading : studentWorksheetsLoading}
@@ -217,11 +217,11 @@ const StudentProfile = ({ student, byParent = false }) => {
         ) : null}
 
         {byParent ? (
-          <TabPanel value='6'>
+          <TabPanel value='6' sx={{ px: 0 }}>
             <StudentAttendanceTab store={byParent ? childAttendance : studentAttendance} studentId={student} />
           </TabPanel>
         ) : ability.can('read', 'StudentAttendance') ? (
-          <TabPanel value='6'>
+          <TabPanel value='6' sx={{ px: 0 }}>
             <StudentAttendanceTab store={byParent ? childAttendance : studentAttendance} studentId={student} />
           </TabPanel>
         ) : null}

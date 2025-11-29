@@ -12,22 +12,16 @@ const usePayrollColumns = () => {
   const { t } = useTranslation()
   const { attendanceStatuses } = useSelector(state => state.attendance)
   const theme = useTheme()
-  console.log('🚀 ~ usePayrollColumns ~ theme:', theme.breakpoints.down('md') ? true : false)
   const [isViewFilesDialogOpen, setIsViewFilesDialogOpen] = useState(false)
   const [selectedTeacher, setSelectedTeacher] = useState(null)
   const [uploadSuccessKeys, setUploadSuccessKeys] = useState({})
 
   const handleFileUpload = useCallback(
     async (acceptedFiles, row) => {
-      // Handle the uploaded file, e.g., sending to the server
-      console.log('File uploaded:', acceptedFiles, 'for row:', row)
       const formData = new FormData()
-      console.log(acceptedFiles[0])
       formData.append('file', acceptedFiles[0])
       formData.append('UserID', row.id)
       const response = await dispatch(AddPayrollFile(formData))
-      // The AddPayrollFile action already dispatches fetchEmployees on success
-      // so the data will be automatically refetched
       if (response?.error) {
         console.error('Upload failed:', response.error)
       } else if (response?.payload || response?.type?.includes('fulfilled')) {
@@ -56,35 +50,9 @@ const usePayrollColumns = () => {
   const columns = useMemo(
     () => [
       {
-        headerName: <Translations text={'Full Name'} />,
-        field: 'FullName',
-        width: theme.breakpoints.down('sm') ? 400 : 150,
-        renderCell: ({ row }) => (
-          <div>
-            {row.firstName} {row.lastName}
-          </div>
-        )
-      },
-      {
-        width: theme.breakpoints.down('sm') ? 300 : 300,
-        headerName: <Translations text={'Latest Payroll Date'} />,
-        renderCell: ({ row }) => <div>{row.lastPayrollDate ? convertDate(row.lastPayrollDate) : '------'}</div>
-      },
-      {
-        headerName: <Translations text={'Upload PDF'} />,
-        field: 'uploadPdf',
-        width: theme.breakpoints.down('sm') ? 300 : 400,
-        headerAlign: 'center',
-        renderCell: ({ row }) => {
-          return (
-            <DropzoneWrapper row={row} onFileUpload={handleFileUpload} uploadSuccess={uploadSuccessKeys[row.id] || 0} />
-          )
-        }
-      },
-      {
         width: theme.breakpoints.up('sm') ? 200 : 200,
         field: 'action',
-        headerName: <Translations text={'Action'} />,
+        headerName: <Translations text={'Actions'} />,
         renderCell: params => {
           return (
             <Tooltip title={<Translations text={'View uploaded files'} />}>
@@ -99,9 +67,36 @@ const usePayrollColumns = () => {
             </Tooltip>
           )
         }
+      },
+      {
+        headerName: <Translations text={'Full Name'} />,
+        field: 'FullName',
+        width: theme.breakpoints.down('sm') ? 400 : 150,
+        renderCell: ({ row }) => (
+          <div>
+            {row.firstName} {row.lastName}
+          </div>
+        )
+      },
+      {
+        width: theme.breakpoints.down('sm') ? 300 : 300,
+        field: 'lastPayrollDate',
+        headerName: <Translations text={'Latest Payroll Date'} />,
+        renderCell: ({ row }) => <div>{row.lastPayrollDate ? convertDate(row.lastPayrollDate) : '------'}</div>
+      },
+      {
+        headerName: <Translations text={'Upload PDF'} />,
+        field: 'uploadPdf',
+        width: theme.breakpoints.down('sm') ? 300 : 400,
+        headerAlign: 'center',
+        renderCell: ({ row }) => {
+          return (
+            <DropzoneWrapper row={row} onFileUpload={handleFileUpload} uploadSuccess={uploadSuccessKeys[row.id] || 0} />
+          )
+        }
       }
     ],
-    [attendanceStatuses, theme, handleFileUpload, handleViewUploadedFiles]
+    [attendanceStatuses, theme, handleFileUpload, handleViewUploadedFiles, uploadSuccessKeys]
   )
 
   return {

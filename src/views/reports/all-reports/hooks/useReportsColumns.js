@@ -4,6 +4,7 @@ import { convertDate } from 'src/@core/utils/convert-date'
 import { checkCell } from 'src/@core/utils/check-cell'
 import Chip from 'src/@core/components/mui/chip'
 import IconButton from '@mui/material/IconButton'
+import Tooltip from '@mui/material/Tooltip'
 import Stack from '@mui/material/Stack'
 import { AbilityContext } from 'src/layouts/components/acl/Can'
 const useReportsColumns = () => {
@@ -34,6 +35,30 @@ const useReportsColumns = () => {
 
   const columns = useMemo(
     () => [
+      {
+        width: 200,
+        field: 'action',
+        headerName: <Translations text={'Action'} />,
+        renderCell: params => {
+          return (
+            <Stack direction={'row'} alignItems={'center'}>
+              {ability.can('update', 'StudentReport') &&
+                (params.row.improved == null || params.row.improved == false) && (
+                  <Tooltip title={<Translations text={'Edit Report'} />}>
+                    <IconButton onClick={e => handleEditReportClick(e, params.row)}>
+                      <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24'>
+                        <path
+                          fill='currentColor'
+                          d='M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83l3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z'
+                        ></path>
+                      </svg>
+                    </IconButton>
+                  </Tooltip>
+                )}
+            </Stack>
+          )
+        }
+      },
       {
         width: 200,
         headerName: <Translations text={'Report Date'} />,
@@ -101,31 +126,9 @@ const useReportsColumns = () => {
         headerName: <Translations text={'Creation Date'} />,
         field: 'creationDate',
         renderCell: ({ row }) => checkCell(convertDate(row.creationDate))
-      },
-      {
-        width: 200,
-        field: 'action',
-        headerName: <Translations text={'Action'} />,
-        renderCell: params => {
-          return (
-            <Stack direction={'row'} alignItems={'center'}>
-              {ability.can('update', 'StudentReport') &&
-                (params.row.improved == null || params.row.improved == false) && (
-                  <IconButton onClick={e => handleEditReportClick(e, params.row)}>
-                    <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24'>
-                      <path
-                        fill='currentColor'
-                        d='M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83l3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z'
-                      ></path>
-                    </svg>
-                  </IconButton>
-                )}
-            </Stack>
-          )
-        }
       }
     ],
-    []
+    [ability, handleEditReportClick]
   )
 
   return { columns, editDraweropen, editDrawerData, handleEditDrawerClose, handleEditDrawerOpen }

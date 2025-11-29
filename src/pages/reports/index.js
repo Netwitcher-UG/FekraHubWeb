@@ -5,72 +5,43 @@ import { fetchReportsByFilter, acceptAllReport } from 'src/store/apps/reports'
 import { fetchCourses } from 'src/store/apps/students'
 import { useSelector, useDispatch } from 'react-redux'
 import useReportsColumns from 'src/views/reports/all-reports/hooks/useReportsColumns'
-import { useRouter } from 'next/router'
-import Divider from '@mui/material/Divider'
-import ReportsPaginate from 'src/views/reports/all-reports/list/paginate'
 import ReportsDataGrid from 'src/views/reports/all-reports/list/dataGrid'
 const ReportsList = () => {
-  //   const [value, setValue] = useState('')
   const [selectedCourse, setSelectedCourse] = useState(0)
-  //   const [searchTerm, setSearchTerm] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
-  const pageSize = 10
-  const router = useRouter()
+  const pageSize = 20
   const store = useSelector(state => state.reports)
   const courses = useSelector(state => state.students.coursesData)
   const dispatch = useDispatch()
   const columns = useReportsColumns()
 
-  const fetchDataWithPagination = (
-    page,
-    // searchValue = '',
-    courseValue
-  ) => {
+  const fetchDataWithPagination = (page, courseValue) => {
     dispatch(fetchReportsByFilter({ improved: '', courseId: courseValue, PageSize: pageSize, PageNumber: page }))
     dispatch(fetchCourses())
   }
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      fetchDataWithPagination(
-        // searchTerm,
-        currentPage,
-        selectedCourse
-      )
+      fetchDataWithPagination(currentPage, selectedCourse)
     }, 700)
 
     return () => clearTimeout(timer)
-  }, [
-    dispatch,
-    currentPage,
-    // searchTerm
-    selectedCourse
-  ])
+  }, [dispatch, currentPage, selectedCourse])
 
   return (
-    <Grid container spacing={6.5}>
-      <Grid item xs={12}>
-        <Card>
+    <Grid container spacing={6.5} sx={{ height: 'calc(100vh - 145px)', overflow: 'hidden' }}>
+      <Grid item xs={12} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           <ReportsDataGrid
             columns={columns}
-            // handleRowClick={handleRowClick}
             store={store}
             dispatch={dispatch}
             courses={courses}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
             acceptAllReport={acceptAllReport}
-            // setValue={setValue}
-            // value={value}
-            // handleFilter={setSearchTerm}
             selectedCourse={selectedCourse}
             setSelectedCourse={setSelectedCourse}
-          />
-          <Divider sx={{ m: '0 !important' }} />
-          <ReportsPaginate
-            totalPages={store?.data?.totalPages}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
           />
         </Card>
       </Grid>

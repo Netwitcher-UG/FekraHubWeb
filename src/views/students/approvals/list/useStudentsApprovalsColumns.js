@@ -71,6 +71,7 @@ const useStudentsApprovalsColumns = (handleApproveClick, handleRejectClick) => {
       },
       {
         width: 200,
+        field: 'birthday',
         headerName: <Translations text={'BirthDate'} />,
         renderCell: ({ row }) => <div>{convertDate(row.birthday)}</div>
       },

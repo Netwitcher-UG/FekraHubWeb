@@ -1,14 +1,7 @@
-import { useState, useEffect } from 'react'
-import CircularProgress from '@mui/material/CircularProgress'
+import { useState } from 'react'
 import Box from '@mui/material/Box'
-// import CardContent from '@mui/material/CardContent'
-// import Grid from '@mui/material/Grid'
-// import AddRecord from './add-record'
-import Divider from '@mui/material/Divider'
 import CustomDialogDelete from 'src/@core/components/custom-delete'
-// import TableHeader from './TableHeader'
-// import Typography from '@mui/material/Typography'
-import { DataGrid } from '@mui/x-data-grid'
+import CustomDataGrid from 'src/@core/components/custom-grid'
 import useTeacherPayrollColumns from './hooks/useTeacherPayrollColumns'
 import { useTranslation } from 'react-i18next'
 import ViewPayrollSlip from './view'
@@ -18,18 +11,6 @@ import FileUploaderRestrictions from 'src/@core/components/inputs/FileUploaderRe
 import toast from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
 import Translations from 'src/layouts/components/Translations'
-const customScrollbarStyles = {
-  '& ::-webkit-scrollbar': {
-    height: 8
-  },
-  '& ::-webkit-scrollbar-thumb': {
-    backgroundColor: '#888',
-    borderRadius: 10,
-    '&:hover': {
-      backgroundColor: '#555'
-    }
-  }
-}
 
 const TeacherPayrollDatagrid = ({ loading, teacherPayrollData, teacher }) => {
   const { t } = useTranslation()
@@ -95,36 +76,15 @@ const TeacherPayrollDatagrid = ({ loading, teacherPayrollData, teacher }) => {
           loading={isUploading}
         />
       </DropzoneWrapper>
-      {/* <TableHeader toggle={handleClickOpen} /> */}
-      <Box sx={{ height: 500 }}>
-        {loading ? (
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '90%',
-              zIndex: 10
-            }}
-          >
-            <CircularProgress size={100} />
-          </Box>
-        ) : (
-          <DataGrid
-            rowHeight={62}
-            rows={teacherPayrollData?.teacherPayrolls || []}
-            columns={columns}
-            hideFooter={true}
-            disableRowSelectionOnClick
-            pagination={true}
-            sx={{
-              overflowY: 'scroll',
-              overflowX: 'scroll',
-              ...customScrollbarStyles,
-              fontSize: '1rem'
-            }}
-          />
-        )}
+      <Box sx={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
+        <CustomDataGrid
+          rows={teacherPayrollData?.teacherPayrolls || []}
+          columns={columns}
+          loading={loading}
+          sx={{
+            height: '100%'
+          }}
+        />
       </Box>
       <CustomDialogDelete
         open={isDialogOpen}

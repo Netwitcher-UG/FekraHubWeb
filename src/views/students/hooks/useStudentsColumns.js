@@ -6,8 +6,9 @@ import { AbilityContext } from 'src/layouts/components/acl/Can'
 import { convertDate } from 'src/@core/utils/convert-date'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
+import Tooltip from '@mui/material/Tooltip'
 import { useDispatch } from 'react-redux'
-import { updateStudentCourse, deleteStudent, fetchStudents, updateStudentInfo } from 'src/store/apps/students'
+import { updateStudentCourse, deleteStudent, fetchStudents } from 'src/store/apps/students'
 import Box from '@mui/material/Box'
 import Autocomplete from '@mui/material/Autocomplete'
 import TextField from '@mui/material/TextField'
@@ -15,7 +16,6 @@ import { useTranslation } from 'react-i18next'
 import toast from 'react-hot-toast'
 
 const useStudentsColumns = ({ courses, selectedCourse, currentPage, pageSize, search = '' }) => {
-  // console.log(courses)
   const handleAddReportClick = (e, row) => {
     e.stopPropagation()
     handleOpenDrawer(row)
@@ -157,26 +157,32 @@ const useStudentsColumns = ({ courses, selectedCourse, currentPage, pageSize, se
   const columns = useMemo(
     () => [
       {
-        field: 'addReport',
+        field: 'actions',
         width: 180,
-        headerName: '',
+        headerName: <Translations text={'Actions'} />,
         renderCell: ({ row }) => (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             {ability.can('create', 'StudentReport') && (
-              <IconButton color='success' onClick={e => handleAddReportClick(e, row)}>
-                <Icon icon='tabler:file-plus' fontSize={30} />
-              </IconButton>
+              <Tooltip title={<Translations text={'Add Report'} />}>
+                <IconButton color='success' onClick={e => handleAddReportClick(e, row)}>
+                  <Icon icon='tabler:file-plus' fontSize={30} />
+                </IconButton>
+              </Tooltip>
             )}
 
             {ability.can('manage', 'Student') && (
-              <IconButton onClick={e => handleEditClick(e, row)}>
-                <Icon icon='mdi:pencil' fontSize={20} />
-              </IconButton>
+              <Tooltip title={<Translations text={'Edit Student'} />}>
+                <IconButton onClick={e => handleEditClick(e, row)}>
+                  <Icon icon='mdi:pencil' fontSize={20} />
+                </IconButton>
+              </Tooltip>
             )}
             {ability.can('manage', 'Student') && (
-              <IconButton color='error' onClick={e => handleDeleteClick(e, row)}>
-                <Icon icon='mdi:delete-outline' fontSize={20} />
-              </IconButton>
+              <Tooltip title={<Translations text={'Delete Student'} />}>
+                <IconButton color='error' onClick={e => handleDeleteClick(e, row)}>
+                  <Icon icon='mdi:delete-outline' fontSize={20} />
+                </IconButton>
+              </Tooltip>
             )}
           </Box>
         ),
@@ -222,12 +228,16 @@ const useStudentsColumns = ({ courses, selectedCourse, currentPage, pageSize, se
                   sx={{ width: '70%', mr: 1 }}
                   renderInput={params => <TextField {...params} size='small' onClick={e => e.stopPropagation()} />}
                 />
-                <IconButton color='success' onClick={e => handleSaveCourse(e, row.id)} sx={{ ml: 1 }}>
-                  <Icon icon='mdi:check' fontSize={20} />
-                </IconButton>
-                <IconButton color='error' onClick={handleCancelCourseEdit}>
-                  <Icon icon='mdi:close' fontSize={20} />
-                </IconButton>
+                <Tooltip title={<Translations text={'Save'} />}>
+                  <IconButton color='success' onClick={e => handleSaveCourse(e, row.id)} sx={{ ml: 1 }}>
+                    <Icon icon='mdi:check' fontSize={20} />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title={<Translations text={'Cancel'} />}>
+                  <IconButton color='error' onClick={handleCancelCourseEdit}>
+                    <Icon icon='mdi:close' fontSize={20} />
+                  </IconButton>
+                </Tooltip>
               </Box>
             )
           }
@@ -242,9 +252,11 @@ const useStudentsColumns = ({ courses, selectedCourse, currentPage, pageSize, se
                 </Typography>
               )}
               {ability.can('update', 'StudentCourse') && (
-                <IconButton color='secondary' onClick={e => handleEditCourse(e, row.id, row.course)}>
-                  <Icon icon='mdi:pencil' fontSize={20} />
-                </IconButton>
+                <Tooltip title={<Translations text={'Edit Course'} />}>
+                  <IconButton color='secondary' onClick={e => handleEditCourse(e, row.id, row.course)}>
+                    <Icon icon='mdi:pencil' fontSize={20} />
+                  </IconButton>
+                </Tooltip>
               )}
             </Box>
           )
@@ -252,6 +264,7 @@ const useStudentsColumns = ({ courses, selectedCourse, currentPage, pageSize, se
       },
       {
         width: 200,
+        field: 'birthday',
         headerName: <Translations text={'BirthDate'} />,
         renderCell: ({ row }) => <div>{convertDate(row.birthday)}</div>
       },

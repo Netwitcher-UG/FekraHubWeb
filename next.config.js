@@ -18,5 +18,6 @@ module.exports = {
   },
   env: {
     NEXT_PUBLIC_BACK_END_URL: process.env.BACK_END_URL
-  }
+  },
+  transpilePackages: ['@mui/x-data-grid']
 }

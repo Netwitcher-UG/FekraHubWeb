@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState, useContext } from 'react'
+import { useMemo, useState, useContext, useCallback } from 'react'
 import Translations from 'src/layouts/components/Translations'
 import { convertDate } from 'src/@core/utils/convert-date'
 import { fetchAttendanceStatuses, editStudentAttendance, deleteAttendanceRecord } from 'src/store/apps/attendance'
@@ -10,7 +10,7 @@ import Icon from 'src/@core/components/icon'
 import { Stack } from '@mui/system'
 import MenuItem from '@mui/material/MenuItem'
 import CustomTextField from 'src/@core/components/mui/text-field'
-import { IconButton, Typography } from '@mui/material'
+import { IconButton, Tooltip } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 
@@ -26,128 +26,118 @@ const useAttendanceColumns = () => {
   const [DeleteName, setDeleteName] = useState(null)
   const [selectedId, setSelectedId] = useState(null)
 
-  const handleConfirmEdit = (rowId, currentStatus, studentId) => {
-    if (newStatus && currentStatus !== newStatus) {
-      dispatch(editStudentAttendance({ id: rowId, statusId: newStatus, studentId: studentId }))
-    }
-    setIsEditEnabled(null)
-  }
+  const handleConfirmEdit = useCallback(
+    (rowId, currentStatus, studentId) => {
+      if (newStatus && currentStatus !== newStatus) {
+        dispatch(editStudentAttendance({ id: rowId, statusId: newStatus, studentId: studentId }))
+      }
+      setIsEditEnabled(null)
+    },
+    [newStatus, dispatch]
+  )
 
-  const handleDeleteClick = params => {
+  const handleDeleteClick = useCallback(params => {
     setIsDialogOpen(true)
     setSelectedId({ id: params.id, selectedId: params.student.id })
     setDeleteName(convertDate(params.date))
-  }
+  }, [])
 
-  const handleCloseDialog = () => {
+  const handleCloseDialog = useCallback(() => {
     setIsDialogOpen(false)
-  }
+  }, [])
 
-  const handleDelete = async () => {
+  const handleDelete = useCallback(async () => {
     const response = await dispatch(deleteAttendanceRecord({ id: selectedId.id, studentId: selectedId.selectedId }))
     if (response?.payload?.status !== 200) toast.error(response?.payload?.data)
     setIsDialogOpen(false)
-  }
+  }, [dispatch, selectedId])
 
-  const columns = useMemo(
-    () => {
-      const cols = [
-        {
-          flex: 0.15,
-          minWidth: 120,
-          headerName: <Translations text={'Date'} />,
-          field: 'date',
-          renderCell: ({ row }) => checkCell(convertDate(row.date))
-        },
-        {
-          width: 200,
-          headerName: <Translations text={'Course'} />,
-          field: 'course.name',
-          renderCell: ({ row }) => (
-            <Chip label={row.course.name} color={'primary'} sx={{ textTransform: 'capitalize' }} />
-          )
-        },
-        {
-          flex: 0.15,
-          minWidth: 120,
-          headerName: <Translations text={'Attendance Status'} />,
-          field: 'attendanceStatus',
-          renderCell: ({ row }) => (
-            <>
-              {isEditEnabled === row.id && ability.can('update', 'StudentAttendance') ? (
-                <CustomTextField
-                  select
-                  fullWidth
-                  id='attendance-status-select'
-                  aria-describedby='attendance-status-select'
-                  defaultValue={row.attendanceStatus?.id || ''}
-                  SelectProps={{
-                    onChange: e => setNewStatus(e.target.value),
-                    displayEmpty: true
-                  }}
-                >
-                  {attendanceStatuses?.map(status => (
-                    <MenuItem key={status.id} value={status.id}>
-                      <Chip label={t(status.title)} color={status.title === 'Absent' ? 'error' : 'info'} />
-                    </MenuItem>
-                  ))}
-                </CustomTextField>
-              ) : (
-                <Chip
-                  label={t(row.attendanceStatus?.title)}
-                  color={row.attendanceStatus?.title === 'Absent' ? 'error' : 'info'}
-                />
-              )}
-            </>
-          )
-        }
-      ]
+  const columns = useMemo(() => {
+    const cols = [
+      {
+        flex: 0.15,
+        minWidth: 120,
+        headerName: <Translations text={'Date'} />,
+        field: 'date',
+        renderCell: ({ row }) => checkCell(convertDate(row.date))
+      },
+      {
+        width: 200,
+        headerName: <Translations text={'Course'} />,
+        field: 'course.name',
+        renderCell: ({ row }) => <Chip label={row.course.name} color={'primary'} sx={{ textTransform: 'capitalize' }} />
+      },
+      {
+        flex: 0.15,
+        minWidth: 120,
+        headerName: <Translations text={'Attendance Status'} />,
+        field: 'attendanceStatus',
+        renderCell: ({ row }) => (
+          <>
+            {isEditEnabled === row.id && ability.can('update', 'StudentAttendance') ? (
+              <CustomTextField
+                select
+                fullWidth
+                id='attendance-status-select'
+                aria-describedby='attendance-status-select'
+                defaultValue={row.attendanceStatus?.id || ''}
+                SelectProps={{
+                  onChange: e => setNewStatus(e.target.value),
+                  displayEmpty: true
+                }}
+              >
+                {attendanceStatuses?.map(status => (
+                  <MenuItem key={status.id} value={status.id}>
+                    <Chip label={t(status.title)} color={status.title === 'Absent' ? 'error' : 'success'} />
+                  </MenuItem>
+                ))}
+              </CustomTextField>
+            ) : (
+              <Chip
+                label={t(row.attendanceStatus?.title)}
+                color={row.attendanceStatus?.title === 'Absent' ? 'error' : 'success'}
+              />
+            )}
+          </>
+        )
+      }
+    ]
 
-      // Conditionally add the actions column based on user's ability
-      if (ability.can('update', 'StudentAttendance')) {
-        cols.push({
-          width: 200,
-          field: 'action',
-          headerName: <Translations text={'Action'} />,
-          renderCell: params => {
-            return (
-              <Stack direction={'row'} alignItems={'center'}>
-                {isEditEnabled !== params.row.id ? (
+    // Conditionally add the actions column based on user's ability
+    if (ability.can('update', 'StudentAttendance')) {
+      cols.push({
+        width: 200,
+        field: 'action',
+        headerName: <Translations text={'Action'} />,
+        renderCell: params => {
+          return (
+            <Stack direction={'row'} alignItems={'center'}>
+              {isEditEnabled !== params.row.id ? (
+                <Tooltip title={<Translations text={'Edit Attendance'} />}>
                   <IconButton onClick={() => setIsEditEnabled(params.row.id)}>
-                    <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24'>
-                      <path
-                        fill='currentColor'
-                        d='M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83l3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z'
-                      ></path>
-                    </svg>
+                    <Icon icon='mdi:pencil' fontSize={20} />
                   </IconButton>
-                ) : (
+                </Tooltip>
+              ) : (
+                <Tooltip title={<Translations text={'Save'} />}>
                   <IconButton
+                    color='success'
                     onClick={() =>
                       handleConfirmEdit(params.row.id, params.row.attendanceStatus?.id, params.row.student.id)
                     }
                   >
-                    <Icon icon='subway:tick' fontSize={20} />
+                    <Icon icon='mdi:check' fontSize={20} />
                   </IconButton>
-                )}
-                {/* <IconButton onClick={() => handleDeleteClick(params.row)}>
-                  <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24'>
-                    <path
-                      fill='currentColor'
-                      d='M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6zM8 9h8v10H8zm7.5-5l-1-1h-5l-1 1H5v2h14V4z'
-                    ></path>
-                  </svg>
-                </IconButton> */}
-              </Stack>
-            )
-          }
-        })
-      }
+                </Tooltip>
+              )}
+            </Stack>
+          )
+        }
+      })
+    }
 
-      return cols
-    },
-    [attendanceStatuses, isEditEnabled, newStatus, ability, i18n.language] // Add 'ability' to the dependency array
-  )
+    return cols
+  }, [attendanceStatuses, isEditEnabled, newStatus, ability, i18n.language, handleConfirmEdit])
 
   return { columns, DeleteName, isDialogOpen, handleCloseDialog, handleDelete }
 }

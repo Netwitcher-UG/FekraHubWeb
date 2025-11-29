@@ -12,9 +12,9 @@ const ProfileTab = ({ data, setValue, setEditDrawerOpen, byParent }) => {
   const ability = useContext(AbilityContext)
 
   return data && Object.values(data).length ? (
-    <Grid container spacing={6}>
+    <Grid container spacing={4}>
       {ability.can('read', 'ParentInfo') && data?.parent?.id && (
-        <Grid item lg={4} md={5} xs={12}>
+        <Grid item xs={12}>
           <AboutOverivew
             about={data?.parent}
             setEditDrawerOpen={setEditDrawerOpen}
@@ -23,24 +23,20 @@ const ProfileTab = ({ data, setValue, setEditDrawerOpen, byParent }) => {
           />
         </Grid>
       )}
-      <Grid item lg={4} md={5} xs={12}>
+      <Grid item xs={12}>
         <AboutOverivew about={data} setEditDrawerOpen={setEditDrawerOpen} byParent={byParent} />
       </Grid>
 
-      <Grid item lg={4} md={5} xs={12}>
+      <Grid item xs={12}>
         <SchoolOverview about={data} />
       </Grid>
 
-      <Grid item lg={4} md={5} xs={12}>
+      <Grid item xs={12}>
         <SchoolOverview about={data} showOverView={true} />
       </Grid>
 
-      <Grid item lg={8} md={7} xs={12}>
-        <Grid container spacing={6}>
-          <Grid item xs={12}>
-            <ActivityTimeline recent={data?.news} setValue={setValue} />
-          </Grid>
-        </Grid>
+      <Grid item xs={12}>
+        <ActivityTimeline recent={data?.news} setValue={setValue} />
       </Grid>
     </Grid>
   ) : null

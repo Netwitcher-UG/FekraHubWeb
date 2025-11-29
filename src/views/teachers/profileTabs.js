@@ -18,7 +18,7 @@ import TeacherPayrolltab from './payroll-list/payroll-tab'
 import ProfileTab from './profile'
 import { useTranslation } from 'react-i18next'
 
-const TeacherProfile = ({ teacher }) => {
+const TeacherProfile = ({ teacher, role }) => {
   // ** State
   const [value, setValue] = useState('1')
   const dispatch = useDispatch()
@@ -27,13 +27,21 @@ const TeacherProfile = ({ teacher }) => {
     state => state.users
   )
   const { teacherAttendance, teacherAttendanceLoading } = useSelector(state => state.attendance)
+
+  // Determine if this is a Secretariat role - use role from URL or fallback to teacherProfileInfo
+  const userRole = role || teacherProfileInfo?.teacher?.roles
+  const isSecretariat = userRole === 'Secretariat'
   useEffect(() => {
     if (!teacher) return
     dispatch(fetchTeacherProfileInfo(teacher))
-    dispatch(fetchTeacherAttendance(teacher))
+    // Only fetch attendance if not Secretariat (check role prop first, then fallback to teacherProfileInfo)
+    const currentRole = role || teacherProfileInfo?.teacher?.roles
+    if (currentRole !== 'Secretariat') {
+      dispatch(fetchTeacherAttendance(teacher))
+      dispatch(fetchAttendanceStatuses())
+    }
     dispatch(fetchTeacherPayroll(teacher))
-    dispatch(fetchAttendanceStatuses())
-  }, [teacher])
+  }, [teacher, role, teacherProfileInfo?.teacher?.roles, dispatch])
 
   const handleChange = (event, newValue) => {
     setValue(newValue)
@@ -59,10 +67,10 @@ const TeacherProfile = ({ teacher }) => {
           aria-label={t('teacher profile tabs')}
         >
           <Tab value='1' label={t('Profile info')} />
-          <Tab value='2' label={t('Teacher Attendance')} />
-          <Tab value='3' label={t('Teacher Payroll Slips')} />
+          {!isSecretariat && <Tab value='2' label={t('Teacher Attendance')} />}
+          <Tab value='3' label={isSecretariat ? t('Secretary Payroll Slips') : t('Teacher Payroll Slips')} />
         </TabList>
-        <TabPanel value='1'>
+        <TabPanel value='1' sx={{ px: 0 }}>
           {teacherProfileLoading ? (
             <Box
               sx={{
@@ -75,29 +83,32 @@ const TeacherProfile = ({ teacher }) => {
               <CircularProgress size={100} />
             </Box>
           ) : teacherProfileInfo?.teacher?.id ? (
-            <ProfileTab data={teacherProfileInfo} setValue={setValue} />
+            <ProfileTab data={teacherProfileInfo} setValue={setValue} role={role} />
           ) : (
             <Grid item xs={12}>
               <Alert severity='error'>
-                {t('No')} {t('teacher')} {t('with id')}: {teacher} , {t('or Something went wrong.')}.
+                {t('No')} {isSecretariat ? t('secretary') : t('teacher')} {t('with id')}: {teacher} ,{' '}
+                {t('or Something went wrong.')}.
                 <br />
                 <br />
                 <small>
-                  {t('Please refresh and check if this')} {t('teacher')} {t('exists')}
+                  {t('Please refresh and check if this')} {isSecretariat ? t('secretary') : t('teacher')} {t('exists')}
                 </small>
               </Alert>
             </Grid>
           )}
         </TabPanel>
-        <TabPanel value='2'>
-          <TeacherAttendanceTab
-            teacherAttendance={teacherAttendance}
-            loading={teacherAttendanceLoading}
-            teacher={teacher}
-          />
-        </TabPanel>
+        {!isSecretariat && (
+          <TabPanel value='2' sx={{ px: 0 }}>
+            <TeacherAttendanceTab
+              teacherAttendance={teacherAttendance}
+              loading={teacherAttendanceLoading}
+              teacher={teacher}
+            />
+          </TabPanel>
+        )}
 
-        <TabPanel value='3'>
+        <TabPanel value='3' sx={{ px: 0 }}>
           <TeacherPayrolltab
             teacherPayrollData={teacherPayrollData}
             loading={teacherPayrollLoading}
