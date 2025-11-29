@@ -29,7 +29,7 @@ export default function LocationDataGrid({ rows, SetSearch, status }) {
             <AddLocation />
           </Box>
         </Stack>
-        <Box>
+      
           <CustomDataGrid
             columns={columns}
             rows={rows}
@@ -38,7 +38,7 @@ export default function LocationDataGrid({ rows, SetSearch, status }) {
               height: '100%'
             }}
           />
-        </Box>
+      
       <CustomDialogDelete
         open={isDialogOpen}
         handleClose={handleCloseDialog}

@@ -60,7 +60,7 @@ const ReportsDataGrid = ({
     <>
       <CardContent sx={{ flexShrink: 0, pb: 0 }}>
         <Grid container spacing={6}>
-          <Grid item sm={4} xs={12}>
+          <Grid item sm={3} xs={12}>
             <Autocomplete
               options={courses?.map(course => ({ value: course.id, label: course.name }))}
               fullWidth
