@@ -81,9 +81,20 @@ const navigation = () => {
     {
       title: 'Payroll',
       icon: 'tabler:report-money',
-      path: '/payroll',
-      action: 'manage',
-      subject: 'payroll'
+      auth: false,
+      children: [
+        {
+          title: 'My Payroll',
+          path: '/my-payroll',
+          auth: false
+        },
+        {
+          title: 'Employees Payroll',
+          path: '/payroll',
+          action: 'manage',
+          subject: 'payroll'
+        }
+      ]
     },
     {
       title: 'Messages',

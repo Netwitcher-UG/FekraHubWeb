@@ -6,6 +6,16 @@ import { ShowSuccessToast } from 'src/@core/utils/ShowSuccesToast'
 import axiosInstance from 'src/lib/axiosInstance'
 import { fetchEmployees } from '../users'
 
+export const fetchMyPayroll = createAsyncThunk('appPayroll/fetchMyPayroll', async (_, { rejectWithValue }) => {
+  try {
+    const response = await axiosInstance.get('/api/PayRolls/payroll-teacher')
+    return response.data
+  } catch (error) {
+    ShowErrorToast('Error fetching payroll')
+    return rejectWithValue(error.response?.data || error.message)
+  }
+})
+
 export const getPayrollTeacherFile = createAsyncThunk('appPayroll/getPayrollTeacher', async id => {
   try {
     const response = await axiosInstance.get(`/api/PayRolls/DownloadPayrolls?Id=${id}`)
@@ -59,12 +69,23 @@ export const appPayrollSlice = createSlice({
     invoiceFile: null,
     TeacherPayroll: [],
     studentPayrollLoading: false,
-    studentInvoicesLoading: false
+    studentInvoicesLoading: false,
+    myPayroll: [],
+    myPayrollLoading: false
   },
   reducers: {},
   extraReducers: builder => {
     builder
-
+      .addCase(fetchMyPayroll.pending, state => {
+        state.myPayrollLoading = true
+      })
+      .addCase(fetchMyPayroll.fulfilled, (state, action) => {
+        state.myPayrollLoading = false
+        state.myPayroll = action.payload
+      })
+      .addCase(fetchMyPayroll.rejected, state => {
+        state.myPayrollLoading = false
+      })
       .addCase(getPayrollTeacherFile.pending, state => {
         state.studentInvoicesLoading = true
       })

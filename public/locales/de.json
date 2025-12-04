@@ -680,5 +680,11 @@
     "View Payroll": "Gehaltsabrechnung anzeigen",
     "Delete Payroll": "Gehaltsabrechnung löschen",
     "No Data Available": "Keine Daten verfügbar",
-    "There are no records to display at this time": "Es gibt keine Daten zum Anzeigen"
+    "There are no records to display at this time": "Es gibt keine Daten zum Anzeigen",
+    "Administrative Notice": "Verwaltungshinweis",
+    "Administrators do not have an associated payroll record. This section is designated for employees and staff members with active payroll information.": "Administratoren haben keinen zugeordneten Gehaltsabrechnungsdatensatz. Dieser Bereich ist für Mitarbeiter und Personalmitglieder mit aktiven Gehaltsabrechnungsinformationen vorgesehen.",
+    "For payroll management, please navigate to the Employees Payroll section.": "Für die Gehaltsabrechnungsverwaltung navigieren Sie bitte zum Bereich Mitarbeitergehaltsabrechnung.",
+    "My Payroll": "Meine Gehaltsabrechnung",
+    "Employees Payroll": "Personalabrechnung",
+    "view file": "Datei anzeigen"
 }
