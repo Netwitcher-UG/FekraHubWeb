@@ -188,7 +188,7 @@ const AddRecord = ({ open, setOpen, attendanceStatuses, teacherId }) => {
               </Grid>
               {hasNoWorkDayError && (
                 <Grid item xs={12}>
-                  <Alert severity='error' sx={{ mt: 2 }}>
+                  <Alert severity='warning' sx={{ mt: 2 }}>
                     {t('The teacher has no course scheduled for this day.')}
                   </Alert>
                 </Grid>
