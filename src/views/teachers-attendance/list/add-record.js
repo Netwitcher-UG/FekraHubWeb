@@ -1,5 +1,5 @@
 import Button from '@mui/material/Button'
-import { useMemo } from 'react'
+import { useMemo, useEffect } from 'react'
 import Dialog from '@mui/material/Dialog'
 import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
@@ -9,15 +9,15 @@ import DialogActions from '@mui/material/DialogActions'
 import IconButton from '@mui/material/IconButton'
 import Icon from 'src/@core/components/icon'
 import MenuItem from '@mui/material/MenuItem'
-import { Grid } from '@mui/material'
+import { Grid, Alert } from '@mui/material'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { useForm, Controller } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import Chip from '@mui/material/Chip'
 import CustomTextField from 'src/@core/components/mui/text-field'
-import { addNewTeacherAttendanceRecord } from 'src/store/apps/attendance'
+import { addNewTeacherAttendanceRecord, hasWorkDay } from 'src/store/apps/attendance'
 import DatePicker from 'react-datepicker'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
@@ -46,6 +46,8 @@ const AddRecord = ({ open, setOpen, attendanceStatuses, teacherId }) => {
   const schema = useMemo(() => getValidationSchema(t), [t])
   const handleClose = () => setOpen(false)
   const dispatch = useDispatch()
+  const hasWorkDayData = useSelector(state => state.attendance.hasWorkDay)
+  const hasWorkDayLoading = useSelector(state => state.attendance.hasWorkDayLoading)
 
   const defaultValues = {
     statusId: '',
@@ -57,12 +59,25 @@ const AddRecord = ({ open, setOpen, attendanceStatuses, teacherId }) => {
     handleSubmit,
     resetField,
     formState: { errors, isSubmitting },
-    reset
+    reset,
+    watch
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues,
     mode: 'onBlur'
   })
+
+  const dateValue = watch('date')
+
+  useEffect(() => {
+    if (dateValue && teacherId) {
+      // Format date as ISO string for the API
+      const formattedDate = dateValue.toISOString()
+      dispatch(hasWorkDay({ teacherId, date: formattedDate }))
+    }
+  }, [dateValue, teacherId, dispatch])
+
+  const hasNoWorkDayError = hasWorkDayData === false && dateValue && teacherId
 
   const onSubmit = async data => {
     const parsedDate = new Date(data?.date)
@@ -171,13 +186,20 @@ const AddRecord = ({ open, setOpen, attendanceStatuses, teacherId }) => {
                   )}
                 />
               </Grid>
+              {hasNoWorkDayError && (
+                <Grid item xs={12}>
+                  <Alert severity='error' sx={{ mt: 2 }}>
+                    {t('The teacher has no course scheduled for this day.')}
+                  </Alert>
+                </Grid>
+              )}
             </Grid>
           </DialogContent>
           <DialogActions sx={{ p: theme => `${theme.spacing(3)} !important` }}>
             <Button type='button' disabled={isSubmitting} variant='outlined' onClick={handleClose}>
               {t('Cancel')}
             </Button>
-            <Button disabled={isSubmitting} type='submit' variant='contained'>
+            <Button disabled={isSubmitting || hasWorkDayLoading} type='submit' variant='contained'>
               {t('Add')}
             </Button>
           </DialogActions>

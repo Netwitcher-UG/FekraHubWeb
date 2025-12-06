@@ -164,6 +164,15 @@ export const deleteTeacherAttendanceRecord = createAsyncThunk(
   }
 )
 
+export const hasWorkDay = createAsyncThunk('appAttendance/hasWorkDay', async ({ teacherId, date }) => {
+  try {
+    const response = await axiosInstance.get(`/api/Attendance/HasWorkDay?teacherId=${teacherId}&date=${date}`)
+    return response?.data
+  } catch (error) {
+    return error.response
+  }
+})
+
 export const fetchCourseAttendanceReport = createAsyncThunk(
   'appAttendance/fetchCourseAttendanceReport',
   async params => {
@@ -191,7 +200,6 @@ export const appSliceAttendance = createSlice({
   name: 'appAttendance',
   initialState: {
     students: [],
-
     studentsLoading: false,
     attendanceStatuses: [],
     submitLoading: false,
@@ -203,7 +211,9 @@ export const appSliceAttendance = createSlice({
     teacherAttendanceLoading: false,
     teacherNames: [],
     teacherNamesLoading: false,
-    courseMonths: []
+    courseMonths: [],
+    hasWorkDay: true,
+    hasWorkDayLoading: false
   },
   reducers: {},
   extraReducers: builder => {
@@ -280,6 +290,16 @@ export const appSliceAttendance = createSlice({
       })
       .addCase(fetchAttendanceMonths.fulfilled, (state, action) => {
         state.courseMonths = action.payload
+      })
+      .addCase(hasWorkDay.pending, state => {
+        state.hasWorkDayLoading = true
+      })
+      .addCase(hasWorkDay.fulfilled, (state, action) => {
+        state.hasWorkDayLoading = false
+        state.hasWorkDay = action.payload
+      })
+      .addCase(hasWorkDay.rejected, state => {
+        state.hasWorkDayLoading = false
       })
   }
 })
