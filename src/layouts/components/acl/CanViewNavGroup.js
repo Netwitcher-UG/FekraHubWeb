@@ -3,13 +3,15 @@ import { useContext } from 'react'
 
 // ** Component Imports
 import { AbilityContext } from 'src/layouts/components/acl/Can'
+import { useAuth } from 'src/hooks/useAuth'
 
 const CanViewNavGroup = props => {
   // ** Props
   const { children, navGroup } = props
 
-  // ** Hook
+  // ** Hooks
   const ability = useContext(AbilityContext)
+  const auth = useAuth()
 
   const checkForVisibleChild = arr => {
     return arr.some(i => {
@@ -39,6 +41,11 @@ const CanViewNavGroup = props => {
   // } else {
   //   return navGroup && canViewMenuGroup(navGroup) ? <>{children}</> : null
   // }
+
+  // Hide Payroll item for Parent role
+  if (navGroup && navGroup.title === 'Payroll' && auth.user?.role === 'Parent') {
+    return null
+  }
 
   if (navGroup && navGroup.auth === false) {
     return <>{children}</>

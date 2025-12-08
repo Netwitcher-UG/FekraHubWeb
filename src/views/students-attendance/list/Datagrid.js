@@ -16,13 +16,6 @@ import { Autocomplete } from '@mui/material'
 import { useDispatch } from 'react-redux'
 import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
-import Skeleton from '@mui/material/Skeleton'
-import Table from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import TableContainer from '@mui/material/TableContainer'
-import TableHead from '@mui/material/TableHead'
-import TableRow from '@mui/material/TableRow'
 
 const StudentsAttendanceDataGrid = ({
   store,
@@ -250,81 +243,16 @@ const StudentsAttendanceDataGrid = ({
           </Box>
         </Box>
       ) : (
-        <Box sx={{ flexShrink: 0, height: 'calc(100vh - 250px)' }}>
-          {selectedCourse && store?.students?.students?.length > 0 ? (
-            <CustomDataGrid
-              rows={store?.students?.students || []}
-              columns={columns}
-              loading={store.studentsLoading}
-              handleRowClick={handleRowClick}
-              sx={{
-                height: '100%'
-              }}
-            />
-          ) : (
-            <Box
-              sx={{
-                height: '100%',
-                overflow: 'auto',
-                '& ::-webkit-scrollbar': {
-                  height: 8
-                },
-                '& ::-webkit-scrollbar-thumb': {
-                  backgroundColor: '#888',
-                  borderRadius: 10,
-                  '&:hover': {
-                    backgroundColor: '#555'
-                  }
-                }
-              }}
-            >
-              <TableContainer>
-                <Table stickyHeader>
-                  <TableHead>
-                    <TableRow>
-                      {columns.map((column, index) => (
-                        <TableCell
-                          key={column.field || index}
-                          sx={{
-                            borderRight: '1px solid #ccc',
-                            borderBottom: '1px solid #ccc',
-                            padding: '16px',
-                            height: '62px',
-                            '&:last-child': {
-                              borderRight: 'none'
-                            }
-                          }}
-                        >
-                          <Skeleton variant='text' width={column.width || 150} height={20} />
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {Array.from({ length: 10 }, (_, index) => (
-                      <TableRow key={index} sx={{ height: '62px' }}>
-                        {columns.map((column, colIndex) => (
-                          <TableCell
-                            key={column.field || colIndex}
-                            sx={{
-                              borderRight: '1px solid #f0f0f0',
-                              borderBottom: '1px solid #f0f0f0',
-                              padding: '16px',
-                              '&:last-child': {
-                                borderRight: 'none'
-                              }
-                            }}
-                          >
-                            <Skeleton variant='text' width={column.width || 150} height={20} />
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Box>
-          )}
+        <Box sx={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
+          <CustomDataGrid
+            rows={store?.students?.students || []}
+            columns={columns}
+            loading={store.studentsLoading}
+            handleRowClick={handleRowClick}
+            sx={{
+              height: '100%'
+            }}
+          />
         </Box>
       )}
     </>
