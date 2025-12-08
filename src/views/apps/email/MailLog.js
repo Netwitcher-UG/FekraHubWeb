@@ -1,5 +1,5 @@
 // ** React Imports
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -22,35 +22,34 @@ import Icon from 'src/@core/components/icon'
 
 // ** Third Party Imports
 import PerfectScrollbar from 'react-perfect-scrollbar'
+import { useTranslation } from 'react-i18next'
 
 // ** Custom Components Imports
 import MailDetailsDialog from './MailDetailsDialog'
+import MailLogSkeleton from './MailLogSkeleton'
 
 // ** Email App Component Imports
-
-import { fetchMails } from 'src/store/apps/email'
 import { useSelector } from 'react-redux'
 
 const MailItem = styled(ListItem)(({ theme }) => ({
   cursor: 'pointer',
-  paddingTop: theme.spacing(2.25),
-  paddingBottom: theme.spacing(2.25),
+  paddingTop: theme.spacing(2.5),
+  paddingBottom: theme.spacing(2.5),
+  paddingLeft: theme.spacing(3),
+  paddingRight: theme.spacing(3),
   justifyContent: 'space-between',
-  transition: 'border 0.15s ease-in-out, transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out',
-  '&:not(:first-child)': {
-    borderTop: `1px solid ${theme.palette.divider}`
-  },
+  alignItems: 'center',
+  transition: 'background-color 0.15s ease-in-out',
+  borderBottom: `1px solid ${theme.palette.divider}`,
+  position: 'relative',
   '&:hover': {
-    zIndex: 2,
-    boxShadow: theme.shadows[3]
+    backgroundColor: `${
+      theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)'
+    } !important`,
+    boxShadow: 'none'
   },
-  [theme.breakpoints.up('xs')]: {
-    paddingLeft: theme.spacing(2.5),
-    paddingRight: theme.spacing(2.5)
-  },
-  [theme.breakpoints.up('sm')]: {
-    paddingLeft: theme.spacing(5),
-    paddingRight: theme.spacing(5)
+  '&:last-child': {
+    borderBottom: 'none'
   }
 }))
 
@@ -85,12 +84,15 @@ const MailLog = props => {
     handleLeftSidebarToggle
   } = props
 
+  // ** Hooks
+  const { t, i18n } = useTranslation()
+
   // ** State
   const [refresh, setRefresh] = useState(false)
   const [selectedMail, setSelectedMail] = useState(null)
   const [dialogOpen, setDialogOpen] = useState(false)
 
-  const { messages } = useSelector(state => state.email)
+  const { messages, isLoading } = useSelector(state => state.email)
   console.log('🚀 ~ MailLog ~ messages:', messages)
 
   const handleMailClick = mail => {
@@ -103,9 +105,28 @@ const MailLog = props => {
     setSelectedMail(null)
   }
 
-  useEffect(() => {
-    dispatch(fetchMails())
-  }, [dispatch])
+  // Filter messages based on query
+  const filteredMessages =
+    messages?.filter(mail => {
+      if (!query || query.trim() === '') {
+        return true
+      }
+
+      const searchQuery = query.toLowerCase().trim()
+      const subject = mail?.subject?.toLowerCase() || ''
+      const messageContent = mail?.message?.replace(/<[^>]*>/g, '').toLowerCase() || ''
+      const senderName = mail?.user?.[0]
+        ? `${mail.user[0]?.firstName || ''} ${mail.user[0]?.lastName || ''}`.toLowerCase()
+        : ''
+      const senderEmail = mail?.externalEmails?.[0]?.email?.toLowerCase() || ''
+
+      return (
+        subject.includes(searchQuery) ||
+        messageContent.includes(searchQuery) ||
+        senderName.includes(searchQuery) ||
+        senderEmail.includes(searchQuery)
+      )
+    }) || []
 
   return (
     <Box sx={{ width: '100%', overflow: 'hidden', position: 'relative', '& .ps__rail-y': { zIndex: 5 } }}>
@@ -119,7 +140,7 @@ const MailLog = props => {
             )}
             <Input
               value={query}
-              placeholder='Search mail'
+              placeholder={t('Search mail')}
               onChange={e => setQuery(e.target.value)}
               sx={{ width: '100%', '&:before, &:after': { display: 'none' } }}
               startAdornment={
@@ -134,123 +155,181 @@ const MailLog = props => {
         <Box sx={{ py: 2, px: { xs: 2.5, sm: 5 } }}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography sx={{ fontSize: '20px' }}>Sent</Typography>
+              <Typography sx={{ fontSize: '20px' }}>{t('Sent')}</Typography>
             </Box>
           </Box>
         </Box>
         <Divider sx={{ m: '0 !important' }} />
         <Box sx={{ p: 0, position: 'relative', overflowX: 'hidden', height: 'calc(100% - 7.5625rem)' }}>
           <ScrollWrapper hidden={hidden}>
-            {messages && messages.length ? (
-              <List sx={{ p: 0 }}>
-                {messages.map(mail => {
+            {isLoading ? (
+              <MailLogSkeleton count={8} />
+            ) : filteredMessages && filteredMessages.length ? (
+              <List sx={{ p: 0, backgroundColor: 'background.paper' }}>
+                {filteredMessages.map((mail, index) => {
                   const mailReadToggleIcon = true ? 'tabler:mail' : 'tabler:mail-opened'
 
                   return (
-                    <MailItem
-                      key={mail.id}
-                      sx={{ backgroundColor: true ? 'action.hover' : 'background.paper' }}
-                      onClick={() => handleMailClick(mail)}
-                    >
-                      <Box sx={{ mr: 4, display: 'flex', overflow: 'hidden', alignItems: 'center' }}>
+                    <MailItem key={mail.id} onClick={() => handleMailClick(mail)}>
+                      {/* Left: Avatar and Sender/Category Name */}
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 2,
+                          minWidth: { xs: '140px', sm: '200px' },
+                          maxWidth: { xs: '140px', sm: '200px' },
+                          mr: 3,
+                          position: 'relative'
+                        }}
+                      >
                         <Avatar
-                          alt={mail.user[0]?.firstName}
-                          src={mail.user[0]?.firstName}
-                          sx={{ mr: 3, width: '2rem', height: '2rem' }}
-                        />
-                        <Box
+                          alt={mail.user[0]?.firstName || mail.externalEmails[0]?.email}
+                          src={mail.user[0]?.avatar || mail.externalEmails[0]?.avatar}
                           sx={{
-                            display: 'flex',
-                            overflow: 'hidden',
-                            flexDirection: { xs: 'column', sm: 'row' },
-                            alignItems: { xs: 'flex-start', sm: 'center' }
+                            width: '2.25rem',
+                            height: '2.25rem',
+                            fontSize: '0.875rem',
+                            fontWeight: 600,
+                            bgcolor: 'primary.main',
+                            color: 'primary.contrastText',
+                            flexShrink: 0
                           }}
                         >
-                          {mail.user.slice(0, 3).map((user, index) => (
-                            <Typography
-                              key={index}
-                              variant='h6'
-                              sx={{
-                                mr: 3,
-                                fontWeight: 500,
-                                whiteSpace: 'nowrap',
-                                width: ['100%', 'auto'],
-                                overflow: ['hidden', 'unset'],
-                                textOverflow: ['ellipsis', 'unset']
-                              }}
-                            >
-                              {user?.firstName + ' ' + user?.lastName + (index < 2 ? ' - ' : '')}{' '}
-                              {/* Add dash after all but last */}
-                            </Typography>
-                          ))}
-
-                          {/* If more than 3 emails, show "..." */}
-                          {mail.user.length > 3 && (
-                            <Typography
-                              variant='h6'
-                              sx={{
-                                fontWeight: 500,
-                                whiteSpace: 'nowrap'
-                              }}
-                            >
-                              ...
-                            </Typography>
-                          )}
-
-                          {mail.externalEmails.slice(0, 3).map((user, index) => (
-                            <Typography
-                              key={index}
-                              variant='h6'
-                              sx={{
-                                mr: 3,
-                                fontWeight: 500,
-                                whiteSpace: 'nowrap',
-                                width: ['100%', 'auto'],
-                                overflow: ['hidden', 'unset'],
-                                textOverflow: ['ellipsis', 'unset']
-                              }}
-                            >
-                              {user?.email + (index < 2 ? ' - ' : '')} {/* Add dash after all but last */}
-                            </Typography>
-                          ))}
-
-                          {/* If more than 3 emails, show "..." */}
-                          {mail.externalEmails.length > 3 && (
-                            <Typography
-                              variant='h6'
-                              sx={{
-                                fontWeight: 500,
-                                whiteSpace: 'nowrap'
-                              }}
-                            >
-                              ...
-                            </Typography>
-                          )}
-                        </Box>
+                          {mail.user[0]
+                            ? (mail.user[0]?.firstName?.[0] || mail.user[0]?.lastName?.[0] || 'U').toUpperCase()
+                            : mail.externalEmails[0]?.email?.[0]?.toUpperCase() || 'U'}
+                        </Avatar>
+                        <Typography
+                          variant='body1'
+                          noWrap
+                          sx={{
+                            fontWeight: 600,
+                            color: 'text.primary',
+                            fontSize: '0.875rem',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            flex: 1,
+                            minWidth: 0,
+                            position: 'relative',
+                            '&::after': {
+                              content: '""',
+                              position: 'absolute',
+                              bottom: '-2px',
+                              left: 0,
+                              width: '60%',
+                              height: '2px',
+                              backgroundColor: 'primary.main'
+                            }
+                          }}
+                        >
+                          {mail.user[0]
+                            ? `${mail.user[0]?.firstName} ${mail.user[0]?.lastName}`.trim()
+                            : mail.externalEmails[0]?.email || t('Unknown')}
+                        </Typography>
                       </Box>
 
+                      {/* Middle: Subject - Date | Message Preview */}
                       <Box
-                        className='mail-info-right'
-                        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          flex: 1,
+                          minWidth: 0,
+                          gap: 1,
+                          mr: 3
+                        }}
                       >
-                        <Typography noWrap sx={{ width: '100%', color: 'text.secondary' }}>
-                          {mail?.subject}
+                        <Typography
+                          variant='body1'
+                          component='span'
+                          sx={{
+                            fontWeight: 600,
+                            color: 'text.primary',
+                            fontSize: '0.875rem',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            flexShrink: 0
+                          }}
+                        >
+                          {mail?.subject || t('No Subject')}
                         </Typography>
-                        <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
-                          {' '}
-                          <div dangerouslySetInnerHTML={{ __html: mail.message }} />
-                        </Box>
+
                         <Typography
                           variant='body2'
-                          sx={{ minWidth: '50px', textAlign: 'right', whiteSpace: 'nowrap', color: 'text.disabled' }}
+                          component='span'
+                          sx={{
+                            color: 'text.secondary',
+                            fontSize: '0.8125rem',
+                            whiteSpace: 'nowrap',
+                            flexShrink: 0
+                          }}
                         >
-                          {new Date(mail.date).toLocaleTimeString('en-US', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            hour12: true
+                          -{' '}
+                          {new Date(mail.date).toLocaleDateString(i18n.language === 'de' ? 'de-DE' : 'en-US', {
+                            month: 'long',
+                            day: 'numeric',
+                            year: 'numeric'
                           })}
                         </Typography>
+
+                        {mail.message && (
+                          <>
+                            <Typography
+                              variant='body2'
+                              component='span'
+                              sx={{
+                                color: 'text.secondary',
+                                fontSize: '0.8125rem',
+                                mx: 0.5,
+                                flexShrink: 0
+                              }}
+                            >
+                              |
+                            </Typography>
+                            <Typography
+                              variant='body2'
+                              component='span'
+                              sx={{
+                                color: 'text.secondary',
+                                fontSize: '0.8125rem',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                                flex: 1,
+                                minWidth: 0,
+                                display: { xs: 'none', sm: 'block' }
+                              }}
+                            >
+                              {mail.message
+                                .replace(/<[^>]*>/g, '')
+                                .replace(/\s+/g, ' ')
+                                .trim()}
+                            </Typography>
+                          </>
+                        )}
                       </Box>
+
+                      {/* Right: Timestamp */}
+                      <Typography
+                        variant='body2'
+                        sx={{
+                          minWidth: '70px',
+                          textAlign: 'right',
+                          whiteSpace: 'nowrap',
+                          color: 'text.secondary',
+                          fontSize: '0.8125rem',
+                          fontWeight: 400,
+                          flexShrink: 0
+                        }}
+                      >
+                        {new Date(mail.date).toLocaleTimeString(i18n.language === 'de' ? 'de-DE' : 'en-US', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          hour12: i18n.language !== 'de'
+                        })}
+                      </Typography>
                     </MailItem>
                   )
                 })}
@@ -258,7 +337,7 @@ const MailLog = props => {
             ) : (
               <Box sx={{ mt: 6, display: 'flex', justifyContent: 'center', alignItems: 'center', '& svg': { mr: 2 } }}>
                 <Icon icon='tabler:alert-octagon' />
-                <Typography>No Mails Found</Typography>
+                <Typography>{t('No Mails Found')}</Typography>
               </Box>
             )}
           </ScrollWrapper>

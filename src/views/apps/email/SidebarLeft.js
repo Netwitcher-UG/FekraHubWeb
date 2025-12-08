@@ -17,6 +17,7 @@ import Icon from 'src/@core/components/icon'
 
 // ** Third Party Imports
 import PerfectScrollbar from 'react-perfect-scrollbar'
+import { useTranslation } from 'react-i18next'
 
 // ** Custom Components Imports
 import CustomBadge from 'src/@core/components/mui/badge'
@@ -52,8 +53,12 @@ const SidebarLeft = props => {
     toggleComposeOpen,
     setMailDetailsOpen,
     handleSelectAllMail,
-    handleLeftSidebarToggle
+    handleLeftSidebarToggle,
+    folder
   } = props
+
+  // ** Hooks
+  const { t } = useTranslation()
 
   const RenderBadge = (folder, color) => {
     if (store && store.mailMeta && store.mailMeta[folder] > 0) {
@@ -114,41 +119,45 @@ const SidebarLeft = props => {
     >
       <Box sx={{ p: 6, overflowY: 'hidden' }}>
         <Button fullWidth variant='contained' onClick={toggleComposeOpen}>
-          Compose
+          {t('Compose')}
         </Button>
       </Box>
       <ScrollWrapper>
         <Box sx={{ pt: 0, overflowY: 'hidden' }}>
           <List component='div' sx={{ '& .MuiListItemIcon-root': { mr: 2 } }}>
-
             <ListItemStyled
               component={Link}
               href='/apps/email/sent'
               onClick={handleListItemClick}
               sx={{
                 py: 1.5,
-                borderLeftColor: handleActiveItem('folder', 'sent') ? 'primary.main' : 'transparent'
+                borderLeftColor:
+                  folder === 'sent' || handleActiveItem('folder', 'sent') ? 'primary.main' : 'transparent',
+                backgroundColor:
+                  folder === 'sent' || handleActiveItem('folder', 'sent') ? 'action.selected' : 'transparent'
               }}
             >
               <ListItemIcon
                 sx={{
-                  color: handleActiveItem('folder', 'sent') ? 'primary.main' : 'text.secondary'
+                  color: folder === 'sent' || handleActiveItem('folder', 'sent') ? 'primary.main' : 'text.secondary'
                 }}
               >
                 <Icon icon='tabler:send' />
               </ListItemIcon>
               <ListItemText
-                primary='Sent'
+                primary={t('Sent')}
                 primaryTypographyProps={{
                   noWrap: true,
-                  sx: { fontWeight: 500, ...(handleActiveItem('folder', 'sent') && { color: 'primary.main' }) }
+                  sx: {
+                    fontWeight: 500,
+                    ...((folder === 'sent' || handleActiveItem('folder', 'sent')) && {
+                      color: 'primary.main',
+                      fontWeight: 600
+                    })
+                  }
                 }}
               />
             </ListItemStyled>
-
-
-
-
           </List>
         </Box>
       </ScrollWrapper>

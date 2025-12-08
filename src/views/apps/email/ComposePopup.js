@@ -14,6 +14,9 @@ import Typography from '@mui/material/Typography'
 import InputLabel from '@mui/material/InputLabel'
 import { createFilterOptions } from '@mui/material/Autocomplete'
 
+// ** Third Party Imports
+import { useTranslation } from 'react-i18next'
+
 // ** Custom Component Imports
 import CustomTextField from 'src/@core/components/mui/text-field'
 import CustomAutocomplete from 'src/@core/components/mui/autocomplete'
@@ -48,6 +51,10 @@ const filter = createFilterOptions()
 const ComposePopup = props => {
   // ** Props
   const { mdAbove, composeOpen, composePopupWidth, toggleComposeOpen } = props
+
+  // ** Hooks
+  const { t } = useTranslation()
+
   const { users } = useSelector(state => state.email)
   const { data, status, error, dataRooms, dataTeacher } = useSelector(state => state.courses)
   const { roles } = useSelector(state => state.roles)
@@ -288,7 +295,7 @@ const ComposePopup = props => {
         }}
       >
         <Typography variant='h5' sx={{ fontWeight: 500 }}>
-          Compose Mail
+          {t('Compose Mail')}
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <IconButton sx={{ p: 1, mr: 2 }} onClick={handleMinimize}>
@@ -314,7 +321,7 @@ const ComposePopup = props => {
               htmlFor='email-to-select'
               sx={{ mr: 3, fontSize: theme => theme.typography.body2.fontSize, lineHeight: 1.539 }}
             >
-              To:
+              {t('To:')}
             </InputLabel>
           </div>
           <CustomAutocomplete
@@ -338,6 +345,7 @@ const ComposePopup = props => {
             renderInput={params => (
               <CustomTextField
                 {...params}
+                placeholder={t('Enter email addresses')}
                 autoComplete='new-password'
                 sx={{
                   '& .MuiFilledInput-root.MuiInputBase-sizeSmall': { border: '0 !important', p: '0 !important' },
@@ -352,13 +360,13 @@ const ComposePopup = props => {
         </Box>
         <Typography variant='body2' sx={{ color: 'primary.main' }}>
           <Box component='span' sx={{ cursor: 'pointer' }} onClick={() => toggleVisibility('cc')}>
-            roles
+            {t('roles')}
           </Box>
           <Box component='span' sx={{ mx: 1 }}>
             |
           </Box>
           <Box component='span' sx={{ cursor: 'pointer' }} onClick={() => toggleVisibility('bcc')}>
-            courses
+            {t('courses')}
           </Box>
         </Typography>
       </Box>
@@ -373,7 +381,7 @@ const ComposePopup = props => {
         >
           <div>
             <InputLabel sx={{ mr: 3, fontSize: theme => theme.typography.body2.fontSize }} htmlFor='email-bcc-select'>
-              Course:
+              {t('Course:')}
             </InputLabel>
           </div>
           <CustomAutocomplete
@@ -398,6 +406,7 @@ const ComposePopup = props => {
             renderInput={params => (
               <CustomTextField
                 {...params}
+                placeholder={t('Select courses')}
                 autoComplete='new-password'
                 sx={{
                   '& .MuiFilledInput-root.MuiInputBase-sizeSmall': { border: '0 !important', p: '0 !important' },
@@ -422,7 +431,7 @@ const ComposePopup = props => {
         >
           <div>
             <InputLabel sx={{ mr: 3, fontSize: theme => theme.typography.body2.fontSize }} htmlFor='email-cc-select'>
-              Role:
+              {t('Role:')}
             </InputLabel>
           </div>
           <CustomAutocomplete
@@ -445,6 +454,7 @@ const ComposePopup = props => {
             renderInput={params => (
               <CustomTextField
                 {...params}
+                placeholder={t('Select roles')}
                 autoComplete='new-password'
                 sx={{
                   '& .MuiFilledInput-root.MuiInputBase-sizeSmall': { border: '0 !important', p: '0 !important' },
@@ -472,15 +482,22 @@ const ComposePopup = props => {
             htmlFor='email-subject-input'
             sx={{ mr: 3, fontSize: theme => theme.typography.body2.fontSize, lineHeight: 1.539 }}
           >
-            Subject:
+            {t('Subject:')}
           </InputLabel>
         </div>
         <Input
           fullWidth
           value={subjectValue}
           id='email-subject-input'
+          placeholder={t('Enter subject')}
           onChange={e => setSubjectValue(e.target.value)}
-          sx={{ '&:before, &:after': { display: 'none' }, '& .MuiInput-input': { py: 2.125 } }}
+          sx={{
+            '&:before, &:after': { display: 'none' },
+            '& .MuiInput-input': {
+              px: theme => `${theme.spacing(1.5)} !important`,
+              py: theme => `${theme.spacing(2.125)} !important`
+            }
+          }}
         />
       </Box>
       <EditorWrapper
@@ -492,7 +509,7 @@ const ComposePopup = props => {
         <ReactDraftWysiwyg
           editorState={messageValue}
           onEditorStateChange={newEditorState => setMessageValue(newEditorState)}
-          placeholder='Write your message...'
+          placeholder={t('Write your message...')}
           toolbar={{
             options: ['inline', 'list', 'link'],
             inline: { inDropdown: false, options: ['bold', 'italic', 'underline'] },
@@ -520,11 +537,11 @@ const ComposePopup = props => {
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Button variant='contained' onClick={handleEmailSend} sx={{ '& svg': { mr: 2 } }}>
             <Icon icon='tabler:send' fontSize='1.125rem' />
-            Send
+            {t('Send')}
           </Button>
           <Button variant='text' component='label' sx={{ mr: 2 }}>
             <Icon icon='tabler:paperclip' fontSize='1.125rem' />
-            Attach Files
+            {t('Attach Files')}
             <input
               type='file'
               multiple // Enable multiple file selection

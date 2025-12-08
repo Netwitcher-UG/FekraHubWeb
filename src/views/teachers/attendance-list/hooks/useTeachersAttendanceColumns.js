@@ -113,7 +113,17 @@ const useTeachersAttendanceColumns = () => {
         width: 200,
         headerName: <Translations text={'Course'} />,
         field: 'course.name',
-        renderCell: ({ row }) => <Chip label={row.course.name} color={'primary'} sx={{ textTransform: 'capitalize' }} />
+        renderCell: ({ row }) => (
+          <>
+            {row.course.name ? (
+              <Chip label={row.course.name} color={'primary'} sx={{ textTransform: 'capitalize' }} />
+            ) : (
+              <Typography variant='body2' color={'error'} sx={{ textTransform: 'capitalize', pt: 4 }}>
+                {t('No Course')}
+              </Typography>
+            )}
+          </>
+        )
       },
       {
         flex: 0.15,

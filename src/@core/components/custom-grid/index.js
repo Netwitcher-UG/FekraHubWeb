@@ -261,19 +261,62 @@ const CustomDataGrid = ({
                   : 'linear-gradient(135deg, #4A5072 0%, #3d425f 50%, #2f3349 100%)',
               boxShadow: theme => theme.shadows[2],
               borderBottom: theme => `2px solid ${theme.palette.primary.main}`,
+              overflow: 'visible',
               '& .MuiDataGrid-columnHeader': {
                 color: theme => (theme.palette.mode === 'light' ? '#1a237e' : theme.palette.common.white),
                 fontWeight: 600,
                 transition: 'background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease',
-                position: 'relative',
+                position: 'relative !important',
+                paddingRight: '0px !important',
+                overflow: 'visible !important',
+                display: 'flex !important',
+                alignItems: 'center',
+                '& > *': {
+                  overflow: 'visible !important'
+                },
+                '& .MuiDataGrid-columnHeaderTitleContainer': {
+                  overflow: 'visible',
+                  minWidth: 0,
+                  flex: '1 1 auto',
+                  maxWidth: 'calc(100% - 24px)'
+                },
                 '&:hover': {
                   backgroundColor: theme =>
                     theme.palette.mode === 'light' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.1)',
                   transform: 'translateY(-2px)',
-                  boxShadow: theme => theme.shadows[4]
+                  boxShadow: theme => theme.shadows[4],
+                  '& .MuiDataGrid-columnSeparator': {
+                    opacity: '1 !important',
+                    width: '24px !important',
+                    minWidth: '24px !important',
+                    maxWidth: '24px !important',
+                    backgroundColor: theme =>
+                      theme.palette.mode === 'light' ? 'rgba(26, 35, 126, 0.1)' : 'rgba(255, 255, 255, 0.15)',
+                    '&::before': {
+                      backgroundColor: theme =>
+                        theme.palette.mode === 'light' ? 'rgba(26, 35, 126, 0.8)' : 'rgba(255, 255, 255, 0.7)',
+                      width: '5px !important'
+                    }
+                  }
                 },
                 '&:not(.MuiDataGrid-columnHeaderCheckbox):hover .MuiDataGrid-columnSeparator': {
-                  opacity: 1
+                  opacity: '1 !important',
+                  width: '24px !important',
+                  minWidth: '24px !important',
+                  maxWidth: '24px !important',
+                  visibility: 'visible !important',
+                  display: 'flex !important',
+                  backgroundColor: theme =>
+                    theme.palette.mode === 'light' ? 'rgba(26, 35, 126, 0.1)' : 'rgba(255, 255, 255, 0.15)',
+                  '&::before': {
+                    backgroundColor: theme =>
+                      theme.palette.mode === 'light' ? 'rgba(26, 35, 126, 0.8)' : 'rgba(255, 255, 255, 0.7)',
+                    width: '5px !important',
+                    visibility: 'visible !important'
+                  },
+                  '&::after': {
+                    visibility: 'visible !important'
+                  }
                 },
                 '&:focus': {
                   backgroundColor: theme =>
@@ -282,7 +325,17 @@ const CustomDataGrid = ({
                 '& .MuiDataGrid-columnHeaderTitle': {
                   color: theme => (theme.palette.mode === 'light' ? '#1a237e' : theme.palette.common.white),
                   fontWeight: 600,
-                  textShadow: theme => (theme.palette.mode === 'light' ? 'none' : 'none')
+                  textShadow: theme => (theme.palette.mode === 'light' ? 'none' : 'none'),
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 1,
+                  minWidth: 0
+                },
+                '& .MuiDataGrid-columnHeaderTitleContainer': {
+                  overflow: 'visible',
+                  minWidth: 0,
+                  flex: 1
                 },
                 '& .MuiDataGrid-iconButtonContainer': {
                   '& .MuiIconButton-root': {
@@ -309,14 +362,33 @@ const CustomDataGrid = ({
               cursor: handleRowClick ? 'pointer' : 'default'
             },
             '& .MuiDataGrid-columnSeparator': {
-              width: '10px !important',
-              minWidth: '10px !important',
-              maxWidth: '10px !important',
+              width: '18px !important',
+              minWidth: '18px !important',
+              maxWidth: '18px !important',
               cursor: 'col-resize !important',
-              transition: 'background-color 0.2s ease, opacity 0.2s ease',
+              transition:
+                'background-color 0.2s ease, opacity 0.2s ease, width 0.2s ease, min-width 0.2s ease, max-width 0.2s ease',
               position: 'relative',
               opacity: 0.7,
               backgroundColor: 'transparent',
+              zIndex: 100,
+              pointerEvents: 'auto',
+              display: 'flex !important',
+              visibility: 'visible !important',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                left: '-12px',
+                right: '-12px',
+                top: 0,
+                bottom: 0,
+                cursor: 'col-resize',
+                zIndex: 101,
+                pointerEvents: 'auto'
+              },
               '&::before': {
                 content: '""',
                 position: 'absolute',
@@ -328,25 +400,29 @@ const CustomDataGrid = ({
                 backgroundColor: theme =>
                   theme.palette.mode === 'light' ? 'rgba(26, 35, 126, 0.4)' : 'rgba(255, 255, 255, 0.4)',
                 transition: 'background-color 0.2s ease, width 0.2s ease',
-                borderRadius: '1px'
+                borderRadius: '1px',
+                zIndex: 102
               },
               '&:hover': {
-                opacity: 1,
+                opacity: '1 !important',
+                width: '24px !important',
+                minWidth: '24px !important',
+                maxWidth: '24px !important',
                 backgroundColor: theme =>
                   theme.palette.mode === 'light' ? 'rgba(26, 35, 126, 0.1)' : 'rgba(255, 255, 255, 0.15)',
                 '&::before': {
                   backgroundColor: theme =>
                     theme.palette.mode === 'light' ? 'rgba(26, 35, 126, 0.8)' : 'rgba(255, 255, 255, 0.7)',
-                  width: '3px'
+                  width: '5px !important'
                 }
               },
               '&:active': {
-                opacity: 1,
+                opacity: '1 !important',
                 backgroundColor: theme =>
                   theme.palette.mode === 'light' ? 'rgba(26, 35, 126, 0.15)' : 'rgba(255, 255, 255, 0.2)',
                 '&::before': {
                   backgroundColor: theme => (theme.palette.mode === 'light' ? '#1a237e' : 'rgba(255, 255, 255, 0.9)'),
-                  width: '3px'
+                  width: '3px !important'
                 }
               }
             },
@@ -355,6 +431,8 @@ const CustomDataGrid = ({
               '&.MuiDataGrid-columnHeader--resizing, &.MuiDataGrid-cell--resizing': {
                 transition: 'none !important'
               },
+              display: 'flex',
+              alignItems: 'center',
               '&[style*="width"]': {
                 transition: 'background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease !important'
               }

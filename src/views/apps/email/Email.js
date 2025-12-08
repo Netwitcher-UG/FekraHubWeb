@@ -93,6 +93,7 @@ const EmailAppLayout = ({ folder, label }) => {
         setMailDetailsOpen={setMailDetailsOpen}
         handleSelectAllMail={handleSelectAllMail}
         handleLeftSidebarToggle={handleLeftSidebarToggle}
+        folder={routeParams.folder}
       />
       <MailLog
         query={query}

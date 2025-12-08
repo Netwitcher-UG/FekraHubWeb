@@ -27,7 +27,11 @@ const CustomDataGrid = ({ rows, columns, rowHeight, pageSize = 20 }) => {
           overflowY: 'scroll',
           overflowX: 'scroll',
           ...customScrollbarStyles,
-          fontSize: '1rem'
+          fontSize: '1rem',
+          '& .MuiDataGrid-columnHeader, & .MuiDataGrid-cell': {
+            display: 'flex',
+            alignItems: 'center'
+          }
         }}
         hideFooter={true}
         disableRowSelectionOnClick

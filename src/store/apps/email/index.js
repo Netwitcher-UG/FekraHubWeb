@@ -79,7 +79,8 @@ export const appEmailSlice = createSlice({
     currentMail: null,
     selectedMails: [],
     messages: [],
-    users: []
+    users: [],
+    isLoading: false
   },
   reducers: {
     handleSelectMail: (state, action) => {
@@ -105,9 +106,17 @@ export const appEmailSlice = createSlice({
     }
   },
   extraReducers: builder => {
-    builder.addCase(fetchMails.fulfilled, (state, action) => {
-      state.messages = action.payload
-    })
+    builder
+      .addCase(fetchMails.pending, state => {
+        state.isLoading = true
+      })
+      .addCase(fetchMails.fulfilled, (state, action) => {
+        state.messages = action.payload
+        state.isLoading = false
+      })
+      .addCase(fetchMails.rejected, state => {
+        state.isLoading = false
+      })
     builder.addCase(fetchUsersMail.fulfilled, (state, action) => {
       state.users = action.payload
     })
