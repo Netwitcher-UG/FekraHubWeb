@@ -159,13 +159,9 @@ function defineAbilitiesFor(role, rolesPermissions) {
       case 'ManageRoom':
         can('manage', 'Room')
         break
-      case 'ManageExcelMigration':
-        can('manage', 'ExcelMigration')
-        break
       case 'GetEmployee':
         can('read', 'Employee')
         can('manage', 'payroll')
-
         break
       case 'GetSecretary':
         can('read', 'Secretary')
@@ -188,12 +184,13 @@ function defineAbilitiesFor(role, rolesPermissions) {
       case 'ManageChildren':
         can('manage', 'Children')
         can('read', 'Event')
-
+        break
       case 'ShowParentInfo':
         can('read', 'ParentInfo')
+        break
       case 'ManageInvoice':
         can('manage', 'Invoices')
-
+        break
       case 'ManageExcelMigration':
         can('manage', 'ExcelMigration')
         break
