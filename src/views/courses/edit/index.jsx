@@ -226,7 +226,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
                         field.onChange(date)
                       }}
                       placeholderText='Click to select a date'
-                      customInput={<CustomTextField label='Basic' fullWidth />}
+                      customInput={<CustomTextField label={t('Start Date')} fullWidth />}
                     />
                   )}
                 />
@@ -247,7 +247,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
                         field.onChange(date)
                       }}
                       placeholderText='Click to select a end date'
-                      customInput={<CustomTextField label='Basic' fullWidth />}
+                      customInput={<CustomTextField label={t('End Date')} fullWidth />}
                     />
                   )}
                 />
