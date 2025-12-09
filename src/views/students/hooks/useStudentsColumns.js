@@ -154,40 +154,48 @@ const useStudentsColumns = ({ courses, selectedCourse, currentPage, pageSize, se
     }
   }, [isDeleting])
 
-  const columns = useMemo(
-    () => [
-      {
-        field: 'actions',
-        width: 180,
-        headerName: <Translations text={'Actions'} />,
-        renderCell: ({ row }) => (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            {ability.can('create', 'StudentReport') && (
-              <Tooltip title={<Translations text={'Add Report'} />}>
-                <IconButton color='success' onClick={e => handleAddReportClick(e, row)}>
-                  <Icon icon='tabler:file-plus' fontSize={30} />
-                </IconButton>
-              </Tooltip>
-            )}
+  const columns = useMemo(() => {
+    const canCreateReport = ability.can('create', 'StudentReport')
+    const canManageStudent = ability.can('manage', 'Student')
+    const showActionsColumn = canCreateReport || canManageStudent
 
-            {ability.can('manage', 'Student') && (
-              <Tooltip title={<Translations text={'Edit Student'} />}>
-                <IconButton onClick={e => handleEditClick(e, row)}>
-                  <Icon icon='mdi:pencil' fontSize={20} />
-                </IconButton>
-              </Tooltip>
-            )}
-            {ability.can('manage', 'Student') && (
-              <Tooltip title={<Translations text={'Delete Student'} />}>
-                <IconButton color='error' onClick={e => handleDeleteClick(e, row)}>
-                  <Icon icon='mdi:delete-outline' fontSize={20} />
-                </IconButton>
-              </Tooltip>
-            )}
-          </Box>
-        ),
-        sortable: false
-      },
+    return [
+      ...(showActionsColumn
+        ? [
+            {
+              field: 'actions',
+              width: 180,
+              headerName: <Translations text={'Actions'} />,
+              renderCell: ({ row }) => (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  {canCreateReport && (
+                    <Tooltip title={<Translations text={'Add Report'} />}>
+                      <IconButton color='success' onClick={e => handleAddReportClick(e, row)}>
+                        <Icon icon='tabler:file-plus' fontSize={30} />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+
+                  {canManageStudent && (
+                    <Tooltip title={<Translations text={'Edit Student'} />}>
+                      <IconButton onClick={e => handleEditClick(e, row)}>
+                        <Icon icon='mdi:pencil' fontSize={20} />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                  {canManageStudent && (
+                    <Tooltip title={<Translations text={'Delete Student'} />}>
+                      <IconButton color='error' onClick={e => handleDeleteClick(e, row)}>
+                        <Icon icon='mdi:delete-outline' fontSize={20} />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                </Box>
+              ),
+              sortable: false
+            }
+          ]
+        : []),
       {
         width: 200,
         headerName: <Translations text={'First Name'} />,
@@ -293,22 +301,21 @@ const useStudentsColumns = ({ courses, selectedCourse, currentPage, pageSize, se
         headerName: <Translations text={'Note'} />,
         field: 'note'
       }
-    ],
-    [
-      ability,
-      courses,
-      editingCourse,
-      selectedNewCourse,
-      handleEditCourse,
-      handleSaveCourse,
-      handleCancelCourseEdit,
-      handleAddReportClick,
-      handleCourseChange,
-      handleDeleteClick,
-      handleEditClick,
-      t
     ]
-  )
+  }, [
+    ability,
+    courses,
+    editingCourse,
+    selectedNewCourse,
+    handleEditCourse,
+    handleSaveCourse,
+    handleCancelCourseEdit,
+    handleAddReportClick,
+    handleCourseChange,
+    handleDeleteClick,
+    handleEditClick,
+    t
+  ])
 
   return {
     columns,
