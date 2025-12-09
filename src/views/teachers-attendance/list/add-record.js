@@ -71,8 +71,12 @@ const AddRecord = ({ open, setOpen, attendanceStatuses, teacherId }) => {
 
   useEffect(() => {
     if (dateValue && teacherId) {
-      // Format date as ISO string for the API
-      const formattedDate = dateValue.toISOString()
+      // Format date preserving the local date (avoiding timezone shift)
+      // Get year, month, day from local date and create ISO string at midnight UTC
+      const year = dateValue.getFullYear()
+      const month = String(dateValue.getMonth() + 1).padStart(2, '0')
+      const day = String(dateValue.getDate()).padStart(2, '0')
+      const formattedDate = `${year}-${month}-${day}T00:00:00.000Z`
       dispatch(hasWorkDay({ teacherId, date: formattedDate }))
     }
   }, [dateValue, teacherId, dispatch])
