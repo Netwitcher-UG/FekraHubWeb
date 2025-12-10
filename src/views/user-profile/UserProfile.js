@@ -14,20 +14,17 @@ import Typography from '@mui/material/Typography'
 import { styled } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import MuiTabList from '@mui/lab/TabList'
-import CircularProgress from '@mui/material/CircularProgress'
 import { useTranslation } from 'react-i18next'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
 // ** Demo Components
-// import Teams from 'src/views/pages/user-profile/teams'
 import Profile from './profile/index'
 import Courses from './courses'
 import AccountSettingsPage from './account-settings'
-// import Projects from 'src/views/pages/user-profile/projects'
-// import Connections from 'src/views/pages/user-profile/connections'
 import UserProfileHeader from './UserProfileHeader'
+import UserProfileSkeleton from './UserProfileSkeleton'
 
 const TabList = styled(MuiTabList)(({ theme }) => ({
   borderBottom: '0 !important',
@@ -75,11 +72,6 @@ const UserProfile = ({ tab, data, isLoading }) => {
     })
     // .then(() => null)
   }
-  // useEffect(() => {
-  //   if (data) {
-  //     setIsLoading(false)
-  //   }
-  // }, [data])
   useEffect(() => {
     if (tab && tab !== activeTab) {
       setActiveTab(tab)
@@ -91,7 +83,10 @@ const UserProfile = ({ tab, data, isLoading }) => {
     profile: <Profile data={data} />,
     courses: <Courses data={data?.course} />,
     settings: <AccountSettingsPage data={data} />
-    // connections: <Connections data={data} />
+  }
+
+  if (isLoading) {
+    return <UserProfileSkeleton />
   }
 
   return (
@@ -135,42 +130,17 @@ const UserProfile = ({ tab, data, isLoading }) => {
                     value='settings'
                     label={
                       <Box sx={{ display: 'flex', alignItems: 'center', ...(!hideText && { '& svg': { mr: 2 } }) }}>
-                        <Icon fontSize='1.125rem' icon='tabler:user-check' />
+                        <Icon fontSize='1.125rem' icon='tabler:settings' />
                         {!hideText && t('Account Settings')}
                       </Box>
                     }
                   />
-                  {/* <Tab
-                    value='projects'
-                    label={
-                      <Box sx={{ display: 'flex', alignItems: 'center', ...(!hideText && { '& svg': { mr: 2 } }) }}>
-                        <Icon fontSize='1.125rem' icon='tabler:layout-grid' />
-                        {!hideText && 'Projects'}
-                      </Box>
-                    }
-                  />
-                  <Tab
-                    value='connections'
-                    label={
-                      <Box sx={{ display: 'flex', alignItems: 'center', ...(!hideText && { '& svg': { mr: 2 } }) }}>
-                        <Icon fontSize='1.125rem' icon='tabler:link' />
-                        {!hideText && 'Connections'}
-                      </Box>
-                    }
-                  /> */}
                 </TabList>
               </Grid>
               <Grid item xs={12}>
-                {isLoading ? (
-                  <Box sx={{ mt: 6, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-                    <CircularProgress sx={{ mb: 4 }} />
-                    <Typography>Loading...</Typography>
-                  </Box>
-                ) : (
-                  <TabPanel sx={{ p: 0 }} value={activeTab}>
-                    {tabContentList[activeTab]}
-                  </TabPanel>
-                )}
+                <TabPanel sx={{ p: 0 }} value={activeTab}>
+                  {tabContentList[activeTab]}
+                </TabPanel>
               </Grid>
             </Grid>
           </TabContext>

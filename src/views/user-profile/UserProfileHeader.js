@@ -3,9 +3,7 @@
 // ** MUI Components
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
-import Button from '@mui/material/Button'
 import { styled } from '@mui/material/styles'
-import CardMedia from '@mui/material/CardMedia'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import { convertDate } from 'src/@core/utils/convert-date'
@@ -13,6 +11,7 @@ import { IconButton } from '@mui/material'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import EditProfileInfoDialog from './edit-info'
+import { useTheme } from '@mui/material/styles'
 
 // ** Third Party Imports
 
@@ -34,17 +33,39 @@ const UserProfileHeader = ({ data }) => {
   const designationIcon = data?.designationIcon || 'tabler:briefcase'
   const [open, setOpen] = useState(false)
   const handleClickOpen = () => setOpen(true)
+  const theme = useTheme()
+  const logoPath = theme.palette.mode === 'dark' ? '/images/logos/logo ferka2.png' : '/images/logos/logo ferka2.png'
   return data !== null ? (
     <>
       <Card>
-        <CardMedia
-          component='img'
-          alt='profile-header'
-          image={'/images/pages/profile-banner.png'}
+        <Box
           sx={{
-            height: { xs: 150, md: 250 }
+            height: { xs: 150, md: 250 },
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: theme =>
+              theme.palette.mode === 'dark'
+                ? `linear-gradient(135deg, ${theme.palette.primary.main}15 0%, ${theme.palette.secondary.main}10 50%, ${theme.palette.primary.main}15 100%)`
+                : `linear-gradient(135deg, ${theme.palette.primary.light}20 0%, ${theme.palette.secondary.light}15 50%, ${theme.palette.primary.light}20 100%)`,
+            position: 'relative',
+            overflow: 'hidden'
           }}
-        />
+        >
+          <Box
+            component='img'
+            src={logoPath}
+            alt='FekraHub Logo'
+            sx={{
+              maxWidth: { xs: '400px', md: '600px' },
+              maxHeight: { xs: '180px', md: '250px' },
+              width: 'auto',
+              height: 'auto',
+              objectFit: 'contain',
+              zIndex: 1
+            }}
+          />
+        </Box>
         <CardContent
           sx={{
             pt: 0,
@@ -55,7 +76,47 @@ const UserProfileHeader = ({ data }) => {
             justifyContent: { xs: 'center', md: 'flex-start' }
           }}
         >
-          <ProfilePicture src={'/images/avatars/user avatar.png'} alt='profile-picture' />
+          <Box
+            sx={{
+              position: 'relative',
+              width: 108,
+              height: 108,
+              borderRadius: 2,
+              // border: `4px solid ${theme.palette.mode === 'dark' ? theme.palette.common.white : theme.palette.divider}`,
+              backgroundColor:
+                theme.palette.mode === 'dark' ? theme.palette.background.paper : theme.palette.common.white,
+              overflow: 'hidden',
+              boxShadow: theme.shadows[4],
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                boxShadow: theme.shadows[8],
+                transform: 'translateY(-2px)'
+              },
+              [theme.breakpoints.down('md')]: {
+                marginBottom: theme.spacing(4)
+              }
+            }}
+          >
+            <Box
+              component='img'
+              src='/images/avatars/user avatar.png'
+              alt='profile-picture'
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: '120%',
+                height: '120%',
+                minWidth: '100%',
+                minHeight: '100%',
+                objectFit: 'cover',
+                objectPosition: 'center',
+                display: 'block',
+                opacity: 1
+              }}
+            />
+          </Box>
           <Box
             sx={{
               width: '100%',
