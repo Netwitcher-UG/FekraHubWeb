@@ -33,32 +33,38 @@ const useReportsColumns = () => {
     setEditDrawerData(null)
   }, [])
 
-  const columns = useMemo(
-    () => [
-      {
+  const columns = useMemo(() => {
+    const baseColumns = []
+
+    // Only add actions column if user has update permission
+    if (ability.can('update', 'StudentReport')) {
+      baseColumns.push({
         width: 200,
         field: 'action',
         headerName: <Translations text={'Action'} />,
         renderCell: params => {
           return (
             <Stack direction={'row'} alignItems={'center'}>
-              {ability.can('update', 'StudentReport') &&
-                (params.row.improved == null || params.row.improved == false) && (
-                  <Tooltip title={<Translations text={'Edit Report'} />}>
-                    <IconButton onClick={e => handleEditReportClick(e, params.row)}>
-                      <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24'>
-                        <path
-                          fill='currentColor'
-                          d='M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83l3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z'
-                        ></path>
-                      </svg>
-                    </IconButton>
-                  </Tooltip>
-                )}
+              {(params.row.improved == null || params.row.improved == false) && (
+                <Tooltip title={<Translations text={'Edit Report'} />}>
+                  <IconButton onClick={e => handleEditReportClick(e, params.row)}>
+                    <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24'>
+                      <path
+                        fill='currentColor'
+                        d='M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83l3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z'
+                      ></path>
+                    </svg>
+                  </IconButton>
+                </Tooltip>
+              )}
             </Stack>
           )
         }
-      },
+      })
+    }
+
+    return [
+      ...baseColumns,
       {
         width: 200,
         headerName: <Translations text={'Report Date'} />,
@@ -127,9 +133,8 @@ const useReportsColumns = () => {
         field: 'creationDate',
         renderCell: ({ row }) => checkCell(convertDate(row.creationDate))
       }
-    ],
-    [ability, handleEditReportClick]
-  )
+    ]
+  }, [ability, handleEditReportClick])
 
   return { columns, editDraweropen, editDrawerData, handleEditDrawerClose, handleEditDrawerOpen }
 }
