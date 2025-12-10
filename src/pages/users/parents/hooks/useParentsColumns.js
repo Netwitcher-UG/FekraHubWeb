@@ -11,31 +11,34 @@ const useParentsColumns = ({ handleEditClick }) => {
   const { t } = useTranslation()
   const ability = useContext(AbilityContext)
 
-  const columns = useMemo(
-    () => [
-      {
+  const columns = useMemo(() => {
+    const baseColumns = []
+
+    // Only add actions column if user has update permission
+    if (ability.can('update', 'User')) {
+      baseColumns.push({
         width: 100,
         field: 'action',
         headerName: <Translations text={'Actions'} />,
         renderCell: params => {
           return (
-            <>
-              {ability.can('update', 'User') && (
-                <Stack direction={'row'} alignItems={'center'}>
-                  <IconButton onClick={e => handleEditClick(e, params.row)}>
-                    <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24'>
-                      <path
-                        fill='currentColor'
-                        d='M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83l3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z'
-                      ></path>
-                    </svg>
-                  </IconButton>
-                </Stack>
-              )}
-            </>
+            <Stack direction={'row'} alignItems={'center'}>
+              <IconButton onClick={e => handleEditClick(e, params.row)}>
+                <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24'>
+                  <path
+                    fill='currentColor'
+                    d='M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83l3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z'
+                  ></path>
+                </svg>
+              </IconButton>
+            </Stack>
           )
         }
-      },
+      })
+    }
+
+    return [
+      ...baseColumns,
       {
         width: 200,
         headerName: <Translations text={'User Name'} />,
@@ -121,9 +124,8 @@ const useParentsColumns = ({ handleEditClick }) => {
         headerName: <Translations text={'Street Num'} />,
         field: 'streetNr'
       }
-    ],
-    [ability, handleEditClick, t]
-  )
+    ]
+  }, [ability, handleEditClick, t])
 
   return { columns }
 }
