@@ -16,6 +16,19 @@ export const fetchMyPayroll = createAsyncThunk('appPayroll/fetchMyPayroll', asyn
   }
 })
 
+export const fetchEmployeesPayrollInfo = createAsyncThunk(
+  'appPayroll/fetchEmployeesPayrollInfo',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get('/api/UsersManagment/payroll-info?IsActive=true')
+      return response.data
+    } catch (error) {
+      ShowErrorToast('Error fetching employees payroll info')
+      return rejectWithValue(error.response?.data || error.message)
+    }
+  }
+)
+
 export const getPayrollTeacherFile = createAsyncThunk('appPayroll/getPayrollTeacher', async id => {
   try {
     const response = await axiosInstance.get(`/api/PayRolls/DownloadPayrolls?Id=${id}`)
@@ -71,7 +84,9 @@ export const appPayrollSlice = createSlice({
     studentPayrollLoading: false,
     studentInvoicesLoading: false,
     myPayroll: [],
-    myPayrollLoading: false
+    myPayrollLoading: false,
+    employeesPayrollInfo: [],
+    employeesPayrollInfoLoading: false
   },
   reducers: {},
   extraReducers: builder => {
@@ -95,6 +110,16 @@ export const appPayrollSlice = createSlice({
       })
       .addCase(getPayrollTeacherFile.rejected, state => {
         state.studentInvoicesLoading = false
+      })
+      .addCase(fetchEmployeesPayrollInfo.pending, state => {
+        state.employeesPayrollInfoLoading = true
+      })
+      .addCase(fetchEmployeesPayrollInfo.fulfilled, (state, action) => {
+        state.employeesPayrollInfoLoading = false
+        state.employeesPayrollInfo = action.payload
+      })
+      .addCase(fetchEmployeesPayrollInfo.rejected, state => {
+        state.employeesPayrollInfoLoading = false
       })
   }
 })
