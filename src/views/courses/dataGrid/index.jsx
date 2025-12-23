@@ -12,7 +12,7 @@ import { AbilityContext } from 'src/layouts/components/acl/Can'
 import CustomDataGrid from 'src/@core/components/custom-grid'
 import MonthlyReportForm from '../monthly-report/monthly-report-form'
 import { useTranslation } from 'react-i18next'
-export default function CoursesDataGrid({ rows, dataRooms, dataTeacher, SetSearch, status }) {
+export default function CoursesDataGrid({ rows, dataRooms, dataTeacher, SetSearch, search, status }) {
   const {
     columns,
     isDialogOpen,
@@ -47,7 +47,7 @@ export default function CoursesDataGrid({ rows, dataRooms, dataTeacher, SetSearc
           justifyContent={'space-between'}
         >
           <Box>
-            <CustomSearch SetSearch={SetSearch} />
+            <CustomSearch SetSearch={SetSearch} value={search} />
           </Box>
           {ability.can('create', 'Course') && <AddCourses dataRooms={dataRooms} dataTeacher={dataTeacher} />}
         </Stack>
