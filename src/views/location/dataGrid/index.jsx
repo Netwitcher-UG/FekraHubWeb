@@ -9,7 +9,7 @@ import CustomSearch from 'src/@core/components/custom-search'
 import AddLocation from '../add'
 import { useTranslation } from 'react-i18next'
 
-export default function LocationDataGrid({ rows, SetSearch, status }) {
+export default function LocationDataGrid({ rows, SetSearch, search, status }) {
   const { columns, isDialogOpen, handleCloseDialog, handleDelete, drawerData, open, handleCloseDrawer, DeleteName } =
     useLocationColumns()
   const { t } = useTranslation()
@@ -23,7 +23,7 @@ export default function LocationDataGrid({ rows, SetSearch, status }) {
           justifyContent={'space-between'}
         >
           <Box>
-            <CustomSearch SetSearch={SetSearch} />
+            <CustomSearch SetSearch={SetSearch} value={search} />
           </Box>
           <Box>
             <AddLocation />

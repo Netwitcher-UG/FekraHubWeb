@@ -24,7 +24,7 @@ export default function Index() {
     <Grid container spacing={6.5} sx={{ height: 'calc(100vh - 145px)', overflow: 'hidden' }}>
       <Grid item xs={12} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
         <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-          <LocationDataGrid rows={data} status={status} SetSearch={SetSearch} />
+          <LocationDataGrid rows={data} status={status} SetSearch={SetSearch} search={search} />
         </Card>
       </Grid>
     </Grid>

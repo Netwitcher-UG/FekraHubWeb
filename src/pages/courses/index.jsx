@@ -30,6 +30,7 @@ export default function Index() {
       dataRooms={dataRooms}
       dataTeacher={dataTeacher}
       SetSearch={SetSearch}
+      search={search}
       status={status}
     />
     </Card>

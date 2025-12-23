@@ -5,11 +5,14 @@ import CustomDataGrid from 'src/@core/components/custom-grid'
 import useRoomColumns from '../hook/useRoomColumns'
 import CustomDialogDelete from 'src/@core/components/custom-delete'
 import DrawerEdit from '../edit'
-import CustomSearch from 'src/@core/components/custom-search'
+// TODO: Uncomment when API endpoint supports search
+// import CustomSearch from 'src/@core/components/custom-search'
 import AddRoom from '../add'
 import { useTranslation } from 'react-i18next'
 
-export default function RoomDataGrid({ rows, SetSearch, status }) {
+// TODO: Uncomment when API endpoint supports search
+// export default function RoomDataGrid({ rows, SetSearch, search, status }) {
+export default function RoomDataGrid({ rows, status }) {
   const { columns, isDialogOpen, handleCloseDialog, handleDelete, drawerData, open, handleCloseDrawer, DeleteName } =
     useRoomColumns()
   const { t } = useTranslation()
@@ -17,16 +20,18 @@ export default function RoomDataGrid({ rows, SetSearch, status }) {
   return (
     <>
       <Card>
+      {/* TODO: Change justifyContent to 'space-between' when uncommenting search */}
       <Stack
           padding={4}
           direction={{ xs: 'column', sm: 'row' }}
           spacing={5}
           alignItems={'center'}
-          justifyContent={'space-between'}
+          justifyContent={'flex-end'}
         >
-          <Box>
-            <CustomSearch SetSearch={SetSearch} />
-          </Box>
+          {/* TODO: Uncomment when API endpoint supports search */}
+          {/* <Box>
+            <CustomSearch SetSearch={SetSearch} value={search} />
+          </Box> */}
           <AddRoom />
         </Stack>
 

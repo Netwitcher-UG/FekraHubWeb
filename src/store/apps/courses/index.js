@@ -25,9 +25,15 @@ export const fetchCourses = createAsyncThunk('courses/fetchCourses', async (data
 
 // git Courses Room
 
-export const fetchCoursesRoom = createAsyncThunk('courses/fetchCoursesRoom', async (_, { rejectWithValue }) => {
+export const fetchCoursesRoom = createAsyncThunk('courses/fetchCoursesRoom', async (data, { rejectWithValue }) => {
   try {
-    const response = await axiosInstance.get('/api/Rooms', {})
+    // Build URL with optional search parameter
+    let url = '/api/Rooms'
+    if (data && data.trim()) {
+      url += `?search=${data}`
+    }
+
+    const response = await axiosInstance.get(url, {})
 
     return response.data
   } catch (error) {
