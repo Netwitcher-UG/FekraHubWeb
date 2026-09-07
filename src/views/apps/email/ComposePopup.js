@@ -280,7 +280,11 @@ const ComposePopup = props => {
         '& .MuiDrawer-paper': {
           borderRadius: 1,
           position: 'static',
-          width: composePopupWidth
+          width: composePopupWidth,
+          maxHeight: theme => `calc(100vh - ${theme.spacing(10)})`,
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden'
         }
       }}
     >
@@ -291,7 +295,8 @@ const ComposePopup = props => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          backgroundColor: 'action.hover'
+          backgroundColor: 'action.hover',
+          flexShrink: 0
         }}
       >
         <Typography variant='h5' sx={{ fontWeight: 500 }}>
@@ -312,7 +317,8 @@ const ComposePopup = props => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          borderBottom: theme => `1px solid ${theme.palette.divider}`
+          borderBottom: theme => `1px solid ${theme.palette.divider}`,
+          flexShrink: 0
         }}
       >
         <Box sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
@@ -376,7 +382,8 @@ const ComposePopup = props => {
             px: 5,
             display: 'flex',
             alignItems: 'center',
-            borderBottom: theme => `1px solid ${theme.palette.divider}`
+            borderBottom: theme => `1px solid ${theme.palette.divider}`,
+            flexShrink: 0
           }}
         >
           <div>
@@ -426,7 +433,8 @@ const ComposePopup = props => {
             px: 5,
             display: 'flex',
             alignItems: 'center',
-            borderBottom: theme => `1px solid ${theme.palette.divider}`
+            borderBottom: theme => `1px solid ${theme.palette.divider}`,
+            flexShrink: 0
           }}
         >
           <div>
@@ -474,7 +482,8 @@ const ComposePopup = props => {
           px: 5,
           display: 'flex',
           alignItems: 'center',
-          borderBottom: theme => `1px solid ${theme.palette.divider}`
+          borderBottom: theme => `1px solid ${theme.palette.divider}`,
+          flexShrink: 0
         }}
       >
         <div>
@@ -502,8 +511,27 @@ const ComposePopup = props => {
       </Box>
       <EditorWrapper
         sx={{
-          '& .rdw-editor-wrapper .rdw-editor-main': { px: 5 },
-          '& .rdw-editor-wrapper, & .rdw-option-wrapper': { border: 0 }
+          flex: 1,
+          minHeight: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          '& .rdw-editor-wrapper': {
+            border: 0,
+            flex: 1,
+            minHeight: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden'
+          },
+          '& .rdw-editor-toolbar': { flexShrink: 0 },
+          '& .rdw-option-wrapper': { border: 0 },
+          '& .rdw-editor-wrapper .rdw-editor-main': {
+            px: 5,
+            flex: 1,
+            minHeight: '10rem',
+            overflowY: 'auto'
+          }
         }}
       >
         <ReactDraftWysiwyg
@@ -531,7 +559,8 @@ const ComposePopup = props => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          borderTop: theme => `1px solid ${theme.palette.divider}`
+          borderTop: theme => `1px solid ${theme.palette.divider}`,
+          flexShrink: 0
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
