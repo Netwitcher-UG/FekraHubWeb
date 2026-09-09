@@ -18,6 +18,8 @@ import account from './apps/account'
 import payroll from './apps/payroll'
 import notifications from './apps/notifications'
 import settings from './apps/settings'
+import statistics from './apps/statistics'
+
 export const store = configureStore({
   reducer: {
     users,
@@ -36,7 +38,8 @@ export const store = configureStore({
     invoices,
     calendar,
     account,
-    settings
+    settings,
+    statistics
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

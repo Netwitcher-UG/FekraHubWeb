@@ -3,7 +3,9 @@
  */
 const getHomeRoute = role => {
   if (role === 'Parent') return '/children'
-  else return '/account/profile'
+  if (role === 'Admin') return '/statistics'
+
+  return '/account/profile'
 }
 
 export default getHomeRoute
