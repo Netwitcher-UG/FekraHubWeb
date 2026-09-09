@@ -120,7 +120,8 @@ const AclGuard = props => {
     '/worksheets': { action: 'manage', subject: 'File' },
     '/students-attendance': { action: 'read', subject: 'StudentAttendance' },
     '/teachers-attendance': { action: 'read', subject: 'TeacherAttendance' },
-    '/settings': { action: 'manage', subject: 'SchoolInfo' }
+    '/settings': { action: 'manage', subject: 'SchoolInfo' },
+    '/statistics': { action: 'read', subject: 'Statistics' }
   }
 
   if (ability && auth.user) {

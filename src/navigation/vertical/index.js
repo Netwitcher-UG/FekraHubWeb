@@ -153,6 +153,13 @@ const navigation = () => {
       ]
     },
     {
+      title: 'Statistics',
+      icon: 'tabler:chart-bar',
+      path: '/statistics',
+      action: 'read',
+      subject: 'Statistics'
+    },
+    {
       title: 'Settings',
       icon: 'ph:gear',
       path: '/settings',
