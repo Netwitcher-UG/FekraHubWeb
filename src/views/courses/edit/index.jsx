@@ -50,7 +50,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
     // Additional validation for other fields can go here
   })
 
-  const [location, setLocation] = useState('')
+  const [roomOptions, setRoomOptions] = useState([])
 
   const { status, error, dataRooms, dataTeacher } = useSelector(state => state.courses)
   const { DaysOfWeeks } = useSelector(state => state.courses)
@@ -88,17 +88,30 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
   })
 
   useEffect(() => {
-    if (dataDef?.room) {
-      setLocation(prevLocations => [...prevLocations, dataDef?.room])
-    }
     dispatch(FetchCourseScheduleDaysOfWeek(''))
-  }, [dataDef?.room, dispatch])
+  }, [dispatch])
+
+  useEffect(() => {
+    if (!open) return
+
+    const selectedLocation =
+      locationData?.find(option => option.id === dataDef?.location?.id) ||
+      locationData?.find(option => option.id === dataDef?.room?.locationId)
+
+    if (selectedLocation?.room?.length) {
+      setRoomOptions(selectedLocation.room)
+    } else if (dataDef?.room) {
+      setRoomOptions([dataDef.room])
+    } else {
+      setRoomOptions([])
+    }
+  }, [open, dataDef, locationData])
 
   const handleSaveData = data => {
     dispatch(editCourses({ ...data, id: dataDef.id }))
     handleCloseDrawer()
     reset()
-    setLocation('')
+    setRoomOptions([])
   }
 
   const { fields, append, remove } = useFieldArray({
@@ -295,9 +308,8 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
                     isOptionEqualToValue={(option, value) => option.id === value}
                     // Handle selection changes
                     onChange={(event, value) => {
-                      const selectedId = value ? value.room : ''
-                      field.onChange(value.id) // Update the form state with the selected option's ID
-                      setLocation(selectedId) // Optionally update local component state
+                      field.onChange(value?.id || '')
+                      setRoomOptions(value?.room || [])
                     }}
                     // Set the selected value
                     value={locationData.find(option => option.id === field.value) || null}
@@ -317,15 +329,16 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
               />
             </Grid>
             <Grid item xs={12} sm={12} lg={12}>
-              {location.length !== 0 ? (
+              {roomOptions.length !== 0 ? (
                 <Grid item xs={12} sm={12} lg={12}>
                   <Controller
                     name='course.RoomId'
                     control={control}
                     render={({ field: { onChange, value, ref } }) => (
                       <Autocomplete
-                        options={location}
+                        options={roomOptions}
                         getOptionLabel={option => option.name || ''}
+                        isOptionEqualToValue={(option, selected) => option.id === selected?.id}
                         renderInput={params => (
                           <CustomTextField
                             {...params}
@@ -339,7 +352,7 @@ export default function DrawerEdit({ open, handleCloseDrawer, dataDef, locationD
                         onChange={(event, newValue) => {
                           onChange(newValue ? newValue.id : '')
                         }}
-                        value={location.find(room => room.id === value) || null}
+                        value={roomOptions.find(room => room.id === value) || null}
                       />
                     )}
                   />
