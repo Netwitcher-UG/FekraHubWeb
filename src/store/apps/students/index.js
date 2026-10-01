@@ -215,6 +215,28 @@ export const downloadStudentsExcelTemplate = createAsyncThunk('appStudents/downl
   }
 })
 
+// Export students using the same filters as the students list
+export const exportStudents = createAsyncThunk(
+  'appStudents/exportStudents',
+  async ({ search = '', course = '', format }, { rejectWithValue }) => {
+    try {
+      const courseId = course == 0 ? '' : course
+      const params = new URLSearchParams({
+        search: search ?? '',
+        courseId: courseId == null ? '' : String(courseId),
+        format
+      })
+      const response = await axiosInstance.get(`/api/Student/export?${params.toString()}`, {
+        responseType: 'blob'
+      })
+
+      return response
+    } catch (error) {
+      return rejectWithValue(error.response || error)
+    }
+  }
+)
+
 export const appStudentsSlice = createSlice({
   name: 'appStudents',
   initialState: {
@@ -237,7 +259,8 @@ export const appStudentsSlice = createSlice({
     studentsApprovals: [],
     studentsApprovalsLoading: false,
     importFromExcelLoading: false,
-    downloadTemplateLoading: false
+    downloadTemplateLoading: false,
+    exportStudentsLoading: false
   },
   reducers: {},
   extraReducers: builder => {
@@ -337,6 +360,15 @@ export const appStudentsSlice = createSlice({
       })
       .addCase(downloadStudentsExcelTemplate.rejected, state => {
         state.downloadTemplateLoading = false
+      })
+      .addCase(exportStudents.pending, state => {
+        state.exportStudentsLoading = true
+      })
+      .addCase(exportStudents.fulfilled, state => {
+        state.exportStudentsLoading = false
+      })
+      .addCase(exportStudents.rejected, state => {
+        state.exportStudentsLoading = false
       })
   }
 })

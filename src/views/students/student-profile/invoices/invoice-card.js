@@ -16,6 +16,7 @@ import CustomAvatar from 'src/@core/components/mui/avatar'
 import toast from 'react-hot-toast'
 
 import { Dialog, DialogContent, DialogTitle } from '@mui/material'
+import { InvoiceFilePreview } from './view'
 
 const InvoiceCard = props => {
   // ** Props
@@ -77,20 +78,7 @@ const InvoiceCard = props => {
           <Typography variant='h6'>{convertDate(date)} Invoice</Typography>
         </DialogTitle>
         <DialogContent>
-          <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
-            <iframe
-              src={`data:application/pdf;base64,${selectedFile}`}
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                border: 'none'
-              }}
-              title={`${convertDate(date)} Contract`}
-            />
-          </div>
+          <InvoiceFilePreview file={selectedFile} name={invoice?.fileName} title={`${convertDate(date)} Invoice`} />
         </DialogContent>
       </Dialog>
     </Card>

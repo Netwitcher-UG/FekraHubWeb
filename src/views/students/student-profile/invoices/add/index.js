@@ -6,10 +6,28 @@ import toast from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
 import Translations from 'src/layouts/components/Translations'
 
+const invoiceAccept = {
+  'application/pdf': ['.pdf'],
+  'image/*': ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp']
+}
+
+const mimeFromName = name => {
+  const ext = name?.split('.').pop()?.toLowerCase()
+  if (ext === 'pdf') return 'application/pdf'
+  if (ext === 'jpg' || ext === 'jpeg') return 'image/jpeg'
+  if (ext === 'png') return 'image/png'
+  if (ext === 'gif') return 'image/gif'
+  if (ext === 'webp') return 'image/webp'
+  if (ext === 'bmp') return 'image/bmp'
+
+  return ''
+}
+
 export default function Add({ student }) {
   const dispatch = useDispatch()
   const [fileBase64, setFileBase64] = useState(null)
   const [fileName, setFileName] = useState(null)
+  const [fileType, setFileType] = useState(null)
   const [removeFile, setRemoveFile] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
 
@@ -17,8 +35,8 @@ export default function Add({ student }) {
     setIsUploading(true)
     try {
       const formData = new FormData()
-      // Create a File object from the Blob to include the filename
-      const file = new File([fileBase64], fileName || 'invoice.pdf', { type: 'application/pdf' })
+      const type = fileType || mimeFromName(fileName) || 'application/octet-stream'
+      const file = new File([fileBase64], fileName || 'invoice', { type })
       formData.append('InvoiceFile', file)
       formData.append('studentId', student)
 
@@ -33,6 +51,7 @@ export default function Add({ student }) {
         toast.success(<Translations text={successMessage} />, { duration: 1000 })
         setFileBase64(null)
         setFileName(null)
+        setFileType(null)
         setRemoveFile(true)
       } else {
         toast.error(errorMessage)
@@ -45,14 +64,18 @@ export default function Add({ student }) {
   }
 
   return (
-    <DropzoneWrapper sx={{ mt: 4, width: '100%' }}>
+    <DropzoneWrapper sx={{ mt: 4, mb: 6, width: '100%' }}>
       <FileUploaderRestrictions
         setFileBase64={setFileBase64}
         setFileName={setFileName}
+        setFileType={setFileType}
         handleUpload={handleUploadInvoice}
         removeFile={removeFile}
         setRemoveFile={setRemoveFile}
         loading={isUploading}
+        accept={invoiceAccept}
+        description='Images and PDF only. Max 1 file and max size of 2 MB'
+        errorText='You can only upload images or PDF files'
       />
     </DropzoneWrapper>
   )

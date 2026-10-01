@@ -20,13 +20,17 @@ import { useDropzone } from 'react-dropzone'
 const FileUploaderRestrictions = ({
   setFileBase64, // You can rename this to reflect the binary nature if needed
   setFileName,
+  setFileType,
   setValue,
   setError,
   removeFile,
   setRemoveFile,
   handleUpload,
   inputDisabled = false,
-  loading = false
+  loading = false,
+  accept = '*',
+  description = 'Max 1 file and max size of 2 MB',
+  errorText = 'You can only upload 1 file & maximum size of 10 MB'
 }) => {
   // ** State
   const [file, setFile] = useState(null)
@@ -43,13 +47,14 @@ const FileUploaderRestrictions = ({
   const { getRootProps, getInputProps } = useDropzone({
     maxFiles: 1,
     maxSize: 10000000, // 10 MB
-    accept: '*', // Adjust according to allowed file types
+    accept,
     disabled: loading || inputDisabled,
     onDrop: acceptedFiles => {
       setShowError(false)
       const newFile = acceptedFiles[0]
       if (newFile) {
         setFile(newFile)
+        setFileType?.(newFile.type)
 
         // Use FileReader to read the file as binary (ArrayBuffer)
         const reader = new FileReader()
@@ -88,6 +93,7 @@ const FileUploaderRestrictions = ({
     setFile(null)
     setFileBase64(null) // Clear the binary data
     setFileName(null) // Clear file name
+    setFileType?.(null)
     // Reset the value and error (if using a form library)
     // setValue('attach', null)
     // setError('attach', {
@@ -130,7 +136,7 @@ const FileUploaderRestrictions = ({
             <Translations text={'Drop file here or click to upload.'} />
           </Typography>
           <Typography sx={{ pb: 2, color: 'text.secondary' }}>
-            <Translations text={'Max 1 file and max size of 2 MB'} />
+            <Translations text={description} />
           </Typography>
         </Box>
       </div>
@@ -173,7 +179,7 @@ const FileUploaderRestrictions = ({
       )}
       {showError && (
         <Typography sx={{ mb: 2.5, color: 'red', textAlign: 'center' }}>
-          <Translations text={'You can only upload 1 file & maximum size of 10 MB'} />
+          <Translations text={errorText} />
         </Typography>
       )}
     </Fragment>
