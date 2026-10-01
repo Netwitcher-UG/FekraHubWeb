@@ -49,14 +49,16 @@ const StudentsApprovalsDataGrid = ({
   const { columns } = useStudentsApprovalsColumns(handleApproveClick, handleRejectClick)
   return (
     <>
-      <Box>
+      <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, height: '100%', minHeight: 0, overflow: 'hidden' }}>
         <CustomDataGrid
           rows={store?.studentsApprovals || []}
           columns={columns}
           loading={store.studentsApprovalsLoading}
           handleRowClick={handleRowClick}
           sx={{
+            flex: 1,
             height: '100%',
+            minHeight: 0,
             '& .MuiDataGrid-row:hover': {
               backgroundColor: 'action.hover'
             }

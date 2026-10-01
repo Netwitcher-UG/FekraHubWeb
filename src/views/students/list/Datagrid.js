@@ -96,7 +96,12 @@ const StudentsDataGrid = ({
       </CardContent>
       <Divider sx={{ m: '0 !important', flexShrink: 0 }} />
       <Box sx={{ flexShrink: 0 }}>
-        <TableHeader value={value} setValue={setValue} handleFilter={handleFilter} />
+        <TableHeader
+          value={value}
+          setValue={setValue}
+          handleFilter={handleFilter}
+          selectedCourse={selectedCourse}
+        />
       </Box>
       <Box sx={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
         <CustomDataGrid
