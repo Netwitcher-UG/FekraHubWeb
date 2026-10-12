@@ -109,8 +109,9 @@ const EditProfileInfoDialog = ({ open, setOpen, profileData }) => {
       firstName: profileData?.firstName,
       lastName: profileData?.lastName,
       nationality: profileData?.nationality,
-      phoneNumber: Number(profileData?.phoneNumber),
-      emergencyPhoneNumber: Number(profileData?.emergencyPhoneNumber),
+      phoneNumber: profileData?.phoneNumber == null ? '' : String(profileData.phoneNumber),
+      emergencyPhoneNumber:
+        profileData?.emergencyPhoneNumber == null ? '' : String(profileData.emergencyPhoneNumber),
       street: profileData?.street,
       streetNr: profileData?.streetNr,
       city: profileData?.city,
@@ -425,7 +426,9 @@ const EditProfileInfoDialog = ({ open, setOpen, profileData }) => {
                   <CustomTextField
                     {...field}
                     fullWidth
-                    type='number'
+                    type='text'
+                    inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+                    onChange={e => field.onChange(e.target.value.replace(/\D/g, ''))}
                     label={<Translations text={'Phone Number'} />}
                     placeholder='123-456-7890'
                     error={Boolean(errors.phoneNumber)}
@@ -444,7 +447,9 @@ const EditProfileInfoDialog = ({ open, setOpen, profileData }) => {
                     fullWidth
                     label={<Translations text={'Emergency Phone Number'} />}
                     placeholder={t('Enter your emergency phone number')}
-                    type='number'
+                    type='text'
+                    inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+                    onChange={e => field.onChange(e.target.value.replace(/\D/g, ''))}
                     error={Boolean(errors.emergencyPhoneNumber)}
                     helperText={errors.emergencyPhoneNumber?.message}
                   />
