@@ -210,4 +210,9 @@ function defineAbilitiesFor(role, rolesPermissions) {
   return build()
 }
 
+export const defaultACLObj = {
+  action: 'manage',
+  subject: 'all'
+}
+
 export default defineAbilitiesFor
