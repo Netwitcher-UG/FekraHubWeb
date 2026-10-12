@@ -145,7 +145,7 @@ const NotificationDropdown = props => {
       let icon = null
       switch (notificationType) {
         case 'event':
-          icon = <CalendarTodayIcon /> // Replace with your desired Calendar Icon
+          icon = <CalendarMonthIcon />
           break
         // Add more cases for other notification types...
         default:

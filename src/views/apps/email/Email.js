@@ -20,7 +20,6 @@ import ComposePopup from 'src/views/apps/email/ComposePopup'
 // ** Actions
 import {
   fetchMails,
-  updateMail,
   paginateMail,
   getCurrentMail,
   updateMailLabel,
@@ -103,7 +102,6 @@ const EmailAppLayout = ({ folder, label }) => {
         dispatch={dispatch}
         setQuery={setQuery}
         direction={direction}
-        updateMail={updateMail}
         routeParams={routeParams}
         labelColors={labelColors}
         paginateMail={paginateMail}

@@ -4,7 +4,7 @@ module.exports = {
     es6: true,
     browser: true
   },
-  extends: ['next/babel','next/core-web-vitals', 'prettier'],
+  extends: ['next/core-web-vitals', 'prettier'],
   parserOptions: {
     ecmaVersion: 11,
     sourceType: 'module',

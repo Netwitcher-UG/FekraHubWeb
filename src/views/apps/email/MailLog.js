@@ -71,7 +71,6 @@ const MailLog = props => {
     dispatch,
     setQuery,
     direction,
-    updateMail,
     routeParams,
     labelColors,
     paginateMail,
