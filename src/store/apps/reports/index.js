@@ -67,9 +67,9 @@ export const unAcceptReport = createAsyncThunk('appReports/unAcceptReport', asyn
   }
 })
 
-export const addReport = createAsyncThunk('appReports/addReport', async data => {
+export const addReport = createAsyncThunk('appReports/addReport', async ({ data, month, year }) => {
   try {
-    const response = await axiosInstance.post('/api/Reports', data, {
+    const response = await axiosInstance.post(`/api/Reports?month=${month}&year=${year}`, data, {
       headers: {
         'Content-Type': 'application/json'
       }

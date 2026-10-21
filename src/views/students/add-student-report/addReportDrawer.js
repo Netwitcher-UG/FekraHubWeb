@@ -21,13 +21,17 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import toast from 'react-hot-toast'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
-import DatePicker from 'react-datepicker'
+import DatePicker, { registerLocale } from 'react-datepicker'
+import de from 'date-fns/locale/de'
+import en from 'date-fns/locale/en-US'
 import { fetchReportKeys, addReport } from 'src/store/apps/reports'
-
 import styled from '@emotion/styled'
 import { useDispatch, useSelector } from 'react-redux'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useTranslation } from 'react-i18next'
+
+registerLocale('de', de)
+registerLocale('en', en)
 
 const Header = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -54,13 +58,15 @@ const DateChip = styled(Chip)(({ theme }) => ({
   fontWeight: 500
 }))
 
-const date = new Date()
-const month = date.toLocaleString('default', { month: 'long' })
-const year = date.getFullYear()
+const getCurrentMonthEnd = () => {
+  const now = new Date()
+
+  return new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999)
+}
 
 const CustomDatePickerWrapper = styled(DatePickerWrapper)({
   '& .react-datepicker-popper': {
-    zIndex: 1500
+    zIndex: 2000
   }
 })
 
@@ -72,9 +78,10 @@ export default function AddReportDrawer({ open, handleCloseDrawer, rowData }) {
   }, [dispatch])
 
   const { reportKeys } = useSelector(state => state.reports)
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const dateLocale = i18n.language === 'de' ? 'de' : 'en'
   const schema = yup.object().shape({
-    // creationDate: yup.date().required(<Translations text={'Date is required'} />),
+    reportDate: yup.date().required(t('Date is required')).max(getCurrentMonthEnd(), t('Date is required')),
     ...reportKeys.reduce((acc, key) => {
       acc[key] = yup.string().required(<Translations text={`${key} ${t('is required')}`} />)
       return acc
@@ -82,7 +89,7 @@ export default function AddReportDrawer({ open, handleCloseDrawer, rowData }) {
   })
 
   const defaultValues = {
-    // creationDate: null,
+    reportDate: new Date(),
     ...reportKeys.reduce((acc, key) => {
       acc[key] = ''
       return acc
@@ -94,6 +101,7 @@ export default function AddReportDrawer({ open, handleCloseDrawer, rowData }) {
     control,
     handleSubmit,
     setValue,
+    watch,
     setError,
     formState: { errors, isSubmitting }
   } = useForm({
@@ -102,10 +110,20 @@ export default function AddReportDrawer({ open, handleCloseDrawer, rowData }) {
     resolver: yupResolver(schema)
   })
 
+  useEffect(() => {
+    if (open) {
+      setValue('reportDate', new Date())
+    }
+  }, [open, setValue])
+
+  const selectedReportDate = watch('reportDate')
+  const chipDate = selectedReportDate instanceof Date ? selectedReportDate : new Date()
+  const monthLabel = chipDate.toLocaleString(dateLocale === 'de' ? 'de-DE' : 'en-US', { month: 'long' })
+  const yearLabel = chipDate.getFullYear()
+
   const onSubmit = async data => {
     const reportData = [
       {
-        creationDate: data.creationDate,
         studentId: rowData?.id,
         data: JSON.stringify(
           reportKeys.reduce((acc, key) => {
@@ -116,7 +134,13 @@ export default function AddReportDrawer({ open, handleCloseDrawer, rowData }) {
       }
     ]
 
-    const response = await dispatch(addReport(reportData))
+    const response = await dispatch(
+      addReport({
+        data: reportData,
+        month: data.reportDate.getMonth() + 1,
+        year: data.reportDate.getFullYear()
+      })
+    )
     if (response?.payload?.status == 200) {
       handleCloseDrawer()
       toast.success(<Translations text={'Report submitted successfully '} />)
@@ -147,70 +171,84 @@ export default function AddReportDrawer({ open, handleCloseDrawer, rowData }) {
             {rowData.firstName} {rowData.lastName}
           </Typography>
         </HeaderText>
-        <DateChip label={`${month} / ${year}`} color='info' />
+        <DateChip label={`${monthLabel} / ${yearLabel}`} color='info' />
       </Header>
 
       <Divider variant='middle' />
       <Stack padding={4} sx={{ gap: '8px' }}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid container rowSpacing={4} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-            {/* <Grid item xs={12} sm={12} lg={12}>
-              <Controller
-                name='creationDate'
-                control={control}
-                render={({ field }) => (
-                  <Box sx={{ mb: 4 }}>
-                    <CustomDatePickerWrapper>
-                      <DatePicker
-                        selected={field.value}
-                        onChange={field.onChange}
-                        dateFormat='yyyy/MM/dd'
-                        customInput={
-                          <CustomTextField
-                            label={<Translations text={'Date'} />}
-                            fullWidth
-                            error={Boolean(errors.creationDate)}
-                            helperText={errors.creationDate?.message}
-                          />
-                        }
-                        placeholderText={t('Date')}
+          <Box sx={{ p: 4, borderRadius: 1, backgroundColor: 'action.hover' }}>
+            <Typography
+              variant='body2'
+              sx={{ mb: 3, color: 'primary.main', fontWeight: 600, letterSpacing: 0.4, textTransform: 'uppercase' }}
+            >
+              <Translations text={'Month'} />
+              <Box component='span' sx={{ color: 'error.main' }}>
+                {' '}
+                *
+              </Box>
+            </Typography>
+            <Controller
+              name='reportDate'
+              control={control}
+              render={({ field }) => (
+                <CustomDatePickerWrapper>
+                  <DatePicker
+                    selected={field.value}
+                    onChange={field.onChange}
+                    showMonthYearPicker
+                    dateFormat='MMMM / yyyy'
+                    maxDate={getCurrentMonthEnd()}
+                    locale={dateLocale}
+                    onChangeRaw={event => event.preventDefault()}
+                    customInput={
+                      <CustomTextField
+                        fullWidth
+                        error={Boolean(errors.reportDate)}
+                        helperText={errors.reportDate?.message}
                       />
-                    </CustomDatePickerWrapper>
-                  </Box>
-                )}
-              />
-            </Grid> */}
-          </Grid>
-          {/* <Typography
-            sx={{
-              fontSize: '15px',
-              m: 2
-            }}
-          >
-            Report Info
-          </Typography>
-          <Divider variant='middle' /> */}
+                    }
+                    placeholderText={t('Month')}
+                  />
+                </CustomDatePickerWrapper>
+              )}
+            />
+          </Box>
 
-          <Grid container rowSpacing={4} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ mt: 2, mb: 4 }}>
-            {' '}
-            {reportKeys.map(key => (
-              <Grid item xs={12} sm={12} lg={12} key={key}>
-                <Controller
-                  name={key}
-                  control={control}
-                  render={({ field }) => (
-                    <CustomTextField
-                      {...field}
-                      label={<Translations text={key} />}
-                      fullWidth
-                      error={Boolean(errors[key])}
-                      helperText={errors[key]?.message}
-                    />
-                  )}
-                />
-              </Grid>
-            ))}
-          </Grid>
+          <Divider sx={{ my: 5 }} />
+
+          <Box sx={{ p: 4, mb: 4, borderRadius: 1, backgroundColor: 'action.hover' }}>
+            <Typography
+              variant='body2'
+              sx={{ mb: 4, color: 'primary.main', fontWeight: 600, letterSpacing: 0.4, textTransform: 'uppercase' }}
+            >
+              <Translations text={'Report Info'} />
+              <Box component='span' sx={{ color: 'error.main' }}>
+                {' '}
+                *
+              </Box>
+            </Typography>
+            <Grid container rowSpacing={4}>
+              {reportKeys.map(key => (
+                <Grid item xs={12} key={key}>
+                  <Controller
+                    name={key}
+                    control={control}
+                    render={({ field }) => (
+                      <CustomTextField
+                        {...field}
+                        required
+                        label={<Translations text={key} />}
+                        fullWidth
+                        error={Boolean(errors[key])}
+                        helperText={errors[key]?.message}
+                      />
+                    )}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
           {reportKeys.length > 0 && (
             <>
               <Divider variant='middle' />
