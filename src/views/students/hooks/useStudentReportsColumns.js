@@ -9,7 +9,14 @@ const useStudentReportsColumns = () => {
       {
         flex: 0.15,
         minWidth: 120,
-        headerName: <Translations text={'Creation Date'} />,
+        headerName: <Translations text={'Report Date'} />,
+        field: 'reportDate',
+        renderCell: ({ row }) => checkCell(row.month != null && row.year != null ? `${row.month}.${row.year}` : '')
+      },
+      {
+        flex: 0.15,
+        minWidth: 120,
+        headerName: <Translations text={'Created At'} />,
         field: 'creationDate',
         renderCell: ({ row }) => checkCell(convertDate(row.creationDate))
       },

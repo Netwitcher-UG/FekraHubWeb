@@ -69,11 +69,13 @@ const useReportsColumns = () => {
         width: 200,
         headerName: <Translations text={'Report Date'} />,
         field: 'reportDate',
-        renderCell: ({ row }) => (
-          <>
-            {row.month}.{row.year}
-          </>
-        )
+        renderCell: ({ row }) => checkCell(row.month != null && row.year != null ? `${row.month}.${row.year}` : '')
+      },
+      {
+        width: 200,
+        headerName: <Translations text={'Created At'} />,
+        field: 'creationDate',
+        renderCell: ({ row }) => checkCell(convertDate(row.creationDate))
       },
       {
         width: 200,
@@ -126,12 +128,6 @@ const useReportsColumns = () => {
         headerName: <Translations text={'Teacher Email'} />,
         field: 'teacherEmail',
         renderCell: ({ row }) => checkCell(row.teacherEmail)
-      },
-      {
-        width: 200,
-        headerName: <Translations text={'Creation Date'} />,
-        field: 'creationDate',
-        renderCell: ({ row }) => checkCell(convertDate(row.creationDate))
       }
     ]
   }, [ability, handleEditReportClick])

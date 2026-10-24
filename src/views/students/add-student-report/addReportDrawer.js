@@ -144,8 +144,10 @@ export default function AddReportDrawer({ open, handleCloseDrawer, rowData }) {
     if (response?.payload?.status == 200) {
       handleCloseDrawer()
       toast.success(<Translations text={'Report submitted successfully '} />)
-    } else if (response?.payload?.status == 400) toast.error(<Translations text={response?.payload?.data} />)
-    else toast.error(<Translations text={'Something went wrong try again !'} />)
+    } else if (response?.payload?.status == 400) {
+      const errorMessage = response?.payload?.data?.message || response?.payload?.data
+      toast.error(typeof errorMessage === 'string' ? errorMessage : <Translations text={'Something went wrong try again !'} />)
+    } else toast.error(<Translations text={'Something went wrong try again !'} />)
   }
 
   return (
