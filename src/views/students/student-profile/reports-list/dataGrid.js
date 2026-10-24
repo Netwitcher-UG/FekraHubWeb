@@ -2,9 +2,18 @@ import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
 import CustomDataGrid from 'src/@core/components/custom-grid'
 
-const StudentReportsDataGrid = ({ columns, store, handleRowClick, byParent }) => {
+const StudentReportsDataGrid = ({
+  columns,
+  store,
+  handleRowClick,
+  byParent,
+  currentPage,
+  setCurrentPage,
+  totalPages
+}) => {
   const loading = byParent ? store.childReportsLoading : store.loading
   const rows = (byParent ? store?.childReports : store?.data?.reports) || []
+  const paginationEnabled = !byParent
 
   return (
     <>
@@ -15,6 +24,10 @@ const StudentReportsDataGrid = ({ columns, store, handleRowClick, byParent }) =>
           columns={columns}
           handleRowClick={handleRowClick}
           loading={loading}
+          pagination={paginationEnabled}
+          totalPages={totalPages}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
           sx={{
             flex: 1,
             minHeight: 0

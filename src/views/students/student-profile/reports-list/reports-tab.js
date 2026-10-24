@@ -4,7 +4,7 @@ import useStudentReportsColumns from '../../hooks/useStudentReportsColumns'
 import StudentReportsDataGrid from './dataGrid'
 import { useRouter } from 'next/router'
 
-const StudentReportsTab = ({ store, byParent }) => {
+const StudentReportsTab = ({ store, byParent, currentPage, setCurrentPage, totalPages }) => {
   const router = useRouter()
   const columns = useStudentReportsColumns()
 
@@ -18,7 +18,15 @@ const StudentReportsTab = ({ store, byParent }) => {
     <Grid container spacing={4} sx={{ height: 'calc(100vh - 245px)', overflow: 'hidden' }}>
       <Grid item xs={12} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
         <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-          <StudentReportsDataGrid columns={columns} handleRowClick={handleRowClick} store={store} byParent={byParent} />
+          <StudentReportsDataGrid
+            columns={columns}
+            handleRowClick={handleRowClick}
+            store={store}
+            byParent={byParent}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            totalPages={totalPages}
+          />
         </Card>
       </Grid>
     </Grid>

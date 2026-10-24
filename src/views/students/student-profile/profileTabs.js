@@ -42,6 +42,8 @@ const StudentProfile = ({ student, byParent = false }) => {
   const { t } = useTranslation()
   const store = useSelector(state => state.reports)
   const [editDrawerOpen, setEditDrawerOpen] = useState(false)
+  const [reportsCurrentPage, setReportsCurrentPage] = useState(1)
+  const reportsPageSize = 10
 
   // ** Selectors for profile, contracts, invoices, worksheets, and attendance data
   const { childProfileInfo, childProfileLoading, studentProfileInfo, studentProfileLoading } = useSelector(
@@ -69,7 +71,6 @@ const StudentProfile = ({ student, byParent = false }) => {
       dispatch(fetchChildWorksheets(student))
       dispatch(fetchChildAttendance(student))
     } else {
-      ability.can('read', 'StudentReport') && dispatch(fetchReportsByFilter({ student: student, improved: true }))
       dispatch(fetchStudentProfileInfo(student))
       ability.can('manage', 'Invoices') && dispatch(fetchStudentInvoices(student))
       ability.can('read', 'Contract') && dispatch(fetchStudentContracts(student))
@@ -78,6 +79,23 @@ const StudentProfile = ({ student, byParent = false }) => {
       ability.can('read', 'StudentAttendance') && dispatch(fetchAttendanceStatuses())
     }
   }, [student])
+
+  useEffect(() => {
+    setReportsCurrentPage(1)
+  }, [student])
+
+  useEffect(() => {
+    if (!student || byParent) return
+    if (!ability.can('read', 'StudentReport')) return
+    dispatch(
+      fetchReportsByFilter({
+        student,
+        improved: true,
+        PageNumber: reportsCurrentPage,
+        PageSize: reportsPageSize
+      })
+    )
+  }, [student, byParent, reportsCurrentPage])
 
   // ** Handle Tab Change
   const handleChange = (event, newValue) => {
@@ -156,7 +174,13 @@ const StudentProfile = ({ student, byParent = false }) => {
           </TabPanel>
         ) : ability.can('read', 'StudentReport') ? (
           <TabPanel value='2' sx={{ px: 0 }}>
-            <StudentReportsTab store={store} byParent={byParent} />
+            <StudentReportsTab
+              store={store}
+              byParent={byParent}
+              currentPage={reportsCurrentPage}
+              setCurrentPage={setReportsCurrentPage}
+              totalPages={store?.data?.totalPages}
+            />
           </TabPanel>
         ) : null}
 
